@@ -86,6 +86,7 @@ namespace PUPFMIS.BusinessLayer
                             .FirstOrDefault();
 
             var officeID = db.UserAccounts.Where(d => d.Email == Email).Select(d => d.FKUserInformationReference.Office).FirstOrDefault();
+            var inflationRate = Convert.ToInt32(db.SystemVariables.Find(1).Value);
             var totalConsumption = db.SuppliesIssueDetails
                                    .Where(d => d.FKRequestHeader.Office == officeID && d.FKSuppliesMaster.FKItem.ItemCode == ItemCode)
                                    .Select(d => new { IssuedYear = d.FKRequestHeader.IssuedAt.Value.Year, Quantity = d.QtyIssued })
@@ -94,7 +95,8 @@ namespace PUPFMIS.BusinessLayer
                                    .OrderByDescending(d => d.Year)
                                    .Select(d => d.Total)
                                    .First();
-            basketItem.TotalConsumption = totalConsumption;
+            var inflation = ((Convert.ToDecimal(totalConsumption) / 100) * inflationRate);
+            basketItem.TotalConsumption = totalConsumption + Convert.ToInt32(Decimal.Round(inflation,0));
             return basketItem;
         }
 
