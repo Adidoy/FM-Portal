@@ -33,6 +33,7 @@ namespace PUPFMIS.Models
         public DbSet<RequestHeader> RequestHeader { get; set; }
         public DbSet<SuppliesRequestDetails> SuppliesRequestDetails { get; set; }
         public DbSet<SuppliesIssueDetails> SuppliesIssueDetails { get; set; }
+        public DbSet<SystemVariables> SystemVariables { get; set; }
 
         //===============================================================//
         //=================== PROCUREMENT TABLES ========================//

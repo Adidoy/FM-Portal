@@ -20,6 +20,9 @@ namespace PUPFMIS.Migrations.FMISMigrations
                 new Models.InventoryType { ID = 4, InventoryTypeName = "Services / Consultancy", IsTangible = false, CreatedAt = System.DateTime.Now },
                 new Models.InventoryType { ID = 4, InventoryTypeName = "Infrastructure / Plant", IsTangible = false, CreatedAt = System.DateTime.Now }
             );
+            context.SystemVariables.AddOrUpdate(
+                new Models.SystemVariables { ID = 1, VariableName = "Quantity Inflation Rate (%)", Value = "5"}
+            );
         }
     }
 }
