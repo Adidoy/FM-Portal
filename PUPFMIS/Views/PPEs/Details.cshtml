@@ -1,0 +1,357 @@
+﻿@model PUPFMIS.Models.PPE
+
+@{
+    ViewBag.Title = "Property, Plant and Equipment";
+    ViewBag.Description = "Details";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("PPEs", "index")</li>
+        <li class="breadcrumb-item">Details</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-right">
+        <h1 class="card-title">AIR-CONDITIONING UNIT, WINDOW TYPE</h1>
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-info card-outline">
+            <div class="card-header">
+                <h3 class="card-title">PPE Details</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Classification, "Classification", htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-question"></i></span>
+                                </div>
+                                @Html.EditorFor(m => m.Classification, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.PPEName, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-id-card"></i></span>
+                                </div>
+                                @Html.EditorFor(model => model.PPEName, new { htmlAttributes = new { @class = "form-control" } })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-list-ul"></i></span>
+                                </div>
+                                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Unit, "Unit", htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-ruler"></i></span>
+                                </div>
+                                @Html.EditorFor(m => m.Unit, new { htmlAttributes = new { @class = "form-control" } })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.UACSObjectAccountCode, "UACS Object Account Code", htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-code"></i></span>
+                                </div>
+                                @Html.EditorFor(m => m.UACSObjectAccountCode, new { htmlAttributes = new { @class = "form-control" } })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.UsefulLife, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-heartbeat"></i></span>
+                                </div>
+                                @Html.EditorFor(model => model.UsefulLife, new { htmlAttributes = new { @class = "form-control" } })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.DepreciationRate, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-arrow-circle-down"></i></span>
+                                </div>
+                                @Html.EditorFor(model => model.DepreciationRate, new { htmlAttributes = new { @class = "form-control" } })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card card-info card-outline">
+                            <div class="card-header">
+                                <h3 class="card-title">PPE Distribution and Assignment</h3>
+                            </div>
+                            <div class="card-header d-flex p-0">
+                                <ul class="nav nav-pills p-2">
+                                    <li class="nav-item"><a class="nav-link active" href="#issuance" data-toggle="tab"><i class="fa fa-tasks"></i>&nbsp; Issuance</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#transfer" data-toggle="tab"><i class="fa fa-box-open"></i>&nbsp; Transfer History</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#ppmp_init" data-toggle="tab"><i class="fa fa-briefcase"></i>&nbsp; Inventory Items</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#ppmp_srvc" data-toggle="tab"><i class="fa fa-briefcase"></i>&nbsp; Services</a></li>
+                                </ul>
+                            </div>
+                            <div class="tab-content">
+                                <br />
+                                <div class="tab-pane active" id="issuance">
+                                    <div class="col-md-12">
+                                        <table class="table table-bordered table-hover" id="tblIssuance">
+                                            <thead>
+                                                <tr>
+                                                    <th>Property No.</th>
+                                                    <th>Reference</th>
+                                                    <th>Office/Officer</th>
+                                                    <th>Location</th>
+                                                    <th>Date Transferred</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        PUP-10-021
+                                                    </td>
+                                                    <td>PAR 19-11-0001</td>
+                                                    <td>
+                                                        <b>PROCUREMENT MANAGEMENT OFFICE</b>
+                                                        <br />
+                                                        <i>PMO Director</i>
+                                                    </td>
+                                                    <td>
+                                                        N106 - Director's Office
+                                                    </td>
+                                                    <td>
+                                                        @DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        PUP-10-023
+                                                    </td>
+                                                    <td>PAR 19-11-0001</td>
+                                                    <td>
+                                                        <b>PROCUREMENT MANAGEMENT OFFICE</b>
+                                                        <br />
+                                                        <i>BAC Secretariat</i>
+                                                    </td>
+                                                    <td>
+                                                        S310 - Bids and Awards Committee Office
+                                                    </td>
+                                                    <td>
+                                                        @DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="transfer">
+                                    <div class="col-md-12">
+                                        <table class="table table-hover display" id="transfers">
+                                            <thead>
+                                                <tr>
+                                                    <th rowspan="2" style="vertical-align:middle; text-align:center;" width="15%">Property No.</th>
+                                                    <th rowspan="2" style="vertical-align:middle; text-align:center;" width="15%">Reference</th>
+                                                    <th colspan="1" style="vertical-align:middle; text-align:center;">From</th>
+                                                    <th colspan="1" style="vertical-align:middle; text-align:center;">To</th>
+                                                    <th rowspan="2" style="vertical-align:middle; text-align:center;" width="20%">Date Transferred</th>
+                                                </tr>
+                                                <tr>
+                                                    <th style="vertical-align:middle; text-align:center;" width="25%">Accountable Office/Officer/Location</th>
+                                                    <th style="vertical-align:middle; text-align:center;" width="25%">Accountable Office/Officer/Location</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        PUP-10-021
+                                                    </td>
+                                                    <td>
+                                                        PAR 19-11-0001
+                                                    </td>
+                                                    <td>
+                                                        <b>PROPERTY AND SUPPLIES MANAGEMENT OFFICE</b>
+                                                        <br />
+                                                        <i>PSMO Director</i>
+                                                        <br />  
+                                                        <i>Sampaguita Bldg.</i>
+                                                    </td>
+                                                    <td>
+                                                        <b>PROCUREMENT MANAGEMENT OFFICE</b>
+                                                        <br />
+                                                        <i>PMO Director</i>
+                                                        <br />
+                                                        <i>N106 - Director's Office</i>
+                                                    </td>
+                                                    <td>
+                                                        @DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        PUP-10-021
+                                                    </td>
+                                                    <td>
+                                                        PAR 19-11-0001
+                                                    </td>
+                                                    <td>
+                                                        <b>PROPERTY AND SUPPLIES MANAGEMENT OFFICE</b>
+                                                        <br />
+                                                        <i>PSMO Director</i>
+                                                        <br />
+                                                        <i>Sampaguita Bldg.</i>
+                                                    </td>
+                                                    <td>
+                                                        <b>PROCUREMENT MANAGEMENT OFFICE</b>
+                                                        <br />
+                                                        <i>PMO Director</i>
+                                                        <br />
+                                                        <i>S310 - Bids and Awards Committee Office</i>
+                                                    </td>
+                                                    <td>
+                                                        @DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="ppmp_init">
+                                    <div class="col-md-12">
+
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="ppmp_srvc">
+                                    <div class="col-md-12">
+
+                                    </div>
+                                </div>
+                                <br />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/adminlte/components/jquery/dist/jquery.min.js"></script>
+<script src="~/Scripts/adminlte/components/datatables/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('#tblIssuance').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+        });
+        $("#transfers").DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+        });
+    });
+
+</script>
+
+@*<div>
+    <h4>PPE</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.FKSubCategoryMaster.ProcurementCategoryName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FKSubCategoryMaster.ProcurementCategoryName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FKUACS.UACS)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FKUACS.UACS)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FKUnit.UnitName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FKUnit.UnitName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PPEName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PPEName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UsefulLife)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UsefulLife)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DepreciationRate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DepreciationRate)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>*@

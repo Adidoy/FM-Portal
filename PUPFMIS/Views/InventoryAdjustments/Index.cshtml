@@ -1,0 +1,81 @@
+﻿@model IEnumerable<PUPFMIS.Models.InventoryAdjustment>
+
+@{
+    ViewBag.Title = "Inventory Adjustments";
+    ViewBag.Description = "Home";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Inventory Adjustments", "index")</li>
+        <li class="breadcrumb-item">Home</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-list"></i> Adjustments List</h3>
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="text-right">
+            <button style="text-align:left;" class="btn btn-info btn-md" onclick='window.location = "@Url.Action("create", "InventoryAdjustments", new { type = ViewBag.Type })"'><i class="fa fa-plus"></i> Create New Adjustment</button>
+            <button style="text-align:left;" class="btn btn-secondary btn-md"><i class="fa fa-filter"></i> Filter</button>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card-body table-responsive p-sm-0">
+            <table class="table table-striped" id="example2">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Date)
+                        </th>
+                        <th>
+                            Reference No.
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.OverallRemarks)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.ProcessedBy)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.VerifiedBy)
+                        </th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @*@foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Date)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.OverallRemarks)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ProcessedBy)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.VerifiedBy)
+                            </td>
+                            <td>
+                                @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                                @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                                @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                            </td>
+                        </tr>
+                    }*@
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

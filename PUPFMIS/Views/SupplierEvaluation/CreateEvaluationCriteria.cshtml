@@ -1,0 +1,75 @@
+﻿@model IEnumerable<PUPFMIS.Models.EvaluationResponses>
+
+<table class="table display table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FKEvaluationCriteria.Criteria)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Response)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                Comply to the quantity / quality / standard requried
+            </td>
+            <td>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="star-rating">
+                            <span class="fa fa-star" data-rating="1"></span>
+                            <span class="fa fa-star" data-rating="2"></span>
+                            <span class="fa fa-star" data-rating="3"></span>
+                            <span class="fa fa-star" data-rating="4"></span>
+                            <span class="fa fa-star" data-rating="5"></span>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        @*@foreach (var item in Model) {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FKEvaluationCriteria.Criteria)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FKSupplierEvaluation.ID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Response)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
+                        @Html.ActionLink("Details", "Details", new { id=item.ID }) |
+                        @Html.ActionLink("Delete", "Delete", new { id=item.ID })
+                    </td>
+                </tr>
+            }*@
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    var $star_rating = $('.star-rating .fa');
+    var SetRatingStar = function () {
+        return $star_rating.each(function () {
+            if (parseInt($star_rating.siblings('input.rating-value').val()) >= parseInt($(this).data('rating'))) {
+                return $(this).removeClass('fa-star-o').addClass('fa-star');
+            } else {
+                return $(this).removeClass('fa-star').addClass('fa-star-o');
+            }
+        });
+    };
+
+    $star_rating.on('click', function () {
+        $star_rating.siblings('input.rating-value').val($(this).data('rating'));
+        return SetRatingStar();
+    });
+
+    SetRatingStar();
+    $(document).ready(function () {
+
+    });
+</script>

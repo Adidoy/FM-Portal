@@ -1,0 +1,183 @@
+﻿@model PUPFMIS.Models.PropertyAcknowledgementVM
+
+@{
+    ViewBag.Title = "Assigned Properties";
+    ViewBag.Description = "Details";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Assigned Properties", "index")</li>
+        <li class="breadcrumb-item">Details</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-left">
+        <h1 class="card-title"><i class="fa fa-bookmark"></i> PAR Details</h1>
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            @Html.LabelFor(m => m.PARHeader.FKRequestHeader, htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-file-invoice"></i></span>
+                </div>
+                @Html.EditorFor(m => m.PARHeader.FKRequestHeader.RISNo, new { htmlAttributes = new { @class = "form-control", disabled = "disabled", style = "font-size: 100%;" } })
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            @Html.LabelFor(model => model.PARHeader.PARNo, htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-asterisk"></i></span>
+                </div>
+                @Html.EditorFor(model => model.PARHeader.PARNo, new { htmlAttributes = new { @class = "form-control", disabled = "disabled", style = "font-size: 100%;" } })
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            @Html.LabelFor(model => model.PARHeader.FKOffice, htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-home"></i></span>
+                </div>
+                @Html.EditorFor(model => model.PARHeader.FKOffice.OfficeName, new { htmlAttributes = new { @class = "form-control", disabled = "disabled", style = "font-size: 100%;" } })
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            @Html.LabelFor(model => model.PARHeader.AccountableOfficer, htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-user"></i></span>
+                </div>
+                @Html.EditorFor(model => model.PARHeader.AccountableOfficer, new { htmlAttributes = new { @class = "form-control", disabled = "disabled", style = "font-size: 100%;" } })
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            @Html.LabelFor(model => model.PARHeader.DateIssued, htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                </div>
+                @Html.EditorFor(model => model.PARHeader.DateIssued, new { htmlAttributes = new { @class = "form-control", disabled = "disabled", style = "font-size: 100%;" } })
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            @Html.LabelFor(model => model.PARHeader.ReceivedFrom, htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-user"></i></span>
+                </div>
+                @Html.EditorFor(model => model.PARHeader.ReceivedFrom, new { htmlAttributes = new { @class = "form-control", disabled = "disabled", style = "font-size: 100%;" } })
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<h3 class="card-title"> Property List</h3>
+<br />
+<hr />
+<div class="row">
+    <div class="col-sm-12">
+        @Html.Partial("DetailsPARItems", Model.PARDetails)
+    </div>
+</div>
+@*<div class="form-horizontal">
+    <h4>PARHeader</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-group">
+        @Html.LabelFor(model => model.PARNo, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.PARNo, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.PARNo, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.POID, "POID", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DropDownList("POID", null, htmlAttributes: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.POID, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Office, "Office", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DropDownList("Office", null, htmlAttributes: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Office, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.AccountableOfficer, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.AccountableOfficer, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.AccountableOfficer, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Designation, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Designation, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Designation, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ReceivedFrom, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.ReceivedFrom, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.ReceivedFrom, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ReceivedBy, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.ReceivedBy, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.ReceivedBy, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.DateIssued, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.DateIssued, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.DateIssued, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Create" class="btn btn-default" />
+        </div>
+    </div>
+</div>*@
+
+@section FormFooter {
+    <div class="form-group float-right">
+        <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("index","EndUserProjects")'"><i class="fa fa-arrow-circle-left"></i> Back</button>
+    </div>
+}

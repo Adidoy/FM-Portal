@@ -1,0 +1,109 @@
+﻿@model PUPFMIS.Models.UsersVM
+
+@{
+    ViewBag.Title = "Register";
+    Layout = "~/Views/Shared/_LayoutBlank.cshtml";
+}
+
+@using (Html.BeginForm("Register", "Users", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    <div class="row vh-100">
+        <div class="col-sm-12 my-auto">
+            <div class="login-logo">
+                <h4>Financial Management Portal</h4>
+            </div>
+            <div class="card card-outline card-info w-75 mx-auto">
+                <div class="card-header">
+                    <h4>Register an Account</h4>
+                </div>
+                <div class="card-body">
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h3 class="card-title">Employee Data</h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label" })
+                                                @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control form-control-sm", @autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.FirstName) } })
+                                                @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.MiddleName, htmlAttributes: new { @class = "control-label" })
+                                                @Html.EditorFor(model => model.MiddleName, new { htmlAttributes = new { @class = "form-control form-control-sm", @autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.MiddleName) } })
+                                                @Html.ValidationMessageFor(model => model.MiddleName, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label" })
+                                                @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control form-control-sm", @autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.LastName) } })
+                                                @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.Office, htmlAttributes: new { @class = "control-label" })
+                                                @Html.DropDownList("Offices", null, htmlAttributes: new { @class = "form-control form-control-sm" })
+                                                @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.Designation, htmlAttributes: new { @class = "control-label" })
+                                                @Html.EditorFor(model => model.Designation, new { htmlAttributes = new { @class = "form-control form-control-sm", @autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.Designation) } })
+                                                @Html.ValidationMessageFor(model => model.Designation, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h3 class="card-title">Account Credentials</h3>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label" })
+                                                        <div class="input-group mb-3">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                                            </div>
+                                                            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control form-control-sm", @autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.Email) } })
+                                                        </div>
+                                                        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                                                    </div>
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label" })
+                                                        <div class="input-group mb-3">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                                            </div>
+                                                            @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control form-control-sm", @autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.Password) } })
+                                                        </div>
+                                                        @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr />
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <input type="submit" value="Register" class="btn btn-primary col-md-12" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

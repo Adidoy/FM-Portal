@@ -1,0 +1,115 @@
+﻿@model PUPFMIS.Models.ProcurementPipelineHeader
+
+@{
+    ViewBag.Title = "Procurement Pipeline";
+    ViewBag.Description = "Create";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Procurement Pipeline", "index")</li>
+        <li class="breadcrumb-item">Create</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-right">
+        <h1 class="card-title"><i class="fa fa-bookmark"></i> New Line Item</h1>
+    </div>
+}
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>Procurement Pipeline Details</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group-sm">
+                    @Html.LabelFor(model => model.ProcurementLineNumber, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-id-card"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.ProcurementLineNumber, new { htmlAttributes = new { @class = "form-control", style = "font-size: 100%" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ProcurementLineNumber, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group-sm">
+                    @Html.LabelFor(model => model.InventoryType, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-box"></i></span>
+                        </div>
+                        @Html.EnumDropDownListFor(model => model.InventoryType, htmlAttributes: new { @class = "form-control", style = "font-size: 100%;" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.InventoryType, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group-sm">
+                    @Html.LabelFor(model => model.ProcurmentStart, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.ProcurmentStart, new { htmlAttributes = new { @class = "form-control", style = "font-size: 100%;" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ProcurmentStart, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group-sm">
+                    @Html.LabelFor(model => model.ProcurementCategory, "ProcurementCategory", htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-question"></i></span>
+                        </div>
+                        @Html.DropDownList("ProcurementCategory", null, htmlAttributes: new { @class = "form-control", style = "font-size: 100%" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ProcurementCategory, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group-sm">
+                    @Html.LabelFor(model => model.ProcurementMode, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-handshake"></i></span>
+                        </div>
+                        @Html.EnumDropDownListFor(model => model.ProcurementMode, htmlAttributes: new { @class = "form-control", style = "font-size: 100%" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ProcurementMode, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group-sm">
+                    @Html.LabelFor(model => model.ProjectCoordinator, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-user"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.ProjectCoordinator, new { htmlAttributes = new { @class = "form-control", style = "font-size: 100%" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ProjectCoordinator, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <h3 class="card-title">Projects with Purchase Requests</h3>
+    <br />
+    <hr />
+    <div class="row">
+        <div class="col-sm-12">
+            @Html.Partial("CreateProcurementPipelineDetails")
+        </div>
+    </div>
+
+    @section FormFooter {
+        <div class="form-group float-right">
+            <button type="button" class="btn btn-primary" onclick="window.location = '@Url.Action("index", "ProcurementPipeline")'"><i class="fa fa-save"></i> Save Changes</button>
+            <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("index","ProcurementPipeline")'"><i class="fa fa-arrow-circle-left"></i> Back</button>
+        </div>
+    }
+}

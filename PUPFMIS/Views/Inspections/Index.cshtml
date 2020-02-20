@@ -1,0 +1,80 @@
+﻿@model IEnumerable<PUPFMIS.Models.InspectionHeader>
+@using PUPFMIS.Helpers
+
+@{
+    ViewBag.Title = "Inspection and Acceptance";
+    ViewBag.Description = "Home";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Inspection and Acceptance", "index")</li>
+        <li class="breadcrumb-item">Home</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-list"></i> Inspections List</h3>
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="text-right">
+            <button style="text-align:left;" class="btn btn-info btn-md" onclick='window.location = "@Url.Action("create", "Inspections")"'><i class="fa fa-plus"></i> Create Inspection Report</button>
+            <button style="text-align:left;" class="btn btn-secondary btn-md"><i class="fa fa-filter"></i> Filter</button>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card-body table-responsive p-sm-0">
+            <table class="table table-striped" id="example2">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayShortNameFor(model => model.First().IARNo)
+                        <th>
+                            @Html.DisplayShortNameFor(model => model.First().FKPOReference.PONumber)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FKPOReference.FKSupplier.SupplierName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.InspectionDate)
+                        </th>
+                        <th>
+                            Action
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.IARNo)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.FKPOReference.PONumber)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.FKPOReference.FKSupplier.SupplierName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.InspectionDate)
+                            </td>
+                            <td>
+                                @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                                @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                                @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div> 
+</div>

@@ -1,0 +1,90 @@
+﻿@model IEnumerable<PUPFMIS.Models.SectorsMaster>
+
+@{
+    ViewBag.Title = "Sectors";
+    ViewBag.Description = "Master";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FMIS Portal", "dashboardv1", "Dashboard")</a></li>
+        <li>@Html.ActionLink("Sectors Master", "Index")</li>
+    </ol>
+}
+
+@section Header {
+    <br />
+    <h1 class="box-title"><a href="#" onclick='loadModal("/sectors-master/create")'>Add New Record</a></h1>
+}
+<table class="table table-bordered table-hover table-striped" id="example1">
+    <thead>
+        <tr>
+            <th width="10%">
+                @Html.DisplayNameFor(model => model.SectorCode)
+            </th>
+            <th width="25%">
+                @Html.DisplayNameFor(model => model.SectorName)
+            </th>
+            <th width="20%">
+                @Html.DisplayNameFor(model => model.Head)
+            </th>
+            <th width="25%">
+                @Html.DisplayNameFor(model => model.HeadDesignation)
+            </th>
+            <th width="20%">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SectorCode)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SectorName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Head)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.HeadDesignation)
+                </td>
+                <td align="center">
+                    <button type="button" class="btn btn-sm btn-primary" data-toggle="tooltip" title="View Details" onclick='loadModal("/sectors-master/details?id=" + @item.ID)'><i class="fa fa-eye"></i></button>
+                    <button type="button" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Edit Record" onclick='loadModal("/sectors-master/edit?id=" + @item.ID)'><i class="fa fa-edit"></i></button>
+                    <button type="button" class="btn btn-sm btn-danger" data-toggle="tooltip" title="Purge Record" onclick='loadModal("/sectors-master/delete?id=" + @item.ID)'><i class="fa fa-times"></i></button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="modal fade" id="modal-default">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="modal-container">
+        </div>
+    </div>
+</div>
+
+@Scripts.Render("~/bundles/jquery")
+<script type="text/javascript">
+    var options = { "backdrop": "static", keyboard: true };
+    function loadModal(url) {
+        $.ajax({
+            type: "GET",
+            url: url,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#modal-container').html(data);
+                $('#modal-default').modal(options);
+                $('#modal-default').modal('show');
+            },
+            error: function () {
+                alert("Dynamic content load failed.");
+            }
+        });
+    }
+</script>

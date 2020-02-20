@@ -1,0 +1,67 @@
+﻿@model PUPFMIS.Models.ChartOfAccountsMaster
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h2 class="modal-title">Edit Account Record [ <small><i>@Model.AccountTitle</i></small> ]</h2>
+</div>
+
+@using (Ajax.BeginForm("Edit", "ChartOfAccountsMaster", new AjaxOptions() { HttpMethod = "POST", UpdateTargetId = "modal-container", OnSuccess = "CloseModal" }))
+{
+    <div class="modal-body" id="form-body">
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.ID)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.UACS, htmlAttributes: new { @class = "control-label" })
+            @Html.EditorFor(model => model.UACS, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.UACS) } })
+            @Html.ValidationMessageFor(model => model.UACS, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.AccountTitle, htmlAttributes: new { @class = "control-label" })
+            @Html.EditorFor(model => model.AccountTitle, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.AccountTitle) } })
+            @Html.ValidationMessageFor(model => model.AccountTitle, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Class, "Class", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.DropDownList("Class", null, htmlAttributes: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Class, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.GenAcct, "General Account", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.DropDownList("GenAcct", null, htmlAttributes: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.GenAcct, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.SubAcct, "Sub-Account", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.DropDownList("SubAcct", null, htmlAttributes: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.SubAcct, "", new { @class = "text-danger" })
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary" id="save-btn">Save changes</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+}
+
+
+<script src="~/Scripts/jquery.validate.js"></script>
+<script type="text/javascript" src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+<script type="text/javascript" src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
+<script type="text/javascript">
+    function CloseModal(data) {
+        if (data.status === "success") {
+            $('#modal-default').modal('hide');
+            window.location.href = "/chart-accounts-master/index";
+        }
+    };
+</script>

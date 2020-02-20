@@ -1,0 +1,89 @@
+﻿@model IEnumerable<PUPFMIS.Models.ExpenditureObjects>
+
+@{
+    ViewBag.Title = "Expenditure Objects";
+    ViewBag.Description = "Master";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Expenditure Objects", "index")</li>
+        <li class="breadcrumb-item">Home</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-right">
+        <button class="btn btn-default btn-md" onclick='loadModal("@Url.Action("create", "ExpenditureObjects")")'><i class="fa fa-plus"></i> Add New Expenditure Object</button>
+    </div>
+}
+
+<table class="table table-bordered table-hover" id="example2">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FKOperatingExpenditure.ExpenditureCategory)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FKOperatingExpenditure.ObjectName)
+            </th>
+            <th>
+                @Html.DisplayShortNameFor(model => model.First().UACS)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ObjectName)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @( item.FKOperatingExpenditure.ExpenditureCategory == PUPFMIS.Models.ExpendituresCategory.MOOE ? "MOOE" : "Captial Outlay" )
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FKOperatingExpenditure.ObjectName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UACS)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ObjectName)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="modal fade" id="modal-default">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="modal-container">
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var options = { "backdrop": "static", keyboard: true };
+    function loadModal(url) {
+        $.ajax({
+            type: "GET",
+            url: url,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#modal-container').html(data);
+                $('#modal-default').modal(options);
+                $('#modal-default').modal('show');
+            }
+        });
+    }
+</script>

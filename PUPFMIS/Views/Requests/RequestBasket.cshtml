@@ -1,0 +1,72 @@
+﻿@model IEnumerable<PUPFMIS.Models.RequestDetails>
+
+@{
+    ViewBag.Title = "My Supplies Requests";
+    ViewBag.Description = "Basket";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("My Supplies Requests", "index")</li>
+        <li class="breadcrumb-item">Request Basket</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-right">
+        <h3 class="card-title"><i class="fa fa-shopping-basket"></i> My Request Basket</h3>
+    </div>
+}
+
+<table class="table table-bordered table-hover" id="example2">
+    <thead>
+        <tr>
+            <th width="20%">
+                @Html.DisplayNameFor(model => model.FKSuppliesMaster.FKItem.ItemImage)
+            </th>
+            <th width="45%">
+                Supply Information
+            </th>
+            <th width="25%">
+                @Html.DisplayNameFor(model => model.QtyRequested)
+            </th>
+            <th width="10%">Remove</th>
+        </tr>
+    </thead>
+    <tbody>
+        @*@foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FKRequestHeader.RISNo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FKSuppliesMaster.StockNo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StockAvailable)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.QtyRequested)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.QtyIssued)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                </td>
+            </tr>
+        }*@
+    </tbody>
+</table>
+<br />
+<div class="card-footer">
+    <div class="form-group float-right">
+        <button type="submit" class="btn btn-primary" onclick="window.location = '@Url.Action("index", "Requests", new { type = "client" })'"><i class="fa fa-share"></i> Submit Request</button>
+        <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("create","Requests", new { type = "client" })'"><i class="fa fa-arrow-left"></i> Back</button>
+    </div>
+</div>

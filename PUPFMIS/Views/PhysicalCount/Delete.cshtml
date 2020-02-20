@@ -1,0 +1,73 @@
+﻿@model PUPFMIS.Models.PhysicalCount
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>PhysicalCount</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.PhysicalInventoryNo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PhysicalInventoryNo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FundCluster)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FundCluster)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CountFor)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CountFor)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DateOfCount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DateOfCount)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ProcessedBy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ProcessedBy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.VerifiedBy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.VerifiedBy)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

@@ -1,0 +1,117 @@
+﻿@model PUPFMIS.Models.RegisterViewModel
+@{
+    ViewBag.Title = "Accounts";
+    ViewBag.Description = "Registration";
+    Layout = "~/Views/Shared/_LayoutBlank.cshtml";
+}
+
+@*@section BreadCrumb {
+    <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FMIS Portal", "dashboardv1", "Dashboard")</a></li>
+        <li>@Html.ActionLink("Accounts Registration", "Index")</li>
+    </ol>
+}*@
+
+@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="row" style="min-height: 100%; min-height: 95vh; display: flex; align-items: center;">
+        <div class="col-md-12">
+            <div class="col-md-1"></div>
+            <div class="col-md-10" style="background-color:rgba(255, 255, 255, 0.8); border-radius:10px;">
+                <div class="row">
+                    <div class="col-md-12">
+                        <br />
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h2>Request for an FMIS Account</h2>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            @Html.ValidationSummary("", new { @class = "text-danger" })
+                            <div class="col-md-7">
+                                <div class="box box-solid box-primary">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title">Personal Details</h3>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label" })
+                                                @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.FirstName) } })
+                                                @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.MiddleInitial, htmlAttributes: new { @class = "control-label" })
+                                                @Html.EditorFor(model => model.MiddleInitial, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.MiddleInitial) } })
+                                                @Html.ValidationMessageFor(model => model.MiddleInitial, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label" })
+                                                @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.LastName) } })
+                                                @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                                            </div>
+
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.Office, "Department", htmlAttributes: new { @class = "control-label" })
+                                                @Html.DropDownList("Office", null, htmlAttributes: new { @class = "form-control" })
+                                                @Html.ValidationMessageFor(model => model.Office, "", new { @class = "text-danger" })
+                                            </div>
+
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.Designation, htmlAttributes: new { @class = "control-label" })
+                                                @Html.EditorFor(model => model.Designation, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.Designation) } })
+                                                @Html.ValidationMessageFor(model => model.Designation, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="box box-solid box-primary">
+                                            <div class="box-header with-border">
+                                                <h3 class="box-title">Account Details</h3>
+                                            </div>
+                                            <div class="box-body">
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label" })
+                                                        @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.Email) } })
+                                                        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                                                    </div>
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label" })
+                                                        @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.Password) } })
+                                                        @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                                                    </div>
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.ConfirmPassword, htmlAttributes: new { @class = "control-label" })
+                                                        @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.ConfirmPassword) } })
+                                                        @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pull-right">
+                            <div class="col-md-12">
+                                <input type="submit" value="Submit" class="btn btn-success" />
+                                <input value="Back" class="btn btn-danger" />
+                            </div>
+                        </div>
+                        <br />
+                    </div>
+                </div>
+                <br />  
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+    </div>
+}

@@ -1,0 +1,47 @@
+﻿@model IEnumerable<PUPFMIS.Models.PARDetails>
+
+<div class="card-body table-responsive p-sm-0">
+    <table class="table table-striped" id="example2">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.FKPPEInstanceReference.PropertyNo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.QtyIssued)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.UnitCost)
+                </th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @*@foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FKPARHeader.PARNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FKPPEInstanceReference.PropertyNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PropertyNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.QtyIssued)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UnitCost)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.PARNo }) |
+                        @Html.ActionLink("Details", "Details", new { id = item.PARNo }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.PARNo })
+                    </td>
+                </tr>
+            }*@
+        </tbody>
+    </table>
+</div>

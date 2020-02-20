@@ -1,0 +1,104 @@
+﻿@model IEnumerable<PUPFMIS.Models.ItemPullOutDetails>
+
+@{
+    ViewBag.Title = "Warehouse Management";
+    ViewBag.Description = "Assemble Items";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Item Dispatch", "index")</li>
+        <li class="breadcrumb-item">Home</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-right">
+        <h3 class="card-title"><i class="fa fa-list-ul"></i> Assemble Items</h3>
+    </div>
+}
+<div class="form-horizontal">
+    <h4>Assembly Line</h4>
+    <hr />
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card-body table-responsive p-sm-0">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th style="vertical-align:middle; text-align:center;">
+                                Item Information
+                            </th>
+                            <th style="vertical-align:middle; text-align:center;">
+                                Unit of Measure
+                            </th>
+                            <th style="vertical-align:middle; text-align:center;">
+                                Quantity
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="vertical-align:middle; text-align:left;">
+                                <h6><b>STOCK NO.: 01-002</b></h6>
+                                <h6><b><i>AIR FRESHENER</i></b></h6>
+                                <i>Specifications go here...</i>
+                            </td>
+                            <td style="vertical-align:middle; text-align:center;">
+                                CANS
+                            </td>
+                            <td style="vertical-align:middle; text-align:center;">
+                                5
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="vertical-align:middle; text-align:left;">
+                                <h6><b>PROPERTY NO.: PUP-053006-002</b></h6>
+                                <h6><b><i>FILING CABINET, STEEL</i></b></h6>
+                                <i>Specifications go here...</i>
+                            </td>
+                            <td style="vertical-align:middle; text-align:center;">
+                                UNIT
+                            </td>
+                            <td style="vertical-align:middle; text-align:center;">
+                                1
+                            </td>
+                        </tr>
+                        @*@foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.FKDispatchReference.WarehouseStaff)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.FKPPEsReference.ID)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.FKSuppliesReference.StockNo)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.PullOutQty)
+                                    </td>
+                                    <td>
+                                        @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                                        @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                                        @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                                    </td>
+                                </tr>
+                            }*@
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="card-footer">
+    <div class="form-group float-right">
+        <button type="button" class="btn btn-primary" onclick="window.location = '@Url.Action("index", "ItemPullouts")'"><i class="fa fa-arrow-right"></i> Dispatch Items</button>
+        <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("index","ItemPullouts")'"><i class="fa fa-arrow-circle-left"></i> Back</button>
+    </div>
+</div>
+

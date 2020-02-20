@@ -1,0 +1,97 @@
+﻿@model PUPFMIS.Models.PPMPHeader
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>PPMPHeader</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ReferenceNo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ReferenceNo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FiscalYear)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FiscalYear)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CreatedAt)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreatedAt)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SubmittedAt)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SubmittedAt)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ApprovedAt)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ApprovedAt)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PreparedBy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PreparedBy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SubmittedBy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SubmittedBy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ApprovalStatus)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ApprovalStatus)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OfficeReference)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OfficeReference)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

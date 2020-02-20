@@ -1,0 +1,58 @@
+﻿@model PUPFMIS.Models.UnitOfMeasure
+
+<div class="modal-header">
+    <h4 class="modal-title">Add New Unit of Measure</h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+@using (Ajax.BeginForm("create", "UnitOfMeasure", new AjaxOptions() { HttpMethod = "POST", UpdateTargetId = "modal-container", OnSuccess = "CloseModal" }, htmlAttributes: new { id = "addUnit" }))
+{
+    <div class="modal-body" id="form-body">
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        
+        <div class="form-group">
+            @Html.LabelFor(model => model.UnitName, htmlAttributes: new { @class = "control-label" })
+            @Html.EditorFor(model => model.UnitName, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.UnitName) } })
+            @Html.ValidationMessageFor(model => model.UnitName, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Abbreviation, htmlAttributes: new { @class = "control-label" })
+            @Html.EditorFor(model => model.Abbreviation, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.Abbreviation) } })
+            @Html.ValidationMessageFor(model => model.Abbreviation, "", new { @class = "text-danger" })
+        </div>
+    </div>
+}
+<div class="modal-footer">
+    <div class="form-group">
+        <button type="button" class="btn btn-primary" id="save-btn"><i class="fa fa-save"></i>&nbsp; Save changes</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i>&nbsp; Close</button>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $("#save-btn").on('click', function (e) {
+        e.preventDefault();
+        swal.fire({
+            title: "Save record?",
+            text: "You are about to save this record, continue?",
+            type: "warning",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#addUnit").submit();
+            }
+        })
+    });
+    function CloseModal(data) {
+        if (data.status === "success") {
+            $('#modal-default').modal('hide');
+            toastr.success('Unit of measure is saved!', 'Save', { timeOut: 10000, preventDuplicates: false });
+            window.location.href = "@Url.Action("index", "UnitOfMeasure")";
+        }
+    };
+</script>

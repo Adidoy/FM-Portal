@@ -1,0 +1,199 @@
+﻿@model IEnumerable<PUPFMIS.Models.MarketSurvey>
+
+@{
+    PUPFMIS.Models.EndUserProject Project = ViewData["ProjectDetails"] as PUPFMIS.Models.EndUserProject;
+    ViewBag.Title = "End-User Projects";
+    ViewBag.Description = "Home";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("End-User Projects", "index")</li>
+        <li class="breadcrumb-item">Home</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-bookmark"></i> Market Survey</h3>
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card card-outline card-primary">
+            <div class="card-header">
+                <h3 class="card-title">Project Details</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                        <div class="form-group">
+                            @Html.LabelFor(model => Project.Code, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-id-badge"></i></span>
+                                </div>
+                                @Html.EditorFor(model => Project.Code, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%;", disabled = "disabled" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => Project.Code, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                        <div class="form-group">
+                            @Html.LabelFor(model => Project.ProjectStatus, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-bell"></i></span>
+                                </div>
+                                @Html.EditorFor(model => Project.ProjectStatus, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%;", Value = "New Project", disabled = "disabled" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => Project.ProjectStatus, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                        <div class="form-group">
+                            @Html.LabelFor(model => Project.FiscalYear, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                </div>
+                                @Html.EditorFor(model => Project.FiscalYear, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%;" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => Project.FiscalYear, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            @Html.LabelFor(model => Project.EndUser, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-user"></i></span>
+                                </div>
+                                @Html.EditorFor(model => Project.EndUser, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%;", type = "text", disabled = "disabled" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => Project.EndUser, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            @Html.LabelFor(model => Project.ProjectStart, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-calendar-plus"></i></span>
+                                </div>
+                                @Html.EditorFor(model => Project.ProjectStart, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%;" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => Project.ProjectStart, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            @Html.LabelFor(model => Project.ProjectName, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-id-card"></i></span>
+                                </div>
+                                @Html.EditorFor(model => Project.ProjectName, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%;" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => Project.ProjectName, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => Project.Purpose, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-anchor"></i></span>
+                                </div>
+                                @Html.EditorFor(model => Project.Purpose, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => Project.Purpose, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="text-right">
+            @if(Model == null)
+            {
+                <button style="text-align:left;" class="btn btn-info btn-md" onclick='window.location = "@Url.Action("createmarketsurvey", "EndUserProjects")"'><i class="fa fa-plus"></i> Create Market Survey</button>
+            }
+            else
+            {
+                <button style="text-align:left;" class="btn btn-info btn-md" onclick='window.location = "@Url.Action("createmarketsurvey", "EndUserProjects")"'><i class="fa fa-plus"></i> Add Items</button>
+                <button style="text-align:left;" class="btn btn-secondary btn-md"><i class="fa fa-filter"></i> Filter</button>
+            }
+        </div>
+    </div>
+</div>
+<hr />
+@if(Model == null)
+{
+    <h2>No market survey yet.</h2>
+}
+else
+{
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card-body table-responsive p-sm-0">
+                <table class="table table-striped table-hover" id="example2">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.FKItem.ItemCode)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.ItemSpecifications)
+                            </th>
+                            <th>
+                                Total Quantity
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.TotalEstimatedBudget)
+                            </th>
+                            <th>
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.FKItem.ItemCode)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ItemSpecifications)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ExpenditureObject)
+                                </td>
+                                <td>
+                                    @item.TotalQty
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.TotalEstimatedBudget)
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                                    @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                                    @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+

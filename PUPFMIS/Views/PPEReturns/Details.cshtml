@@ -1,0 +1,35 @@
+﻿@model PUPFMIS.Models.PPEReturn
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>PPEReturn</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.EndUser)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EndUser)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DateReturned)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DateReturned)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

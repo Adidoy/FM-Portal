@@ -1,0 +1,103 @@
+﻿@model PUPFMIS.Models.RequestDetails
+
+@{ 
+    PUPFMIS.Models.SuppliesMaster supplyDetails = ViewData["SupplyDetails"] as PUPFMIS.Models.SuppliesMaster;
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-info card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Request Details</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            @Html.Label("Item Image", new { htmlAttributes = new { @class = "control-label" } })
+                            <br />
+                            <img src="~/Content/imgs/image-not-available.jpg"  width="300" height="300"/>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.FKSuppliesMaster.StockNo, new { htmlAttributes = new { @class = "control-label" } })
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <button class="btn btn-primary" type="button" onclick='loadModal("@Url.Action("viewCatalog", "ProcurementProjects")")'><i class="fa fa-search"></i></button>
+                                        </div>
+                                        @Html.EditorFor(model => model.FKSuppliesMaster.StockNo, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.FKSuppliesMaster.StockNo) } })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.FKSuppliesMaster.FKItem, new { htmlAttributes = new { @class = "control-label" } })
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fa fa-id-card"></i></span>
+                                        </div>
+                                        @Html.EditorFor(model => model.FKSuppliesMaster.FKItem.ItemName, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.FKSuppliesMaster.FKItem.ItemName), disabled = "disabled" } })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.FKSuppliesMaster.FKItem.ItemSpecifications, new { htmlAttributes = new { @class = "control-label" } })
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fa fa-list-ul"></i></span>
+                                        </div>
+                                        @Html.EditorFor(m => m.FKSuppliesMaster.FKItem.ItemSpecifications, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.FKSuppliesMaster.FKItem.ItemSpecifications), disabled = "disabled" } })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.FKSuppliesMaster.FKUOMDistribution.UnitName, new { htmlAttributes = new { @class = "control-label" } })
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fa fa-ruler"></i></span>
+                                        </div>
+                                        @Html.EditorFor(m => m.FKSuppliesMaster.FKUOMDistribution.UnitName, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.FKSuppliesMaster.FKUOMDistribution.UnitName), disabled = "disabled" } })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.QtyRequested, new { htmlAttributes = new { @class = "control-label" } })
+                                    <div class="input-group mb-3">
+                                        @Html.EditorFor(m => m.QtyRequested, new { htmlAttributes = new { @class = "form-control", type = "number", min = "1" } })
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary" type="button"><i class="fa fa-shopping-basket"></i> Add to Basket</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-default">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content" id="modal-container">
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/adminlte/components/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript">
+        var options = { "backdrop": "static", keyboard: true };
+        function loadModal(url) {
+            $.ajax({
+                type: "GET",
+                url: url,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#modal-container').html(data);
+                    $('#modal-default').modal(options);
+                    $('#modal-default').modal('show');
+                }
+            });
+        }
+</script>

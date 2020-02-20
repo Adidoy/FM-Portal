@@ -1,0 +1,137 @@
+﻿@model PUPFMIS.Models.Basket
+
+@{
+    ViewBag.Title = ViewBag.PageTitle;
+    ViewBag.Description = "Update Basket";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@ViewBag.PageTitle</li>
+        <li class="breadcrumb-item">Home</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-bookmark"></i> @Model.ItemName.ToString().ToUpper() @( (String.IsNullOrEmpty(Model.ItemShortSpecifications)) ? "" : Model.ItemShortSpecifications ) <span><small>(@Model.ItemCode)</small></span></h3>
+}
+
+@using (Html.BeginForm("update-basket", "Catalogue", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-sm-12">
+            @Html.HiddenFor(m => m.ItemID)
+            @Html.HiddenFor(m => m.ItemCode)
+            @Html.HiddenFor(m => m.ItemName)
+            @Html.HiddenFor(m => m.ItemShortSpecifications)
+            @Html.HiddenFor(m => m.ItemSpecifications)
+            @Html.HiddenFor(m => m.ItemImage)
+            @Html.HiddenFor(m => m.ProcurementSource)
+            @Html.HiddenFor(m => m.IndividualUOMReference)
+            @Html.HiddenFor(m => m.MinimumIssuanceQty)
+            @Html.HiddenFor(m => m.ItemCategory)
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group-sm">
+                        <div class="mt-3" style="text-align:center; vertical-align: middle;" id="itemImageHolder">
+                            @if (Model.ItemImage != null)
+                            {
+                                var base64 = Convert.ToBase64String(Model.ItemImage);
+                                var imgsrc = string.Format("data:image/jpg;base64,{0}", base64);
+                                <img src='@imgsrc' style="max-width:250px; max-height:250px;" />
+                            }
+                            else
+                            {
+                                <img src="@Url.Content("~/Content/imgs/PUPLogo.png")" style="max-width:250px; max-height:250px;" />
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-8">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <h4>@Model.ItemName.ToString().ToUpper() @( (String.IsNullOrEmpty(Model.ItemShortSpecifications)) ? "" : Model.ItemShortSpecifications ) <span><small><b>(@Model.ItemCode)</b></small></span></h4>
+                            <hr />
+                            <h6>ITEM SPECIFICATIONS:</h6>
+                            <p style="text-align:justify;">@Model.ItemSpecifications</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <br />
+                            @Html.LabelFor(d => d.ProcurementSource): @( Model.ProcurementSource == PUPFMIS.Models.ProcurementSources.PS_DBM ? "DBM Procurement Store" : "Private Suppliers" )
+                            <br />
+                            @Html.LabelFor(d => d.IndividualUOMReference): @Model.IndividualUOMReference
+                            <br />
+                            @Html.LabelFor(d => d.ItemCategory): @Model.ItemCategory
+                            <br />
+                            @Html.LabelFor(d => d.MinimumIssuanceQty): @Model.MinimumIssuanceQty
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    @Html.Label("Quantity Requirement")
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group-sm">
+                                        <div class="input-group input-group-sm mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><b>Q1</b></span>
+                                            </div>
+                                            @Html.EditorFor(m => m.Qtr1Qty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%;", type = "number" } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.Qtr1Qty, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group-sm">
+                                        <div class="input-group input-group-sm mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><b>Q2</b></span>
+                                            </div>
+                                            @Html.EditorFor(m => m.Qtr2Qty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%;", type = "number" } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.Qtr2Qty, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group-sm">
+                                        <div class="input-group input-group-sm mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><b>Q3</b></span>
+                                            </div>
+                                            @Html.EditorFor(m => m.Qtr3Qty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%;", type = "number" } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.Qtr3Qty, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group-sm">
+                                        <div class="input-group input-group-sm mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><b>Q4</b></span>
+                                            </div>
+                                            @Html.EditorFor(m => m.Qtr4Qty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%;", type = "number" } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.Qtr4Qty, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-sm-12">
+            <div style="text-align: right;">
+                <button type="submit" class="btn btn-md btn-success"> <i class="fa fa-edit"></i> Update Basket Item</button>
+                <button type="button" class="btn btn-md btn-danger" onclick='window.location = "@Url.Action("catalogue", "PPMP")"'> <i class="fa fa-arrow-circle-left"></i> Back to Catalogue</button>
+            </div>
+        </div>
+    </div>
+}

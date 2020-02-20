@@ -1,0 +1,187 @@
+﻿@model IEnumerable<PUPFMIS.Models.ProcurementPipelineHeader>
+
+@{
+    ViewBag.Title = "Procurement Pipeline";
+    ViewBag.Description = "Home";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Procurement Pipeline", "index")</li>
+        <li class="breadcrumb-item">Home</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-list"></i> Procurement Line Items</h3>
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="text-right">
+            <button style="text-align:left;" class="btn btn-info btn-md" onclick='window.location = "@Url.Action("create", "ProcurementPipeline")"'><i class="fa fa-plus"></i> Add New Line Item</button>
+            <button style="text-align:left;" class="btn btn-secondary btn-md"><i class="fa fa-filter"></i> Filter</button>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card-body table-responsive p-sm-0">
+            <table class="table table-striped" id="example2">
+                <thead>
+                    <tr>
+                        <th style="vertical-align: middle; text-align: left;" width="10%">
+                            @Html.DisplayNameFor(model => model.ProcurementLineNumber)
+                        </th>
+                        <th style="vertical-align: middle; text-align: left;" width="20%">
+                            Procurement Activity Details
+                        </th>
+                        <th style="vertical-align: middle; text-align: left;" width="15%">
+                            @Html.DisplayNameFor(model => model.ProjectCoordinator)
+                        </th>
+                        <th style="vertical-align: middle; text-align: left;" width="15%">
+                            @Html.DisplayNameFor(model => model.ProcurmentStart)
+                        </th>
+                        <th style="vertical-align: middle; text-align: left;" width="15%">
+                            @Html.DisplayNameFor(model => model.Status)
+                        </th>
+                        <th style="vertical-align: middle; text-align: left;" width="10%">Percentage</th>
+                        <th style="vertical-align: middle; text-align: left;" width="15%">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="vertical-align: middle; text-align:left">
+                            2020-001
+                        </td>
+                        <td style="vertical-align: middle; text-align:left">
+                            <b>OFFICE SUPPLIES</b>
+                            <i>
+                                <br />
+                                Common-use Supplies and Equipment
+                                <br />
+                                Agency-to-Agency
+                            </i>
+                        </td>
+                        <td style="vertical-align: middle; text-align:left">
+                            PMO Staff 1
+                        </td>
+                        <td style="vertical-align: middle; text-align:left">
+                            21 December 2019
+                        </td>
+                        <td style="vertical-align:middle; text-align:left;">
+                            <span class="badge bg-secondary" style="font-size:100%;">SCHEDULED PRE-PROCUREMENT CONFERENCE</span>
+                            <br />
+                            <i style="font-size:80%;">@DateTime.Now.ToString("dd MMMM yyyy hh:mmtt")</i>
+                        </td>
+                        <td style="vertical-align: middle; text-align:center;">
+                            1%
+                        </td>
+                        <td style="vertical-align:middle; text-align:center;">
+                            <button type="button" class="btn btn-sm btn-primary" style="width: 175px; margin-top: 2.5px; margin-bottom: 2.5px;" onclick="window.location = '@Url.Action("details", "ProcurementLineItem", new { id = 0 })'"><i class="fa fa-eye"></i> View Details</button>
+                            <br />
+                            <button type="button" class="btn btn-sm btn-info" style="width: 175px; margin-top: 2.5px; margin-bottom: 2.5px;" onclick="window.location = '@Url.Action("create", "AgencyProcurementRequest", new { id = 0 })'"><i class="fa fa-asterisk"></i> Prepare A.P.R</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="vertical-align: middle; text-align:left">
+                            2020-002
+                        </td>
+                        <td style="vertical-align: middle; text-align:left">
+                            <b>ICT EQUIPMENT AND PERIPHERALS</b>
+                            <i>
+                                <br />
+                                Inventory Items
+                                <br />
+                                Public Bidding
+                            </i>
+                        </td>
+                        <td style="vertical-align: middle; text-align:left">
+                            PMO Staff 2
+                        </td>
+                        <td style="vertical-align: middle; text-align:left">
+                            20 January 2020
+                        </td>
+                        <td style="vertical-align:middle; text-align:left;">
+                            <span class="badge bg-secondary" style="font-size:100%;">NEW LINE ITEM</span>
+                            <br />
+                            <i style="font-size:80%;">@DateTime.Now.ToString("dd MMMM yyyy hh:mmtt")</i>
+                        </td>
+                        <td style="vertical-align: middle; text-align:center">
+                            1%
+                        </td>
+                        <td style="vertical-align:middle; text-align:center;">
+                            <button type="button" class="btn btn-sm btn-primary" style="width: 175px; margin-top: 2.5px; margin-bottom: 2.5px;" onclick="window.location = '@Url.Action("details", "ProcurementLineItem", new { id = 0 })'"><i class="fa fa-eye"></i> View Details</button>
+                            <br />
+                            <button type="button" class="btn btn-sm btn-warning" style="width: 175px; margin-top: 2.5px; margin-bottom: 2.5px;" onclick="window.location = '@Url.Action("update", "ProcurementPipeline", new { id = 0 })'"><i class="fa fa-edit"></i> Update Line Item</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="vertical-align: middle; text-align:left">
+                            2019-020
+                        </td>
+                        <td style="vertical-align: middle; text-align:left">
+                            <b>ICT EQUIPMENT AND PERIPHERALS</b>
+                            <i>
+                                <br />
+                                Inventory Items
+                                <br />
+                                Public Bidding
+                            </i>
+                        </td>
+                        <td style="vertical-align: middle; text-align:left">
+                            PMO Staff 1
+                        </td>
+                        <td style="vertical-align: middle; text-align:left">
+                            12 May 2019
+                        </td>
+                        <td style="vertical-align:middle; text-align:left;">
+                            <span class="badge bg-warning" style="font-size:100%;">ISSUE NOTICE TO PROCEED</span>
+                            <br />
+                            <i style="font-size:80%;">@DateTime.Now.ToString("dd MMMM yyyy hh:mmtt")</i>
+                        </td>
+                        <td style="vertical-align: middle; text-align:center">
+                            85%
+                        </td>
+                        <td style="vertical-align:middle; text-align:center;">
+                            <button type="button" class="btn btn-sm btn-primary" style="width: 175px; margin-top: 2.5px; margin-bottom: 2.5px;" onclick="window.location = '@Url.Action("details", "ProcurementLineItem", new { id = 0 })'"><i class="fa fa-eye"></i> View Details</button>
+                            <br />
+                            <button type="button" class="btn btn-sm btn-info" style="width: 175px; margin-top: 2.5px; margin-bottom: 2.5px;" onclick="window.location = '@Url.Action("create", "PurchaseOrders")'"><i class="fa fa-asterisk"></i> Prepare P.O.</button>
+                        </td>
+                    </tr>
+                    @*@foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.FKItemCategory.ProcurementCategoryName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ProcurementLineNumber)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.InventoryType)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ProcurementMode)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ProjectCoordinator)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ProcurmentStart)
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                                    @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                                    @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                                </td>
+                            </tr>
+                        }*@
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div> 

@@ -1,0 +1,99 @@
+﻿@model IEnumerable<PUPFMIS.Models.SupplierEvaluation>
+
+@{
+    ViewBag.Title = "Supplier's Evaluation";
+    ViewBag.Description = "Home";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Supplier's Evaluation", "index")</li>
+        <li class="breadcrumb-item">Home</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-list"></i> Evaluated Suppliers List</h3>
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="text-right">
+            @*<button style="text-align:left;" class="btn btn-info btn-md" onclick='window.location = "@Url.Action("create", "SupplierEvalutaion")"'><i class="fa fa-plus"></i> Create New Project</button>*@
+            <button style="text-align:left;" class="btn btn-secondary btn-md"><i class="fa fa-filter"></i> Filter</button>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card-body table-responsive p-sm-0">
+            <table class="table table-striped" id="example2">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FKPurchaseOrder)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FKSuppliers)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FKItems)
+                        </th>
+                        <th>
+                            Average Score
+                        </th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            PO NUMBER
+                        </td>
+                        <td>
+                            <b>ITEM NAME</b>
+                            <br />
+                            <i>specifications go here...</i>
+                        </td>
+                        <td>
+                            <b>SUPPLIER NAME</b>
+                            <br />
+                            <i>specifications go here...</i>
+                        </td>
+                        <td style="vertical-align:middle; text-align:left;">
+                            <span class="badge bg-secondary" style="font-size:100%;">NO EVALUATION YET</span>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-primary" style="width: 175px; margin-top: 2.5px; margin-bottom: 2.5px;" onclick="window.location = '@Url.Action("create", "SupplierEvaluation", new { type = "end-user" })'"><i class="fa fa-check"></i> Evaluate Supplier</button>
+                        </td>
+                    </tr>
+                    @*@foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.FKItems.ItemName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.FKOffices.OfficeCode)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.FKPurchaseOrder.PONumber)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.SupplierID)
+                            </td>
+                            <td>
+                                @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                                @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                                @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                            </td>
+                        </tr>
+                    }*@
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

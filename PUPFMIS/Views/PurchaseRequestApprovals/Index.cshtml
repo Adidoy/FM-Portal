@@ -1,0 +1,90 @@
+﻿@model IEnumerable<PUPFMIS.Models.PurchaseRequestApproval>
+
+@{
+    ViewBag.Title = "Purchase Request Approval";
+    ViewBag.Description = "Home";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Purchase Request Approval", "index")</li>
+        <li class="breadcrumb-item">Home</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-right">
+        <h1 class="card-title"><i class="fa fa-list"></i>&nbsp; Submitted Purchase Requests</h1>
+    </div>
+}
+
+<table class="table table-bordered table-hover" id="example2">
+    <thead>
+        <tr>
+            <th width="20%">
+                Date Updated
+            </th>
+            <th width="10%">
+                PR No.
+            </th>
+            <th width="15%">
+                Office Name
+            </th>
+            <th width="15%">
+                Last Action Taken
+            </th>
+            <th width="20%">
+                Remarks
+            </th>
+            <th width="20%">
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td valign="middle">
+                10 October 2019 01:00PM
+            </td>
+            <td valign="middle">
+                19-018
+            </td>
+            <td valign="middle">
+                PSMO
+            </td>
+            <td valign="middle">
+                Submitted
+            </td>
+            <td valign="middle">
+                Purchase Request submitted for approval.
+            </td>
+            <td align="center" valign="middle">
+                <button type="button" class="btn btn-sm btn-success" style="width:175px;" onclick="window.location = '@Url.Action("review", "PurchaseRequestApprovals")'"><i class="fa fa-eye"></i> Review Submission</button> <br />
+            </td>
+        </tr>
+        @*@foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Action)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Remarks)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ActionTakenBy)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedAt)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                </td>
+            </tr>
+        }*@
+    </tbody>
+</table>

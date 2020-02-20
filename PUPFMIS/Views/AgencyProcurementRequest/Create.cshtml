@@ -1,0 +1,132 @@
+﻿@model PUPFMIS.Models.AgencyProcurementRequest
+
+@{
+    ViewBag.Title = "Agency Procurement Request";
+    ViewBag.Description = "Create";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Agency Procurement Request", "index")</li>
+        <li class="breadcrumb-item">Create</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-right">
+        <h1 class="card-title">Create New Agency Procurement Request</h1>
+    </div>
+}
+
+<div class="card card-info card-outline">
+    <div class="card-header">
+        <h1 class="card-title"><b>APR Details</b></h1>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-hover">
+            <tr>
+                <th>Agency Control No.</th>
+                <td><i>New APR</i></td>
+            </tr>
+            <tr>
+                <th>Date Prepared</th>
+                <td>@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")</td>
+            </tr>
+        </table>
+        <br />
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    @Html.Label("", "Select Coverage", htmlAttributes: new { @class = "control-label" })
+                    @{
+                        List<SelectListItem> listItems = new List<SelectListItem>();
+                        listItems.Add(new SelectListItem
+                        {
+                            Text = "First Half",
+                            Selected = true
+                        });
+                        listItems.Add(new SelectListItem
+                        {
+                            Text = "Second Half"
+                        });
+                        listItems.Add(new SelectListItem
+                        {
+                            Text = "From Undelivered"
+                        });
+                    }
+                    @Html.DropDownList("coverage", listItems, htmlAttributes: new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<br />
+<div class="card card-info card-outline">
+    <div class="card-header">
+        <h1 class="card-title"><b>Line Items</b></h1>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-bordered table-hover" id="example2">
+                    <thead>
+                        <tr>
+                            <th width="40%">Item and Description</th>
+                            <th width="15%">Unit</th>
+                            <th width="10%">Quantity</th>
+                            <th width="15%">Unit Price</th>
+                            <th width="20%">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <b>Desktop Computer, MITHI</b>
+                                Specifications: (specifications goes here...)
+                            </td>
+                            <td align="center">
+                                BTLS
+                            </td>
+                            <td align="center">
+                                100
+                            </td>
+                            <td align="right">
+                                43.79
+                            </td>
+                            <td align="right">
+                                4,379.00
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                STAMP PAD INK, purple or violet
+                            </td>
+                            <td align="center">
+                                BTLS
+                            </td>
+                            <td align="center">
+                                100
+                            </td>
+                            <td align="right">
+                                30.80
+                            </td>
+                            <td align="right">
+                                3,080.00
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section FormFooter {
+    <div class="form-group float-right">
+        <button type="submit" class="btn btn-primary" onclick="window.location = '@Url.Action("index", "AgencyProcurementRequest")'">Save changes</button>
+        <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("index", "AgencyProcurementRequest")'">Back</button>
+    </div>
+}

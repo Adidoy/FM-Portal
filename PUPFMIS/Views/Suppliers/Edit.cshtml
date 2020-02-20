@@ -1,0 +1,136 @@
+﻿@model PUPFMIS.Models.Supplier
+
+<div class="modal-header">
+    <h4 class="modal-title">Edit Supplier Record</h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+@using (Ajax.BeginForm("Edit", "Suppliers", new AjaxOptions() { HttpMethod = "POST", UpdateTargetId = "modal-container", OnSuccess = "CloseModal" }, htmlAttributes: new { id = "editSupplier" }))
+{
+    <div class="modal-body" id="form-body">
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.ID)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.SupplierName, htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-id-card"></i></span>
+                </div>
+                @Html.EditorFor(model => model.SupplierName, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%;" } })
+            </div>
+            @Html.ValidationMessageFor(model => model.SupplierName, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Address, htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-home"></i></span>
+                </div>
+                @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%;" } })
+            </div>
+            @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ContactPerson, htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-user"></i></span>
+                </div>
+                @Html.EditorFor(model => model.ContactPerson, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%;" } })
+            </div>
+            @Html.ValidationMessageFor(model => model.ContactPerson, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ContactNumber, htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-phone"></i></span>
+                </div>
+                @Html.EditorFor(model => model.ContactNumber, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%;" } })
+            </div>
+            @Html.ValidationMessageFor(model => model.ContactNumber, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.AlternateContactNumber, htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-phone-square"></i></span>
+                </div>
+                @Html.EditorFor(model => model.AlternateContactNumber, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%;" } })
+            </div>
+            @Html.ValidationMessageFor(model => model.AlternateContactNumber, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.TaxIdNumber, htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-file"></i></span>
+                </div>
+                @Html.EditorFor(model => model.TaxIdNumber, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%" } })
+            </div>
+            @Html.ValidationMessageFor(model => model.TaxIdNumber, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.EmailAddress, htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+                </div>
+                @Html.EditorFor(model => model.EmailAddress, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%" } })
+            </div>
+            @Html.ValidationMessageFor(model => model.EmailAddress, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Website, htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-code"></i></span>
+                </div>
+                @Html.EditorFor(model => model.Website, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%" } })
+            </div>
+            @Html.ValidationMessageFor(model => model.Website, "", new { @class = "text-danger" })
+        </div>
+
+    </div>
+}
+
+<div class="modal-footer">
+    <div class="form-group">
+        <button type="button" class="btn btn-primary" id="save-btn"><i class="fa fa-save"></i>&nbsp; Save changes</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i>&nbsp; Close</button>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $("#save-btn").on('click', function (e) {
+        e.preventDefault();
+        swal.fire({
+            title: "Update record?",
+            text: "You are about to update this record, continue?",
+            type: "warning",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#editSupplier").submit();
+            }
+        })
+    });
+    function CloseModal(data) {
+        if (data.status === "success") {
+            $('#modal-default').modal('hide');
+            toastr.success('Supplier record is saved!', 'Save', { timeOut: 10000, preventDuplicates: false });
+            window.location.href = "@Url.Action("index", "Suppliers")";
+        }
+    };
+</script>

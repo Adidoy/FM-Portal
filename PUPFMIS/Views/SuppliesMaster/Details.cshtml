@@ -1,0 +1,51 @@
+﻿@model PUPFMIS.Models.SuppliesMaster
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>SuppliesMaster</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.FKItem.ItemName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FKItem.ItemName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FKUOMDelivery.UnitName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FKUOMDelivery.UnitName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FKUOMDistribution.UnitName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FKUOMDistribution.UnitName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.StockNo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.StockNo)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -1,0 +1,104 @@
+﻿@model PUPFMIS.Models.PhysicalCount
+
+@{
+    ViewBag.Title = "Physical Count";
+    ViewBag.Description = "Update";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Physical Count", "index")</li>
+        <li class="breadcrumb-item">Update</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-left">
+        <h1 class="card-title"><i class="fa fa-bookmark"></i> Count Details</h1>
+    </div>
+}
+
+<div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-12">
+        <div class="form-group">
+            @Html.LabelFor(m => m.PhysicalInventoryNo, htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-id-card"></i></span>
+                </div>
+                @Html.EditorFor(m => m.PhysicalInventoryNo, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.DateOfCount, htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                </div>
+                @Html.EditorFor(m => m.DateOfCount, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.ProcessedBy, htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-user"></i></span>
+                </div>
+                @Html.EditorFor(m => m.ProcessedBy, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12">
+        <div class="form-group">
+            @Html.LabelFor(m => m.Period, htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                </div>
+                @Html.EditorFor(m => m.Period, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.FundCluster, htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-object-group"></i></span>
+                </div>
+                @Html.EditorFor(m => m.FundCluster, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.VerifiedBy, htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-user-check"></i></span>
+                </div>
+                @Html.EditorFor(m => m.VerifiedBy, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+@if (ViewBag.Type == "supplies")
+{
+    <h3 class="card-title">Supply Items</h3>
+        <br />
+        <hr />
+        @Html.Partial("CreateSuppliesCount")
+}
+else if (ViewBag.Type == "properties")
+{
+    <h3 class="card-title">Properties, Plant, Equipment</h3>
+        <br />
+        <hr />
+}
+
+@section FormFooter {
+    <div class="form-group float-right">
+        <button type="button" class="btn btn-primary" onclick="window.location = '@Url.Action("index", "PhysicalCount")'"><i class="fa fa-save"></i> Save Changes</button>
+        <button type="button" class="btn btn-info" onclick="window.location = '@Url.Action("index", "PhysicalCount")'"><i class="fa fa-share"></i> Submit PCI</button>
+        <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("index","PhysicalCount")'"><i class="fa fa-arrow-circle-left"></i> Back</button>
+    </div>
+}

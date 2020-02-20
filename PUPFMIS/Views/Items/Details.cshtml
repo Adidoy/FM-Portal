@@ -1,0 +1,147 @@
+﻿@model PUPFMIS.Models.Item
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Item</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.FKIndividualUnitReference.UnitName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FKIndividualUnitReference.UnitName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FKInventoryTypeReference.InventoryTypeName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FKInventoryTypeReference.InventoryTypeName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FKItemCategoryReference.ItemCategoryName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FKItemCategoryReference.ItemCategoryName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FKPackagingUnitReference.UnitName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FKPackagingUnitReference.UnitName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ItemCode)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ItemCode)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ItemName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ItemName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ItemSpecifications)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ItemSpecifications)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ProcurementSource)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ProcurementSource)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ExpenditureClassReference)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ExpenditureClassReference)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ItemImage)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ItemImage)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PackagingMinimumQty)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PackagingMinimumQty)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DistributionQtyPerPack)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DistributionQtyPerPack)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PurgeFlag)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PurgeFlag)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CreatedAt)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreatedAt)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UpdatedAt)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UpdatedAt)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DeletedAt)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DeletedAt)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

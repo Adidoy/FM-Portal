@@ -1,0 +1,110 @@
+﻿@model IEnumerable<PUPFMIS.Models.RequestHeader>
+
+@{
+    ViewBag.Title = "My Supplies Requests";
+    ViewBag.Description = "Home";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("My Supplies Requests", "index")</li>
+        <li class="breadcrumb-item">Home</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-right">
+        <button class="btn btn-default btn-md" onclick="window.location = '@Url.Action("create","Requests", new { type = "client" })'"><i class="fa fa-plus"></i> Create New RIS</button>
+    </div>
+}
+
+<table class="table table-bordered table-hover" id="example2">
+    <thead>
+        <tr>
+            <th width="15%">
+                @Html.DisplayNameFor(model => model.RISNo)
+            </th>
+            <th width="20%">
+                @Html.DisplayNameFor(model => model.RequestDate)
+            </th>
+            <th width="25%">
+                @Html.DisplayNameFor(model => model.RequestStatus)
+            </th>
+            <th width="20%">
+                Staff
+            </th>
+            <th width="20%">
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>2019-11-0212</td>
+            <td>@DateTime.Now.ToString("dd MMM yyyy hh:mm tt")</td>
+            <td>
+                <b style="color: gray">RELEASED</b>
+                <br />
+                <i>@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")</i>
+            </td>
+            <td>
+                PSMO Staff
+            </td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>2019-11-0436</td>
+            <td>@DateTime.Now.ToString("dd MMM yyyy hh:mm tt")</td>
+            <td>
+                <b style="color: red">DISAPPROVED</b>
+                <br />
+                <i>@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")</i>
+            </td>
+            <td>
+                PSMO Staff
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>2019-11-0912</td>
+            <td>@DateTime.Now.ToString("dd MMM yyyy hh:mm tt")</td>
+            <td>
+                <b style="color: orange">CANCELLED</b>
+                <br />
+                <i>@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")</i>
+            </td>
+            <td>
+                PSMO Staff
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>2019-11-0912</td>
+            <td>@DateTime.Now.ToString("dd MMM yyyy hh:mm tt")</td>
+            <td>
+                <b style="color: green">APPROVED</b>
+                <br />
+                <i>@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")</i>
+            </td>
+            <td>
+                PSMO Staff
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>2019-11-1212</td>
+            <td>@DateTime.Now.ToString("dd MMM yyyy hh:mm tt")</td>
+            <td>
+                <b style="color: black">NEW REQUEST</b>
+            </td>
+            <td>
+                PSMO Staff
+            </td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>

@@ -1,0 +1,51 @@
+﻿@model PUPFMIS.Models.ProcurementPipelineHeader
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>ProcurementPipelineHeader</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ProcurementLineNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ProcurementLineNumber)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ProcurementMode)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ProcurementMode)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ProjectCoordinator)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ProjectCoordinator)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ProcurmentStart)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ProcurmentStart)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

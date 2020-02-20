@@ -1,0 +1,353 @@
+﻿@model PUPFMIS.Models.DeliveryVM
+
+@{
+    IEnumerable<PUPFMIS.Models.DeliveryDetails> purchaseItems = ViewData["PurchaseItems"] as IEnumerable<PUPFMIS.Models.DeliveryDetails>;
+    IEnumerable<PUPFMIS.Models.DeliveryWorkflow> deliveryWorkflow = ViewData["DeliveryWorkflow"] as IEnumerable<PUPFMIS.Models.DeliveryWorkflow>;
+    ViewBag.Title = "Deliveries Receipt";
+    ViewBag.Description = "Details";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Deliveries Receipt", "index")</li>
+        <li class="breadcrumb-item">Details</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-right">
+        <h1 class="card-title">Delivery No. 19-11-01</h1>
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-info card-outline">
+            <div class="card-header d-flex p-0">
+                <ul class="nav nav-pills p-2">
+                    <li class="nav-item"><a class="nav-link active" href="#details" data-toggle="tab"><i class="fa fa-list-ul"></i>&nbsp; Delivery Details</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#workflow" data-toggle="tab"><i class="fa fa-briefcase"></i>&nbsp; Workflow</a></li>
+                </ul>
+            </div>
+            <div class="tab-content">
+                <div class="tab-pane active" id="details">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card card-info card-outline">
+                                    <div class="card-header">
+                                        <h6><b>Purchase Order Details</b></h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-group">
+                                            @Html.Label("Reference", htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-id-badge"></i></span>
+                                                </div>
+                                                @Html.Editor("Reference", new { htmlAttributes = new { @class = "form-control", Value = "Agency Procurement Request", disabled = "disabled" } })
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Header.PONumber, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-file-invoice"></i></span>
+                                                </div>
+                                                @Html.EditorFor(model => model.Header.PONumber, new { htmlAttributes = new { @class = "form-control", Value = "007-19", disabled = "disabled" } })
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Header.PODate, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                                </div>
+                                                @Html.EditorFor(model => model.Header.PODate, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", Value = DateTime.Now.ToString("dd MMMM yyyy hh:mm tt"), disabled = "disabled" } })
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Header.Supplier, "Supplier", htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group md-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-truck-loading"></i></span>
+                                                </div>
+                                                @Html.Editor("SupplierName", new { htmlAttributes = new { @class = "form-control", autocomplete = "off", Value = "Department of Budget and Management", disabled = "disabled" } })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card card-info card-outline">
+                                    <div class="card-header">
+                                        <h6><b>Delivery Details</b></h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Header.InvoiceNumber, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fas fa-file-invoice-dollar"></i></span>
+                                                </div>
+                                                @Html.EditorFor(model => model.Header.InvoiceNumber, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", Value = "NTD19-003851", disabled = "disabled" } })
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Header.InvoiceDate, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                                </div>
+                                                @Html.EditorFor(model => model.Header.InvoiceDate, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", Value = DateTime.Now.ToString("dd MMMM yyyy hh:mm tt"), disabled = "disabled" } })
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Header.DRNumber, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fas fa-truck"></i></span>
+                                                </div>
+                                                @Html.EditorFor(model => model.Header.DRNumber, new { htmlAttributes = new { @class = "form-control align-content-center", autocomplete = "off", Value = "M19-004650-CSE", disabled = "disabled" } })
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Header.ReceivedBy, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group md-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-handshake"></i></span>
+                                                </div>
+                                                @Html.EditorFor(model => model.Header.ReceivedBy, new { htmlAttributes = new { @class = "form-control", Value = "PSMO Staff", disabled = "disabled" } })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card card-info card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Items Received</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table table-bordered table-hover" id="example2">
+                                            <thead>
+                                                <tr>
+                                                    <th width="30%">Item and Specifications</th>
+                                                    <th width="10%">Unit</th>
+                                                    <th width="10%">Expected Qty</th>
+                                                    <th width="15%">Received Qty</th>
+                                                    <th width="10%">Backlog Qty</th>
+                                                    <th width="25%">Warehouse</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        DESKTOP COMPUTER
+                                                        (specifications go here....)
+                                                    </td>
+                                                    <td align="center">
+                                                        UNIT
+                                                    </td>
+                                                    <td align="center">
+                                                        10
+                                                    </td>
+                                                    <td align="center">
+                                                        10
+                                                    </td>
+                                                    <td align="center">
+                                                        0
+                                                    </td>
+                                                    <td align="center">
+                                                        PSMO
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="tab-pane" id="workflow">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card card-info card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Workflow Details</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <table class="table table-bordered table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="20%">@Html.DisplayNameFor(m => deliveryWorkflow.First().DateUpdated)</th>
+                                                            <th width="20%">@Html.DisplayNameFor(m => deliveryWorkflow.First().UpdatedBy)</th>
+                                                            <th width="20%">@Html.DisplayNameFor(m => deliveryWorkflow.First().WorkflowTask)</th>
+                                                            <th width="40%">@Html.DisplayNameFor(m => deliveryWorkflow.First().Description)</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")</td>
+                                                            <td>PSMO Staff</td>
+                                                            <td>Delivery Receipt Processed</td>
+                                                            <td>Delivery for NTD19-003851 / M19-004650-CSE has been processed and waiting for approval.</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")</td>
+                                                            <td>PSMO Supplies Chief</td>
+                                                            <td>Delivery Receipt Verified</td>
+                                                            <td>Certifying that the items encoded for NTD19-003851 / M19-004650-CSE are all correct</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")</td>
+                                                            <td>PSMO Supplies Director</td>
+                                                            <td>Delivery Receipt Acknowledge</td>
+                                                            <td>Acknowledging the delivery made. Forwarding to IMO for inspection.</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")</td>
+                                                            <td>PSMO Supplies Chief</td>
+                                                            <td>Delivery Receipt forwared for Inspection</td>
+                                                            <td>N/A</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h5>Update Workflow</h5>
+                                                <hr />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                @Html.Partial("Workflow")
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+@*<div>
+    <h4>DeliveryHeader</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.FK_Supplier.SupplierName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FK_Supplier.SupplierName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DeliveryAcceptanceNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DeliveryAcceptanceNumber)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DateProcessed)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DateProcessed)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ProcessedBy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ProcessedBy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ReceivedBy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ReceivedBy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PONumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PONumber)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PODate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PODate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.InvoiceNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.InvoiceNumber)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.InvoiceDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.InvoiceDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DRNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DRNumber)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DeliveryDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DeliveryDate)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>*@

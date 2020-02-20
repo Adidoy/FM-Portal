@@ -1,0 +1,154 @@
+﻿@model PUPFMIS.Models.PPE
+
+@{
+    ViewBag.Title = "Property, Plant, Equipment";
+    ViewBag.Description = "Property Cards";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("PPEs", "index")</li>
+        <li class="breadcrumb-item">Property Cards</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-right">
+        <h1 class="card-title">AIR-CONDITIONING UNIT, WINDOW TYPE</h1>
+    </div>
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="form-horizontal">
+            <h5>PPE Details</h5>
+            <hr />
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group-sm">
+                        @Html.LabelFor(model => model.FKItem.FkProcurementCategory.ProcurementCategoryName, "Classification", htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-question"></i></span>
+                            </div>
+                            @Html.EditorFor(model => model.FKItem.FkProcurementCategory.ProcurementCategoryName, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.FKItem.ItemName, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-id-card"></i></span>
+                            </div>
+                            @Html.EditorFor(model => model.FKItem.ItemName, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.FKItem.ItemSpecifications, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-list-ul"></i></span>
+                            </div>
+                            @Html.EditorFor(model => model.FKItem.ItemSpecifications, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Unit, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-ruler"></i></span>
+                            </div>
+                            @Html.EditorFor(model => model.FKUnit.UnitName, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.Unit, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PropertyNo, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-hashtag"></i></span>
+                            </div>
+                            @Html.EditorFor(model => model.PropertyNo, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.PropertyNo, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.UsefulLife, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-heartbeat"></i></span>
+                            </div>
+                            @Html.EditorFor(model => model.UsefulLife, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.UsefulLife, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DepreciationRate, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-arrow-circle-down"></i></span>
+                            </div>
+                            @Html.EditorFor(model => model.DepreciationRate, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.DepreciationRate, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<h3 class="card-title">PPE Cards</h3>
+<br />
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-info card-outline">
+            <div class="card-header d-flex p-0">
+                <ul class="nav nav-pills p-2">
+                    <li class="nav-item"><a class="nav-link active" href="#pc" data-toggle="tab"><i class="fa fa-file-archive"></i>&nbsp; Property Card</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#ppelc" data-toggle="tab"><i class="fa fa-file-invoice"></i>&nbsp; Property, Plant, Equipment Ledger Card</a></li>
+                </ul>
+            </div>
+            <div class="tab-content">
+                <br />
+                <div class="tab-pane active" id="pc">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="d-flex justify-content-center">
+                                    <h5>As of @DateTime.Now.ToString("MMMM, yyyy")</h5>
+                                </div>
+                                <hr />
+                            </div>
+                        </div>
+                        @Html.Partial("PropertyCardDetails", Model)
+                    </div>
+                </div>
+                <div class="tab-pane" id="ppelc">
+                    <div class="col-md-12">
+                        @Html.Partial("PPELedgerCard", Model)
+                    </div>
+                </div>
+                <br />
+            </div>
+        </div>
+    </div>
+</div>

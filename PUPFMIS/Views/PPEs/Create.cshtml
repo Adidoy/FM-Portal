@@ -1,0 +1,128 @@
+﻿@model PUPFMIS.Models.PPE
+
+@{
+    ViewBag.Title = "Property, Plant and Equipment";
+    ViewBag.Description = "New";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("PPEs", "index")</li>
+        <li class="breadcrumb-item">New</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-right">
+        <h1 class="card-title"><i class="fa fa-bookmark"></i> New Property, Plant, Equipment</h1>
+    </div>
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-horizontal">   
+                <h5>PPE Details</h5>
+                <hr />
+
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group-sm">
+                            @Html.LabelFor(model => model.FKItem.FkProcurementCategory.ProcurementCategoryName, "Classification", htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-question"></i></span>
+                                </div>
+                                @Html.EditorFor(model => model.FKItem.FkProcurementCategory.ProcurementCategoryName, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.FKItem.ItemName, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-id-card"></i></span>
+                                </div>
+                                @Html.EditorFor(model => model.FKItem.ItemName, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.FKItem.ItemSpecifications, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-list-ul"></i></span>
+                                </div>
+                                @Html.EditorFor(model => model.FKItem.ItemSpecifications, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Unit, "Unit", htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-ruler"></i></span>
+                                </div>
+                                @Html.DropDownList("Unit", null, htmlAttributes: new { @class = "form-control form-control-sm" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.Unit, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.PropertyNo, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-hashtag"></i></span>
+                                </div>
+                                @Html.EditorFor(model => model.PropertyNo, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.PropertyNo, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.UsefulLife, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-heartbeat"></i></span>
+                                </div>
+                                @Html.EditorFor(model => model.UsefulLife, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.UsefulLife, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.DepreciationRate, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-arrow-circle-down"></i></span>
+                                </div>
+                                @Html.EditorFor(model => model.DepreciationRate, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.DepreciationRate, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @section FormFooter {
+        <div class="form-group float-right">
+            <button type="submit" class="btn btn-primary" style="height:40px; width:145px;" onclick="window.location = '@Url.Action("index", "PPEs", new { type = "custodian" })'"><i class="fa fa-save"></i> Save changes</button>
+            <button type="button" class="btn btn-danger" style="height:40px; width:100px;" onclick="window.location = '@Url.Action("index", "PPEs", new { type = "custodian" })'"><i class="fa fa-arrow-circle-left"></i> Back</button>
+        </div>
+    }
+}

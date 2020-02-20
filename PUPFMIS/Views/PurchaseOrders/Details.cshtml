@@ -1,0 +1,43 @@
+﻿@model PUPFMIS.Models.PurchaseOrderHeader
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>PurchaseOrderHeader</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.FKSupplier.SupplierName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FKSupplier.SupplierName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PONumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PONumber)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PODate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PODate)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

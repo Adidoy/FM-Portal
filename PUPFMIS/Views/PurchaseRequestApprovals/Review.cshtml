@@ -1,0 +1,127 @@
+﻿@model PUPFMIS.Models.PurchaseRequestApproval
+
+@{
+    ViewBag.Title = "Purchase Request Approval";
+    ViewBag.Description = "Review";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Review Purchase Request", "index")</li>
+        <li class="breadcrumb-item">Home</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-right">
+        <h1 class="card-title"><i class="fa fa-comment"></i>&nbsp; Review Purchase Request</h1>
+    </div>
+}
+
+<div class="card card-info card-outline">
+    <div class="card-header d-flex p-0">
+        <ul class="nav nav-pills p-2">
+            <li class="nav-item"><a class="nav-link active" href="#pr_details" data-toggle="tab"><i class="fa fa-list"></i>&nbsp; Purchase Requests</a></li>
+            <li class="nav-item"><a class="nav-link" href="#workflow" data-toggle="tab"><i class="fa fa-briefcase"></i>&nbsp; Workflow</a></li>
+        </ul>
+    </div>
+    <div class="tab-content">
+        <div class="tab-pane active" id="pr_details">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th width="15%" align="center">
+                            PR No.
+                        </th>
+                        <th width="15%" align="center">
+                            Office
+                        </th>
+                        <th width="25%" align="center">
+                            Purpose
+                        </th>
+                        <th width="20%" align="center">
+                            Total Cost
+                        </th>
+                        <th width="20%" align="center">
+                            Action
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td valign="middle">
+                            19-018
+                        </td>
+                        <td valign="middle">
+                            PSMO
+                        </td>
+                        <td>
+                            For replacement of old desktop computers
+                        </td>
+                        <td align="right" valign="middle">
+                            42,000.00
+                        </td>
+                        <td align="center" valign="middle">
+                            <button type="button" class="btn btn-sm btn-success" style="width:175px;" onclick="window.location = '@Url.Action("details", "PurchaseRequestApprovals")'"><i class="fa fa-eye"></i> View PR Details</button> <br />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="tab-pane" id="workflow">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th width="25%">
+                            Date
+                        </th>
+                        <th width="50%">
+                            Description
+                        </th>
+                        <th width="25%">
+                            Staff
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            01 October 2019 10:45AM
+                        </td>
+                        <td>
+                            Purchase Request submitted to Procurement Management Office.
+                        </td>
+                        <td>
+                            PSMO Staff
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            10 October 2019 01:00PM
+                        </td>
+                        <td>
+                            Purchase Request Submission Accepted.
+                        </td>
+                        <td>
+                            PMO Staff
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            10 October 2019 01:00PM
+                        </td>
+                        <td>
+                            Purchase Request shall be subject for review of PMO-BACSEC, thank you.
+                        </td>
+                        <td>
+                            PMO Staff
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

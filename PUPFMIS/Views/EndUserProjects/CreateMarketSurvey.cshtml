@@ -1,0 +1,467 @@
+﻿@model PUPFMIS.Models.MarketSurvey
+
+@{
+    ViewBag.Title = "Market Survey";
+    ViewBag.Description = "Create";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("End-User Projects", "index")</li>
+        <li class="breadcrumb-item">Details</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-left">
+        <h1 class="card-title"><i class="fa fa-bookmark"></i> Create Market Survey :: @ViewBag.ProjectCode - @ViewBag.ProjectName</h1>
+    </div>
+}
+
+@using (Ajax.BeginForm("AddDetails", "EndUserProjects", new AjaxOptions() { UpdateTargetId = "frame-details", OnSuccess="ClearEntries" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-horizontal">
+                <h5>Select Item</h5>
+                <hr />
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="card card-outline card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Item Details</h3>
+                            </div>
+                            <div class="card-body">
+                                @Html.HiddenFor(m => m.FKItem.ID, htmlAttributes: new { id = "itemID" })
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group-sm">
+                                            @Html.Label("Item Image", new { htmlAttributes = new { @class = "control-label" } })
+                                            <br />
+                                            <div style="text-align:center; vertical-align: middle;" id="itemImageHolder">
+                                                <img class="img-fluid" id="itemImage" src="~/Content/imgs/image-not-available.jpg" style="max-width:150px;max-height:150px" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group-sm">
+                                            @Html.LabelFor(m => m.FKItem.ItemCode, new { htmlAttributes = new { @class = "control-label" } })
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <button type="button" class="btn btn-primary btn-sm" onclick="loadModal('@Url.Action("ViewCatalog", "Items")')"><i class="fa fa-search"></i></button>
+                                                </div>
+                                                @Html.EditorFor(m => m.FKItem.ItemCode, new { htmlAttributes = new { id = "itemCode", @class = "form-control form-control-sm", style = "font-size: 100%", placeholder = Html.DisplayNameFor(m => m.FKItem.ItemCode) } })
+                                            </div>
+                                        </div>
+                                        <div class="form-group-sm">
+                                            @Html.LabelFor(m => m.FKItem.ItemName, new { htmlAttributes = new { @class = "control-label" } })
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-id-card"></i></span>
+                                                </div>
+                                                @Html.EditorFor(m => m.FKItem.ItemName, new { htmlAttributes = new { id = "itemName", @class = "form-control form-control-sm", style = "font-size: 100%", placeholder = Html.DisplayNameFor(m => m.FKItem.ItemName) } })
+                                            </div>
+                                        </div>
+                                        <div class="form-group-sm">
+                                            @Html.LabelFor(m => m.FKItem.FKIndividualUnitReference.UnitName, new { htmlAttributes = new { @class = "control-label" } })
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-ruler"></i></span>
+                                                </div>
+                                                @Html.EditorFor(m => m.FKItem.FKIndividualUnitReference.UnitName, new { htmlAttributes = new { id = "itemUnit", @class = "form-control form-control-sm", style = "font-size: 100%;", placeholder = Html.DisplayNameFor(m => m.FKItem.FKIndividualUnitReference.UnitName) } })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group-sm">
+                                            @Html.LabelFor(m => m.FKItem.ItemSpecifications, new { htmlAttributes = new { @class = "control-label" } })
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-list-ul"></i></span>
+                                                </div>
+                                                @Html.EditorFor(m => m.FKItem.ItemSpecifications, new { htmlAttributes = new { id = "itemSpecifications", @class = "form-control form-control-sm", style = "font-size: 100%; height:100px", placeholder = Html.DisplayNameFor(m => m.FKItem.ItemSpecifications) } })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        @Html.Label("Quantity Requirement", new { htmlAttributes = new { @class = "control-label" } })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group-sm">
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><b>Q1</b></span>
+                                                </div>
+                                                @Html.EditorFor(m => m.Qtr1, new { htmlAttributes = new { id = "QtyQ1", @class = "form-control form-control-sm", style = "font-size: 100%;", type = "number", min = "1" } })
+                                            </div>
+                                        </div>
+                                        <div class="form-group-sm">
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><b>Q2</b></span>
+                                                </div>
+                                                @Html.EditorFor(m => m.Qtr2, new { htmlAttributes = new { id = "QtyQ2", @class = "form-control form-control-sm", style = "font-size: 100%;", type = "number", min = "1" } })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group-sm">
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><b>Q3</b></span>
+                                                </div>
+                                                @Html.EditorFor(m => m.Qtr3, new { htmlAttributes = new { id = "QtyQ3", @class = "form-control form-control-sm", style = "font-size: 100%;", type = "number", min = "1" } })
+                                            </div>
+                                        </div>
+                                        <div class="form-group-sm">
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><b>Q4</b></span>
+                                                </div>
+                                                @Html.EditorFor(m => m.Qtr4, new { htmlAttributes = new { id = "QtyQ4", @class = "form-control form-control-sm", style = "font-size: 100%;", type = "number", min = "1" } })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="card card-info card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Supplier Details</h3>
+                                    </div>
+                                    <div class="card-header d-flex p-0">
+                                        <ul class="nav nav-pills p-2">
+                                            <li class="nav-item"><a class="nav-link active" href="#supplier1" data-toggle="tab"><i class="fa fa-truck"></i>&nbsp; Supplier 1</a></li>
+                                            <li class="nav-item"><a class="nav-link" href="#supplier2" data-toggle="tab"><i class="fa fa-truck"></i>&nbsp; Supplier 2</a></li>
+                                            <li class="nav-item"><a class="nav-link" href="#supplier3" data-toggle="tab"><i class="fa fa-truck"></i>&nbsp; Supplier 3</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="tab-content">
+                                        <div class="tab-pane active" id="supplier1">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    @Html.HiddenFor(m => m.Supplier1Reference, htmlAttributes: new { id = "supplierID1" })
+                                                    <div class="col-sm-12">
+                                                        <div class="form-group-sm">
+                                                            @Html.LabelFor(model => model.FkSupplierReference1.SupplierName, htmlAttributes: new { @class = "control-label" })
+                                                            <div class="input-group mb-3">
+                                                                <div class="input-group-prepend">
+                                                                    <button type="button" class="btn btn-sm btn-primary" onclick="loadSupplier('@Url.Action("ViewSuppliers", "Suppliers", new { seqNo = 1 })')"><i class="fa fa-search"></i></button>
+                                                                </div>
+                                                                @Html.EditorFor(model => model.FkSupplierReference1.SupplierName, new { htmlAttributes = new { id = "supplierName1", @class = "form-control form-control-sm", style = "font-size: 100%;" } })
+                                                            </div>
+                                                            @Html.ValidationMessageFor(model => model.FkSupplierReference1.SupplierName, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group-sm">
+                                                            @Html.LabelFor(model => model.FkSupplierReference1.ContactNumber, htmlAttributes: new { @class = "control-label" })
+                                                            <div class="input-group mb-3">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fa fa-phone"></i></span>
+                                                                </div>
+                                                                @Html.EditorFor(model => model.FkSupplierReference1.ContactNumber, new { htmlAttributes = new { id = "supplierContact1", @class = "form-control form-control-sm", style = "font-size: 100%;" } })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group-sm">
+                                                            @Html.LabelFor(model => model.FkSupplierReference1.ContactPerson, htmlAttributes: new { @class = "control-label" })
+                                                            <div class="input-group mb-3">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fa fa-user"></i></span>
+                                                                </div>
+                                                                @Html.EditorFor(model => model.FkSupplierReference1.ContactPerson, new { htmlAttributes = new { id = "supplierContactPerson1", @class = "form-control form-control-sm", style = "font-size: 100%;" } })
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <div class="form-group-sm">
+                                                            @Html.LabelFor(model => model.FkSupplierReference1.Address, htmlAttributes: new { @class = "control-label" })
+                                                            <div class="input-group mb-3">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fa fa-address-book"></i></span>
+                                                                </div>
+                                                                @Html.EditorFor(model => model.FkSupplierReference1.Address, new { htmlAttributes = new { id = "supplierAddress1", @class = "form-control form-control-sm", style = "font-size: 100%;" } })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <div class="form-group-sm">
+                                                            @Html.LabelFor(model => model.Supplier1UnitCost, htmlAttributes: new { @class = "control-label" })
+                                                            <div class="input-group mb-3">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fa fa-money-bill"></i></span>
+                                                                </div>
+                                                                @Html.EditorFor(model => model.Supplier1UnitCost, new { htmlAttributes = new { id = "unitCost1", @class = "form-control form-control-sm", style = "font-size: 100%; text-align:right;" } })
+                                                            </div>
+                                                            @Html.ValidationMessageFor(model => model.Supplier1UnitCost, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane" id="supplier2">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    @Html.HiddenFor(m => m.Supplier2Reference, htmlAttributes: new { id = "supplierID2" })
+                                                    <div class="col-sm-12">
+                                                        <div class="form-group-sm">
+                                                            @Html.LabelFor(model => model.FkSupplierReference2.SupplierName, htmlAttributes: new { @class = "control-label" })
+                                                            <div class="input-group mb-3">
+                                                                <div class="input-group-prepend">
+                                                                    <button type="button" class="btn btn-sm btn-primary" onclick="loadSupplier('@Url.Action("ViewSuppliers", "Suppliers", new { seqNo = 2 })')"><i class="fa fa-search"></i></button>
+                                                                </div>
+                                                                @Html.EditorFor(model => model.FkSupplierReference2.SupplierName, new { htmlAttributes = new { id = "supplierName2", @class = "form-control form-control-sm", style = "font-size: 100%;" } })
+                                                            </div>
+                                                            @Html.ValidationMessageFor(model => model.FkSupplierReference2.SupplierName, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group-sm">
+                                                            @Html.LabelFor(model => model.FkSupplierReference2.ContactNumber, htmlAttributes: new { @class = "control-label" })
+                                                            <div class="input-group mb-3">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fa fa-phone"></i></span>
+                                                                </div>
+                                                                @Html.EditorFor(model => model.FkSupplierReference2.ContactNumber, new { htmlAttributes = new { id = "supplierContact2", @class = "form-control form-control-sm", style = "font-size: 100%;" } })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group-sm">
+                                                            @Html.LabelFor(model => model.FkSupplierReference2.ContactPerson, htmlAttributes: new { @class = "control-label" })
+                                                            <div class="input-group mb-3">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fa fa-user"></i></span>
+                                                                </div>
+                                                                @Html.EditorFor(model => model.FkSupplierReference2.ContactPerson, new { htmlAttributes = new { id = "supplierContactPerson2", @class = "form-control form-control-sm", style = "font-size: 100%;" } })
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <div class="form-group-sm">
+                                                            @Html.LabelFor(model => model.FkSupplierReference2.Address, htmlAttributes: new { @class = "control-label" })
+                                                            <div class="input-group mb-3">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fa fa-address-book"></i></span>
+                                                                </div>
+                                                                @Html.EditorFor(model => model.FkSupplierReference2.Address, new { htmlAttributes = new { id = "supplierAddress2", @class = "form-control form-control-sm", style = "font-size: 100%;" } })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <div class="form-group-sm">
+                                                            @Html.LabelFor(model => model.Supplier1UnitCost, htmlAttributes: new { @class = "control-label" })
+                                                            <div class="input-group mb-3">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fa fa-money-bill"></i></span>
+                                                                </div>
+                                                                @Html.EditorFor(model => model.Supplier2UnitCost, new { htmlAttributes = new { id = "unitCost2", @class = "form-control form-control-sm", style = "font-size: 100%; text-align:right;" } })
+                                                            </div>
+                                                            @Html.ValidationMessageFor(model => model.Supplier2UnitCost, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane" id="supplier3">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    @Html.HiddenFor(m => m.Supplier3Reference, htmlAttributes: new { id = "supplierID3" })
+                                                    <div class="col-sm-12">
+                                                        <div class="form-group-sm">
+                                                            @Html.LabelFor(model => model.FkSupplierReference3.SupplierName, htmlAttributes: new { @class = "control-label" })
+                                                            <div class="input-group mb-3">
+                                                                <div class="input-group-prepend">
+                                                                    <button type="button" class="btn btn-sm btn-primary" onclick="loadSupplier('@Url.Action("ViewSuppliers", "Suppliers", new { seqNo = 3 })')"><i class="fa fa-search"></i></button>
+                                                                </div>
+                                                                @Html.EditorFor(model => model.FkSupplierReference3.SupplierName, new { htmlAttributes = new { id = "supplierName3", @class = "form-control form-control-sm", style = "font-size: 100%;" } })
+                                                            </div>
+                                                            @Html.ValidationMessageFor(model => model.FkSupplierReference3.SupplierName, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group-sm">
+                                                            @Html.LabelFor(model => model.FkSupplierReference3.ContactNumber, htmlAttributes: new { @class = "control-label" })
+                                                            <div class="input-group mb-3">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fa fa-phone"></i></span>
+                                                                </div>
+                                                                @Html.EditorFor(model => model.FkSupplierReference3.ContactNumber, new { htmlAttributes = new { id = "supplierContact3", @class = "form-control form-control-sm", style = "font-size: 100%;" } })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group-sm">
+                                                            @Html.LabelFor(model => model.FkSupplierReference3.ContactPerson, htmlAttributes: new { @class = "control-label" })
+                                                            <div class="input-group mb-3">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fa fa-user"></i></span>
+                                                                </div>
+                                                                @Html.EditorFor(model => model.FkSupplierReference3.ContactPerson, new { htmlAttributes = new { id = "supplierContactPerson3", @class = "form-control form-control-sm", style = "font-size: 100%;" } })
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <div class="form-group-sm">
+                                                            @Html.LabelFor(model => model.FkSupplierReference3.Address, htmlAttributes: new { @class = "control-label" })
+                                                            <div class="input-group mb-3">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fa fa-address-book"></i></span>
+                                                                </div>
+                                                                @Html.EditorFor(model => model.FkSupplierReference3.Address, new { htmlAttributes = new { id = "supplierAddress3", @class = "form-control form-control-sm", style = "font-size: 100%;" } })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <div class="form-group-sm">
+                                                            @Html.LabelFor(model => model.Supplier3UnitCost, htmlAttributes: new { @class = "control-label" })
+                                                            <div class="input-group mb-3">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fa fa-money-bill"></i></span>
+                                                                </div>
+                                                                @Html.EditorFor(model => model.Supplier3UnitCost, new { htmlAttributes = new { id = "unitCost3", @class = "form-control form-control-sm", style = "font-size: 100%; text-align:right;" } })
+                                                            </div>
+                                                            @Html.ValidationMessageFor(model => model.Supplier3UnitCost, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="text-right">
+                                    <button type="submit" class="btn btn-info"><i class="fa fa-plus"></i> Add Item</button>
+                                    <button type="button" class="btn btn-info" onclick="ClearEntries()"><i class="fa fa-eraser"></i> Clear Entries</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<br /><br />
+
+<div class="row">
+    <div class="col-sm-12">
+        <div id="frame-details">
+           @Html.Partial("MarketSurveyItems")
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-default">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content" id="modal-container">
+        </div>
+    </div>
+</div>
+
+@section FormFooter {
+    <div class="form-group float-right">
+        <button type="button" class="btn btn-primary" onclick="window.location = '@Url.Action("index", "EndUserProjects")'"><i class="fa fa-save"></i> Save Changes</button>
+        <button type="button" class="btn btn-success" onclick="window.location = '@Url.Action("detailsmarketsurveyitem","EndUserProjects", new { id = 0, status = "new-project" })'"><i class="fa fa-eye"></i> View Market Survey</button>
+        <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("index","EndUserProjects")'"><i class="fa fa-arrow-circle-left"></i> Back</button>
+    </div>
+}
+
+<script src="~/Scripts/adminlte/components/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('#msItemsList').DataTable({
+            columnDefs: [{
+                targets: 2,
+                className: 'center'
+            }],
+            "paging": false,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+        });
+    });
+    var options = { "backdrop": "static", keyboard: true };
+    function loadModal(url) {
+        $.ajax({
+            type: "GET",
+            url: url,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#modal-container').html(data);
+                $('#modal-default').modal(options);
+                $('#modal-default').modal('show');
+            }
+        });
+    }
+    function loadSupplier(url) {
+        $(function () {
+            $.ajax({
+                type: "GET",
+                url: url,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+                success: function (data) {
+                    $('#modal-container').html(data);
+                    $('#modal-default').modal(options);
+                    $('#modal-default').modal('show');
+                }
+            });
+        });
+    }
+    function ClearEntries() {
+        $("#supplierID1").val('');
+        $("#supplierName1").val('');
+        $("#supplierAddress1").val('');
+        $('#supplierContact1').val('');
+        $('#supplierContactPerson1').val('');
+        $('#unitCost1').val('');
+        $("#supplierID2").val('');
+        $("#supplierName2").val('');
+        $("#supplierAddress2").val('');
+        $('#supplierContact2').val('');
+        $('#supplierContactPerson2').val('');
+        $('#unitCost2').val('');
+        $("#supplierID3").val('');
+        $("#supplierName3").val('');
+        $("#supplierAddress3").val('');
+        $('#supplierContact3').val('');
+        $('#supplierContactPerson3').val('');
+        $('#unitCost3').val('');
+        $("#itemCode").val('');
+        $("#itemName").val('');
+        $('#itemSpecifications').val('');
+        $('#itemUnit').val('');
+        $("#itemImageHolder").html('<img class="img-fluid" src="@Url.Content("/Content/imgs/image-not-available.jpg")" style="max-width:150px;max-height:150px" />');
+        $('#QtyQ1').val('');
+        $('#QtyQ2').val('');
+        $('#QtyQ3').val('');
+        $('#QtyQ4').val('');
+    }
+</script>
