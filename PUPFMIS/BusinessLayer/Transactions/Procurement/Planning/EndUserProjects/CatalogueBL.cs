@@ -15,6 +15,14 @@ namespace PUPFMIS.BusinessLayer
     {
         private FMISDbContext db = new FMISDbContext();
 
+        public List<string> GetCategories()
+        {
+            var categories = db.ItemCategories.Select(d => d.ItemCategoryName).ToList();
+            categories.Add("All Categories");
+            categories.Sort();
+            return categories;
+        }
+
         public List<Catalogue> GetCSEItems()
         {
             return (from items in db.Items
@@ -55,6 +63,39 @@ namespace PUPFMIS.BusinessLayer
                             })
                             .OrderBy(d => new { d.ItemName, d.ItemCode })
                             .FirstOrDefault();
+        }
+
+        public Basket GetCSECItems(string ItemCode, string Email)
+        {
+            var basketItem = db.Items
+                            .Where(d => d.FKInventoryTypeReference.InventoryTypeName == "Common Use Office Supplies" && d.ItemCode == ItemCode)
+                            .Select(d => new Basket
+                            {
+                                ItemID = d.ID,
+                                ItemCode = d.ItemCode,
+                                ItemName = d.ItemName,
+                                ItemShortSpecifications = d.ItemShortSpecifications,
+                                ItemSpecifications = d.ItemSpecifications,
+                                ItemCategory = d.FKItemCategoryReference.ItemCategoryName,
+                                ItemImage = d.ItemImage,
+                                IndividualUOMReference = d.FKIndividualUnitReference.UnitName,
+                                MinimumIssuanceQty = d.MinimumIssuanceQty,
+                                ProcurementSource = d.ProcurementSource
+                            })
+                            .OrderBy(d => new { d.ItemName, d.ItemCode })
+                            .FirstOrDefault();
+
+            var officeID = db.UserAccounts.Where(d => d.Email == Email).Select(d => d.FKUserInformationReference.Office).FirstOrDefault();
+            var totalConsumption = db.SuppliesIssueDetails
+                                   .Where(d => d.FKRequestHeader.Office == officeID && d.FKSuppliesMaster.FKItem.ItemCode == ItemCode)
+                                   .Select(d => new { IssuedYear = d.FKRequestHeader.IssuedAt.Value.Year, Quantity = d.QtyIssued })
+                                   .GroupBy(d => d.IssuedYear)
+                                   .Select(d => new { Total = d.Sum(x => x.Quantity), Year = d.Key })
+                                   .OrderByDescending(d => d.Year)
+                                   .Select(d => d.Total)
+                                   .First();
+            basketItem.TotalConsumption = totalConsumption;
+            return basketItem;
         }
 
         public List<Catalogue> GetPropertyItems()
@@ -209,12 +250,9 @@ namespace PUPFMIS.BusinessLayer
                    .ToList();
         }
 
-        public List<string> GetCategories()
+        public bool ValidateConsumptionVSQuantity(Basket item)
         {
-            var categories = db.ItemCategories.Select(d => d.ItemCategoryName).ToList();
-            categories.Add("All Categories");
-            categories.Sort();
-            return categories;
+            return (item.TotalQty > item.TotalConsumption) ? true : false;
         }
 
         protected override void Dispose(bool disposing)

@@ -74,13 +74,20 @@ namespace PUPFMIS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Basket cseCatalogue = catalogueBL.GetCSECItems(ItemCode);
-            if (cseCatalogue == null)
+            Basket itemBasket;
+            if((Session["BasketItems"] != null) && (((List<Basket>)Session["BasketItems"]).Where(d => d.ItemCode == ItemCode).Count() == 1))
+            {
+                itemBasket = ((List<Basket>)Session["BasketItems"]).Where(d => d.ItemCode == ItemCode).FirstOrDefault();
+                ViewBag.PageTitle = "Common Use Office Supplies";
+                return View("AddToBasket", itemBasket);
+            }
+            itemBasket = catalogueBL.GetCSECItems(ItemCode, User.Identity.Name);
+            if (itemBasket == null)
             {
                 return HttpNotFound();
             }
             ViewBag.PageTitle = "Common Use Office Supplies";
-            return View("AddToBasket", cseCatalogue);
+            return View("AddToBasket", itemBasket);
         }
 
         [HttpPost]
@@ -92,31 +99,41 @@ namespace PUPFMIS.Controllers
             ValidateAddItem(itemBasket);
             if (ModelState.IsValid)
             {
+                if (Session["BasketItems"] == null)
+                {
+                    Session["BasketItems"] = new List<Basket>();
+                    //((List<Basket>)Session["BasketItems"]).Add(itemBasket);
+                }
+
                 itemBasket.Qtr1Qty = (String.IsNullOrEmpty(itemBasket.Qtr1Qty.ToString())) ? 0 : (int)itemBasket.Qtr1Qty;
                 itemBasket.Qtr2Qty = (String.IsNullOrEmpty(itemBasket.Qtr2Qty.ToString())) ? 0 : (int)itemBasket.Qtr2Qty;
                 itemBasket.Qtr3Qty = (String.IsNullOrEmpty(itemBasket.Qtr3Qty.ToString())) ? 0 : (int)itemBasket.Qtr3Qty;
                 itemBasket.Qtr4Qty = (String.IsNullOrEmpty(itemBasket.Qtr4Qty.ToString())) ? 0 : (int)itemBasket.Qtr4Qty;
                 itemBasket.TotalQty = ((int)itemBasket.Qtr1Qty + (int)itemBasket.Qtr2Qty + (int)itemBasket.Qtr3Qty + (int)itemBasket.Qtr4Qty);
 
-                if (Session["BasketItems"] == null)
+                if (catalogueBL.ValidateConsumptionVSQuantity(itemBasket))
                 {
-                    Session["BasketItems"] = new List<Basket>();
-                    ((List<Basket>)Session["BasketItems"]).Add(itemBasket);
+                    if (String.IsNullOrEmpty(itemBasket.Remarks))
+                    {
+                        ModelState.AddModelError(string.Empty, "Total Quantity is greater than the Previous consumption. Please reduce the quantity requirement or provide a justification below.");
+                        ViewBag.NeedsJustification = true;
+                        return View("AddToBasket", itemBasket);
+                    }
+                }
+
+                if (((List<Basket>)Session["BasketItems"]).Where(d => d.ItemID == itemBasket.ItemID).Count() == 1)
+                {
+                    ((List<Basket>)Session["BasketItems"]).Where(d => d.ItemID == itemBasket.ItemID).FirstOrDefault().Qtr1Qty = itemBasket.Qtr1Qty;
+                    ((List<Basket>)Session["BasketItems"]).Where(d => d.ItemID == itemBasket.ItemID).FirstOrDefault().Qtr2Qty = itemBasket.Qtr2Qty;
+                    ((List<Basket>)Session["BasketItems"]).Where(d => d.ItemID == itemBasket.ItemID).FirstOrDefault().Qtr3Qty = itemBasket.Qtr3Qty;
+                    ((List<Basket>)Session["BasketItems"]).Where(d => d.ItemID == itemBasket.ItemID).FirstOrDefault().Qtr4Qty = itemBasket.Qtr4Qty;
+                    ((List<Basket>)Session["BasketItems"]).Where(d => d.ItemID == itemBasket.ItemID).FirstOrDefault().TotalQty = itemBasket.TotalQty;
+                    ((List<Basket>)Session["BasketItems"]).Where(d => d.ItemID == itemBasket.ItemID).FirstOrDefault().Remarks = (String.IsNullOrEmpty(itemBasket.Remarks)) ? "Acceptable" : itemBasket.Remarks;
                 }
                 else
                 {
-                    if (((List<Basket>)Session["BasketItems"]).Where(d => d.ItemID == itemBasket.ItemID).Count() == 1)
-                    {
-                        ((List<Basket>)Session["BasketItems"]).Where(d => d.ItemID == itemBasket.ItemID).First().Qtr1Qty += itemBasket.Qtr1Qty;
-                        ((List<Basket>)Session["BasketItems"]).Where(d => d.ItemID == itemBasket.ItemID).First().Qtr2Qty += itemBasket.Qtr2Qty;
-                        ((List<Basket>)Session["BasketItems"]).Where(d => d.ItemID == itemBasket.ItemID).First().Qtr3Qty += itemBasket.Qtr3Qty;
-                        ((List<Basket>)Session["BasketItems"]).Where(d => d.ItemID == itemBasket.ItemID).First().Qtr4Qty += itemBasket.Qtr4Qty;
-                        ((List<Basket>)Session["BasketItems"]).Where(d => d.ItemID == itemBasket.ItemID).First().TotalQty += itemBasket.TotalQty;
-                    }
-                    else
-                    {
-                        ((List<Basket>)Session["BasketItems"]).Add(itemBasket);
-                    }
+                    itemBasket.Remarks = (String.IsNullOrEmpty(itemBasket.Remarks)) ? "Acceptable" : itemBasket.Remarks;
+                    ((List<Basket>)Session["BasketItems"]).Add(itemBasket);
                 }
                 return RedirectToAction("common-use-supplies");
             }

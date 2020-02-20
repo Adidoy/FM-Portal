@@ -94,11 +94,12 @@ namespace PUPFMIS.Models
         [Display(Name = "Total Qty")]
         public int? TotalQty { get; set; }
 
-        [Display(Name = "Total Consumption")]
+        [Display(Name = "Total Previous Consumption")]
         public int? TotalConsumption { get; set; }
 
-        [Display(Name = "Remarrks/Justification")]
         [MaxLength(150)]
+        [Display(Name = "Remarks")]
+        [DataType(DataType.MultilineText)]
         public string Remarks { get; set; }
     }
 

@@ -62,12 +62,17 @@
                     </div>
                     <br />
                     <div class="row">
+                        <div class="col-sm-12">
+                            @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-lg-7 col-md-7 col-sm-12">
                             <div class="row">
                                 <div class="col-sm-6">
                                     @Html.LabelFor(d => d.ProcurementSource)
                                 </div>
-                                <div class="1">
+                                <div class="col-sm-1">
                                     :
                                 </div>
                                 <div class="col-sm-5">
@@ -78,7 +83,7 @@
                                 <div class="col-sm-6">
                                     @Html.LabelFor(d => d.IndividualUOMReference)
                                 </div>
-                                <div class="1">
+                                <div class="col-sm-1">
                                     :
                                 </div>
                                 <div class="col-sm-5">
@@ -89,7 +94,7 @@
                                 <div class="col-sm-6">
                                     @Html.LabelFor(d => d.ItemCategory)
                                 </div>
-                                <div class="1">
+                                <div class="col-sm-1">
                                     :
                                 </div>
                                 <div class="col-sm-5">
@@ -100,11 +105,22 @@
                                 <div class="col-sm-6">
                                    @Html.LabelFor(d => d.MinimumIssuanceQty)
                                 </div>
-                                <div class="1">
+                                <div class="col-sm-1">
                                     :
                                 </div>
                                 <div class="col-sm-5">
                                     @Model.MinimumIssuanceQty
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    @Html.LabelFor(d => d.TotalConsumption)
+                                </div>
+                                <div class="col-sm-1">
+                                    :
+                                </div>
+                                <div class="col-sm-5">
+                                    @Model.TotalConsumption
                                 </div>
                             </div>
                         </div>
@@ -159,6 +175,18 @@
                             </div>
                         </div>
                     </div>
+                    @if (ViewBag.NeedsJustification == true)
+                    {
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Remarks, htmlAttributes: new { @class = "control-label" })
+                                    @Html.EditorFor(model => model.Remarks, new { htmlAttributes = new { @class = "form-control form-control-sm", placeholde = "Enter the justification here..." } })
+                                    @Html.ValidationMessageFor(model => model.Remarks, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         </div>

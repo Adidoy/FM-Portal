@@ -66,6 +66,7 @@
                                                 @Html.HiddenFor(m => basketItems[item].IndividualUOMReference)
                                                 @Html.HiddenFor(m => basketItems[item].MinimumIssuanceQty)
                                                 @Html.HiddenFor(m => basketItems[item].ItemCategory)
+                                                @Html.HiddenFor(m => basketItems[item].Remarks)
                                                 @( (String.IsNullOrEmpty(basketItems[item].ItemShortSpecifications)) ? "" : basketItems[item].ItemShortSpecifications ) <small>(@basketItems[item].ItemCode)</small>
                                             </td>
                                             <td style="text-align: center; vertical-align: middle;">
