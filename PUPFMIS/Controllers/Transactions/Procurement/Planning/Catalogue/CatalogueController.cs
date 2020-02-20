@@ -74,7 +74,7 @@ namespace PUPFMIS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Basket cseCatalogue = catalogueBL.GetCSECItems(ItemCode, User.Identity.Name);
+            Basket cseCatalogue = catalogueBL.GetCSECItems(ItemCode);
             if (cseCatalogue == null)
             {
                 return HttpNotFound();
@@ -123,8 +123,8 @@ namespace PUPFMIS.Controllers
             return View("AddToBasket", itemBasket);
         }
 
-        [ActionName("update-basket")]
-        [Route("ops/procurement/planning/catalogue/{ItemCode}/update-basket")]
+        [ActionName("update-basket-item")]
+        [Route("ops/procurement/planning/catalogue/{ItemCode}/update-basket-item")]
         public ActionResult UpdateBasket(string ItemCode)
         {
             if (ItemCode == null)
@@ -172,9 +172,8 @@ namespace PUPFMIS.Controllers
             return View("update-basket", itemBasket);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
         [ActionName("remove-from-basket")]
+        [Route("ops/procurement/planning/catalogue/{ItemCode}/remove-from-basket")]
         public ActionResult RemoveFromBasket(string ItemCode)
         {
             ((List<Basket>)Session["BasketItems"]).Remove(((List<Basket>)Session["BasketItems"]).Find(d => d.ItemCode == ItemCode));

@@ -18,7 +18,8 @@
     <h3 class="card-title"><i class="fa fa-list"></i> Basket Items</h3>
 }
 
-@Html.BeginForm("create", "PPMP", FormMethod.Post)
+@using (Html.BeginForm("create", "PPMP", FormMethod.Post))
+{
     <div class="row">
         <div class="col-sm-12">
             <hr />
@@ -28,14 +29,12 @@
                         <table class="table table-striped table-hover" id="basket">
                             <thead>
                                 <tr>
-                                    <th rowspan="2" style="text-align:center; vertical-align: middle;" width="23%">
+                                    <th rowspan="2" style="text-align:center; vertical-align: middle;" width="50%">
                                         Item Specifications
                                     </th>
                                     <th colspan="5" style="text-align:center; vertical-align: middle;">
                                         Quantity Requirement
                                     </th>
-                                    <th rowspan="2" style="text-align:center; vertical-align: middle;" width="7%">Total<br />Consumption</th>
-                                    <th rowspan="2" style="text-align:center; vertical-align: middle;" width="20%">Remarks/<br />Justifications</th>
                                     <th rowspan="2" style="text-align:center; vertical-align: middle;" width="15%">
                                         Action
                                     </th>
@@ -52,119 +51,48 @@
                                 @if (Model != null)
                                 {
                                     var basketItems = Model.ToList();
-                                    for (int i = 0; i < basketItems.Count; i++)
+                                    for (var item = 0; item < basketItems.Count; item++)
                                     {
-                                        if (basketItems[i].TotalQty > basketItems[i].TotalConsumption && !String.IsNullOrEmpty(basketItems[i].TotalConsumption.ToString()))
-                                        {
-                                            <tr style="background-color:lightpink; color:red;">
-                                                <td style="vertical-align: middle;">
-                                                    <b>@basketItems[i].ItemName</b>
-                                                    @Html.HiddenFor(m => basketItems[i].ItemID)
-                                                    @Html.HiddenFor(m => basketItems[i].ItemCode)
-                                                    @Html.HiddenFor(m => basketItems[i].ItemName)
-                                                    @Html.HiddenFor(m => basketItems[i].ItemShortSpecifications)
-                                                    @Html.HiddenFor(m => basketItems[i].ItemSpecifications)
-                                                    @Html.HiddenFor(m => basketItems[i].ItemImage)
-                                                    @Html.HiddenFor(m => basketItems[i].ProcurementSource)
-                                                    @Html.HiddenFor(m => basketItems[i].IndividualUOMReference)
-                                                    @Html.HiddenFor(m => basketItems[i].MinimumIssuanceQty)
-                                                    @Html.HiddenFor(m => basketItems[i].ItemCategory)
-                                                    @Html.HiddenFor(m => basketItems[i].TotalConsumption)
-                                                    @Html.HiddenFor(m => basketItems[i].Qtr1Qty)
-                                                    @Html.HiddenFor(m => basketItems[i].Qtr2Qty)
-                                                    @Html.HiddenFor(m => basketItems[i].Qtr3Qty)
-                                                    @Html.HiddenFor(m => basketItems[i].Qtr4Qty)
-                                                    @Html.HiddenFor(m => basketItems[i].TotalQty)
-
-                                                    @( (String.IsNullOrEmpty(basketItems[i].ItemShortSpecifications)) ? "" : basketItems[i].ItemShortSpecifications ) <small>(@basketItems[i].ItemCode)</small>
-                                                </td>
-                                                <td style="text-align: center; vertical-align: middle;">
-                                                    @basketItems[i].Qtr1Qty
-                                                </td>
-                                                <td style="text-align: center; vertical-align: middle;">
-                                                    @basketItems[i].Qtr2Qty
-                                                </td>
-                                                <td style="text-align: center; vertical-align: middle;">
-                                                    @basketItems[i].Qtr3Qty
-                                                </td>
-                                                <td style="text-align: center; vertical-align: middle;">
-                                                    @basketItems[i].Qtr4Qty
-                                                </td>
-                                                <td style="text-align: center; vertical-align: middle;">
-                                                    @basketItems[i].TotalQty
-                                                </td>
-                                                <td style="text-align: center; vertical-align: middle;">
-                                                    @basketItems[i].TotalConsumption
-                                                </td>
-                                                <td style="text-align: center; vertical-align: middle;">
-                                                    @Html.EditorFor(model => basketItems[i].Remarks, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%;" } })
-                                                    @Html.ValidationMessageFor(model => basketItems[i].Remarks, "", new { @class = "text-danger" })
-                                                </td>
-                                                <td style="text-align: center; vertical-align: middle;">
-                                                    @using (Html.BeginForm("remove-from-basket", "Catalogue", new { ItemCode = basketItems[i].ItemCode }, FormMethod.Post))
-                                                    {
-                                                        @Html.AntiForgeryToken()
-                                                        <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-times"></i></button>
-                                                        <button type="button" class="btn btn-sm btn-warning" onclick="window.location = '@Url.Action("update-basket", "Catalogue", new { ItemCode = basketItems[i].ItemCode })'"><i class="fa fa-edit"></i></button>
-                                                    }
-                                                </td>
-                                            </tr>
-                                        }
-                                        else
-                                        {
-                                            <tr>
-                                                <td style="vertical-align: middle;"><b>@basketItems[i].ItemName</b> 
-                                                    @Html.HiddenFor(m => basketItems[i].ItemID)
-                                                    @Html.HiddenFor(m => basketItems[i].ItemCode)
-                                                    @Html.HiddenFor(m => basketItems[i].ItemName)
-                                                    @Html.HiddenFor(m => basketItems[i].ItemShortSpecifications)
-                                                    @Html.HiddenFor(m => basketItems[i].ItemSpecifications)
-                                                    @Html.HiddenFor(m => basketItems[i].ItemImage)
-                                                    @Html.HiddenFor(m => basketItems[i].ProcurementSource)
-                                                    @Html.HiddenFor(m => basketItems[i].IndividualUOMReference)
-                                                    @Html.HiddenFor(m => basketItems[i].MinimumIssuanceQty)
-                                                    @Html.HiddenFor(m => basketItems[i].ItemCategory)
-                                                    @Html.HiddenFor(m => basketItems[i].TotalConsumption)
-                                                    @Html.HiddenFor(m => basketItems[i].Qtr1Qty)
-                                                    @Html.HiddenFor(m => basketItems[i].Qtr2Qty)
-                                                    @Html.HiddenFor(m => basketItems[i].Qtr3Qty)
-                                                    @Html.HiddenFor(m => basketItems[i].Qtr4Qty)
-                                                    @Html.HiddenFor(m => basketItems[i].TotalQty)
-                                                
-                                                    @( (String.IsNullOrEmpty(basketItems[i].ItemShortSpecifications)) ? "" : basketItems[i].ItemShortSpecifications ) <small>(@basketItems[i].ItemCode)</small>
-                                                </td>
-                                                <td style="text-align: center; vertical-align: middle;">
-                                                    @basketItems[i].Qtr1Qty
-                                                </td>
-                                                <td style="text-align: center; vertical-align: middle;">
-                                                    @basketItems[i].Qtr2Qty
-                                                </td>
-                                                <td style="text-align: center; vertical-align: middle;">
-                                                    @basketItems[i].Qtr3Qty
-                                                </td>
-                                                <td style="text-align: center; vertical-align: middle;">
-                                                    @basketItems[i].Qtr4Qty
-                                                </td>
-                                                <td style="text-align: center; vertical-align: middle;">
-                                                    @basketItems[i].TotalQty
-                                                </td>
-                                                <td style="text-align: center; vertical-align: middle;">
-                                                    @basketItems[i].TotalConsumption
-                                                </td>
-                                                <td style="text-align: center; vertical-align: middle;">
-                                                    @Html.HiddenFor(m => basketItems[i].Remarks, htmlAttributes: new { Value = "Accepted" })
-                                                    @Html.EditorFor(model => basketItems[i].Remarks, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", style = "font-size: 100%;", Value = "Accepted" } })
-                                                </td>
-                                                <td style="text-align: center; vertical-align: middle;">
-                                                    @using (Html.BeginForm("remove-from-basket", "Catalogue", new { ItemCode = basketItems[i].ItemCode }, FormMethod.Post))
-                                                    {
-                                                        @Html.AntiForgeryToken()
-                                                        <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-times"></i></button>
-                                                        <button type="button" class="btn btn-sm btn-warning" onclick="window.location = '@Url.Action("update-basket", "Catalogue", new { ItemCode = basketItems[i].ItemCode })'"><i class="fa fa-edit"></i></button>
-                                                    }
-                                                </td>
-                                            </tr>
-                                        }
+                                        <tr>
+                                            <td style="vertical-align: middle;">
+                                                <b>@basketItems[item].ItemName</b>
+                                                @Html.HiddenFor(m => basketItems[item].ItemID)
+                                                @Html.HiddenFor(m => basketItems[item].ItemCode)
+                                                @Html.HiddenFor(m => basketItems[item].ItemName)
+                                                @Html.HiddenFor(m => basketItems[item].ItemShortSpecifications)
+                                                @Html.HiddenFor(m => basketItems[item].ItemSpecifications)
+                                                @Html.HiddenFor(m => basketItems[item].ItemImage)
+                                                @Html.HiddenFor(m => basketItems[item].ProcurementSource)
+                                                @Html.HiddenFor(m => basketItems[item].IndividualUOMReference)
+                                                @Html.HiddenFor(m => basketItems[item].MinimumIssuanceQty)
+                                                @Html.HiddenFor(m => basketItems[item].ItemCategory)
+                                                @( (String.IsNullOrEmpty(basketItems[item].ItemShortSpecifications)) ? "" : basketItems[item].ItemShortSpecifications ) <small>(@basketItems[item].ItemCode)</small>
+                                            </td>
+                                            <td style="text-align: center; vertical-align: middle;">
+                                                @Html.HiddenFor(m => basketItems[item].Qtr1Qty)
+                                                @basketItems[item].Qtr1Qty
+                                            </td>
+                                            <td style="text-align: center; vertical-align: middle;">
+                                                @Html.HiddenFor(m => basketItems[item].Qtr2Qty)
+                                                @basketItems[item].Qtr2Qty
+                                            </td>
+                                            <td style="text-align: center; vertical-align: middle;">
+                                                @Html.HiddenFor(m => basketItems[item].Qtr3Qty)
+                                                @basketItems[item].Qtr3Qty
+                                            </td>
+                                            <td style="text-align: center; vertical-align: middle;">
+                                                @Html.HiddenFor(m => basketItems[item].Qtr4Qty)
+                                                @basketItems[item].Qtr4Qty
+                                            </td>
+                                            <td style="text-align: center; vertical-align: middle;">
+                                                @Html.HiddenFor(m => basketItems[item].TotalQty)
+                                                @basketItems[item].TotalQty
+                                            </td>
+                                            <td style="text-align: center; vertical-align: middle;">
+                                                <button type="button" class="btn btn-sm btn-danger" id="remove-btn" onclick="window.location.href = '@Url.Action("remove-from-basket", "Catalogue", new { ItemCode = basketItems[item].ItemCode })'"><i class="fa fa-times"></i></button>
+                                                <button type="button" class="btn btn-sm btn-warning" onclick="window.location = '@Url.Action("update-basket-item", "Catalogue", new { ItemCode = basketItems[item].ItemCode })'"><i class="fa fa-edit"></i></button>
+                                            </td>
+                                        </tr>
                                     }
                                 }
                                 else
@@ -181,7 +109,6 @@
                 </div>
             </div>
         </div>
-
     </div>
     <hr />
     <div class="row">

@@ -107,17 +107,6 @@
                                     @Model.MinimumIssuanceQty
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    @Html.LabelFor(d => d.TotalConsumption) <small>(Previous Year)</small>
-                                </div>
-                                <div class="1">
-                                    :
-                                </div>
-                                <div class="col-sm-5">
-                                    @( String.IsNullOrEmpty(Model.TotalConsumption.ToString()) ? "No issuance record" : Model.TotalConsumption.ToString() )
-                                </div>
-                            </div>
                         </div>
                         <div class="col-lg-5 col-md-5 col-sm-12">
                             <div class="row">

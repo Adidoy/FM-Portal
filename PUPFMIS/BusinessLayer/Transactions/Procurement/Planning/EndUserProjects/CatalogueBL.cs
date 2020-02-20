@@ -37,11 +37,9 @@ namespace PUPFMIS.BusinessLayer
                    .ToList();
         }
 
-        public Basket GetCSECItems(string ItemCode, string Email)
+        public Basket GetCSECItems(string ItemCode)
         {
-            var office = db.UserAccounts.Where(d => d.Email == Email).FirstOrDefault().FKUserInformationReference.Office;
-
-            Basket basket = db.Items
+            return db.Items
                             .Where(d => d.FKInventoryTypeReference.InventoryTypeName == "Common Use Office Supplies" && d.ItemCode == ItemCode)
                             .Select(d => new Basket {
                                 ItemID = d.ID,
@@ -57,14 +55,6 @@ namespace PUPFMIS.BusinessLayer
                             })
                             .OrderBy(d => new { d.ItemName, d.ItemCode })
                             .FirstOrDefault();
-            //basket.TotalConsumption = db.SuppliesIssueDetails
-            //                          .Where(d => d.FKSuppliesMaster.FKItem.ItemCode == ItemCode && d.FKRequestHeader.Office == office)
-            //                          .Select(d => new { ItemCode = d.FKSuppliesMaster.FKItem.ItemCode, Quantity = d.QtyIssued })
-            //                          .GroupBy(d => d.ItemCode)
-            //                          .Select(d => d.Sum(x => x.Quantity))
-            //                          .FirstOrDefault();
-            basket.TotalConsumption = 25;
-            return basket;
         }
 
         public List<Catalogue> GetPropertyItems()
