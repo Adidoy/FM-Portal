@@ -43,7 +43,6 @@ namespace PUPFMIS.Controllers
                 UsersVM user;
                 if (accountsManagementBL.VerifyUserCredentials(login, out Message, out user))
                 {
-                    ViewData["User"] = user;
                     var claims = new[]
                     {
                         new Claim(ClaimTypes.Name, user.Email)
