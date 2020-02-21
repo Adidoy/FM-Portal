@@ -68,6 +68,13 @@
                                                 @Html.HiddenFor(m => basketItems[item].ItemCategory)
                                                 @Html.HiddenFor(m => basketItems[item].Remarks)
                                                 @( (String.IsNullOrEmpty(basketItems[item].ItemShortSpecifications)) ? "" : basketItems[item].ItemShortSpecifications ) <small>(@basketItems[item].ItemCode)</small>
+                                                @if(basketItems[item].Remarks != "Acceptable")
+                                                {
+                                                    <br /><br />
+                                                    <span>
+                                                        <i><b>Remarks</b> : @Html.DisplayFor(m => basketItems[item].Remarks)</i> 
+                                                    </span>
+                                                }
                                             </td>
                                             <td style="text-align: center; vertical-align: middle;">
                                                 @Html.HiddenFor(m => basketItems[item].Qtr1Qty)
