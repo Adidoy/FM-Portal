@@ -94,7 +94,7 @@ namespace PUPFMIS.Models
         [Display(Name = "Total Qty")]
         public int? TotalQty { get; set; }
 
-        [Display(Name = "Total Previous Consumption")]
+        [Display(Name = "Maximum Request Quantity")]
         public int? TotalConsumption { get; set; }
 
         [MaxLength(150)]
