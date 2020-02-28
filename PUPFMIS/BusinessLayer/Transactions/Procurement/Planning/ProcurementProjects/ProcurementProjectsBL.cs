@@ -55,7 +55,7 @@ namespace PUPFMIS.BusinessLayer
                    }).ToList();
         }
 
-        public bool SaveProject(Basket projectBasket, string Email)
+        public bool SaveProject(Basket projectBasket, string Email, string Type)
         {
             var user = db.UserAccounts.Where(d => d.Email == Email).FirstOrDefault();
             var office = hris.OfficeModel.Find(user.FKUserInformationReference.Office);
@@ -65,7 +65,7 @@ namespace PUPFMIS.BusinessLayer
             projectBasket.BasketHeader.SubmittedBy = office.OfficeHead;
             projectBasket.BasketHeader.ProjectStatus = "New Project";
             projectBasket.BasketHeader.PurgeFlag = false;
-            projectBasket.BasketHeader.ProjectCode = GenerateProjectCode(projectBasket.BasketHeader.FiscalYear, office.OfficeName);
+            projectBasket.BasketHeader.ProjectCode = GenerateProjectCode(projectBasket.BasketHeader.FiscalYear, office.OfficeName, Type);
 
             ProjectProcurementPlan header = new ProjectProcurementPlan();
             header = projectBasket.BasketHeader;
@@ -122,12 +122,12 @@ namespace PUPFMIS.BusinessLayer
             return false;
         }
 
-        private string GenerateProjectCode(string FiscalYear, string OfficeName)
+        private string GenerateProjectCode(string FiscalYear, string OfficeName, string Type)
         {
             var office = hris.OfficeModel.Where(d => d.OfficeName == OfficeName).FirstOrDefault();
             var series = db.ProjectProcurementPlan.Where(d => d.Office == office.ID && d.FiscalYear == FiscalYear).Count() + 1;
             var seriesStr = (series.ToString().Length == 1) ? "00" + series.ToString() : (series.ToString().Length == 2) ? "0" + series.ToString() : series.ToString();
-            return "EUPR-" + office.OfficeCode + "-" + seriesStr + "-" + FiscalYear;
+            return Type + "-" + office.OfficeCode + "-" + seriesStr + "-" + FiscalYear;
         }
 
         public ProjectProcurementViewModel GetProjectDetails(string ProjectCode)
@@ -136,6 +136,11 @@ namespace PUPFMIS.BusinessLayer
             projectViewModel.Header = db.ProjectProcurementPlan.Where(d => d.ProjectCode == ProjectCode && d.PurgeFlag == false).FirstOrDefault();
             projectViewModel.Items = db.ProjectProcurementPlanItems.Where(d => d.FKProjectReference.ID == projectViewModel.Header.ID).ToList();
             return projectViewModel;
+        }
+
+        public ProjectProcurementPlanItems GetProjectItem(string ProjectCode, string ItemCode)
+        {
+            return db.ProjectProcurementPlanItems.Where(d => d.FKProjectReference.ProjectCode == ProjectCode && d.FKItemReference.ItemCode == ItemCode).FirstOrDefault();
         }
 
         protected override void Dispose(bool disposing)

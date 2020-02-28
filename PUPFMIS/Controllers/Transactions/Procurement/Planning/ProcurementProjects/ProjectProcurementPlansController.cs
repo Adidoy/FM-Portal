@@ -250,9 +250,32 @@ namespace PUPFMIS.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult SaveProject(Basket projectBasket)
         {
-            projectProcurement.SaveProject(projectBasket, User.Identity.Name);
+            projectProcurement.SaveProject(projectBasket, User.Identity.Name, "EUPR");
             return RedirectToAction("dashboard", "PPMP");
         }
+
+        [ActionName("update-item")]
+        [Route("ops/procurement/planning/projects/{ProjectCode}/details/{ItemCode}/update-item")]
+        public ActionResult UpdateItem(string ProjectCode, string ItemCode)
+        {
+            if(ProjectCode == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            if(ItemCode == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            ProjectProcurementPlanItems item = projectProcurement.GetProjectItem(ProjectCode, ItemCode);
+            if(item == null)
+            {
+                return HttpNotFound();
+            }
+            return View("UpdateItem", item);
+        }
+
         //=======================================================================================================================
 
         public ActionResult Edit(int? id)

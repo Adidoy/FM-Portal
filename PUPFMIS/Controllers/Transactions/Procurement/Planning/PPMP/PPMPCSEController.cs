@@ -22,7 +22,7 @@ namespace PUPFMIS.Controllers
         {
             ProjectProcurementPlan header = new ProjectProcurementPlan();
 
-            header.ProjectCode = "EUPR-XXXX-0000-0000";
+            header.ProjectCode = "CSPL-XXXX-0000-0000";
             header.ProjectName = "Supply and delivery of Common Use Office Supplies";
             header.Description = "Supply and delivery of common use office supplies to be used for daily transactions of the Office";
             header.ProjectMonthStart = 1;
@@ -47,7 +47,7 @@ namespace PUPFMIS.Controllers
                 return RedirectToAction("catalogue");
             }
 
-            header.ProjectCode = "EUPR-XXXX-0000-0000";
+            header.ProjectCode = "CSPL-XXXX-0000-0000";
             header.ProjectName = "Supply and delivery of Common Use Office Supplies";
             header.Description = "Supply and delivery of common use office supplies to be used for daily transactions of the Office";
             header.ProjectMonthStart = 1;
@@ -246,7 +246,7 @@ namespace PUPFMIS.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult SaveProject(Basket projectBasket)
         {
-            procurementProjects.SaveProject(projectBasket, User.Identity.Name);
+            procurementProjects.SaveProject(projectBasket, User.Identity.Name, "CSPL");
             return RedirectToAction("dashboard", "PPMP");
         }
 

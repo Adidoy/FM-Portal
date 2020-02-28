@@ -4770,6 +4770,7 @@
     <Content Include="Views\PPMPCSE\AddToBasket.cshtml" />
     <Content Include="Views\PPMPCSE\Catalogue.cshtml" />
     <Content Include="Views\PPMPCSE\UpdateBasket.cshtml" />
+    <Content Include="Views\ProjectProcurementPlans\UpdateItem.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
