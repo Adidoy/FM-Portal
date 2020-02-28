@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PUPFMIS.Models
 {
-    [Table("property_requestHeader")]
+    [Table("property_requestheader")]
     public class RequestHeader
     {
         [Key]
@@ -59,7 +59,7 @@ namespace PUPFMIS.Models
         public virtual InventoryType FKRequestTypeReference { get; set; }
     }
 
-    [Table("property_suppliesRequestDetails")]
+    [Table("property_suppliesrequestdetails")]
     public class SuppliesRequestDetails
     {
         [Key, Column(Order = 0)]
@@ -81,7 +81,7 @@ namespace PUPFMIS.Models
         public virtual Supply FKSuppliesMaster { get; set; }
     }
 
-    [Table("property_suppliesIssueDetails")]
+    [Table("property_suppliesissuedetails")]
     public class SuppliesIssueDetails
     {
         [Key, Column(Order = 0)]

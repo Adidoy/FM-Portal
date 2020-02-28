@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<PUPFMIS.Models.PPMPHeaderViewModel>
 
 @{
-    ViewBag.Title = "PPMP";
+    ViewBag.Title = "Project Procurement Management Plan";
     ViewBag.Description = "Home";
     Layout = "~/Views/Shared/_IndexLayout.cshtml";
 }
@@ -22,6 +22,7 @@
     <div class="col-sm-12">
         <div class="text-right">
             <button style="text-align:left;" class="btn btn-secondary btn-md"><i class="fa fa-filter"></i> Filter</button>
+            <button style="text-align:left;" class="btn btn-danger btn-md" onclick="window.location = '@Url.Action("dashboard", "PPMP")'"><i class="fa fa-arrow-circle-left"></i> Back</button>
         </div>
     </div>
 </div>
@@ -64,23 +65,31 @@
                             </td>
                             <td>
                                 @if (item.Status == "New")
-                                {
+                                    {
                                     <span class="badge bg-secondary" style="font-size:100%;">@Html.DisplayFor(modelItem => item.Status)</span>
                                 }
                                 else if (item.Status == "Submitted")
                                 {
                                     <span class="badge bg-warning" style="font-size:100%;">@Html.DisplayFor(modelItem => item.Status)</span>
-                                }
-                                else if (item.Status == "Submission Accepted")
-                                {
+                                    }
+                                    else if (item.Status == "Submission Accepted")
+                                    {
                                     <span class="badge bg-success" style="font-size:100%;">@Html.DisplayFor(modelItem => item.Status)</span>
-                                }
+                                    }
                             </td>
                             <td style="vertical-align:middle; text-align:center;">
-                                <button type="button" class="btn btn-sm btn-primary" style="width: 100px;" onclick="window.location = '@Url.Action("details", "PPMP", new { ReferenceNo = item.ReferenceNo })'"><i class="fa fa-eye"></i> View</button>
+                                @if (item.PPMPType == "Common Use Office Supplies")
+                                    {
+                                    <button type="button" class="btn btn-sm btn-primary" style="width: 100px;" onclick="window.location = '@Url.Action("details", "PPMPCSE", new { ReferenceNo = item.ReferenceNo })'"><i class="fa fa-eye"></i> View</button>
+                                }
+                                else if (item.PPMPType == "Property and Equipment")
+                                {
+                                    <button type="button" class="btn btn-sm btn-primary" style="width: 100px;" onclick="window.location = '@Url.Action("details", "PPMPProperty", new { ReferenceNo = item.ReferenceNo })'"><i class="fa fa-eye"></i> View</button>
+                                    }
+
                             </td>
                         </tr>
-                    }
+                        }
                 </tbody>
             </table>
         </div>

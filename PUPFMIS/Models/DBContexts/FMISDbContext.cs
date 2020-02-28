@@ -7,10 +7,6 @@ namespace PUPFMIS.Models
     public class FMISDbContext : DbContext
     {
         public FMISDbContext() : base("FMISDbContext") { }
-        //public FMISDbContext() : base("name=FMPortal")
-        //{
-            
-        //}
 
         public static FMISDbContext Create()
         {
@@ -23,13 +19,15 @@ namespace PUPFMIS.Models
         public DbSet<InventoryType> InventoryTypes { get; set; }
         public DbSet<Item> Items { get; set; }
         public DbSet<ItemPrice> ItemPrices { get; set; } 
-        public DbSet<EndUserProject> EndUserProjects { get; set; }
+        public DbSet<ProjectProcurementPlan> ProjectProcurementPlan { get; set; }
+        public DbSet<ProjectProcurementPlanItems> ProjectProcurementPlanItems { get; set; }
         public DbSet<MarketSurvey> MarketSurvey { get; set; }
         public DbSet<PPMPHeader> PPMPHeader { get; set; }
         public DbSet<PPMPCSEDetails> PPMPCSEDetails { get; set; }
         public DbSet<PPMPDeadlines> PPMPDeadlines { get; set; }
         public DbSet<PPMPApprovalWorkflow> PPMPApprovalWorkflow { get; set; }
         public DbSet<Supply> Supplies { get; set; }
+        public DbSet<StockCard> StockCard { get; set; }
         public DbSet<RequestHeader> RequestHeader { get; set; }
         public DbSet<SuppliesRequestDetails> SuppliesRequestDetails { get; set; }
         public DbSet<SuppliesIssueDetails> SuppliesIssueDetails { get; set; }

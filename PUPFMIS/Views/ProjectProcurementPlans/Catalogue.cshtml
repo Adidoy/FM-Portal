@@ -1,0 +1,110 @@
+﻿@model IEnumerable<PUPFMIS.Models.Catalogue>
+
+@{
+    ViewBag.Title = "Items";
+    ViewBag.Description = "Catalogue";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Project Procurement Plan", "PPMP")</li>
+        <li class="breadcrumb-item">Catalogue</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-list"></i> @ViewBag.CategoryName</h3>
+}
+<br /><br />
+<div class="row">
+    <div class="col-sm-9">
+        @if (Model.Count() == 0)
+        {
+            <div class="row">
+                <div class="col-sm-12">
+                    <h3>No items found.</h3>
+                </div>
+            </div>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                <div class="row">
+                    <div class="col-lg-2 col-md-12 col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-12" style="text-align:center;">
+                                @if (item.ItemImage != null)
+                                {
+                                    var base64 = Convert.ToBase64String(item.ItemImage);
+                                    var imgsrc = string.Format("data:image/jpg;base64,{0}", base64);
+                                    <img src='@imgsrc' style="max-width:100px; max-height:100px;" />
+                                }
+                                else
+                                {
+                                    <img src="@Url.Content("~/Content/imgs/PUPLogo.png")" style="max-width:100px; max-height:100px;" />
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-10 col-md-6 col-sm-12">
+                        <h4>@item.ItemName.ToString().ToUpper() @( (String.IsNullOrEmpty(item.ItemShortSpecifications)) ? "" : item.ItemShortSpecifications ) <span><small><b>(@item.ItemCode)</b></small></span></h4>
+                        <h6>ITEM SPECIFICATIONS:</h6>
+                        <p style="text-align:justify;">@item.ItemSpecifications</p>
+                        <p style="font-size:12pt;">
+                            <b>Procurement Source:</b> @( item.ProcurementSource == PUPFMIS.Models.ProcurementSources.PS_DBM ? "DBM Procurement Store" : "Private Suppliers" )
+                            <br />
+                            <b>Unit of Measure:</b> @item.IndividualUOMReference
+                            <br />
+                            <b>Category:</b> @item.ItemCategory
+                            <br />
+                            <b>Minimum Issuance Qty:</b> @item.MinimumIssuanceQty
+                        </p>
+                        <br />
+                        <div style="text-align:right;">
+                            <button type="button" class="btn btn-sm btn-success" onclick="window.location = '@Url.Action("add-to-basket", "ProjectProcurementPlans", new { ItemCode = item.ItemCode })'"><i class="fa fa-shopping-basket"></i> Add to Basket</button>
+                            @*<button type="button" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Regular Items</button>*@
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <br />
+            }
+        }
+    </div>
+    <div class="col-sm-3">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-warning"><i class="fa fa-shopping-basket"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text mt-3" style="font-size:12pt; font-weight:bold;"> @Html.ActionLink("View Basket", "view-basket", "ProjectProcurementPlans")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card card-secondary">
+                    <div class="card-header">
+                        <h3 class="card-title">Categories</h3>
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            @foreach (string category in ViewBag.Categories)
+                            {
+                                <ul class="list-group">
+                                    <li class="list-group-item list-group-item-secondary">
+                                        @Html.ActionLink(category, "view-by-category", new { categoryName = category })
+                                    </li>
+                                </ul>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

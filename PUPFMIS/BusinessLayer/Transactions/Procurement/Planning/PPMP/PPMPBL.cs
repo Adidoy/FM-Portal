@@ -16,6 +16,18 @@ namespace PUPFMIS.BusinessLayer
         private HRISDbContext HRISdb = new HRISDbContext();
         private ReportsConfig reportConfig = new ReportsConfig();
 
+        public List<PPMPDeadlines> GetFiscalYears()
+        {
+            return FMISdb.PPMPDeadlines.Where(d => d.PurgeFlag == false).OrderBy(d => d.FiscalYear).ToList();
+        }
+
+        public int UpdateTotalConsumption()
+        {
+            return 25;
+        }
+
+        //====================================================================================================//
+
         public List<PPMPHeaderViewModel> GetMyPPMP()
         {
             var OfficeID = FMISdb.UserInformation.Find(FMISdb.UserAccounts.Where(d => d.Email == System.Web.HttpContext.Current.User.Identity.Name).FirstOrDefault().ID).Office;
@@ -292,22 +304,24 @@ namespace PUPFMIS.BusinessLayer
 
             reportConfig.AddTable(true);
             reportConfig.AddContentColumn(new Unit(2, UnitType.Centimeter), ParagraphAlignment.Center, new Color(252, 207, 101));
-            reportConfig.AddContentColumn(new Unit(11.63, UnitType.Centimeter), ParagraphAlignment.Center, new Color(252, 207, 101));
-            reportConfig.AddContentColumn(new Unit(5, UnitType.Centimeter), ParagraphAlignment.Center, new Color(252, 207, 101));
+            reportConfig.AddContentColumn(new Unit(8.5, UnitType.Centimeter), ParagraphAlignment.Center, new Color(252, 207, 101));
+            reportConfig.AddContentColumn(new Unit(2.5, UnitType.Centimeter), ParagraphAlignment.Center, new Color(252, 207, 101));
             reportConfig.AddContentColumn(new Unit(2.37, UnitType.Centimeter), ParagraphAlignment.Center, new Color(252, 207, 101));
             reportConfig.AddContentColumn(new Unit(2.37, UnitType.Centimeter), ParagraphAlignment.Center, new Color(252, 207, 101));
             reportConfig.AddContentColumn(new Unit(2.37, UnitType.Centimeter), ParagraphAlignment.Center, new Color(252, 207, 101));
             reportConfig.AddContentColumn(new Unit(2.37, UnitType.Centimeter), ParagraphAlignment.Center, new Color(252, 207, 101));
             reportConfig.AddContentColumn(new Unit(2.37, UnitType.Centimeter), ParagraphAlignment.Center, new Color(252, 207, 101));
+            reportConfig.AddContentColumn(new Unit(5.63, UnitType.Centimeter), ParagraphAlignment.Center, new Color(252, 207, 101));
 
             reportConfig.AddContentRow(new Unit(0.2, UnitType.Inch));
-            reportConfig.AddContent("PART I. AVAILABLE AT PROCUREMENT SERVICE STORES", 0, new Unit(10, UnitType.Point), true, ParagraphAlignment.Left, VerticalAlignment.Center, 7);
+            reportConfig.AddContent("PART I. AVAILABLE AT PROCUREMENT SERVICE STORES", 0, new Unit(10, UnitType.Point), true, ParagraphAlignment.Left, VerticalAlignment.Center, 8);
 
             reportConfig.AddContentRow(new Unit(0.2, UnitType.Inch));
             reportConfig.AddContent("Item Code", 0, new Unit(10, UnitType.Point), true, ParagraphAlignment.Center, VerticalAlignment.Center, null, 1);
             reportConfig.AddContent("Item and Specifications", 1, new Unit(10, UnitType.Point), true, ParagraphAlignment.Center, VerticalAlignment.Center, null, 1);
             reportConfig.AddContent("Unit of Measure", 2, new Unit(10, UnitType.Point), true, ParagraphAlignment.Center, VerticalAlignment.Center, null, 1);
             reportConfig.AddContent("Quantity Requirement", 3, new Unit(10, UnitType.Point), true, ParagraphAlignment.Center, VerticalAlignment.Center, 4);
+            reportConfig.AddContent("Remarks", 8, new Unit(10, UnitType.Point), true, ParagraphAlignment.Center, VerticalAlignment.Center, null, 1);
 
             reportConfig.AddContentRow(new Unit(0.2, UnitType.Inch));
             reportConfig.AddContent("Qtr 1", 3, new Unit(10, UnitType.Point), true, ParagraphAlignment.Center, VerticalAlignment.Center);
@@ -318,18 +332,19 @@ namespace PUPFMIS.BusinessLayer
 
             reportConfig.AddTable(true);
             reportConfig.AddContentColumn(new Unit(2, UnitType.Centimeter));
-            reportConfig.AddContentColumn(new Unit(11.63, UnitType.Centimeter));
-            reportConfig.AddContentColumn(new Unit(5, UnitType.Centimeter));
+            reportConfig.AddContentColumn(new Unit(8.5, UnitType.Centimeter));
+            reportConfig.AddContentColumn(new Unit(2.5, UnitType.Centimeter));
             reportConfig.AddContentColumn(new Unit(2.37, UnitType.Centimeter));
             reportConfig.AddContentColumn(new Unit(2.37, UnitType.Centimeter));
             reportConfig.AddContentColumn(new Unit(2.37, UnitType.Centimeter));
             reportConfig.AddContentColumn(new Unit(2.37, UnitType.Centimeter));
             reportConfig.AddContentColumn(new Unit(2.37, UnitType.Centimeter));
+            reportConfig.AddContentColumn(new Unit(5.63, UnitType.Centimeter));
 
             if (ppmpVM.DBMItems.Count == 0)
             {
                 reportConfig.AddContentRow(new Unit(0.2, UnitType.Inch));
-                reportConfig.AddContent("*** NO ITEMS ***", 0, new Unit(10, UnitType.Point), true, ParagraphAlignment.Center, VerticalAlignment.Center, 7);
+                reportConfig.AddContent("*** NO ITEMS ***", 0, new Unit(10, UnitType.Point), true, ParagraphAlignment.Center, VerticalAlignment.Center, 8);
             }
             else
             {
@@ -345,27 +360,30 @@ namespace PUPFMIS.BusinessLayer
                     reportConfig.AddContent(item.Qtr3.ToString(), 5, new Unit(10, UnitType.Point), false, ParagraphAlignment.Center, VerticalAlignment.Center);
                     reportConfig.AddContent(item.Qtr4.ToString(), 6, new Unit(10, UnitType.Point), false, ParagraphAlignment.Center, VerticalAlignment.Center);
                     reportConfig.AddContent(item.TotalQty.ToString(), 7, new Unit(10, UnitType.Point), true, ParagraphAlignment.Center, VerticalAlignment.Center);
+                    reportConfig.AddContent((item.Remarks == "Acceptable" || String.IsNullOrEmpty(item.Remarks)) ? "" : item.Remarks, 8, new Unit(10, UnitType.Point), false, ParagraphAlignment.Justify, VerticalAlignment.Center);
                 }
             }
 
             reportConfig.AddTable(true);
             reportConfig.AddContentColumn(new Unit(2, UnitType.Centimeter), ParagraphAlignment.Center, new Color(252, 207, 101));
-            reportConfig.AddContentColumn(new Unit(11.63, UnitType.Centimeter), ParagraphAlignment.Center, new Color(252, 207, 101));
-            reportConfig.AddContentColumn(new Unit(5, UnitType.Centimeter), ParagraphAlignment.Center, new Color(252, 207, 101));
+            reportConfig.AddContentColumn(new Unit(8.5, UnitType.Centimeter), ParagraphAlignment.Center, new Color(252, 207, 101));
+            reportConfig.AddContentColumn(new Unit(2.5, UnitType.Centimeter), ParagraphAlignment.Center, new Color(252, 207, 101));
             reportConfig.AddContentColumn(new Unit(2.37, UnitType.Centimeter), ParagraphAlignment.Center, new Color(252, 207, 101));
             reportConfig.AddContentColumn(new Unit(2.37, UnitType.Centimeter), ParagraphAlignment.Center, new Color(252, 207, 101));
             reportConfig.AddContentColumn(new Unit(2.37, UnitType.Centimeter), ParagraphAlignment.Center, new Color(252, 207, 101));
             reportConfig.AddContentColumn(new Unit(2.37, UnitType.Centimeter), ParagraphAlignment.Center, new Color(252, 207, 101));
             reportConfig.AddContentColumn(new Unit(2.37, UnitType.Centimeter), ParagraphAlignment.Center, new Color(252, 207, 101));
+            reportConfig.AddContentColumn(new Unit(5.63, UnitType.Centimeter), ParagraphAlignment.Center, new Color(252, 207, 101));
 
             reportConfig.AddContentRow(new Unit(0.2, UnitType.Inch));
-            reportConfig.AddContent("PART II. OTHER ITEMS NOT AVALABLE AT PS BUT REGULARLY PURCHASED FROM OTHER SOURCES (Note: Please indicate price of items)", 0, new Unit(10, UnitType.Point), true, ParagraphAlignment.Left, VerticalAlignment.Center, 7);
+            reportConfig.AddContent("PART II. OTHER ITEMS NOT AVALABLE AT PS BUT REGULARLY PURCHASED FROM OTHER SOURCES (Note: Please indicate price of items)", 0, new Unit(10, UnitType.Point), true, ParagraphAlignment.Left, VerticalAlignment.Center, 8);
 
             reportConfig.AddContentRow(new Unit(0.2, UnitType.Inch));
             reportConfig.AddContent("Item Code", 0, new Unit(10, UnitType.Point), true, ParagraphAlignment.Center, VerticalAlignment.Center, null, 1);
             reportConfig.AddContent("Item and Specifications", 1, new Unit(10, UnitType.Point), true, ParagraphAlignment.Center, VerticalAlignment.Center, null, 1);
             reportConfig.AddContent("Unit of Measure", 2, new Unit(10, UnitType.Point), true, ParagraphAlignment.Center, VerticalAlignment.Center, null, 1);
             reportConfig.AddContent("Quantity Requirement", 3, new Unit(10, UnitType.Point), true, ParagraphAlignment.Center, VerticalAlignment.Center, 4);
+            reportConfig.AddContent("Remarks", 8, new Unit(10, UnitType.Point), true, ParagraphAlignment.Center, VerticalAlignment.Center, null, 1);
 
             reportConfig.AddContentRow(new Unit(0.2, UnitType.Inch));
             reportConfig.AddContent("Qtr 1", 3, new Unit(10, UnitType.Point), true, ParagraphAlignment.Center, VerticalAlignment.Center);
@@ -376,18 +394,19 @@ namespace PUPFMIS.BusinessLayer
 
             reportConfig.AddTable(true);
             reportConfig.AddContentColumn(new Unit(2, UnitType.Centimeter));
-            reportConfig.AddContentColumn(new Unit(11.63, UnitType.Centimeter));
-            reportConfig.AddContentColumn(new Unit(5, UnitType.Centimeter));
+            reportConfig.AddContentColumn(new Unit(8.5, UnitType.Centimeter));
+            reportConfig.AddContentColumn(new Unit(2.5, UnitType.Centimeter));
             reportConfig.AddContentColumn(new Unit(2.37, UnitType.Centimeter));
             reportConfig.AddContentColumn(new Unit(2.37, UnitType.Centimeter));
             reportConfig.AddContentColumn(new Unit(2.37, UnitType.Centimeter));
             reportConfig.AddContentColumn(new Unit(2.37, UnitType.Centimeter));
             reportConfig.AddContentColumn(new Unit(2.37, UnitType.Centimeter));
+            reportConfig.AddContentColumn(new Unit(5.63, UnitType.Centimeter));
 
             if (ppmpVM.NonDBMItems.Count == 0)
             {
                 reportConfig.AddContentRow(new Unit(0.2, UnitType.Inch));
-                reportConfig.AddContent("*** NO ITEMS ***", 0, new Unit(10, UnitType.Point), true, ParagraphAlignment.Center, VerticalAlignment.Center, 7);
+                reportConfig.AddContent("*** NO ITEMS ***", 0, new Unit(10, UnitType.Point), true, ParagraphAlignment.Center, VerticalAlignment.Center, 8);
             }
             else
             {
@@ -403,6 +422,7 @@ namespace PUPFMIS.BusinessLayer
                     reportConfig.AddContent(item.Qtr3.ToString(), 5, new Unit(10, UnitType.Point), false, ParagraphAlignment.Center, VerticalAlignment.Center);
                     reportConfig.AddContent(item.Qtr4.ToString(), 6, new Unit(10, UnitType.Point), false, ParagraphAlignment.Center, VerticalAlignment.Center);
                     reportConfig.AddContent(item.TotalQty.ToString(), 7, new Unit(10, UnitType.Point), true, ParagraphAlignment.Center, VerticalAlignment.Center);
+                    reportConfig.AddContent((item.Remarks == "Acceptable" || String.IsNullOrEmpty(item.Remarks)) ? "" : item.Remarks, 8, new Unit(10, UnitType.Point), false, ParagraphAlignment.Justify, VerticalAlignment.Center);
                 }
             }
 

@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using PUPFMIS.Models;
+﻿using PUPFMIS.Models;
 using PUPFMIS.Models.HRIS;
-using System.Security.Cryptography;
-using System.Web.Helpers;
-using System.Data.Entity.Infrastructure;
+using System;
+using System.Collections.Generic;
 using System.Data.Entity;
-using System.Web.Security;
+using System.Data.Entity.Infrastructure;
+using System.Linq;
+using System.Web.Helpers;
+using System.Web.Mvc;
 
 namespace PUPFMIS.BusinessLayer
 {

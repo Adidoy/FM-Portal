@@ -7,7 +7,7 @@ using System.Web.Mvc;
 
 namespace PUPFMIS.Models
 {
-    [Table("master_itemCategory")]
+    [Table("master_itemcategory")]
     public class ItemCategory
     {
         [Key]
@@ -117,7 +117,7 @@ namespace PUPFMIS.Models
         public DateTime? DeletedAt { get; set; }
     }
 
-    [Table("master_itemPrices")]
+    [Table("master_itemprices")]
     public class ItemPrice
     {
         [Key]
@@ -151,11 +151,14 @@ namespace PUPFMIS.Models
         public DateTime? UpdatedAt { get; set; }
     }
 
-    [Table("master_inventoryTypes")]
+    [Table("master_inventorytypes")]
     public class InventoryType
     {
         [Key]
         public int ID { get; set; }
+
+        [Display(Name = "Inventory Code")]
+        public string InventoryCode { get; set; }
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
         [MaxLength(75, ErrorMessage = "{0} must be up to {1} characters only.")]

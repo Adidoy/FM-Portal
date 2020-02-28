@@ -23,10 +23,20 @@ namespace PUPFMIS.BusinessLayer
             return categories;
         }
 
-        public List<Catalogue> GetCSEItems()
+        public List<InventoryType> GetInventoryTypes()
+        {
+            return db.InventoryTypes.ToList();
+        }
+
+        public InventoryType GetInventoryTypes(int InventoryTypeID)
+        {
+            return db.InventoryTypes.Find(InventoryTypeID);
+        }
+
+        public List<Catalogue> GetCatalogue()
         {
             return (from items in db.Items
-                    where items.FKInventoryTypeReference.InventoryTypeName == "Common Use Office Supplies"
+                    where items.InventoryTypeReference != 1 || items.InventoryTypeReference != 4 || items.InventoryTypeReference != 5
                     select new Catalogue
                     {
                         ItemID = items.ID,
@@ -38,18 +48,65 @@ namespace PUPFMIS.BusinessLayer
                         ItemImage = items.ItemImage,
                         IndividualUOMReference = items.FKIndividualUnitReference.UnitName,
                         MinimumIssuanceQty = items.MinimumIssuanceQty,
-                        ProcurementSource = items.ProcurementSource
+                        ProcurementSource = items.ProcurementSource,
+                        ItemInventoryType = items.FKInventoryTypeReference.InventoryTypeName
                     }
                    )
                    .OrderBy(d => new { d.ItemName, d.ItemCode })
                    .ToList();
         }
 
-        public Basket GetCSECItems(string ItemCode)
+        public List<Catalogue> GetCatalogue(string CategoryName)
+        {
+            return (from items in db.Items
+                    where items.FKItemCategoryReference.ItemCategoryName == CategoryName
+                    select new Catalogue
+                    {
+                        ItemID = items.ID,
+                        ItemCode = items.ItemCode,
+                        ItemName = items.ItemName,
+                        ItemShortSpecifications = items.ItemShortSpecifications,
+                        ItemSpecifications = items.ItemSpecifications,
+                        ItemCategory = items.FKItemCategoryReference.ItemCategoryName,
+                        ItemImage = items.ItemImage,
+                        IndividualUOMReference = items.FKIndividualUnitReference.UnitName,
+                        MinimumIssuanceQty = items.MinimumIssuanceQty,
+                        ProcurementSource = items.ProcurementSource,
+                        ItemInventoryType = items.FKInventoryTypeReference.InventoryTypeName
+                    }
+                   )
+                   .OrderBy(d => new { d.ItemName, d.ItemCode })
+                   .ToList();
+        }
+
+        public List<Catalogue> GetCatalogue(int InventoryTypeID)
+        {
+            return (from items in db.Items
+                    where items.InventoryTypeReference == InventoryTypeID
+                    select new Catalogue
+                    {
+                        ItemID = items.ID,
+                        ItemCode = items.ItemCode,
+                        ItemName = items.ItemName,
+                        ItemShortSpecifications = items.ItemShortSpecifications,
+                        ItemSpecifications = items.ItemSpecifications,
+                        ItemCategory = items.FKItemCategoryReference.ItemCategoryName,
+                        ItemImage = items.ItemImage,
+                        IndividualUOMReference = items.FKIndividualUnitReference.UnitName,
+                        MinimumIssuanceQty = items.MinimumIssuanceQty,
+                        ProcurementSource = items.ProcurementSource,
+                        ItemInventoryType = items.FKInventoryTypeReference.InventoryTypeName
+                    }
+                   )
+                   .OrderBy(d => new { d.ItemName, d.ItemCode })
+                   .ToList();
+        }
+
+        public BasketItem GetItems(string ItemCode)
         {
             return db.Items
-                            .Where(d => d.FKInventoryTypeReference.InventoryTypeName == "Common Use Office Supplies" && d.ItemCode == ItemCode)
-                            .Select(d => new Basket {
+                            .Where(d => d.ItemCode == ItemCode)
+                            .Select(d => new BasketItem {
                                 ItemID = d.ID,
                                 ItemCode = d.ItemCode,
                                 ItemName = d.ItemName,
@@ -59,17 +116,18 @@ namespace PUPFMIS.BusinessLayer
                                 ItemImage = d.ItemImage,
                                 IndividualUOMReference = d.FKIndividualUnitReference.UnitName,
                                 MinimumIssuanceQty = d.MinimumIssuanceQty,
-                                ProcurementSource = d.ProcurementSource
+                                ProcurementSource = d.ProcurementSource,
+                                ItemInventoryType = d.FKInventoryTypeReference.InventoryTypeName
                             })
                             .OrderBy(d => new { d.ItemName, d.ItemCode })
                             .FirstOrDefault();
         }
 
-        public Basket GetCSECItems(string ItemCode, string Email)
+        public BasketItem GetItems(string ItemCode, string Email)
         {
             var basketItem = db.Items
                             .Where(d => d.FKInventoryTypeReference.InventoryTypeName == "Common Use Office Supplies" && d.ItemCode == ItemCode)
-                            .Select(d => new Basket
+                            .Select(d => new BasketItem
                             {
                                 ItemID = d.ID,
                                 ItemCode = d.ItemCode,
@@ -80,7 +138,8 @@ namespace PUPFMIS.BusinessLayer
                                 ItemImage = d.ItemImage,
                                 IndividualUOMReference = d.FKIndividualUnitReference.UnitName,
                                 MinimumIssuanceQty = d.MinimumIssuanceQty,
-                                ProcurementSource = d.ProcurementSource
+                                ProcurementSource = d.ProcurementSource,
+                                ItemInventoryType = d.FKInventoryTypeReference.InventoryTypeName
                             })
                             .OrderBy(d => new { d.ItemName, d.ItemCode })
                             .FirstOrDefault();
@@ -94,167 +153,20 @@ namespace PUPFMIS.BusinessLayer
                                    .Select(d => new { Total = d.Sum(x => x.Quantity), Year = d.Key })
                                    .OrderByDescending(d => d.Year)
                                    .Select(d => d.Total)
-                                   .First();
+                                   .FirstOrDefault();
             var inflation = ((Convert.ToDecimal(totalConsumption) / 100) * inflationRate);
             basketItem.TotalConsumption = totalConsumption + Convert.ToInt32(Decimal.Round(inflation,0));
             return basketItem;
         }
 
-        public List<Catalogue> GetPropertyItems()
-        {
-            return (from items in db.Items
-                    where items.FKInventoryTypeReference.InventoryTypeName == "Property and Equipment"
-                    select new Catalogue
-                    {
-                        ItemID = items.ID,
-                        ItemCode = items.ItemCode,
-                        ItemName = items.ItemName,
-                        ItemShortSpecifications = items.ItemShortSpecifications,
-                        ItemSpecifications = items.ItemSpecifications,
-                        ItemCategory = items.FKItemCategoryReference.ItemCategoryName,
-                        ItemImage = items.ItemImage,
-                        IndividualUOMReference = items.FKIndividualUnitReference.UnitName,
-                        MinimumIssuanceQty = items.MinimumIssuanceQty,
-                        ProcurementSource = items.ProcurementSource
-                    }
-                   )
-                   .OrderBy(d => new { d.ItemName, d.ItemCode })
-                   .ToList();
-        }
-
-        public Basket GetPropertyItems(string ItemCode)
-        {
-            return (from items in db.Items
-                    where items.FKInventoryTypeReference.InventoryTypeName == "Property and Equipment" && items.ItemCode == ItemCode
-                    select new Basket
-                    {
-                        ItemID = items.ID,
-                        ItemCode = items.ItemCode,
-                        ItemName = items.ItemName,
-                        ItemShortSpecifications = items.ItemShortSpecifications,
-                        ItemSpecifications = items.ItemSpecifications,
-                        ItemCategory = items.FKItemCategoryReference.ItemCategoryName,
-                        ItemImage = items.ItemImage,
-                        IndividualUOMReference = items.FKIndividualUnitReference.UnitName,
-                        MinimumIssuanceQty = items.MinimumIssuanceQty,
-                        ProcurementSource = items.ProcurementSource
-                    }
-                   )
-                   .OrderBy(d => new { d.ItemName, d.ItemCode }).FirstOrDefault();
-        }
-
-        public List<Catalogue> GetSemiExpandablePropertyItems()
-        {
-            return (from items in db.Items
-                    where items.FKInventoryTypeReference.InventoryTypeName == "Semi-Expendable Property and Equipment"
-                    select new Catalogue
-                    {
-                        ItemID = items.ID,
-                        ItemCode = items.ItemCode,
-                        ItemName = items.ItemName,
-                        ItemShortSpecifications = items.ItemShortSpecifications,
-                        ItemSpecifications = items.ItemSpecifications,
-                        ItemCategory = items.FKItemCategoryReference.ItemCategoryName,
-                        ItemImage = items.ItemImage,
-                        IndividualUOMReference = items.FKIndividualUnitReference.UnitName,
-                        MinimumIssuanceQty = items.MinimumIssuanceQty,
-                        ProcurementSource = items.ProcurementSource
-                    }
-                   )
-                   .OrderBy(d => new { d.ItemName, d.ItemCode })
-                   .ToList();
-        }
-
-        public Basket GetSemiExpandablePropertyItems(string ItemCode)
-        {
-            return (from items in db.Items
-                    where items.FKInventoryTypeReference.InventoryTypeName == "Semi-Expendable Property and Equipment" && items.ItemCode == ItemCode
-                    select new Basket
-                    {
-                        ItemID = items.ID,
-                        ItemCode = items.ItemCode,
-                        ItemName = items.ItemName,
-                        ItemShortSpecifications = items.ItemShortSpecifications,
-                        ItemSpecifications = items.ItemSpecifications,
-                        ItemCategory = items.FKItemCategoryReference.ItemCategoryName,
-                        ItemImage = items.ItemImage,
-                        IndividualUOMReference = items.FKIndividualUnitReference.UnitName,
-                        MinimumIssuanceQty = items.MinimumIssuanceQty,
-                        ProcurementSource = items.ProcurementSource
-                    }
-                   )
-                   .OrderBy(d => new { d.ItemName, d.ItemCode }).FirstOrDefault();
-        }
-
-        public List<Catalogue> GetCSEItemsByCategory(string CategoryName)
-        {
-            return (from items in db.Items
-                    where items.FKInventoryTypeReference.InventoryTypeName == "Common Use Office Supplies" && items.FKItemCategoryReference.ItemCategoryName == CategoryName
-                    select new Catalogue
-                    {
-                        ItemID = items.ID,
-                        ItemCode = items.ItemCode,
-                        ItemName = items.ItemName,
-                        ItemShortSpecifications = items.ItemShortSpecifications,
-                        ItemSpecifications = items.ItemSpecifications,
-                        ItemCategory = items.FKItemCategoryReference.ItemCategoryName,
-                        ItemImage = items.ItemImage,
-                        IndividualUOMReference = items.FKIndividualUnitReference.UnitName,
-                        MinimumIssuanceQty = items.MinimumIssuanceQty,
-                        ProcurementSource = items.ProcurementSource
-                    }
-                   )
-                   .OrderBy(d => new { d.ItemName, d.ItemCode })
-                   .ToList();
-        }
-
-        public List<Catalogue> GetPropertyItemsByCategory(string CategoryName)
-        {
-            return (from items in db.Items
-                    where items.FKInventoryTypeReference.InventoryTypeName == "Property and Equipment" && items.FKItemCategoryReference.ItemCategoryName == CategoryName
-                    select new Catalogue
-                    {
-                        ItemID = items.ID,
-                        ItemCode = items.ItemCode,
-                        ItemName = items.ItemName,
-                        ItemShortSpecifications = items.ItemShortSpecifications,
-                        ItemSpecifications = items.ItemSpecifications,
-                        ItemCategory = items.FKItemCategoryReference.ItemCategoryName,
-                        ItemImage = items.ItemImage,
-                        IndividualUOMReference = items.FKIndividualUnitReference.UnitName,
-                        MinimumIssuanceQty = items.MinimumIssuanceQty,
-                        ProcurementSource = items.ProcurementSource
-                    }
-                   )
-                   .OrderBy(d => new { d.ItemName, d.ItemCode })
-                   .ToList();
-        }
-
-        public List<Catalogue> GetSemiExpandableProprertyItemsByCategory(string CategoryName)
-        {
-            return (from items in db.Items
-                    where items.FKInventoryTypeReference.InventoryTypeName == "Semi-Expandable Property and Equipment" && items.FKItemCategoryReference.ItemCategoryName == CategoryName
-                    select new Catalogue
-                    {
-                        ItemID = items.ID,
-                        ItemCode = items.ItemCode,
-                        ItemName = items.ItemName,
-                        ItemShortSpecifications = items.ItemShortSpecifications,
-                        ItemSpecifications = items.ItemSpecifications,
-                        ItemCategory = items.FKItemCategoryReference.ItemCategoryName,
-                        ItemImage = items.ItemImage,
-                        IndividualUOMReference = items.FKIndividualUnitReference.UnitName,
-                        MinimumIssuanceQty = items.MinimumIssuanceQty,
-                        ProcurementSource = items.ProcurementSource
-                    }
-                   )
-                   .OrderBy(d => new { d.ItemName, d.ItemCode })
-                   .ToList();
-        }
-
-        public bool ValidateConsumptionVSQuantity(Basket item)
+        public bool ValidateConsumptionVSQuantity(BasketItem item)
         {
             return (item.TotalQty > item.TotalConsumption) ? true : false;
+        }
+
+        public List<Supplier> GetSuppliers()
+        {
+            return db.Suppliers.Where(d => d.PurgeFlag == false).ToList();
         }
 
         protected override void Dispose(bool disposing)

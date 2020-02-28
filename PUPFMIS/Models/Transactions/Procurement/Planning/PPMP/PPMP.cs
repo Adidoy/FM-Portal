@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace PUPFMIS.Models
 {
-    [Table("procurement_ppmpHeader")]
+    [Table("procurement_ppmpheader")]
     public class PPMPHeader
     {
         [Key]
@@ -49,7 +49,7 @@ namespace PUPFMIS.Models
         public virtual InventoryType FKPPMPTypeReference { get; set; }
     }
 
-    [Table("procurement_ppmpCSEDetails")]
+    [Table("procurement_ppmpcsedetails")]
     public class PPMPCSEDetails
     {
         [Key]
@@ -71,7 +71,7 @@ namespace PUPFMIS.Models
         [Required]
         public int Qtr4 { get; set; }
 
-        [Display(Name = "Remarks/Justification")]
+        [Display(Name = "Remarks")]
         public string Remarks { get; set; }
 
         [Display(Name = "Total Qty.")]
@@ -149,12 +149,33 @@ namespace PUPFMIS.Models
         public PPMPViewModel()
         {
             PPMPHeader = new PPMPHeaderViewModel();
-            DBMItems = new List<Basket>();
-            NonDBMItems = new List<Basket>();
+            DBMItems = new List<BasketItem>();
+            NonDBMItems = new List<BasketItem>();
         }
         public PPMPHeaderViewModel PPMPHeader { get; set; }
-        public List<Basket> DBMItems { get; set; }
-        public List<Basket> NonDBMItems { get; set; }
+        public List<BasketItem> DBMItems { get; set; }
+        public List<BasketItem> NonDBMItems { get; set; }
+    }
+
+    public class PPMPCSE
+    {
+        public PPMPHeader BasketHeader { get; set; }
+        public List<BasketItem> BasketItems { get; set; }
+    }
+
+    public class PPMPClientDashboard
+    {
+        [Display(Name = "Submitted PPMPs")]
+        public int SubmittedPPMPs { get; set; }
+
+        [Display(Name = "Items Requested")]
+        public int ItemsRequested { get; set; }
+
+        [Display(Name = "Implemented Projects")]
+        public int ImplementedProjects { get; set; }
+
+        [Display(Name = "% Implemented")]
+        public decimal PercentImplemented { get; set; }
     }
 
     public class PPMPItemVM

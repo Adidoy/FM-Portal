@@ -25,7 +25,8 @@ namespace PUPFMIS
                 ExpireTimeSpan = TimeSpan.FromMinutes(30),
                 LogoutPath = new PathString("/login"),
                 LoginPath = new PathString("/login"),
-                AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie
+                AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
+                ReturnUrlParameter = "/"
                 //Provider = new CookieAuthenticationProvider
                 //{
                 //    // Enables the application to validate the security stamp when the user logs in.

@@ -1,0 +1,170 @@
+﻿@model PUPFMIS.Models.ProjectProcurementViewModel
+
+@{
+    ViewBag.Title = "End User Project";
+    ViewBag.Description = "Details";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Project Procurement Plans", "dashboard", "PPMP")</li>
+        <li class="breadcrumb-item">End User Project Details</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-right">
+        <h1 class="card-title"><i class="fa fa-bookmark"></i> @Model.Header.ProjectName <small>(@Model.Header.ProjectCode)</small></h1>
+    </div>
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <h5>Project Details</h5>
+        <hr />
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Header.ProjectCode, htmlAttributes: new { @class = "control-label" })
+                        @Html.EditorFor(model => model.Header.ProjectCode, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
+                        @Html.ValidationMessageFor(model => model.Header.ProjectCode, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Header.ProjectName, htmlAttributes: new { @class = "control-label" })
+                        @Html.EditorFor(model => model.Header.ProjectName, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%" } })
+                        @Html.ValidationMessageFor(model => model.Header.ProjectName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Header.Description, htmlAttributes: new { @class = "control-label" })
+                        @Html.EditorFor(model => model.Header.Description, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%" } })
+                        @Html.ValidationMessageFor(model => model.Header.Description, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Header.FiscalYear, htmlAttributes: new { @class = "control-label" })
+                        @Html.DropDownList("FiscalYear", null, htmlAttributes: new { @class = "form-control form-control-sm", style = "font-size: 100%" })
+                        @Html.ValidationMessageFor(model => model.Header.FiscalYear, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Header.ProjectMonthStart, htmlAttributes: new { @class = "control-label" })
+                        @Html.DropDownList("ProjectMonthStart", null, htmlAttributes: new { @class = "form-control form-control-sm", style = "font-size: 100%" })
+                        @Html.ValidationMessageFor(model => model.Header.ProjectMonthStart, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-sm-12">
+        <h5>Line Items</h5>
+        <hr />
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card-body table-responsive p-sm-0">
+            <table class="table table-striped table-hover" id="example2">
+                <thead>
+                    <tr>
+                        <th rowspan="2" style="text-align: center; vertical-align: middle;" width="50%">
+                            Item and Specifications
+                        </th>
+                        <th colspan="2" style="text-align: center; vertical-align: middle;">
+                            Quantity Requirement
+                        </th>
+                        <th rowspan="2" style="text-align: center; vertical-align: middle;" width="25%">
+                            Action
+                        </th>
+                    </tr>
+                    <tr>
+                        <th style="text-align: center; vertical-align: middle;" width="15%">Distribution</th>
+                        <th style="text-align: center; vertical-align: middle;" width="10%">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td style="text-align:justify; vertical-align:top;">
+                                <b>@Html.DisplayFor(modelItem => item.FKItemReference.ItemName).ToString().ToUpper()@((string.IsNullOrEmpty(item.FKItemReference.ItemShortSpecifications)) ? "" : ", " + item.FKItemReference.ItemShortSpecifications )</b>
+                                <br />
+                                <p>@Html.DisplayFor(modelItem => item.FKItemReference.ItemSpecifications)</p>
+                                <p>
+                                    <b>@Html.DisplayNameFor(modelItem => item.FKItemReference.FKIndividualUnitReference) : </b>@Html.DisplayFor(modelItem => item.FKItemReference.FKIndividualUnitReference.UnitName)
+                                    <br />
+                                    <b>@Html.DisplayNameFor(modelItem => item.FKItemReference.ProcurementSource) : </b>@Html.DisplayFor(modelItem => item.FKItemReference.ProcurementSource)
+                                    @if (item.Remarks != "Acceptable")
+                                    {
+                                        <br />
+                                        <small style="color:red; font-size:8pt;"><i>***@item.Remarks</i></small>
+                                    }
+                                </p>
+                            </td>
+                            <td style="text-align:left; vertical-align:top;">
+                                <div class="row">
+                                    <div class="col-sm-5">
+                                        @Html.LabelFor(modelItem => item.Qtr1, htmlAttributes: new { @class = "control-label" }):
+                                    </div>
+                                    <div class="col-sm-7 text-right">
+                                        @Html.DisplayFor(modelItem => item.Qtr1)
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-5">
+                                        @Html.LabelFor(modelItem => item.Qtr2, htmlAttributes: new { @class = "control-label" }):
+                                    </div>
+                                    <div class="col-sm-7 text-right">
+                                        @Html.DisplayFor(modelItem => item.Qtr2)
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-5">
+                                        @Html.LabelFor(modelItem => item.Qtr3, htmlAttributes: new { @class = "control-label" }):
+                                    </div>
+                                    <div class="col-sm-7 text-right">
+                                        @Html.DisplayFor(modelItem => item.Qtr3)
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-5">
+                                        @Html.LabelFor(modelItem => item.Qtr4, htmlAttributes: new { @class = "control-label" }):
+                                    </div>
+                                    <div class="col-sm-7 text-right">
+                                        @Html.DisplayFor(modelItem => item.Qtr4)
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="text-align:center; vertical-align:top;">
+                                @Html.DisplayFor(modelItem => item.TotalQty)
+                            </td>
+                            <td style="text-align:center; vertical-align:middle;">
+
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

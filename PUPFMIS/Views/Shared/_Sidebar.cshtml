@@ -42,19 +42,15 @@
                                 </a>
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item">
-                                        <a href="@Url.Action("index","Suppliers")" class="nav-link" style="padding-bottom: 1px;">
-                                            <span style="text-indent:15px; font-size:10.5pt;">
-                                                <i class="fa fa-truck" aria-hidden="true"></i>&nbsp;
-                                                Suppliers
-                                            </span>
+                                        <a href="@Url.Action("index","Suppliers")" class="nav-link pt-1 pb-1" style="text-indent:3px; font-size:10pt;">
+                                            <i class="fa fa-circle" style="font-size:5pt;"></i> &nbsp;
+                                            Suppliers
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="@Url.Action("index","UnitOfMeasure")" class="nav-link">
-                                            <span style="text-indent:15px; font-size:10.5pt;">
-                                                <i class="fa fa-paperclip"></i>&nbsp;
-                                                Units of Measure
-                                            </span>
+                                        <a href="@Url.Action("index","UnitOfMeasure")"  class="nav-link pt-1 pb-1" style="text-indent:3px; font-size:10pt;">
+                                            <i class="fa fa-circle" style="font-size:5pt;"></i> &nbsp;
+                                            Units of Measure
                                         </a>
                                     </li>
                                 </ul>
@@ -99,7 +95,7 @@
                             <li class="nav-header" style="font-size:9pt;">
                                 PROCUREMENT &amp; BUDGET PLANNING
                             </li>
-                            <li class="nav-item">
+                            @*<li class="nav-item">
                                 <a href="#" class="nav-link" style="font-size:10.5pt;">
                                     <i class="fas fa-book-open"></i>&nbsp;
                                     <p>
@@ -139,7 +135,7 @@
                                         </a>
                                     </li>
                                 </ul>
-                            </li>
+                            </li>*@
                             <li class="nav-item">
                                 <a href="#" class="nav-link" style="font-size:10.5pt;">
                                     <i class="fas fa-folder"></i>&nbsp;
@@ -156,9 +152,9 @@
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="@Url.Action("index","PPMP")" class="nav-link pt-1 pb-1" style="text-indent:3px; font-size:10pt;">
+                                        <a href="@Url.Action("dashboard","PPMP")" class="nav-link pt-1 pb-1" style="text-indent:3px; font-size:10pt;">
                                             <i class="fa fa-circle" style="font-size:5pt;"></i> &nbsp;
-                                            My PPMP
+                                            Project Procurement Plans
                                         </a>
                                     </li>
                                     <li class="nav-item">

@@ -12,10 +12,6 @@ namespace PUPFMIS
             string ltecomponents = "~/Scripts/adminlte/components/";
             string lte = "~/Content/adminlte/";
 
-            
-            bundles.Add(new StyleBundle("~/bundles/fonts")
-                .Include(ltecomponents + "ionicons/css/ionicons.min.css", new CssRewriteUrlTransform()));
-
             bundles.Add(new StyleBundle("~/bundles/styles")
                 .Include(ltecomponents + "bootstrap/dist/css/bootstrap.min.css")
                 .Include(ltecomponents + "tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css")

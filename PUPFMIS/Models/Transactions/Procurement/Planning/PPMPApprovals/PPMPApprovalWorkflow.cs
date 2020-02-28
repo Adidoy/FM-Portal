@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PUPFMIS.Models
 {
-    [Table("workflow_ppmpApproval")]
+    [Table("workflow_ppmpapproval")]
     public class PPMPApprovalWorkflow
     {
         [Key]

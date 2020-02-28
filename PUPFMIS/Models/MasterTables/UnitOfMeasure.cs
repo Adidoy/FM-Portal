@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace PUPFMIS.Models
 {
-    [Table("master_UOM")]
+    [Table("master_uom")]
     public class UnitOfMeasure
     {
         [Key]
