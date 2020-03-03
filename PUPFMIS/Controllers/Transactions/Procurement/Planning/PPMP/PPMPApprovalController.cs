@@ -25,7 +25,9 @@ namespace PUPFMIS.Controllers
         }
 
         [ActionName("view-submissions")]
-        public ActionResult ViewSubmissions()
+        [Authorize(Roles = SystemRoles.SuperUser + ", " + SystemRoles.BudgetAdmin + ", " + SystemRoles.BudgetOfficer)]
+        [Route("procurement/planning/ppmp/approvals/budget/view-submissions")]
+        public ActionResult ForBudgetApproval()
         {
             return View("ViewSubmissions", approvalBL.GetSubmittedPPMP());
         }
@@ -39,6 +41,7 @@ namespace PUPFMIS.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             PPMPCSEViewModel ppmpVM = approvalBL.GetPPMPCSEDetails(ReferenceNo);
+            ppmpVM.PPMPItems = ppmpVM.PPMPItems.OrderBy(d => d.AcceptanceCode).OrderBy(d => d.FKItem.ItemName).ToList();
             if (ppmpVM == null)
             {
                 return HttpNotFound();

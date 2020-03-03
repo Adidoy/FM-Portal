@@ -16,89 +16,6 @@ namespace PUPFMIS.BusinessLayer
         private HRISDbContext hrisDB = new HRISDbContext();
         private LogsMasterTables log = new LogsMasterTables();
 
-        public List<UsersVM> GetUsers(bool? DeleteFlag)
-        {
-            List<UsersVM> usersList = new List<UsersVM>();
-            if (DeleteFlag != null)
-            {
-                usersList = (from userAccounts in db.UserAccounts
-                                join userInformation in db.UserInformation
-                                on userAccounts.UserInformationReference equals userInformation.ID
-                                where userAccounts.PurgeFlag == DeleteFlag
-                                select new UsersVM
-                                {
-                                    ID = userAccounts.ID,
-                                    Email = userAccounts.Email,
-                                    Password = userAccounts.Password,
-                                    LastName = userInformation.LastName,
-                                    FirstName = userInformation.FirstName,
-                                    MiddleName = userInformation.MiddleName,
-                                    Designation = userInformation.Designation,
-                                    Office = userInformation.Office
-                                }).ToList();
-            }
-            else
-            {
-                usersList = (from userAccounts in db.UserAccounts
-                                join userInformation in db.UserInformation
-                                on userAccounts.UserInformationReference equals userInformation.ID
-                                select new UsersVM
-                                {
-                                    ID = userAccounts.ID,
-                                    Email = userAccounts.Email,
-                                    Password = userAccounts.Password,
-                                    LastName = userInformation.LastName,
-                                    FirstName = userInformation.FirstName,
-                                    MiddleName = userInformation.MiddleName,
-                                    Designation = userInformation.Designation,
-                                    Office = userInformation.Office
-                                }).ToList();
-            }
-            return usersList;
-        }
-
-        public UsersVM GetUsers(int? ID, bool? DeleteFlag)
-        {
-            UsersVM usersList = new UsersVM();
-            if (DeleteFlag != null)
-            {
-                usersList = (from userAccounts in db.UserAccounts
-                             join userInformation in db.UserInformation
-                             on userAccounts.UserInformationReference equals userInformation.ID
-                             where userAccounts.PurgeFlag == DeleteFlag && userAccounts.ID == ID
-                             select new UsersVM
-                             {
-                                 ID = userAccounts.ID,
-                                 Email = userAccounts.Email,
-                                 Password = userAccounts.Password,
-                                 LastName = userInformation.LastName,
-                                 FirstName = userInformation.FirstName,
-                                 MiddleName = userInformation.MiddleName,
-                                 Designation = userInformation.Designation,
-                                 Office = userInformation.Office
-                             }).FirstOrDefault();
-            }
-            else
-            {
-                usersList = (from userAccounts in db.UserAccounts
-                             join userInformation in db.UserInformation
-                             on userAccounts.UserInformationReference equals userInformation.ID
-                             where userAccounts.ID == ID
-                             select new UsersVM
-                             {
-                                 ID = userAccounts.ID,
-                                 Email = userAccounts.Email,
-                                 Password = userAccounts.Password,
-                                 LastName = userInformation.LastName,
-                                 FirstName = userInformation.FirstName,
-                                 MiddleName = userInformation.MiddleName,
-                                 Designation = userInformation.Designation,
-                                 Office = userInformation.Office
-                             }).FirstOrDefault();
-            }
-            return usersList;
-        }
-
         public UsersVM GetUsers(string Email, bool? DeleteFlag)
         {
             UsersVM usersList = new UsersVM();
@@ -141,10 +58,9 @@ namespace PUPFMIS.BusinessLayer
             return usersList;
         }
 
-        public Offices GetUserOffice(string Email)
+        public List<Roles> GetRoles()
         {
-            int OfficeID = GetUsers(Email, false).Office;
-            return hrisDB.OfficeModel.Find(OfficeID);
+            return db.Roles.ToList();
         }
         
         public bool RegisterUser(UsersVM userAccount, out string Message)
@@ -212,7 +128,7 @@ namespace PUPFMIS.BusinessLayer
             }
         }
 
-        public bool VerifyUserCredentials(LoginVM loginCredentials, out string ErrorMessage, out UsersVM userAccount)
+        public bool VerifyUserCredentials(LoginVM loginCredentials, out UsersVM userAccount)
         {
             var Email = loginCredentials.Email;
             var IsEmailValid = (db.UserAccounts.Where(d => d.Email == Email).Count() == 1) ? true : false;
@@ -224,28 +140,23 @@ namespace PUPFMIS.BusinessLayer
                 var saltedPassword = loginCredentials.Password + salt;
                 if (Crypto.VerifyHashedPassword(hashedPassword, saltedPassword) && db.UserAccounts.Where(d => d.Email == Email && d.Password == hashedPassword).Count() == 1)
                 {
-                    ErrorMessage = "Success";
-                    userAccount = (from account in db.UserAccounts
-                                   join information in db.UserInformation
-                                   on account.UserInformationReference equals information.ID
-                                   where account.Email == loginCredentials.Email
-                                   select new UsersVM
-                                   {
-                                       Email = account.Email,
-                                       FirstName = information.FirstName,
-                                       LastName = information.LastName,
-                                       Designation = information.Designation
-                                   }).FirstOrDefault();
+                    userAccount = db.UserAccounts
+                                    .Include(d => d.FKUserInformationReference)
+                                    .Where(d => d.Email == loginCredentials.Email)
+                                    .Select(d => new UsersVM {
+                                        Email = d.Email,
+                                        FirstName = d.FKUserInformationReference.FirstName,
+                                        LastName = d.FKUserInformationReference.LastName,
+                                        Designation = d.FKUserInformationReference.Designation
+                                    }).FirstOrDefault();
                     return true;
                 }
             }
             else
             {
-                ErrorMessage = "Email is invalid. Please check your input.";
                 userAccount = null;
                 return false;
             }
-            ErrorMessage = "An error occured. Please try again.";
             userAccount = null;
             return false;
         }
@@ -254,7 +165,6 @@ namespace PUPFMIS.BusinessLayer
         {
             if (disposing)
             {
-
                 db.Dispose();
             }
             base.Dispose(disposing);

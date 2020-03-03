@@ -294,6 +294,7 @@
     <Compile Include="Controllers\AccountsManagement\UsersController.cs" />
     <Compile Include="Helpers\HTMLHelperExtensions.cs" />
     <Compile Include="Helpers\HtmlHelpers.cs" />
+    <Compile Include="Models\AccountsManagement\UserRoles.cs" />
     <Compile Include="Models\AccountsManagement\Users.cs" />
     <Compile Include="Models\AIS\ChartOfAccounts.cs" />
     <Compile Include="Models\DBContexts\ABDBContext.cs" />
@@ -4774,7 +4775,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Controllers\Transactions\Workflow\Delivery\" />
-    <Folder Include="Models\Workflow\" />
     <Folder Include="Reports\PPMP\" />
   </ItemGroup>
   <ItemGroup>
