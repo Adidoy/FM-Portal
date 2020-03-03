@@ -1,0 +1,147 @@
+﻿@model PUPFMIS.Models.ProjectProcurementPlanItems
+
+@{
+    ViewBag.Title = "End User Project";
+    ViewBag.Description = "Update Item";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Project Procurement Plans", "dashboard", "PPMP")</li>
+        <li class="breadcrumb-item">Update Project Item</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-right">
+        <h1 class="card-title"><i class="fa fa-bookmark"></i> @Model.FKItemReference.ItemName <small>(@Model.FKItemReference.ItemCode)</small></h1>
+    </div>
+}
+
+@using (Html.BeginForm("update-item", "ProjectProcurementPlans", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.ID)
+    @Html.HiddenFor(m => m.FKItemReference.ItemCode)
+    @Html.HiddenFor(m => m.FKProjectReference.ProjectCode)
+
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group-sm">
+                <div class="mt-3" style="text-align:center; vertical-align: middle;" id="itemImageHolder">
+                    @if (Model.FKItemReference.ItemImage != null)
+                    {
+                        var base64 = Convert.ToBase64String(Model.FKItemReference.ItemImage);
+                        var imgsrc = string.Format("data:image/jpg;base64,{0}", base64);
+                        <img src='@imgsrc' style="max-width:250px; max-height:250px;" />
+                    }
+                    else
+                    {
+                        <img src="@Url.Content("~/Content/imgs/PUPLogo.png")" style="max-width:250px; max-height:250px;" />
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h4>@Model.FKItemReference.ItemName.ToString().ToUpper() @( (String.IsNullOrEmpty(Model.FKItemReference.ItemShortSpecifications)) ? "" : Model.FKItemReference.ItemShortSpecifications ) <span><small><b>(@Model.FKItemReference.ItemCode)</b></small></span></h4>
+                    <hr />
+                    <h6>ITEM SPECIFICATIONS:</h6>
+                    <p style="text-align:justify;">@Model.FKItemReference.ItemSpecifications</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <br />
+                    @Html.LabelFor(d => d.FKItemReference.ProcurementSource): @( Model.FKItemReference.ProcurementSource == PUPFMIS.Models.ProcurementSources.PS_DBM ? "DBM Procurement Store" : "Private Suppliers" )
+                    <br />
+                    @Html.LabelFor(d => d.FKItemReference.FKIndividualUnitReference): @Model.FKItemReference.FKIndividualUnitReference.UnitName
+                    <br />
+                    @Html.LabelFor(d => d.FKItemReference.FKItemCategoryReference): @Model.FKItemReference.FKItemCategoryReference.ItemCategoryName
+                    <br />
+                    @Html.LabelFor(d => d.FKItemReference.MinimumIssuanceQty): @Model.FKItemReference.MinimumIssuanceQty
+                    @if (ViewBag.ProjectType == "CSPR")
+                    {
+                        <br />
+                        <span>@Html.Label("Total Previous Consumption: ")</span> @Html.Display("TotalConsumption")
+                    }
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+
+                    <div class="row">
+                        <div class="col-sm-12">
+                            @Html.Label("Quantity Requirement")
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group-sm">
+                                <div class="input-group input-group-sm mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><b>Q1</b></span>
+                                    </div>
+                                    @Html.EditorFor(m => m.Qtr1, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%;", type = "number" } })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.Qtr1, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group-sm">
+                                <div class="input-group input-group-sm mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><b>Q2</b></span>
+                                    </div>
+                                    @Html.EditorFor(m => m.Qtr2, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%;", type = "number" } })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.Qtr2, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group-sm">
+                                <div class="input-group input-group-sm mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><b>Q3</b></span>
+                                    </div>
+                                    @Html.EditorFor(m => m.Qtr3, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%;", type = "number" } })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.Qtr3, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group-sm">
+                                <div class="input-group input-group-sm mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><b>Q4</b></span>
+                                    </div>
+                                    @Html.EditorFor(m => m.Qtr4, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%;", type = "number" } })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.Qtr4, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    if (ViewBag.NeedsJustification == true)
+    {
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Remarks, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(model => model.Remarks, new { htmlAttributes = new { @class = "form-control form-control-sm", placeholde = "Enter the justification here..." } })
+                    @Html.ValidationMessageFor(model => model.Remarks, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+    }
+    <hr />
+    <br />
+    <div class="row">
+        <div class="col-sm-12">
+            <div style="text-align: right;">
+                <button type="submit" class="btn btn-md btn-success"> <i class="fa fa-edit"></i> Update Project Item</button>
+                <button type="button" class="btn btn-md btn-danger" onclick='window.location = "@Url.Action("details", "ProjectProcurementPlans", new { ProjectCode = Model.FKProjectReference.ProjectCode })"'> <i class="fa fa-arrow-circle-left"></i> Back to Project Details</button>
+            </div>
+        </div>
+    </div>
+}

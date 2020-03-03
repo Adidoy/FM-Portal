@@ -273,7 +273,99 @@ namespace PUPFMIS.Controllers
             {
                 return HttpNotFound();
             }
+
+            if(ProjectCode.Substring(0,4) == "CSPR")
+            {
+                ViewBag.ProjectType = "CSPR";
+                ViewBag.TotalConsumption = catalogueBL.GetItems(ItemCode, User.Identity.Name).TotalConsumption;
+            }
             return View("UpdateItem", item);
+        }
+
+        [HttpPost]
+        [ActionName("update-item")]
+        [Route("ops/procurement/planning/projects/{ProjectCode}/details/{ItemCode}/update-item")]
+        public ActionResult Update(ProjectProcurementPlanItems projectItem)
+        {
+            ProjectProcurementPlanItems item = projectProcurement.GetProjectItem(projectItem.ID);
+            item.Qtr1 = projectItem.Qtr1;
+            item.Qtr2 = projectItem.Qtr2;
+            item.Qtr3 = projectItem.Qtr3;
+            item.Qtr4 = projectItem.Qtr4;
+            item.TotalQty = projectItem.Qtr1 + projectItem.Qtr2 + projectItem.Qtr3 + projectItem.Qtr4;
+            item.Remarks = projectItem.Remarks;
+
+            int? TotalConsumption = null;
+            if (projectItem.FKProjectReference.ProjectCode.Substring(0, 4) == "CSPR")
+            {
+                TotalConsumption = catalogueBL.GetItems(projectItem.FKItemReference.ItemCode, User.Identity.Name).TotalConsumption;
+
+                if (item.TotalQty >= TotalConsumption)
+                {
+                    if (String.IsNullOrEmpty(item.Remarks))
+                    {
+                        ModelState.AddModelError(string.Empty, "Total Quantity is greater than the Previous consumption. Please reduce the quantity requirement or provide a justification below.");
+                        ViewBag.NeedsJustification = true;
+                        return View("UpdateItem", item);
+                    }
+                }
+                item.Remarks = (String.IsNullOrEmpty(projectItem.Remarks)) ? "Acceptable" : item.Remarks;
+            }
+
+            if (projectProcurement.UpdateProjectItem(projectItem))
+            {
+                return RedirectToAction("details", "ProjectProcurementPlans", new { ProjectCode = projectItem.FKProjectReference.ProjectCode });
+            }
+
+            if (projectItem.FKProjectReference.ProjectCode.Substring(0, 4) == "CSPR")
+            {
+                ViewBag.ProjectType = "CSPR";
+                ViewBag.TotalConsumption = TotalConsumption;
+            }
+            return View("UpdateItem", projectItem);
+        }
+
+        [ActionName("remove-item")]
+        [Route("ops/procurement/planning/projects/{ID}/remove-item")]
+        public ActionResult RemoveItem(int? ID)
+        {
+            if (ID == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            ProjectProcurementPlanItems item = projectProcurement.GetProjectItem((int)ID);
+            if (item == null)
+            {
+                return HttpNotFound();
+            }
+            var ProjectCode = item.FKProjectReference.ProjectCode;
+            if(projectProcurement.RemoveItem((int)ID))
+            {
+                return RedirectToAction("details", "ProjectProcurementPlans", new { ProjectCode = ProjectCode });
+            }
+
+            return View("UpdateItem", item);
+        }
+
+        [ActionName("add-to-PPMP")]
+        [Route("ops/procurement/planning/projects/{ProjectCode}/add-to-PPMP")]
+        public ActionResult AddToPPMP(string ProjectCode)
+        {
+            if(ProjectCode == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            ProjectProcurementViewModel projectModel = projectProcurement.GetProjectDetails(ProjectCode);
+
+            if(projectModel == null)
+            {
+                return HttpNotFound();
+            }
+
+            projectProcurement.AddToPPMP(projectModel, User.Identity.Name);
+
+            return RedirectToAction("index", "ProjectProcurementPlans");
         }
 
         //=======================================================================================================================

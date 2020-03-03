@@ -12,6 +12,7 @@ namespace PUPFMIS.BusinessLayer
     {
         private FMISDbContext db = new FMISDbContext();
         private HRISDbContext hris = new HRISDbContext();
+        private PPMPCSEBusinessLayer ppmpCSEBL = new PPMPCSEBusinessLayer();
 
         public List<PPMPDeadlines> GetFiscalYears()
         {
@@ -55,8 +56,12 @@ namespace PUPFMIS.BusinessLayer
                    }).ToList();
         }
 
-        public bool SaveProject(Basket projectBasket, string Email, string Type)
+        public string SaveProject(Basket projectBasket, string Email, string Type)
         {
+            if(db.ProjectProcurementPlan.Where(d => d.ProjectCode.Substring(0,4) == Type).Count() >= 1)
+            {
+                return "Project Exists";
+            }
             var user = db.UserAccounts.Where(d => d.Email == Email).FirstOrDefault();
             var office = hris.OfficeModel.Find(user.FKUserInformationReference.Office);
             projectBasket.BasketHeader.CreatedAt = DateTime.Now;
@@ -73,7 +78,7 @@ namespace PUPFMIS.BusinessLayer
             db.ProjectProcurementPlan.Add(header);
             if(db.SaveChanges() == 0)
             {
-                return false;
+                return "Failed";
             }
 
             foreach(var item in projectBasket.BasketItems)
@@ -91,7 +96,7 @@ namespace PUPFMIS.BusinessLayer
                 db.ProjectProcurementPlanItems.Add(items);
                 if (db.SaveChanges() == 0)
                 {
-                    return false;
+                    return "Failed";
                 }
 
                 if (!string.IsNullOrEmpty(item.Supplier1ID.ToString()) || !string.IsNullOrEmpty(item.Supplier2ID.ToString()) || !string.IsNullOrEmpty(item.Supplier3ID.ToString()) )
@@ -113,13 +118,13 @@ namespace PUPFMIS.BusinessLayer
                     db.MarketSurvey.Add(ms);
                     if (db.SaveChanges() == 0)
                     {
-                        return false;
+                        return "Failed";
                     }
 
-                    return true;
+                    return "Success";
                 }
             }
-            return false;
+            return "Failed";
         }
 
         private string GenerateProjectCode(string FiscalYear, string OfficeName, string Type)
@@ -141,6 +146,57 @@ namespace PUPFMIS.BusinessLayer
         public ProjectProcurementPlanItems GetProjectItem(string ProjectCode, string ItemCode)
         {
             return db.ProjectProcurementPlanItems.Where(d => d.FKProjectReference.ProjectCode == ProjectCode && d.FKItemReference.ItemCode == ItemCode).FirstOrDefault();
+        }
+
+        public ProjectProcurementPlanItems GetProjectItem(int ID)
+        {
+            return db.ProjectProcurementPlanItems.Find(ID);
+        }
+
+        public bool UpdateProjectItem(ProjectProcurementPlanItems projectItem)
+        {
+            ProjectProcurementPlanItems item = db.ProjectProcurementPlanItems.Find(projectItem.ID);
+            if(item == null)
+            {
+                return false;
+            }
+
+            item.Qtr1 = projectItem.Qtr1;
+            item.Qtr2 = projectItem.Qtr2;
+            item.Qtr3 = projectItem.Qtr3;
+            item.Qtr4 = projectItem.Qtr4;
+            item.TotalQty = projectItem.Qtr1 + projectItem.Qtr2 + projectItem.Qtr3 + projectItem.Qtr4;
+            item.Remarks = projectItem.Remarks;
+
+            if(db.SaveChanges() == 1)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool RemoveItem(int ID)
+        {
+            ProjectProcurementPlanItems item = db.ProjectProcurementPlanItems.Find(ID);
+            db.ProjectProcurementPlanItems.Remove(item);
+            if(db.SaveChanges() == 1)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public void AddToPPMP(ProjectProcurementViewModel projectModel, string UserEmail)
+        {
+            if(db.PPMPHeader.Where(d => d.FiscalYear == projectModel.Header.FiscalYear && d.PPMPType == 1).Count() == 0)
+            {
+                ppmpCSEBL.CreatePPMPCSE(projectModel, UserEmail);
+            }
+            else
+            {
+                ppmpCSEBL.UpdatePPMPCSE(projectModel, UserEmail);
+            }
         }
 
         protected override void Dispose(bool disposing)

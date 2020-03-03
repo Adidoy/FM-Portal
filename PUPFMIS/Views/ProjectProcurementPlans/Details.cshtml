@@ -113,7 +113,7 @@
                                 <p>
                                     <b>@Html.DisplayNameFor(modelItem => item.FKItemReference.FKIndividualUnitReference) : </b>@Html.DisplayFor(modelItem => item.FKItemReference.FKIndividualUnitReference.UnitName)
                                     <br />
-                                    <b>@Html.DisplayNameFor(modelItem => item.FKItemReference.ProcurementSource) : </b>@Html.DisplayFor(modelItem => item.FKItemReference.ProcurementSource)
+                                    <b>@Html.DisplayNameFor(modelItem => item.FKItemReference.ProcurementSource) : </b>@( item.FKItemReference.ProcurementSource == PUPFMIS.Models.ProcurementSources.PS_DBM ? "DBM Procurement Store" : "Private Suppliers" )
                                     @if (item.Remarks != "Acceptable")
                                     {
                                         <br />
@@ -158,13 +158,23 @@
                             <td style="text-align:center; vertical-align:top;">
                                 @Html.DisplayFor(modelItem => item.TotalQty)
                             </td>
-                            <td style="text-align:center; vertical-align:middle;">
-
+                            <td style="text-align:center; vertical-align:top;">
+                                <button type="button" style="width: 35px;" class="btn btn-sm btn-warning mt-1 mb-1" data-toggle="tooltip" title="Edit Project Item" onclick="window.location = '@Url.Action("update-item", "ProjectProcurementPlans", new { ProjectCode = item.FKProjectReference.ProjectCode, ItemCode = item.FKItemReference.ItemCode })'"><i class="fa fa-edit"></i></button>
+                                <br />
+                                <button type="button" style="width: 35px;" class="btn btn-sm btn-danger mt-1 mb-1" data-toggle="tooltip" title="Remove Project Item" onclick="window.location = '@Url.Action("remove-item", "ProjectProcurementPlans", new { ID = item.ID })'"><i class="fa fa-times"></i></button>
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <div style="text-align: right;">
+            <button type="submit" class="btn btn-md btn-warning" onclick='window.location = "@Url.Action("add-to-ppmp", "ProjectProcurementPlans", new { ProjectCode = Model.Header.ProjectCode })"'><i class="fa fa-plus"></i> Finalize and Add to PPMP</button>
+            <button type="button" class="btn btn-md btn-danger" onclick='window.location = "@Url.Action("index", "ProjectProcurementPlans")"'><i class="fa fa-arrow-circle-left"></i> Back to Projects List</button>
         </div>
     </div>
 </div>
