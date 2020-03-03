@@ -357,14 +357,11 @@ namespace PUPFMIS.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             ProjectProcurementViewModel projectModel = projectProcurement.GetProjectDetails(ProjectCode);
-
             if(projectModel == null)
             {
                 return HttpNotFound();
             }
-
             projectProcurement.AddToPPMP(projectModel, User.Identity.Name);
-
             return RedirectToAction("index", "ProjectProcurementPlans");
         }
 

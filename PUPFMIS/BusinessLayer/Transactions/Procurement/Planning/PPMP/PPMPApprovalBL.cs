@@ -44,6 +44,13 @@ namespace PUPFMIS.BusinessLayer
                         Status = headers.Status
                     }).ToList();
         }
+        public int GetAcceptedItems()
+        {
+            return db.PPMPCSEDetails
+                    .Where(d => d.AcceptanceCode == AcceptanceCodes.Accepted)
+                    .GroupBy(d => d.FKItem.ItemCode)
+                    .Count();
+        }
         public List<PPMPSubmittedItems> GetSubmittedItems()
         {
             var submittedItems = db.PPMPCSEDetails
@@ -136,8 +143,7 @@ namespace PUPFMIS.BusinessLayer
         {
             PPMPCSEViewModel ppmpCSE = new PPMPCSEViewModel();
             ppmpCSE.PPMPHeader = GetPPMPHeader(ReferenceNo);
-            ppmpCSE.DBMItems = GetDBMItems(ppmpCSE.PPMPHeader.PPMPId);
-            ppmpCSE.NonDBMItems = GetNonDBMItems(ppmpCSE.PPMPHeader.PPMPId);
+            ppmpCSE.PPMPItems = db.PPMPCSEDetails.Where(d => d.FKPPMPReference.ID == ppmpCSE.PPMPHeader.PPMPId).ToList();
             return ppmpCSE;
         }
 
@@ -183,10 +189,6 @@ namespace PUPFMIS.BusinessLayer
         //{
         //    return db.PPMPHeader.Where(d => d.Status == "Submitted").Count();
         //}
-
-
-
-
 
         //public List<PPMPSubmittedItems> GetAcceptedItems()
         //{
@@ -262,8 +264,6 @@ namespace PUPFMIS.BusinessLayer
         //    return submittedItems;
         //}
 
-
-
         //public List<PPMPDistributionList> GetDistributionList(string ItemCode)
         //{
         //    var ppmp = db.PPMPCSEDetails.Where(d => d.FKPPMPReference.Status == "Submission Accepted" && d.FKItem.ItemCode == ItemCode).AsEnumerable();
@@ -283,7 +283,7 @@ namespace PUPFMIS.BusinessLayer
         //            }).ToList();
         //}
 
-        public bool AcceptSubmission(string ReferenceNo, int UserID, int OfficeID)
+        public bool AcceptSubmission(string ReferenceNo, string UserEmail)
         {
             PPMPHeaderViewModel ppmpHeader = ppmpBL.GetPPMPHeader(ReferenceNo);
             var header = db.PPMPHeader.Find(ppmpHeader.PPMPId);
@@ -297,13 +297,13 @@ namespace PUPFMIS.BusinessLayer
                     return false;
                 }
 
-                approvalWF.PPMPId = ppmpHeader.PPMPId;
-                approvalWF.Remarks = "Submission of PPMP from " + ppmpHeader.OfficeName + "is accepted. Final quantity of items specified is subject to budget approval.";
-                approvalWF.UpdatedAt = DateTime.Now;
-                approvalWF.ActionMadeBy = UserID;
-                approvalWF.ActionMadeByOffice = OfficeID;
-                approvalWF.Status = "Submission Accepted";
-                db.PPMPApprovalWorkflow.Add(approvalWF);
+                //approvalWF.PPMPId = ppmpHeader.PPMPId;
+                //approvalWF.Remarks = "Submission of PPMP from " + ppmpHeader.OfficeName + "is accepted. Final quantity of items specified is subject to budget approval.";
+                //approvalWF.UpdatedAt = DateTime.Now;
+                //approvalWF.ActionMadeBy = UserID;
+                //approvalWF.ActionMadeByOffice = OfficeID;
+                //approvalWF.Status = "Submission Accepted";
+                //db.PPMPApprovalWorkflow.Add(approvalWF);
 
                 if (db.SaveChanges() == 1)
                 {

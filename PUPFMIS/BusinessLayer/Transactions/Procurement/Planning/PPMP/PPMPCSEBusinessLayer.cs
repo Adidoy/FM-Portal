@@ -21,37 +21,17 @@ namespace PUPFMIS.BusinessLayer
             return db.PPMPDeadlines.Where(d => d.PurgeFlag == false).OrderBy(d => d.FiscalYear).ToList();
         }
 
-        public List<Months> GetMonths()
-        {
-            var months = new List<Months>()
-                {
-                    new Months { MonthValue = 1, MonthName = "January" },
-                    new Months { MonthValue = 2, MonthName = "February" },
-                    new Months { MonthValue = 3, MonthName = "March" },
-                    new Months { MonthValue = 4, MonthName = "April" },
-                    new Months { MonthValue = 5, MonthName = "May" },
-                    new Months { MonthValue = 6, MonthName = "June" },
-                    new Months { MonthValue = 7, MonthName = "July" },
-                    new Months { MonthValue = 8, MonthName = "August" },
-                    new Months { MonthValue = 9, MonthName = "September" },
-                    new Months { MonthValue = 10, MonthName = "October" },
-                    new Months { MonthValue = 11, MonthName = "November" },
-                    new Months { MonthValue = 12, MonthName = "December" }
-                };
-            return months;
-        }
-
-        public bool CreatePPMPCSE(ProjectProcurementViewModel project, string UserEmail)
+        public bool CreatePPMPCSE(ProjectProcurementViewModel project, string UserEmail, InventoryType PPMPType)
         {
             PPMPHeader header = new PPMPHeader();
             PPMPCSEDetails cseDetails = new PPMPCSEDetails();
 
             header.FiscalYear = project.Header.FiscalYear;
-            header.PPMPType = 1;
+            header.PPMPType = PPMPType.ID;
             header.PreparedBy = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault().ID;
             header.OfficeReference = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault().FKUserInformationReference.Office;
             header.CreatedAt = DateTime.Now;
-            header.ReferenceNo = GenerateReferenceNo(project.Header.FiscalYear, header.OfficeReference);
+            header.ReferenceNo = GenerateReferenceNo(project.Header.FiscalYear, header.OfficeReference, PPMPType.InventoryCode);
             header.Status = "New";
 
             db.PPMPHeader.Add(header);
@@ -64,7 +44,7 @@ namespace PUPFMIS.BusinessLayer
             List<PPMPCSEDetails> ppmpLineItems = new List<PPMPCSEDetails>();
             foreach (var item in project.Items)
             {
-                if(item.FKItemReference.FKInventoryTypeReference.InventoryTypeName == "Common Use Office Supplies")
+                if (item.FKItemReference.FKInventoryTypeReference.InventoryTypeName == "Common Use Office Supplies")
                 {
                     PPMPCSEDetails ppmpLineItem = new PPMPCSEDetails();
                     ppmpLineItem.ProjectProcurementProjectItemReference = item.ID;
@@ -105,9 +85,13 @@ namespace PUPFMIS.BusinessLayer
             return false;
         }
 
-        public bool UpdatePPMPCSE(ProjectProcurementViewModel project, string UserEmail)
+        public bool UpdatePPMPCSE(ProjectProcurementViewModel project, string UserEmail, InventoryType PPMPType)
         {
-            PPMPHeader header = db.PPMPHeader.Where(d => d.FiscalYear == project.Header.FiscalYear && d.PPMPType == 1).FirstOrDefault();
+            PPMPHeader header = db.PPMPHeader.Where(d => d.FiscalYear == project.Header.FiscalYear && d.PPMPType == PPMPType.ID && d.Status == "New").FirstOrDefault();
+            if (header == null)
+            {
+                return false;
+            }
 
             List<PPMPCSEDetails> ppmpLineItems = new List<PPMPCSEDetails>();
             foreach (var item in project.Items)
@@ -150,14 +134,14 @@ namespace PUPFMIS.BusinessLayer
             return false;
         }
 
-        public List<PPMPCSEDetails> GetDBMItems(int? PPMPID)
+        public string GenerateReferenceNo(string FiscalYear, int OfficeReference, string TypeCode)
         {
-            return db.PPMPCSEDetails.Where(d => d.PPMPID == PPMPID && d.FKItem.ProcurementSource == ProcurementSources.PS_DBM).ToList();
-        }
-
-        public List<PPMPCSEDetails> GetNonDBMItems(int? PPMPID)
-        {
-            return db.PPMPCSEDetails.Where(d => d.PPMPID == PPMPID && d.FKItem.ProcurementSource == ProcurementSources.Non_DBM).ToList();
+            string referenceNo = string.Empty;
+            string officeCode = HRISdb.OfficeModel.Find(OfficeReference).OfficeCode;
+            string seqNo = (db.PPMPHeader.Where(d => d.FiscalYear == FiscalYear).Count() + 1).ToString();
+            seqNo = seqNo.ToString().Length == 3 ? seqNo : seqNo.ToString().Length == 2 ? "0" + seqNo.ToString() : "00" + seqNo.ToString();
+            referenceNo = "PPMP-" + TypeCode + "-" + officeCode + "-" + seqNo + "-" + FiscalYear;
+            return referenceNo;
         }
 
         public PPMPHeaderViewModel GetPPMPHeader(string ReferenceNo)
@@ -476,16 +460,6 @@ namespace PUPFMIS.BusinessLayer
                 }
             }
             return false;
-        }
-
-        public string GenerateReferenceNo(string FiscalYear, int OfficeReference)
-        {
-            string referenceNo = string.Empty;
-            string officeCode = HRISdb.OfficeModel.Find(OfficeReference).OfficeCode;
-            string seqNo = (db.PPMPHeader.Where(d => d.FiscalYear == FiscalYear).Count() + 1).ToString();
-            seqNo = seqNo.ToString().Length == 3 ? seqNo : seqNo.ToString().Length == 2 ? "0" + seqNo.ToString() : "00" + seqNo.ToString();
-            referenceNo = "PPMP-CUSE-" + officeCode + "-" + seqNo + "-" + FiscalYear;
-            return referenceNo;
         }
 
         protected override void Dispose(bool disposing)

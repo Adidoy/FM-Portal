@@ -15,13 +15,12 @@ namespace PUPFMIS.Controllers
     {
         private FMISDbContext db = new FMISDbContext();
         private PPMPApprovalBL approvalBL = new PPMPApprovalBL();
-        private AccountsManagementBL accountsBL = new AccountsManagementBL();
 
         [ActionName("dashboard")]
         public ActionResult Index()
         {
             ViewBag.TotalSubmitted = approvalBL.GetSubmittedPPMP().Count;
-            //ViewBag.ItemCount = approvalBL.GetAcceptedItems().Count();
+            ViewBag.ItemCount = approvalBL.GetAcceptedItems();
             return View("Index");
         }
 
@@ -45,6 +44,12 @@ namespace PUPFMIS.Controllers
                 return HttpNotFound();
             }
             return View("SubmissionDetails", ppmpVM);
+        }
+
+        [Route("ops/procurement/planning/ppmp/approvals/{ReferenceNo}/accept-submission")]
+        public ActionResult AcceptSubmission(string ReferenceNo)
+        {
+            return RedirectToAction("index");
         }
 
         //[Route("ops/procurement/planning/ppmp/approvals/view-submitted-items")]
@@ -82,15 +87,7 @@ namespace PUPFMIS.Controllers
         //    return View(distributionList);
         //}
 
-        //[Route("ops/procurement/planning/ppmp/approvals/{ReferenceNo}/accept-submission")]
-        //public ActionResult AcceptSubmission(string ReferenceNo)
-        //{
-        //    var user = accountsBL.GetUsers(User.Identity.Name, false);
-        //    var userID = user.ID;
-        //    var officeID = user.Office;
-        //    approvalBL.AcceptSubmission(ReferenceNo, userID, officeID);
-        //    return RedirectToAction("index");
-        //}
+
 
         //public ActionResult RejectSubmission(string ReferenceNo)
         //{
@@ -186,7 +183,6 @@ namespace PUPFMIS.Controllers
             if (disposing)
             {
                 approvalBL.Dispose();
-                accountsBL.Dispose();
                 db.Dispose();
             }
             base.Dispose(disposing);

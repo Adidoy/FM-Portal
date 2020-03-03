@@ -13,6 +13,7 @@ namespace PUPFMIS.BusinessLayer
         private FMISDbContext db = new FMISDbContext();
         private HRISDbContext hris = new HRISDbContext();
         private PPMPCSEBusinessLayer ppmpCSEBL = new PPMPCSEBusinessLayer();
+        private PPMPBL ppmpBusinessLayer = new PPMPBL();
 
         public List<PPMPDeadlines> GetFiscalYears()
         {
@@ -58,10 +59,10 @@ namespace PUPFMIS.BusinessLayer
 
         public string SaveProject(Basket projectBasket, string Email, string Type)
         {
-            if(db.ProjectProcurementPlan.Where(d => d.ProjectCode.Substring(0,4) == Type).Count() >= 1)
-            {
-                return "Project Exists";
-            }
+            //if(db.ProjectProcurementPlan.Where(d => d.ProjectCode.Substring(0,4) == Type).Count() >= 1)
+            //{
+            //    return "Project Exists";
+            //}
             var user = db.UserAccounts.Where(d => d.Email == Email).FirstOrDefault();
             var office = hris.OfficeModel.Find(user.FKUserInformationReference.Office);
             projectBasket.BasketHeader.CreatedAt = DateTime.Now;
@@ -189,13 +190,28 @@ namespace PUPFMIS.BusinessLayer
 
         public void AddToPPMP(ProjectProcurementViewModel projectModel, string UserEmail)
         {
-            if(db.PPMPHeader.Where(d => d.FiscalYear == projectModel.Header.FiscalYear && d.PPMPType == 1).Count() == 0)
+            var inventoryTypes = db.InventoryTypes.ToList();
+            foreach (var type in inventoryTypes)
             {
-                ppmpCSEBL.CreatePPMPCSE(projectModel, UserEmail);
-            }
-            else
-            {
-                ppmpCSEBL.UpdatePPMPCSE(projectModel, UserEmail);
+                if(projectModel.Items.Where(d => d.FKItemReference.FKInventoryTypeReference.ID == type.ID).Count() > 0)
+                {
+                    var ppmp = db.PPMPHeader.Where(d => d.FiscalYear == projectModel.Header.FiscalYear && d.PPMPType == type.ID).OrderByDescending(d => d.ID).FirstOrDefault();
+                    if (ppmp == null)
+                    {
+                        //create
+                        ppmpCSEBL.CreatePPMPCSE(projectModel, UserEmail, type);
+                    }
+                    else if (ppmp.Status == "New")
+                    {
+                        //update
+                        ppmpCSEBL.UpdatePPMPCSE(projectModel, UserEmail, type);
+                    }
+                    else
+                    {
+                        ppmpCSEBL.CreatePPMPCSE(projectModel, UserEmail, type);
+                        //create additional
+                    }
+                }
             }
         }
 
