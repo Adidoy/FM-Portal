@@ -47,7 +47,7 @@ namespace PUPFMIS.Controllers
                 return RedirectToAction("catalogue");
             }
 
-            header.ProjectCode = "CSPL-XXXX-0000-0000";
+            header.ProjectCode = "CSPR-XXXX-0000-0000";
             header.ProjectName = "Supply and delivery of Common Use Office Supplies";
             header.Description = "Supply and delivery of common use office supplies to be used for daily transactions of the Office";
             header.ProjectMonthStart = 1;
@@ -246,62 +246,66 @@ namespace PUPFMIS.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult SaveProject(Basket projectBasket)
         {
-            procurementProjects.SaveProject(projectBasket, User.Identity.Name, "CSPL");
+            var status = procurementProjects.SaveProject(projectBasket, User.Identity.Name, "CSPR");
+            if(status == "Success")
+            {
+                return RedirectToAction("dashboard", "PPMP");
+            }
             return RedirectToAction("dashboard", "PPMP");
         }
 
-        //====================================================================================================
+        [ActionName("details")]
+        [Route("ops/procurement/planning/ppmp/{ReferenceNo}/details")]
+        public ActionResult Details(string ReferenceNo)
+        {
+            if (ReferenceNo == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            PPMPCSEViewModel ppmpCSE = ppmpCSEBusinessLayer.GetPPMPCSEDetails(ReferenceNo);
+            if (ppmpCSE == null)
+            {
+                return HttpNotFound();
+            }
+            ViewBag.Workflow = ppmpCSEBusinessLayer.GetApprovalWorkflow(ReferenceNo);
+            if (ViewBag.Workflow == null)
+            {
+                return HttpNotFound();
+            }
+            return View(ppmpCSE);
+        }
 
-        //[Route("ops/procurement/planning/ppmp/{ReferenceNo}/details")]
-        //public ActionResult Details(string ReferenceNo)
-        //{
-        //    if (ReferenceNo == null)
-        //    {
-        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-        //    }
-        //    PPMPCSEViewModel ppmpCSE = ppmpBL.GetPPMPCSEDetails(ReferenceNo);
-        //    if (ppmpCSE == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-        //    ViewBag.Workflow = ppmpBL.GetApprovalWorkflow(ReferenceNo);
-        //    if (ViewBag.Workflow == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-        //    return View(ppmpCSE);
-        //}
+        public ActionResult SubmitPPMP(string ReferenceNo)
+        {
+            if (ReferenceNo == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            PPMPCSEViewModel ppmpCSE = ppmpCSEBusinessLayer.GetPPMPCSEDetails(ReferenceNo);
+            if (ppmpCSEBusinessLayer.SubmitPPMP(ReferenceNo) == false)
+            {
+                return RedirectToAction("index");
+            }
+            return RedirectToAction("index");
+        }
 
-        //public ActionResult SubmitPPMP(string ReferenceNo)
-        //{
-        //    if (ReferenceNo == null)
-        //    {
-        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-        //    }
-        //    PPMPCSEViewModel ppmpCSE = ppmpBL.GetPPMPCSEDetails(ReferenceNo);
-        //    if (ppmpBL.SubmitPPMP(ReferenceNo) == false)
-        //    {
-        //        return RedirectToAction("index");
-        //    }
-        //    return RedirectToAction("index");
-        //}
+        [ActionName("print-ppmp")]
+        [Route("ops/procurement/planning/ppmp/{ReferenceNo}/print")]
+        public ActionResult PrintPPMP(string ReferenceNo)
+        {
+            var stream = ppmpCSEBusinessLayer.GeneratePPMPReport(ReferenceNo, Server.MapPath("~/Content/imgs/PUPLogo.png"));
+            Response.Clear();
+            Response.ClearContent();
+            Response.ClearHeaders();
+            Response.AddHeader("content-length", stream.Length.ToString());
+            //Response.AddHeader("content-disposition", "attachment; filename=" + ReferenceNo + ".pdf");
+            Response.ContentType = "application/pdf";
+            Response.BinaryWrite(stream.ToArray());
+            stream.Close();
+            Response.End();
 
-        //[Route("ops/procurement/planning/ppmp/{ReferenceNo}/print")]
-        //public ActionResult PrintPPMP(string ReferenceNo)
-        //{
-        //    var stream = ppmpBL.GeneratePPMPReport(ReferenceNo, Server.MapPath("~/Content/imgs/PUPLogo.png"));
-        //    Response.Clear();
-        //    Response.ClearContent();
-        //    Response.ClearHeaders();
-        //    //Response.AddHeader("content-length", stream.Length.ToString());
-        //    Response.AddHeader("content-disposition", "attachment; filename=" + ReferenceNo + ".pdf");
-        //    Response.ContentType = "application/pdf";
-        //    Response.BinaryWrite(stream.ToArray());
-        //    stream.Close();
-        //    Response.End();
-
-        //    return RedirectToAction("index");
-        //}
+            return RedirectToAction("index");
+        }
 
         protected override void Dispose(bool disposing)
         {

@@ -182,6 +182,18 @@ namespace PUPFMIS.BusinessLayer
             contentRow.Height = RowHeight;
         }
 
+        public void AddContentRow(bool TopBorder)
+        {
+            contentRow = new Row();
+            contentRow = contentTable.AddRow();
+            if(TopBorder == false)
+            {
+                var border = new Border();
+                border.Color = new Color(0, 0, 0, 0);
+                contentRow.Borders.Top = border;
+            }
+        }
+
         public void AddContent(string Value, int CellIndex)
         {
             contentRow.Cells[CellIndex].AddParagraph(Value);
@@ -273,6 +285,28 @@ namespace PUPFMIS.BusinessLayer
                 contentRow.Cells[CellIndex].MergeRight = (int)MergeRightSize;
             }
             contentRow.Cells[CellIndex].MergeDown = MergeDownSize;
+        }
+
+        public void AddContent(string Value, int CellIndex, Unit FontSize, bool BoldFace, ParagraphAlignment HorizontalAlign, VerticalAlignment VerticalAlign, int? MergeRightSize, int? MergeDownSize, bool BottomLine)
+        {
+            contentRow.Cells[CellIndex].AddParagraph(Value);
+            contentRow.Cells[CellIndex].Format.Font.Size = FontSize;
+            contentRow.Cells[CellIndex].Format.Font.Bold = BoldFace;
+            contentRow.Cells[CellIndex].Format.Alignment = HorizontalAlign;
+            contentRow.Cells[CellIndex].VerticalAlignment = VerticalAlign;
+            if (!String.IsNullOrEmpty(MergeRightSize.ToString()))
+            {
+                contentRow.Cells[CellIndex].MergeRight = (int)MergeRightSize;
+            }
+            if (!String.IsNullOrEmpty(MergeDownSize.ToString()))
+            {
+                contentRow.Cells[CellIndex].MergeDown = (int)MergeDownSize;
+            }
+            if(BottomLine == false)
+            {
+                contentRow.Borders.Bottom.Color = new Color(0,0,0,0);
+                contentRow.Borders.Top.Color = new Color(0, 0, 0, 0);
+            }
         }
 
         public MemoryStream GenerateReport()

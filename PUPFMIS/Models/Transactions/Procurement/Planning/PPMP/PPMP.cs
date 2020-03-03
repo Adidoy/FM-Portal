@@ -86,12 +86,19 @@ namespace PUPFMIS.Models
         [Display(Name = "Is Accepted?")]
         public AcceptanceCodes? AcceptanceCode { get; set; }
 
+        [Display(Name = "Project")]
+        public int? ProjectProcurementProjectItemReference { get; set; }
+
         [Display(Name = "Item Specifications")]
         [ForeignKey("Item")]
         public virtual Item FKItem { get; set; }
 
         [ForeignKey("PPMPID")]
         public virtual PPMPHeader FKPPMPReference { get; set; }
+
+        [Display(Name = "Project")]
+        [ForeignKey("ProjectProcurementProjectItemReference")]
+        public virtual ProjectProcurementPlanItems FKPPPItemsReference { get; set; }
     }
 
     public class PPMPHeaderViewModel
@@ -135,13 +142,11 @@ namespace PUPFMIS.Models
         public PPMPCSEViewModel()
         {
             PPMPHeader = new PPMPHeaderViewModel();
-            DBMItems = new List<PPMPCSEDetails>();
-            NonDBMItems = new List<PPMPCSEDetails>();
+            PPMPItems = new List<PPMPCSEDetails>();
         }
 
         public PPMPHeaderViewModel PPMPHeader { get; set; }
-        public List<PPMPCSEDetails> DBMItems { get; set; }
-        public List<PPMPCSEDetails> NonDBMItems { get; set; }
+        public List<PPMPCSEDetails> PPMPItems { get; set; }
     }
 
     public class PPMPViewModel
@@ -155,12 +160,6 @@ namespace PUPFMIS.Models
         public PPMPHeaderViewModel PPMPHeader { get; set; }
         public List<BasketItem> DBMItems { get; set; }
         public List<BasketItem> NonDBMItems { get; set; }
-    }
-
-    public class PPMPCSE
-    {
-        public PPMPHeader BasketHeader { get; set; }
-        public List<BasketItem> BasketItems { get; set; }
     }
 
     public class PPMPClientDashboard
@@ -237,8 +236,6 @@ namespace PUPFMIS.Models
         [Display(Name = "Accepted")]
         Accepted = 0,
         [Display(Name = "Reduce Quantity")]
-        ReduceQuantity = 1,
-        [Display(Name = "Needs Justification")]
-        NeedsJustification = 2
+        ReduceQuantity = 1
     }
 }

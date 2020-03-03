@@ -194,8 +194,7 @@ namespace PUPFMIS.BusinessLayer
         {
             PPMPCSEViewModel ppmpCSE = new PPMPCSEViewModel();
             ppmpCSE.PPMPHeader = GetPPMPHeader(ReferenceNo);
-            ppmpCSE.DBMItems = GetDBMItems(ppmpCSE.PPMPHeader.PPMPId);
-            ppmpCSE.NonDBMItems = GetNonDBMItems(ppmpCSE.PPMPHeader.PPMPId);
+            ppmpCSE.PPMPItems = FMISdb.PPMPCSEDetails.Where(d => d.PPMPID == ppmpCSE.PPMPHeader.PPMPId).ToList();
             return ppmpCSE;
         }
 
@@ -276,10 +275,7 @@ namespace PUPFMIS.BusinessLayer
         public MemoryStream GeneratePPMPReport(string ReferenceNo, string LogoPath)
         {
             PPMPCSEViewModel ppmpVM = GetPPMPCSEDetails(ReferenceNo);
-            ppmpVM.DBMItems = GetDBMItems(ppmpVM.PPMPHeader.PPMPId);
-            ppmpVM.NonDBMItems = GetNonDBMItems(ppmpVM.PPMPHeader.PPMPId);
-            //var preparedBy = GetPreparedBy(ppmpVM.PPMPHeader.PreparedBy);
-            //var office = GetOffice(ppmpVM.PPMPHeader.OfficeReference);
+            ppmpVM.PPMPItems = FMISdb.PPMPCSEDetails.Where(d => d.FKPPMPReference.ID == ppmpVM.PPMPHeader.PPMPId).ToList();
 
             reportConfig.ReportTitle = ppmpVM.PPMPHeader.ReferenceNo;
             reportConfig.ReportFormTitle = "Form D";
@@ -341,14 +337,15 @@ namespace PUPFMIS.BusinessLayer
             reportConfig.AddContentColumn(new Unit(2.37, UnitType.Centimeter));
             reportConfig.AddContentColumn(new Unit(5.63, UnitType.Centimeter));
 
-            if (ppmpVM.DBMItems.Count == 0)
+            List<PPMPCSEDetails> DBMItems = FMISdb.PPMPCSEDetails.Where(d => d.FKPPMPReference.ID == ppmpVM.PPMPHeader.PPMPId && d.FKItem.ProcurementSource == ProcurementSources.PS_DBM).ToList();
+            if (DBMItems.Count == 0)
             {
                 reportConfig.AddContentRow(new Unit(0.2, UnitType.Inch));
                 reportConfig.AddContent("*** NO ITEMS ***", 0, new Unit(10, UnitType.Point), true, ParagraphAlignment.Center, VerticalAlignment.Center, 8);
             }
             else
             {
-                foreach (var item in ppmpVM.DBMItems)
+                foreach (var item in DBMItems)
                 {
                     reportConfig.AddContentRow(new Unit(0.2, UnitType.Inch));
                     var itemName = item.FKItem.ItemName + ((String.IsNullOrEmpty(item.FKItem.ItemShortSpecifications)) ? "" : ", " + item.FKItem.ItemShortSpecifications);
@@ -403,14 +400,15 @@ namespace PUPFMIS.BusinessLayer
             reportConfig.AddContentColumn(new Unit(2.37, UnitType.Centimeter));
             reportConfig.AddContentColumn(new Unit(5.63, UnitType.Centimeter));
 
-            if (ppmpVM.NonDBMItems.Count == 0)
+            List<PPMPCSEDetails> NonDBMItems = FMISdb.PPMPCSEDetails.Where(d => d.FKPPMPReference.ID == ppmpVM.PPMPHeader.PPMPId && d.FKItem.ProcurementSource == ProcurementSources.Non_DBM).ToList();
+            if (NonDBMItems.Count == 0)
             {
                 reportConfig.AddContentRow(new Unit(0.2, UnitType.Inch));
                 reportConfig.AddContent("*** NO ITEMS ***", 0, new Unit(10, UnitType.Point), true, ParagraphAlignment.Center, VerticalAlignment.Center, 8);
             }
             else
             {
-                foreach (var item in ppmpVM.NonDBMItems)
+                foreach (var item in NonDBMItems)
                 {
                     reportConfig.AddContentRow(new Unit(0.2, UnitType.Inch));
                     var itemName = item.FKItem.ItemName + ((String.IsNullOrEmpty(item.FKItem.ItemShortSpecifications)) ? "" : ", " + item.FKItem.ItemShortSpecifications);

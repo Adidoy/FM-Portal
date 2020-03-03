@@ -267,14 +267,13 @@
     <Compile Include="Controllers\MvcHelpers.cs" />
     <Compile Include="Controllers\Transactions\Procurement\AgencyProcurementRequest\AgencyProcurementRequestController.cs" />
     <Compile Include="Controllers\Transactions\Procurement\APP\APPController.cs" />
-    <Compile Include="Controllers\Transactions\Procurement\Planning\ProjectProcurementPlan\EndUserProjectsController.cs" />
     <Compile Include="Controllers\Transactions\Procurement\ItemPriceCatalogueController.cs" />
     <Compile Include="Controllers\Transactions\Procurement\Pipeline\ProcurementPipelineController.cs" />
     <Compile Include="Controllers\Transactions\Procurement\Planning\PPMP\PPMPApprovalController.cs" />
     <Compile Include="Controllers\Transactions\Procurement\Planning\PPMP\PPMPController.cs" />
     <Compile Include="Controllers\Transactions\Procurement\Planning\PPMP\PPMPCSEController.cs" />
     <Compile Include="Controllers\Transactions\Procurement\Planning\PPMP\PPMPDeadlinesController.cs" />
-    <Compile Include="Controllers\Transactions\Procurement\Planning\ProcurementProjects\ProjectProcurementPlansController.cs" />
+    <Compile Include="Controllers\Transactions\Procurement\Planning\ProjectProcurementPlan\ProjectProcurementPlansController.cs" />
     <Compile Include="Controllers\Transactions\Procurement\PurchaseOrder\PurchaseOrdersController.cs" />
     <Compile Include="Controllers\Transactions\Procurement\PurchaseRequest\PurchaseRequestController.cs" />
     <Compile Include="Controllers\Transactions\Procurement\SupplierEvaluation\SupplierEvaluationController.cs" />
