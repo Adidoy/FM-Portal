@@ -46,6 +46,8 @@ namespace PUPFMIS.Models
         [MaxLength(75)]
         [Display(Name = "Designation")]
         public string Designation { get; set; }
+
+        public string Role { get; set; }
     }
 
     public class LoginVM

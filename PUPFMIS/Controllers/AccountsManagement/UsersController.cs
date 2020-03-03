@@ -12,21 +12,20 @@ using System.Web.Mvc;
 namespace PUPFMIS.Controllers
 {
     [Route("users-management/accounts/{action}")]
-    [Authorize]
     public class UsersController : Controller
     {
         private FMISDbContext db = new FMISDbContext();
         private AccountsManagementBL accountsManagementBL = new AccountsManagementBL();
         private OfficesBL officesBL = new OfficesBL();
 
-        public ActionResult index()
+        public ActionResult Index()
         {
             return View(db.UserInformation.ToList());
         }
 
         [Route("login")]
         [AllowAnonymous]
-        public ActionResult login(string returnUrl)
+        public ActionResult Login(string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
             return View();
@@ -35,13 +34,13 @@ namespace PUPFMIS.Controllers
         [HttpPost]
         [Route("login")]
         [AllowAnonymous]
-        public ActionResult login(LoginVM login, string returnUrl)
+        public ActionResult Login(LoginVM login, string returnUrl)
         {
             string Message = string.Empty;
             if (ModelState.IsValid)
             {
                 UsersVM user;
-                if (accountsManagementBL.VerifyUserCredentials(login, out Message, out user))
+                if (accountsManagementBL.VerifyUserCredentials(login, out user))
                 {
                     var claims = new[]
                     {
@@ -58,9 +57,9 @@ namespace PUPFMIS.Controllers
         }
 
         [HttpPost]
-        [Route("logout")]
+        [Route("logout")]   
         [AllowAnonymous]
-        public ActionResult logout()
+        public ActionResult Logout()
         {
             var ctx = Request.GetOwinContext();
             var authManager = ctx.Authentication;
@@ -78,17 +77,20 @@ namespace PUPFMIS.Controllers
             return RedirectToAction("index", "Home");
         }
 
-        [AllowAnonymous]
-        public ActionResult register()
+        [Authorize(Roles = SystemRoles.SuperUser + ", " + SystemRoles.SystemAdmin)]
+        [ActionName("register")]
+        public ActionResult Register()
         {
             ViewBag.Offices = new SelectList(officesBL.GetOffices(), "ID", "OfficeName");
+            ViewBag.Roles = new SelectList(accountsManagementBL.GetRoles(), "ID", "Role");
             return View();
         }
 
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize(Roles = SystemRoles.SuperUser + ", " + SystemRoles.SystemAdmin)]
         [ValidateAntiForgeryToken]
-        public ActionResult register(UsersVM user)
+        [ActionName("register")]
+        public ActionResult Register(UsersVM user)
         {
             ModelState.Remove("PasswordSalt");
             string Message = string.Empty;
@@ -211,7 +213,6 @@ namespace PUPFMIS.Controllers
         {
             if (disposing)
             {
-                
                 db.Dispose();
                 accountsManagementBL.Dispose();
             }

@@ -23,6 +23,17 @@ namespace PUPFMIS.Migrations.FMISMigrations
             context.SystemVariables.AddOrUpdate(
                 new Models.SystemVariables { ID = 1, VariableName = "Quantity Inflation Rate (%)", Value = "5"}
             );
+            context.Roles.AddOrUpdate(
+                new Models.Roles { ID = 1, Role = "Super User" },
+                new Models.Roles { ID = 2, Role = "System Administrator" },
+                new Models.Roles { ID = 3, Role = "Procurement Administrator" },
+                new Models.Roles { ID = 4, Role = "Property Administrator" },
+                new Models.Roles { ID = 5, Role = "Supplies Administrator" },
+                new Models.Roles { ID = 6, Role = "Warehouse Administrator" },
+                new Models.Roles { ID = 7, Role = "Supplies Officer" },
+                new Models.Roles { ID = 8, Role = "Budget Administrator" },
+                new Models.Roles { ID = 9, Role = "Budget Officer" }
+            );
         }
     }
 }
