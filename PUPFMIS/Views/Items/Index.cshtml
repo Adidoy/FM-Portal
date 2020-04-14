@@ -21,7 +21,7 @@
 <div class="row">
     <div class="col-sm-12">
         <div class="text-right">
-            <button style="text-align:left;" class="btn btn-info btn-md" onclick='window.location = "@Url.Action("create", "Items")"'><i class="fa fa-plus"></i> Add New Item</button>
+            <button style="text-align:left;" class="btn btn-info btn-md" onclick='window.location = "@Url.Action("create-item", "Items")"'><i class="fa fa-plus"></i> Add New Item</button>
             <button style="text-align:left;" class="btn btn-secondary btn-md"><i class="fa fa-filter"></i> Filter</button>
         </div>
     </div>
@@ -33,10 +33,11 @@
             <table class="table table-striped table-hover" id="itemList">
                 <thead>
                     <tr>
-                        <th style="text-align:center;" width="30%">
+                        <th width="15%"></th>
+                        <th style="text-align:center;" width="25%">
                             Item
                         </th>
-                        <th style="text-align:center;" width="50%">
+                        <th style="text-align:center;" width="40%">
                             @Html.DisplayNameFor(model => model.ItemSpecifications)
                         </th>
                         <th style="text-align:center;" width="20%">
@@ -48,33 +49,25 @@
                     @foreach (var item in Model)
                     {
                         <tr>
-                            <td style="text-align:center;">
-                                <div class="row">
-                                    <div class="col-sm-12 text-center">
-                                        @if (item.ItemImage != null)
-                                        {
-                                            var base64 = Convert.ToBase64String(item.ItemImage);
-                                            var imgsrc = string.Format("data:image/jpg;base64,{0}", base64);
-                                            <img src='@imgsrc' style="max-width:100px;max-height:100px" />
-                                        }
-                                        else
-                                        {
-                                            <img src='~/Content/imgs/PUPLogo.png' style="max-width:100px;max-height:100px" />
-                                        }
-                                    </div>
-                                </div>
+                            <td style="text-align: center;">
+                                @if (item.ItemImage != null)
+                                {
+                                    var base64 = Convert.ToBase64String(item.ItemImage);
+                                    var imgsrc = string.Format("data:image/jpg;base64,{0}", base64);
+                                    <img src='@imgsrc' style="max-width:100px;max-height:100px" />
+                                }
+                                else
+                                {
+                                    <img src='~/Content/imgs/PUPLogo.png' style="max-width:100px;max-height:100px" />
+                                }
+                            </td>
+                            <td style="text-align: left;">
+                                (@Html.DisplayFor(modelItem => item.ItemCode))
                                 <br />
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <h6>
-                                            <b>
-                                                @Html.DisplayFor(modelItem => item.ItemName).ToString().ToUpper()
-                                                @(string.IsNullOrEmpty(item.ItemShortSpecifications) ? "" : ", " + item.ItemShortSpecifications.ToString().ToUpper())
-                                            </b>
-                                            <small>(@Html.DisplayFor(modelItem => item.ItemCode))</small>
-                                        </h6>
-                                    </div>
-                                </div>
+                                <b>
+                                    @Html.DisplayFor(modelItem => item.ItemName).ToString().ToUpper()
+                                    @(string.IsNullOrEmpty(item.ItemShortSpecifications) ? "" : ", " + item.ItemShortSpecifications.ToString().ToUpper())
+                                </b>
                             </td>
                             <td align="justify">
                                 <i>
@@ -95,9 +88,9 @@
                                 @Html.LabelFor(modelItem => item.MinimumIssuanceQty) : @Html.DisplayFor(modelItem => item.MinimumIssuanceQty) @Html.DisplayFor(modelItem => item.FKIndividualUnitReference.UnitName)
                             </td>
                             <td align="center">
-                                <button type="button" class="btn btn-sm btn-primary" data-toggle="tooltip" title="View Details" onclick="loadModal('@Url.Action("details","Items", new { id = item.ID })')"><i class="fa fa-eye"></i></button>
-                                <button type="button" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Edit Record" onclick="loadModal('@Url.Action("edit","Items", new { id = item.ID })')"><i class="fa fa-edit"></i></button>
-                                <button type="button" class="btn btn-sm btn-danger" data-toggle="tooltip" title="Purge Record" onclick="loadModal('@Url.Action("delete","Items", new { id = item.ID })')"><i class="fa fa-trash"></i></button>
+                                <button type="button" class="btn btn-sm btn-primary" data-toggle="tooltip" title="View Details" onclick="window.location = '@Url.Action("item-details","Items", new { Area = "", ItemCode = item.ItemCode })'"><i class="fa fa-eye"></i></button>
+                                <button type="button" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Edit Record" onclick="window.location = '@Url.Action("update-item","Items", new { Area = "", ItemCode = item.ItemCode })'"><i class="fa fa-edit"></i></button>
+                                <button type="button" class="btn btn-sm btn-danger" data-toggle="tooltip" title="Purge Record" onclick="window.location = '@Url.Action("delete","Items", new { Area = "", ItemCode = item.ItemCode })'"><i class="fa fa-trash"></i></button>
                             </td>
                         </tr>
                     }
@@ -114,10 +107,9 @@
             "paging": true,
             "lengthChange": true,
             "searching": true,
-            "ordering": true,
+            "ordering": false,
             "info": true,
-            "autoWidth": false,
-            "order": [[1, "asc"]]
+            "autoWidth": false
         });
     });
 </script>

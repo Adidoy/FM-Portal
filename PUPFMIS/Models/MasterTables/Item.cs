@@ -7,16 +7,22 @@ using System.Web.Mvc;
 
 namespace PUPFMIS.Models
 {
-    [Table("master_itemcategory")]
+    [Table("master_itemCategory")]
     public class ItemCategory
     {
         [Key]
         public int ID { get; set; }
 
         [Required]
-        [Display(Name = "Item Category Name")]
         [MaxLength(150)]
+        [Column(TypeName = "VARCHAR")]
+        [Display(Name = "Item Category Name")]
         public string ItemCategoryName { get; set; }
+
+        [Column(TypeName = "VARCHAR")]
+        [Display(Name = "Category For")]
+        [MaxLength(10, ErrorMessage = "{0} must be up to {1} characters only.")]
+        public string CategoryFor { get; set; }
 
         [Required]
         [Display(Name = "Is Deleted?")]
@@ -38,23 +44,28 @@ namespace PUPFMIS.Models
         [Key]
         public int ID { get; set; }
 
-        [Required]
         [Display(Name = "Item Code")]
+        [Column(TypeName = "VARCHAR")]
+        [MaxLength(20, ErrorMessage = "{0} field must be up to {1} characters only.")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
         public string ItemCode { get; set; }
 
-        [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
-        [MaxLength(75, ErrorMessage = "{0} field must be up to {1} characters only")]
         [Display(Name = "Item Name")]
+        [Column(TypeName = "VARCHAR")]
+        [MaxLength(75, ErrorMessage = "{0} field must be up to {1} characters only")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
         public string ItemName { get; set; }
 
-        [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
+        [Column(TypeName = "VARCHAR")]
         [Display(Name = "Short Specifications")]
+        [MaxLength(75, ErrorMessage = "{0} field must be up to {1} characters only.")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
         public string ItemShortSpecifications { get; set; }
 
-        [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
-        [Display(Name = "Full Specifications")]
-        [DataType(DataType.MultilineText)]
         [AllowHtml]
+        [DataType(DataType.MultilineText)]
+        [Display(Name = "Full Specifications")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
         public string ItemSpecifications { get; set; }
 
         [Display(Name = "Procurement Source")]
@@ -78,29 +89,29 @@ namespace PUPFMIS.Models
         [Display(Name = "Individual UOM")]
         public int? IndividualUOMReference { get; set; }
 
-        [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
         [Display(Name = "Quantity per Package")]
-        public decimal DistributionQtyPerPack { get; set; }
-
         [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
-        [Display(Name = "Minimum Issuance Quantity")]
-        public decimal MinimumIssuanceQty { get; set; }
+        public int DistributionQtyPerPack { get; set; }
 
-        [ForeignKey("InventoryTypeReference")]
+        [Display(Name = "Minimum Issuance Quantity")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
+        public int MinimumIssuanceQty { get; set; }
+
         [Display(Name = "Inventory Type")]
+        [ForeignKey("InventoryTypeReference")]
         public virtual InventoryType FKInventoryTypeReference { get; set; }
 
         [Display(Name = "Packaging Unit")]
         [ForeignKey("PackagingUOMReference")]
         public virtual UnitOfMeasure FKPackagingUnitReference { get; set; }
 
-        [Display(Name = "Individual Unit of Measure")]
         [ForeignKey("IndividualUOMReference")]
+        [Display(Name = "Individual Unit of Measure")]
         public virtual UnitOfMeasure FKIndividualUnitReference { get; set; }
-        
-        [ForeignKey("ItemCategoryReference")]
+
         [Display(Name = "Item Category")]
-        public virtual ItemCategory FKItemCategoryReference { get; set; }
+        [ForeignKey("ItemCategoryReference")]
+        public virtual DBMCategories FKItemCategoryReference { get; set; }
 
         [Required]
         [Display(Name = "Is Deleted?")]
@@ -117,7 +128,7 @@ namespace PUPFMIS.Models
         public DateTime? DeletedAt { get; set; }
     }
 
-    [Table("master_itemprices")]
+    [Table("master_itemPrices")]
     public class ItemPrice
     {
         [Key]
@@ -151,7 +162,7 @@ namespace PUPFMIS.Models
         public DateTime? UpdatedAt { get; set; }
     }
 
-    [Table("master_inventorytypes")]
+    [Table("master_inventoryTypes")]
     public class InventoryType
     {
         [Key]

@@ -1,0 +1,69 @@
+﻿@model IEnumerable<PUPFMIS.Models.Services>
+
+@{
+    ViewBag.Title = "Services";
+    ViewBag.Description = "Master";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Services", "list", new { Area = "" }, null)</li>
+        <li class="breadcrumb-item">Home</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-list"></i> Purged Services List</h3>
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="text-right">
+            <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("list", "Services", new { Area = "" })'"><i class="fa fa-arrow-circle-left"></i> Back</button>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card-body table-responsive p-sm-0">
+            <table class="table table-striped table-hover" id="example2">
+                <thead>
+                    <tr>
+                        <th width="30%" style="text-align:center; vertical-align: middle">
+                            @Html.DisplayNameFor(model => model.ServiceName)
+                        </th>
+                        <th width="30%" style="text-align:center; vertical-align: middle">
+                            @Html.DisplayNameFor(model => model.ItemShortSpecifications)
+                        </th>
+                        <th width="20%" style="text-align:center; vertical-align: middle">
+                            @Html.DisplayNameFor(model => model.DeletedAt)
+                        </th>
+                        <th width="20%" style="text-align:center; vertical-align: middle">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ServiceName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ItemShortSpecifications)
+                            </td>
+                            <td>
+                                @item.DeletedAt.Value.ToString("dd MMMM yyyy hh:mm tt")
+                            </td>
+                            <td align="center">
+                                <button type="button" class="btn btn-sm btn-success" data-toggle="tooltip" title="Restore" onclick="window.location.href = '@Url.Action("restore-service-confirmed", "Services", new { Area = "", ServiceCode = item.ServiceCode })'"><i class="fa fa-trash-restore"></i>&nbsp; Restore Record</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

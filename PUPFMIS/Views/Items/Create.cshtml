@@ -20,7 +20,7 @@
     </div>
 }
 
-@using (Html.BeginForm("create", "Items", FormMethod.Post, htmlAttributes: new { id = "addItem", enctype = "multipart/form-data" }))
+@using (Html.BeginForm("create-item", "Items", FormMethod.Post, htmlAttributes: new { id = "addItem", Area = "", enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
     
@@ -109,14 +109,14 @@
                 <div class="row">
                     <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-group">
-                            @Html.LabelFor(model => model.PackagingUOMReference, htmlAttributes: new { @class = "control-label" })
+                            @Html.LabelFor(model => model.IndividualUOMReference, htmlAttributes: new { @class = "control-label" })
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fa fa-bookmark"></i></span>
                                 </div>
-                                @Html.DropDownList("PackagingUOMReference", null, htmlAttributes: new { @class = "form-control form-control-sm" })
+                                @Html.DropDownList("IndividualUOMReference", null, htmlAttributes: new { @class = "form-control form-control-sm" })
                             </div>
-                            @Html.ValidationMessageFor(model => model.PackagingUOMReference, "", new { @class = "text-danger" })
+                            @Html.ValidationMessageFor(model => model.IndividualUOMReference, "", new { @class = "text-danger" })
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12">
@@ -135,14 +135,14 @@
                 <div class="row">
                     <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-group">
-                            @Html.LabelFor(model => model.IndividualUOMReference, htmlAttributes: new { @class = "control-label" })
+                            @Html.LabelFor(model => model.PackagingUOMReference, htmlAttributes: new { @class = "control-label" })
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fa fa-bookmark"></i></span>
                                 </div>
-                                @Html.DropDownList("IndividualUOMReference", null, htmlAttributes: new { @class = "form-control form-control-sm" })
+                                @Html.DropDownList("PackagingUOMReference", null, htmlAttributes: new { @class = "form-control form-control-sm" })
                             </div>
-                            @Html.ValidationMessageFor(model => model.IndividualUOMReference, "", new { @class = "text-danger" })
+                            @Html.ValidationMessageFor(model => model.PackagingUOMReference, "", new { @class = "text-danger" })
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12">
@@ -192,8 +192,8 @@
 
 @section FormFooter {
     <div class="form-group float-right">
-        <button type="button" class="btn btn-primary" id="save-btn" onclick='SaveItem()'><i class="fa fa-save"></i>&nbsp; Save changes</button>
-        <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("index","Items")'"><i class="fa fa-arrow-circle-left"></i> Back</button>
+        <button type="button" class="btn btn-primary" id="save-btn" onclick="SaveItem()"><i class="fa fa-save"></i>&nbsp; Save changes</button>
+        <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("item-list","Items")'"><i class="fa fa-arrow-circle-left"></i> Back</button>
     </div>
 }
 

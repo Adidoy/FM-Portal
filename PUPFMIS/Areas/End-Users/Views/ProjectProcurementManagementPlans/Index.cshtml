@@ -1,0 +1,108 @@
+﻿@model IEnumerable<PUPFMIS.Models.PPMPHeaderViewModel>
+
+@{
+    ViewBag.Title = "PPMP";
+    ViewBag.Description = "Home";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+    var PPMP = Model as List<PUPFMIS.Models.PPMPHeaderViewModel>;
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("PPMP", "index")</li>
+        <li class="breadcrumb-item">Home</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-list"></i> PPMP List</h3>
+}
+
+@using (Html.BeginForm("submit-ppmp", "ProjectProcurementManagementPlans", FormMethod.Post, new { Area = "end-users" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="text-right">
+                <button style="text-align:left;" class="btn btn-warning btn-md"><i class="fa fa-share"></i> Submit Selected PPMP</button>
+                <button style="text-align:left;" class="btn btn-danger btn-md" onclick="window.location = '@Url.Action("dashboard", "PPMP")'"><i class="fa fa-arrow-circle-left"></i> Back to Dashboard</button>
+            </div>
+        </div>
+    </div>
+    <hr />
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card-body table-responsive p-sm-0">
+                <table class="table table-striped table-hover" id="example2">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center; vertical-align:middle" width="25%">
+                                @Html.DisplayNameFor(model => model.ReferenceNo)
+                            </th>
+                            <th style="text-align:center; vertical-align:middle" width="15%">
+                                @Html.DisplayNameFor(model => model.FiscalYear)
+                            </th>
+                            <th style="text-align:center; vertical-align:middle" width="15%">
+                                @Html.DisplayNameFor(model => model.EstimatedBudget)
+                            </th>
+                            <th style="text-align:center; vertical-align:middle" width="25%">
+                                @Html.DisplayNameFor(model => model.Status)
+                            </th>
+                            <th style="text-align:center; vertical-align:middle" width="20%">
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        @for (var item = 0; item < PPMP.Count; item++)
+                        {
+                            <tr>
+                                <td align="justify">
+                                    @if (PPMP[item].Status != "New PPMP")
+                                    {
+                                        @Html.CheckBoxFor(m => PPMP[item].IsSelected, htmlAttributes: new { disabled = "disabled" })<span>&emsp;</span><b>@Html.DisplayFor(modelItem => PPMP[item].ReferenceNo)</b>
+                                    }
+                                    else
+                                    {
+                                        @Html.HiddenFor(modelItem => PPMP[item].ReferenceNo)
+                                        @Html.CheckBoxFor(m => PPMP[item].IsSelected)<span>&emsp;</span><b>@Html.DisplayFor(modelItem => PPMP[item].ReferenceNo)</b>
+                                    }
+                                    
+                                </td>
+                                <td align="center">
+                                    @Html.HiddenFor(modelItem => PPMP[item].FiscalYear)
+                                    @Html.DisplayFor(modelItem => PPMP[item].FiscalYear)
+                                </td>
+                                <td align="right">
+                                    @Html.HiddenFor(modelItem => PPMP[item].EstimatedBudget)
+                                    @( String.Format("{0:C}", PPMP[item].EstimatedBudget) )
+                                </td>
+                                <td align="center">
+                                    @Html.HiddenFor(modelItem => PPMP[item].Status)
+                                    @if (PPMP[item].Status == "New PPMP")
+                                    {
+                                        <span class="badge bg-secondary" style="font-size:100%;">@Html.DisplayFor(modelItem => PPMP[item].Status)</span>
+                                    }
+                                    else if (PPMP[item].Status == "PPMP Submitted")
+                                    {
+                                        <span class="badge bg-warning" style="font-size:100%;">@Html.DisplayFor(modelItem => PPMP[item].Status)</span>
+                                    }
+                                    else if (PPMP[item].Status == "Submission Accepted")
+                                    {
+                                        <span class="badge bg-success" style="font-size:100%;">@Html.DisplayFor(modelItem => PPMP[item].Status)</span>
+                                    }
+                                </td>
+                                <td style="vertical-align:middle; text-align:center;">
+                                    <button type="button" class="btn btn-sm btn-primary" onclick="window.location = '@Url.Action("view-ppmp-details", "ProjectProcurementManagementPlans", new { Area = "end-users", ReferenceNo = PPMP[item].ReferenceNo })'"><i class="fa fa-eye"></i> View Details</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}

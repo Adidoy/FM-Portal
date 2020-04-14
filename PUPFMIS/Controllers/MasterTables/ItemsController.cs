@@ -7,58 +7,62 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using PUPFMIS.Models;
-using PUPFMIS.BusinessLayer;
+using PUPFMIS.BusinessAndDataLogic;
 
 namespace PUPFMIS.Controllers
 {
-    [Authorize]
-    [Route("master-tables/items/{action}")]
+    [RoutePrefix("master-tables/items")]
+    [Authorize(Roles = SystemRoles.SuperUser)]
     public class ItemsController : Controller
     {
-        ItemsBL itemsBL = new ItemsBL();
-        UnitOfMeasureBL unitOfMeasureBL = new UnitOfMeasureBL();
-        ItemCategoriesBL itemCategoriesBL = new ItemCategoriesBL();
-        InventoryTypeBL inventoryTypesBL = new InventoryTypeBL();
-        ChartOfAccountsBL coaBL = new ChartOfAccountsBL();
+        ItemBusinessLogic itemsBL = new ItemBusinessLogic();
+        ItemDataAccess itemDA = new ItemDataAccess();
 
+        [Route("")]
+        [Route("list")]
+        [ActionName("item-list")]
         public ActionResult Index()
         {
-            return View(itemsBL.GetItems());
+            return View("index", itemsBL.GetItems(false));
         }
 
-        public ActionResult Details(int? id)
+        [ActionName("item-details")]
+        [Route("details/{ItemCode}")]
+        public ActionResult Details(string ItemCode)
         {
-            if (id == null)
+            if (ItemCode == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Item item = itemsBL.GetItems(id);
+            Item item = itemsBL.GetItemsByCode(ItemCode, false);
             if (item == null)
             {
                 return HttpNotFound();
             }
-            return View(item);
+            return View("details",item);
         }
 
+        [Route("create")]
+        [ActionName("create-item")]
         public ActionResult Create()
         {
-            ViewBag.AccountClass = new SelectList(coaBL.GetChartOfAccounts(), "UACS", "AccountTitle");
-            ViewBag.IndividualUOMReference = new SelectList(unitOfMeasureBL.GetUOMs(), "ID", "UnitName");
-            ViewBag.InventoryTypeReference = new SelectList(inventoryTypesBL.GetInventoryTypes(), "ID", "InventoryTypeName");
-            ViewBag.ItemCategoryReference = new SelectList(itemCategoriesBL.GetCategories(), "ID", "ItemCategoryName");
-            ViewBag.PackagingUOMReference = new SelectList(unitOfMeasureBL.GetUOMs(), "ID", "UnitName");
-            return View();
+            ViewBag.AccountClass = new SelectList(itemDA.GetChartOfAccounts(), "UACS", "AccountTitle");
+            ViewBag.IndividualUOMReference = new SelectList(itemDA.GetUnitsOfMeasure(), "ID", "UnitName");
+            ViewBag.InventoryTypeReference = new SelectList(itemDA.GetInventoryTypes(), "ID", "InventoryTypeName");
+            ViewBag.ItemCategoryReference = new SelectList(itemDA.GetCategories(), "ID", "ItemCategoryName");
+            ViewBag.PackagingUOMReference = new SelectList(itemDA.GetUnitsOfMeasure(), "ID", "UnitName");
+            return View("create");
         }
 
         [HttpPost]
+        [Route("create")]
         [ValidateAntiForgeryToken]
+        [ActionName("create-item")]
         public ActionResult Create(Item item, HttpPostedFileBase upload)
         {
 
             ModelState.Remove("ItemCode");
             ModelState.Remove("ItemImage");
-
-            //ValidateModel(item);
             if (ModelState.IsValid)
             {
                 if (upload != null && upload.ContentLength > 0)
@@ -69,72 +73,73 @@ namespace PUPFMIS.Controllers
 
                 if (itemsBL.AddItemRecord(item))
                 {
-                    return RedirectToAction("Index");
+                    return RedirectToAction("item-list", "Items", new { Area = "" });
                 }
                 else
                 {
-                    ViewBag.IndividualUOMReference = new SelectList(unitOfMeasureBL.GetUOMs(), "ID", "UnitName", item.IndividualUOMReference);
-                    ViewBag.InventoryTypeReference = new SelectList(inventoryTypesBL.GetInventoryTypes(), "ID", "InventoryTypeName", item.InventoryTypeReference);
-                    ViewBag.ItemCategoryReference = new SelectList(itemCategoriesBL.GetCategories(), "ID", "ItemCategoryName", item.ItemCategoryReference);
-                    ViewBag.PackagingUOMReference = new SelectList(unitOfMeasureBL.GetUOMs(), "ID", "UnitName", item.PackagingUOMReference);
-                    return View(item);
+                    ViewBag.IndividualUOMReference = new SelectList(itemDA.GetUnitsOfMeasure(), "ID", "UnitName", item.IndividualUOMReference);
+                    ViewBag.InventoryTypeReference = new SelectList(itemDA.GetInventoryTypes(), "ID", "InventoryTypeName", item.InventoryTypeReference);
+                    ViewBag.ItemCategoryReference = new SelectList(itemDA.GetCategories(), "ID", "ItemCategoryName", item.ItemCategoryReference);
+                    ViewBag.PackagingUOMReference = new SelectList(itemDA.GetUnitsOfMeasure(), "ID", "UnitName", item.PackagingUOMReference);
+                    return View("create", item);
                 }
             }
-
-            ViewBag.IndividualUOMReference = new SelectList(unitOfMeasureBL.GetUOMs(), "ID", "UnitName", item.IndividualUOMReference);
-            ViewBag.InventoryTypeReference = new SelectList(inventoryTypesBL.GetInventoryTypes(), "ID", "InventoryTypeName", item.InventoryTypeReference);
-            ViewBag.ItemCategoryReference = new SelectList(itemCategoriesBL.GetCategories(), "ID", "ItemCategoryName", item.ItemCategoryReference);
-            ViewBag.PackagingUOMReference = new SelectList(unitOfMeasureBL.GetUOMs(), "ID", "UnitName", item.PackagingUOMReference);
-            return View(item);
+            ViewBag.IndividualUOMReference = new SelectList(itemDA.GetUnitsOfMeasure(), "ID", "UnitName", item.IndividualUOMReference);
+            ViewBag.InventoryTypeReference = new SelectList(itemDA.GetInventoryTypes(), "ID", "InventoryTypeName", item.InventoryTypeReference);
+            ViewBag.ItemCategoryReference = new SelectList(itemDA.GetCategories(), "ID", "ItemCategoryName", item.ItemCategoryReference);
+            ViewBag.PackagingUOMReference = new SelectList(itemDA.GetUnitsOfMeasure(), "ID", "UnitName", item.PackagingUOMReference);
+            return View("create", item);
         }
 
-        public ActionResult Edit(int? id)
+        [ActionName("update-item")]
+        [Route("update/{ItemCode}")]
+        public ActionResult Edit(string ItemCode)
         {
-            if (id == null)
+            if (ItemCode == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Item item = itemsBL.GetItems(id);
+            Item item = itemsBL.GetItemsByCode(ItemCode, false);
             if (item == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.IndividualUOMReference = new SelectList(unitOfMeasureBL.GetUOMs(), "ID", "UnitName", item.IndividualUOMReference);
-            ViewBag.InventoryTypeReference = new SelectList(inventoryTypesBL.GetInventoryTypes(), "ID", "InventoryTypeName", item.InventoryTypeReference);
-            ViewBag.ItemCategoryReference = new SelectList(itemCategoriesBL.GetCategories(), "ID", "ItemCategoryName", item.ItemCategoryReference);
-            ViewBag.PackagingUOMReference = new SelectList(unitOfMeasureBL.GetUOMs(), "ID", "UnitName", item.PackagingUOMReference);
-            return View(item);
+            ViewBag.IndividualUOMReference = new SelectList(itemDA.GetUnitsOfMeasure(), "ID", "UnitName", item.IndividualUOMReference);
+            ViewBag.InventoryTypeReference = new SelectList(itemDA.GetInventoryTypes(), "ID", "InventoryTypeName", item.InventoryTypeReference);
+            ViewBag.ItemCategoryReference = new SelectList(itemDA.GetCategories(), "ID", "ItemCategoryName", item.ItemCategoryReference);
+            ViewBag.PackagingUOMReference = new SelectList(itemDA.GetUnitsOfMeasure(), "ID", "UnitName", item.PackagingUOMReference);
+            return View("edit", item);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ActionName("update-item")]
+        [Route("update/{ItemCode}")]
         public ActionResult Edit(Item item)
         {
-            //if (ModelState.IsValid)
-            //{
-            //    db.Entry(item).State = EntityState.Modified;
-            //    db.SaveChanges();
-            //    return RedirectToAction("Index");
-            //}
-            //ViewBag.IndividualUOMReference = new SelectList(db.UOM, "ID", "UnitName", item.IndividualUOMReference);
-            //ViewBag.InventoryTypeReference = new SelectList(db.InventoryTypes, "ID", "InventoryTypeName", item.InventoryTypeReference);
-            //ViewBag.ItemCategoryReference = new SelectList(db.ItemCategories, "ID", "ItemCategoryName", item.ItemCategoryReference);
-            //ViewBag.PackagingUOMReference = new SelectList(db.UOM, "ID", "UnitName", item.PackagingUOMReference);
-            return View(item);
+            if (ModelState.IsValid)
+            {
+                return RedirectToAction("Index");
+            }
+            ViewBag.IndividualUOMReference = new SelectList(itemDA.GetUnitsOfMeasure(), "ID", "UnitName", item.IndividualUOMReference);
+            ViewBag.InventoryTypeReference = new SelectList(itemDA.GetInventoryTypes(), "ID", "InventoryTypeName", item.InventoryTypeReference);
+            ViewBag.ItemCategoryReference = new SelectList(itemDA.GetCategories(), "ID", "ItemCategoryName", item.ItemCategoryReference);
+            ViewBag.PackagingUOMReference = new SelectList(itemDA.GetUnitsOfMeasure(), "ID", "UnitName", item.PackagingUOMReference);
+            return View("edit", item);
         }
 
         // GET: Items/Delete/5
-        public ActionResult Delete(int? id)
+        public ActionResult Delete(string ItemCode)
         {
-            //if (id == null)
-            //{
-            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            //}
-            Item item = itemsBL.GetItems(id);
-            //if (item == null)
-            //{
-            //    return HttpNotFound();
-            //}
+            if (ItemCode == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Item item = itemsBL.GetItemsByCode(ItemCode, false);
+            if (item == null)
+            {
+                return HttpNotFound();
+            }
             return View(item);
         }
 
@@ -154,9 +159,7 @@ namespace PUPFMIS.Controllers
             if (disposing)
             {
                 itemsBL.Dispose();
-                unitOfMeasureBL.Dispose();
-                itemCategoriesBL.Dispose();
-                inventoryTypesBL.Dispose();
+                itemDA.Dispose();
             }
             base.Dispose(disposing);
         }

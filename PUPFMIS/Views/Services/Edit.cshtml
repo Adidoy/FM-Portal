@@ -1,0 +1,130 @@
+﻿@model PUPFMIS.Models.Services
+
+@{
+    ViewBag.Title = "Services";
+    ViewBag.Description = "Edit";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Services Master", "index")</li>
+        <li class="breadcrumb-item">Edit</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-right">
+        <h1 class="card-title"><i class="fa fa-bookmark"></i> Edit Service Details</h1>
+    </div>
+}
+
+@using (Html.BeginForm("update-service", "Services", FormMethod.Post, new { Area = "", id = "add-service" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.ID)
+
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ServiceCode, htmlAttributes: new { @class = "control-label" })
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class=" fa fa-id-badge"></i></span>
+                    </div>
+                    @Html.EditorFor(model => model.ServiceCode, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
+                </div>
+                @Html.ValidationMessageFor(model => model.ServiceCode, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ServiceName, htmlAttributes: new { @class = "control-label" })
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class=" fa fa-id-badge"></i></span>
+                    </div>
+                    @Html.EditorFor(model => model.ServiceName, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%" } })
+                </div>
+                @Html.ValidationMessageFor(model => model.ServiceName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ItemShortSpecifications, htmlAttributes: new { @class = "control-label" })
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-asterisk"></i></span>
+                    </div>
+                    @Html.EditorFor(model => model.ItemShortSpecifications, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%" } })
+                </div>
+                @Html.ValidationMessageFor(model => model.ItemShortSpecifications, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="form-group">
+                @Html.LabelFor(model => model.AccountClass, htmlAttributes: new { @class = "control-label" })
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-bookmark"></i></span>
+                    </div>
+                    @Html.DropDownList("AccountClass", null, htmlAttributes: new { @class = "form-control form-control-sm" })
+                </div>
+                @Html.ValidationMessageFor(model => model.AccountClass, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ServiceTypeReference, htmlAttributes: new { @class = "control-label" })
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-book"></i></span>
+                    </div>
+                    @Html.DropDownList("ServiceTypeReference", null, htmlAttributes: new { @class = "form-control form-control-sm" })
+                </div>
+                @Html.ValidationMessageFor(model => model.ServiceTypeReference, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ServiceCategoryReference, htmlAttributes: new { @class = "control-label" })
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-question"></i></span>
+                    </div>
+                    @Html.DropDownList("ServiceCategoryReference", null, htmlAttributes: new { @class = "form-control form-control-sm" })
+                </div>
+                @Html.ValidationMessageFor(model => model.ServiceCategoryReference, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+    @section FormFooter {
+        <div class="form-group float-right">
+            <button type="button" class="btn btn-primary" id="save-btn" onclick="SaveService()"><i class="fa fa-save"></i>&nbsp; Save changes</button>
+            <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("list", "Services", new { Area = "" })'"><i class="fa fa-arrow-circle-left"></i> Back</button>
+        </div>
+    }
+}
+
+<script src="~/Scripts/adminlte/components/jquery/dist/jquery.min.js"></script>
+<script src="~/Scripts/adminlte/components/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript">
+    function SaveService() {
+        swal.fire({
+            title: "Save record?",
+            text: "You are about to save changes for this record, continue?",
+            type: "warning",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#add-service").submit();
+            }
+        })
+    }
+</script>

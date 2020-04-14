@@ -42,13 +42,13 @@
                                 </a>
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item">
-                                        <a href="@Url.Action("index","Suppliers")" class="nav-link pt-1 pb-1" style="text-indent:3px; font-size:10pt;">
+                                        <a href="@Url.Action("index","Suppliers", new { area = "" })" class="nav-link pt-1 pb-1" style="text-indent:3px; font-size:10pt;">
                                             <i class="fa fa-circle" style="font-size:5pt;"></i> &nbsp;
                                             Suppliers
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="@Url.Action("index","UnitOfMeasure")"  class="nav-link pt-1 pb-1" style="text-indent:3px; font-size:10pt;">
+                                        <a href="@Url.Action("index","UnitOfMeasure", new { area = "" })"  class="nav-link pt-1 pb-1" style="text-indent:3px; font-size:10pt;">
                                             <i class="fa fa-circle" style="font-size:5pt;"></i> &nbsp;
                                             Units of Measure
                                         </a>
@@ -65,27 +65,27 @@
                                 </a>
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item">
-                                        <a href="@Url.Action("index","ItemCategories")" class="nav-link" style="padding-bottom: 1px;">
-                                            <span style="text-indent:15px; font-size:10.5pt;">
-                                                <i class="fa fa-question" aria-hidden="true"></i>&nbsp;
-                                                Item Categories
-                                            </span>
+                                        <a href="@Url.Action("index","ItemCategories", new { area = "" })" class="nav-link pt-1 pb-1" style="text-indent:3px; font-size:10pt;">
+                                            <i class="fa fa-circle" style="font-size:5pt;"></i> &nbsp;
+                                            Item/Service Categories
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="@Url.Action("index","Items")" class="nav-link" style="padding-bottom: 1px;">
-                                            <span style="text-indent:15px; font-size:10.5pt;">
-                                                <i class="fa fa-pen" aria-hidden="true"></i>&nbsp;
-                                                Items
-                                            </span>
+                                        <a href="@Url.Action("item-list","Items", new { area = "" })" class="nav-link pt-1 pb-1" style="text-indent:3px; font-size:10pt;">
+                                            <i class="fa fa-circle" style="font-size:5pt;"></i> &nbsp;
+                                            Items
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="@Url.Action("index","ItemPrices")" class="nav-link" style="padding-bottom: 1px;">
-                                            <span style="text-indent:15px; font-size:10.5pt;">
-                                                <i class="fa fa-coins" aria-hidden="true"></i>&nbsp;
-                                                Item Prices
-                                            </span>
+                                        <a href="@Url.Action("list","Services", new { area = "" })" class="nav-link pt-1 pb-1" style="text-indent:3px; font-size:10pt;">
+                                            <i class="fa fa-circle" style="font-size:5pt;"></i> &nbsp;
+                                            Services
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="@Url.Action("index","ItemPrices", new { area = "" })" class="nav-link pt-1 pb-1" style="text-indent:3px; font-size:10pt;">
+                                            <i class="fa fa-circle" style="font-size:5pt;"></i> &nbsp;
+                                            Item Prices
                                         </a>
                                     </li>
                                 </ul>
@@ -95,47 +95,6 @@
                             <li class="nav-header" style="font-size:9pt;">
                                 PROCUREMENT &amp; BUDGET PLANNING
                             </li>
-                            @*<li class="nav-item">
-                                <a href="#" class="nav-link" style="font-size:10.5pt;">
-                                    <i class="fas fa-book-open"></i>&nbsp;
-                                    <p>
-                                        End-User Projects
-                                        <i class="fas fa-angle-left right"></i>
-                                    </p>
-                                </a>
-                                <ul class="nav nav-treeview">
-                                    <li class="nav-item">
-                                        <a href="@Url.Action("common-use-supplies","Catalogue")" class="nav-link pt-1 pb-1" style="text-indent:3px; font-size:10pt;">
-                                            <i class="fa fa-circle" style="font-size:5pt;"></i> &nbsp;
-                                            Common Use Office Supplies
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="@Url.Action("property-and-equipment","Catalogue")" class="nav-link pt-1 pb-1" style="text-indent:3px; font-size:10pt;">
-                                            <i class="fa fa-circle" style="font-size:5pt;"></i> &nbsp;
-                                            Property &amp; Equipment
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="@Url.Action("semi-expandable-property","Catalogue")" class="nav-link pt-1 pb-1" style="text-indent:3px; font-size:10pt;">
-                                            <i class="fa fa-circle" style="font-size:5pt;"></i> &nbsp;
-                                            Semi-expandable PPE
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="#" class="nav-link pt-1 pb-1" style="text-indent:3px; font-size:10pt;">
-                                            <i class="fa fa-circle" style="font-size:5pt;"></i> &nbsp;
-                                            Services / Consultancy
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="#" class="nav-link pt-1 pb-1" style="text-indent:3px; font-size:10pt;">
-                                            <i class="fa fa-circle" style="font-size:5pt;"></i> &nbsp;
-                                            Infrastructure
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>*@
                             <li class="nav-item">
                                 <a href="#" class="nav-link" style="font-size:10.5pt;">
                                     <i class="fas fa-folder"></i>&nbsp;
@@ -146,25 +105,31 @@
                                 </a>
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item">
-                                        <a href="@Url.Action("index","PPMPDeadlines")" class="nav-link pt-1 pb-1" style="text-indent:3px; font-size:10pt;">
+                                        <a href="@Url.Action("dashboard","ProjectPlans", new { area = "end-users" })" class="nav-link pt-1 pb-1" style="text-indent:3px; font-size:10pt;">
+                                            <i class="fa fa-circle" style="font-size:5pt;"></i> &nbsp;
+                                            Project Planning
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="@Url.Action("index","PPMPDeadlines", new { area = "" })" class="nav-link pt-1 pb-1" style="text-indent:3px; font-size:10pt;">
                                             <i class="fa fa-circle" style="font-size:5pt;"></i> &nbsp;
                                             PPMP Deadlines
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="@Url.Action("dashboard","PPMP")" class="nav-link pt-1 pb-1" style="text-indent:3px; font-size:10pt;">
+                                        <a href="@Url.Action("dashboard","PPMP", new { area = "" })" class="nav-link pt-1 pb-1" style="text-indent:3px; font-size:10pt;">
                                             <i class="fa fa-circle" style="font-size:5pt;"></i> &nbsp;
                                             Project Procurement Plans
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="@Url.Action("dashboard","PPMPApproval")" class="nav-link pt-1 pb-1" style="text-indent:3px; font-size:10pt;">
+                                        <a href="@Url.Action("index","projectapprovals", new { area = "budget" })" class="nav-link pt-1 pb-1" style="text-indent:3px; font-size:10pt;">
                                             <i class="fa fa-circle" style="font-size:5pt;"></i> &nbsp;
-                                            PPMP Approval
+                                            Project Approval
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="@Url.Action("index","APP")" class="nav-link pt-1 pb-1" style="text-indent:3px; font-size:10pt;">
+                                        <a href="@Url.Action("index","APP", new { area = "" })" class="nav-link pt-1 pb-1" style="text-indent:3px; font-size:10pt;">
                                             <i class="fa fa-circle" style="font-size:5pt;"></i> &nbsp;
                                             Annual Procurement Plan
                                         </a>

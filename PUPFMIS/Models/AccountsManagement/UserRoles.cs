@@ -44,6 +44,7 @@ namespace PUPFMIS.Models
         public const string SystemAdmin = "System Administrator";
         public const string BudgetAdmin = "Budget Administrator";
         public const string BudgetOfficer = "Budget Officer";
+        public const string EndUser = "End User";
     }
 
     public class UsersRoleProvider : RoleProvider

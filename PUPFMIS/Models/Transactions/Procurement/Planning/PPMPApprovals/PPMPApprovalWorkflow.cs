@@ -4,63 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PUPFMIS.Models
 {
-    [Table("workflow_ppmpapproval")]
-    public class PPMPApprovalWorkflow
-    {
-        [Key]
-        public int ID { get; set; }
 
-        [Required]
-        public int PPMPId { get; set; }
-
-        [Required]
-        [Display(Name = "Status")]
-        public string Status { get; set; }
-
-        [Required]
-        [Display(Name = "Date Updated")]
-        public DateTime UpdatedAt { get; set; }
-
-        [Required]
-        [DataType(DataType.MultilineText)]
-        public string Remarks { get; set; }
-
-        [Required]
-        [Display(Name = "Action by")]
-        public int ActionMadeBy { get; set; }
-
-        [Required]
-        [Display(Name = "Office")]
-        public int ActionMadeByOffice { get; set; }
-    }
-
-    public class PPMPApprovalWorkflowViewModel
-    {
-        public int PPMPId { get; set; }
-
-        [Display(Name = "Reference No.")]
-        public string ReferenceNo { get; set; }
-
-        [Required]
-        [Display(Name = "Status")]
-        public string Status { get; set; }
-
-        [Required]
-        [Display(Name = "Date Updated")]
-        public DateTime UpdatedAt { get; set; }
-
-        [Required]
-        [DataType(DataType.MultilineText)]
-        public string Remarks { get; set; }
-
-        [Required]
-        [Display(Name = "Office")]
-        public string Office { get; set; }
-
-        [Required]
-        [Display(Name = "Personnel")]
-        public string Personnel { get; set; }
-    }
 
     public class PPMPSubmittedItems
     {

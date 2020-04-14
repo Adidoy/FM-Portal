@@ -12,18 +12,39 @@ namespace PUPFMIS.Models
         {
             return new FMISDbContext();
         }
-        
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<PPMPHeader>()
+                .HasRequired<InventoryType>(s => s.FKPPMPTypeReference)
+                .WithMany()
+                .WillCascadeOnDelete(false);
+            modelBuilder.Entity<Services>()
+                .HasRequired<InventoryType>(s => s.FKInventoryTypeReference)
+                .WithMany()
+                .WillCascadeOnDelete(false);
+            modelBuilder.Entity<Services>()
+                .HasRequired<PhilGEPSCategories>(s => s.FKCategoryReference)
+                .WithMany()
+                .WillCascadeOnDelete(false);
+        }
+
         public DbSet<Supplier> Suppliers { get; set; }
         public DbSet<UnitOfMeasure> UOM { get; set; }
         public DbSet<ItemCategory> ItemCategories { get; set; }
+        public DbSet<DBMCategories> DBMCategories { get; set; }
+        public DbSet<PhilGEPSCategories> PhilGEPSCategories { get; set; }
         public DbSet<InventoryType> InventoryTypes { get; set; }
         public DbSet<Item> Items { get; set; }
+        public DbSet<Services> Services { get; set; }
         public DbSet<ItemPrice> ItemPrices { get; set; } 
-        public DbSet<ProjectProcurementPlan> ProjectProcurementPlan { get; set; }
-        public DbSet<ProjectProcurementPlanItems> ProjectProcurementPlanItems { get; set; }
-        public DbSet<MarketSurvey> MarketSurvey { get; set; }
+
+        public DbSet<ProjectPlans> ProjectPlans { get; set; }
+        public DbSet<ProjectPlanItems> ProjectPlanItems { get; set; }
+        public DbSet<ProjectPlanServices> ProjectPlanServices { get; set; }
         public DbSet<PPMPHeader> PPMPHeader { get; set; }
-        public DbSet<PPMPCSEDetails> PPMPCSEDetails { get; set; }
+        public DbSet<PPMPItemDetails> PPMPItemDetails { get; set; }
+        public DbSet<PPMPServiceDetails> PPMPServiceDetails { get; set; }
         public DbSet<PPMPDeadlines> PPMPDeadlines { get; set; }
         public DbSet<PPMPApprovalWorkflow> PPMPApprovalWorkflow { get; set; }
         public DbSet<Supply> Supplies { get; set; }

@@ -1,6 +1,6 @@
 ﻿using FluentValidation.Results;
 using Microsoft.Owin.Security;
-using PUPFMIS.BusinessLayer;
+using PUPFMIS.BusinessAndDataLogic;
 using PUPFMIS.Models;
 using System.Data.Entity;
 using System.Linq;
@@ -77,17 +77,17 @@ namespace PUPFMIS.Controllers
             return RedirectToAction("index", "Home");
         }
 
-        [Authorize(Roles = SystemRoles.SuperUser + ", " + SystemRoles.SystemAdmin)]
+        //[Authorize(Roles = SystemRoles.SuperUser + ", " + SystemRoles.SystemAdmin)]
         [ActionName("register")]
         public ActionResult Register()
         {
-            ViewBag.Offices = new SelectList(officesBL.GetOffices(), "ID", "OfficeName");
+            ViewBag.Office = new SelectList(officesBL.GetOffices(), "ID", "OfficeName");
             ViewBag.Roles = new SelectList(accountsManagementBL.GetRoles(), "ID", "Role");
             return View();
         }
 
         [HttpPost]
-        [Authorize(Roles = SystemRoles.SuperUser + ", " + SystemRoles.SystemAdmin)]
+        //[Authorize(Roles = SystemRoles.SuperUser + ", " + SystemRoles.SystemAdmin)]
         [ValidateAntiForgeryToken]
         [ActionName("register")]
         public ActionResult Register(UsersVM user)
