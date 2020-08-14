@@ -1,0 +1,76 @@
+﻿@{
+    ViewBag.Title = "My Projects";
+    ViewBag.Description = "Details";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("My Projects", "dashboard", "My Projects", new { Area = "procurement" }, null)</li>
+        <li class="breadcrumb-item">Details</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-bookmark"></i> @Model.PAPCode - @Model.ProcurementProgram</h3>
+}
+
+@using (Ajax.BeginForm("open-pr-submission", "MyProjects", new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "details", Area = "procurement" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Partial("_Form")
+}
+
+@section FormFooter {
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" onclick="OpenSubmission()"><i class="fa fa-thumbs-up"></i>&nbsp; Open Purchase Request Submission</button>
+                <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("dashboard", "MyProjects", new { area = "procurement" })'"><i class="fa fa-arrow-alt-circle-left"></i>&nbsp; Back to Dashboard</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    function OpenSubmission() {
+        swal.fire({
+            title: "Save record?",
+            text: "You are about to save this record, continue?",
+            type: "warning",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#details").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    type: "error"
+                })
+            };
+        })
+    }
+    function CreateResult(data) {
+        if (data.result == true) {
+            swal.fire({
+                title: "Record Saved!",
+                text: "Procurement Program is successfully assigned.",
+                type: "success"
+            }).then((result) => {
+                if (result.value) {
+                    window.location.href = "@Url.Action("dashboard", "MyProjects", new { Area = "procurement" })";
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                type: "error"
+            });
+        }
+    }
+</script>

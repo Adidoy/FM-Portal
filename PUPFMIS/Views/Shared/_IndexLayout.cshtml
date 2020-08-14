@@ -32,17 +32,15 @@
     </section>
 </div>
 
-@section scripts{
-    <script type="text/javascript">
+<script type="text/javascript">
         $(function () {
             $('#example2').DataTable({
                 "paging": true,
                 "lengthChange": true,
                 "searching": true,
-                "ordering": true,
+                "ordering": false,
                 "info": true,
                 "autoWidth": false,
             });
         });
-    </script>
-}
+</script>

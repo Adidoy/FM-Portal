@@ -2,6 +2,7 @@
 using FluentValidation.Results;
 using PUPFMIS.Models;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
@@ -37,6 +38,11 @@ namespace PUPFMIS.Controllers
 
         public ActionResult Create()
         {
+            List<string> categoryFor = new List<string>();
+            categoryFor.Add("Items");
+            categoryFor.Add("Services");
+
+            ViewBag.CategoryFor = new SelectList(categoryFor);
             return PartialView();
         }
 
@@ -75,6 +81,11 @@ namespace PUPFMIS.Controllers
             {
                 return HttpNotFound();
             }
+            List<string> categoryFor = new List<string>();
+            categoryFor.Add("Items");
+            categoryFor.Add("Services");
+
+            ViewBag.CategoryFor = new SelectList(categoryFor);
             return PartialView(_itemCategory);
         }
 

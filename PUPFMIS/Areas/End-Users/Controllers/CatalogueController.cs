@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
+using System;
 
 namespace PUPFMIS.Areas.EndUsers.Controllers
 {
@@ -13,14 +14,17 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
     [Authorize(Roles = SystemRoles.SuperUser + ", " + SystemRoles.EndUser)]
     public class CatalogueController : Controller
     {
-        private CatalogueDAL catalogueDAL = new CatalogueDAL();
         private CatalogueBL catalogueBL = new CatalogueBL();
+        private CatalogueDAL catalogueDAL = new CatalogueDAL();
+        private ItemDataAccess itemDataAccess = new ItemDataAccess();
+        private HRISDataAccess hrisDataAccess = new HRISDataAccess();
 
         [HttpPost]
         [Route("")]
         [ActionName("view-item-catalogue")]
         public ActionResult CommonSuppliesCatalogue(string ProjectCode, bool FromCatalogue)
         {
+            var departmentCode = hrisDataAccess.GetEmployee(User.Identity.Name).DepartmentCode;
             if(FromCatalogue == false)
             {
                 Session["ProjectPlan"] = new ProjectPlanVM();
@@ -32,13 +36,13 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
             if(ProjectCode.Substring(0, 4) == "CSPR")
             {
                 ViewBag.ProjectCode = ProjectCode;
-                return View("CommonSuppliesCatalogue", catalogueDAL.GetCommonSuppliesCatalogue());
+                return View("CommonSuppliesCatalogue", itemDataAccess.GetItemCatalogueView(false, "CUOS", departmentCode));
             }
 
             if (ProjectCode.Substring(0, 4) == "EUPR")
             {
                 ViewBag.ProjectCode = ProjectCode;
-                return View("CommonSuppliesCatalogue", catalogueDAL.GetCatalogue());
+                return View("CommonSuppliesCatalogue", itemDataAccess.GetItemCatalogueView(false, departmentCode));
             }
             return RedirectToAction("project-details", "ProjectPlans", new { Area = "end-user", ProjectCode = ProjectCode });
         }
@@ -47,6 +51,7 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
         [ActionName("view-item-catalogue")]
         public ActionResult CommonSuppliesCatalogue()
         {
+            var departmentCode = hrisDataAccess.GetEmployee(User.Identity.Name).DepartmentCode;
             var projectPlan = Session["ProjectPlan"] as ProjectPlanVM;
             if (projectPlan == null)
             {
@@ -56,13 +61,13 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
             if (projectPlan.ProjectCode.Substring(0, 4) == "CSPR")
             {
                 ViewBag.ProjectCode = projectPlan.ProjectCode;
-                return View("CommonSuppliesCatalogue", catalogueDAL.GetCommonSuppliesCatalogue());
+                return View("CommonSuppliesCatalogue", itemDataAccess.GetItemCatalogueView(false, "CUOS", departmentCode));
             }
 
             if (projectPlan.ProjectCode.Substring(0, 4) == "EUPR")
             {
                 ViewBag.ProjectCode = projectPlan.ProjectCode;
-                return View("CommonSuppliesCatalogue", catalogueDAL.GetCatalogue());
+                return View("CommonSuppliesCatalogue", itemDataAccess.GetItemCatalogueView(false, departmentCode));
             }
             return RedirectToAction("project-details", "ProjectPlans", new { Area = "end-user", ProjectCode = projectPlan.ProjectCode });
         }
@@ -108,7 +113,7 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
 
         private ActionResult AddSupplies(CatalogueBasketItemVM Item, ProjectPlanVM ProjectPlan)
         {
-            if (Item.InventoryType == "Common Use Office Supplies")
+            if (Item.InventoryType == "Common Use Office Supplies" && Item.ProcurementSource == ProcurementSources.PS_DBM)
             {
                 var supplierInfo = catalogueDAL.GetSupplier(1);
                 Item.Supplier1ID = supplierInfo.ID;
@@ -116,8 +121,8 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
                 Item.Supplier1Address = supplierInfo.Address;
                 Item.Supplier1ContactNo = supplierInfo.ContactNumber;
                 Item.Supplier1EmailAddress = (supplierInfo.EmailAddress == null) ? "Email Address not provided." : supplierInfo.EmailAddress;
-                Item.Supplier1UnitCost = (decimal)Item.UnitCost;
-                Item.UnitCost = (decimal)Item.UnitCost;
+                Item.Supplier1UnitCost = Item.UnitCost == null ? 0.00m : (decimal)Item.UnitCost;
+                Item.UnitCost = Item.UnitCost == null ? 0.00m : (decimal)Item.UnitCost;
             }
 
             if (catalogueBL.ItemBelongsToProject(ProjectPlan.ProjectCode, Item.ItemCode))
@@ -194,6 +199,7 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
                 Item.Supplier2UnitCost = newProposalItem.Supplier2UnitCost;
                 Item.Supplier3ID = newProposalItem.Supplier3ID;
                 Item.Supplier3UnitCost = newProposalItem.Supplier3UnitCost;
+                ViewBag.IsTangible = catalogueBL.IsItemTangible(Item.ItemCode);
                 ViewBag.EnableElement = true;
                 return View("AddToBasket", Item);
             }
@@ -220,6 +226,7 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
             if (!catalogueBL.ValidateAddItem(itemBasket, projectPlan.ProjectCode, out Message))
             {
                 ModelState.AddModelError("", Message);
+                ViewBag.IsTangible = catalogueBL.IsItemTangible(itemBasket.ItemCode);
                 ViewBag.EnableElement = true;
                 return View("AddToBasket", itemBasket);
             }
@@ -251,6 +258,7 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
             else
             {
                 itemBasket.UnitCost = catalogueBL.ComputeUnitCost(itemBasket.Supplier1UnitCost, itemBasket.Supplier2UnitCost, itemBasket.Supplier3UnitCost);
+                itemBasket.UnitCost = Math.Round((decimal)itemBasket.UnitCost, 2, MidpointRounding.AwayFromZero);
             }
 
             if (ModelState.IsValid)
@@ -297,6 +305,7 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
             }
             
             ViewBag.EnableElement = true;
+            ViewBag.IsTangible = catalogueBL.IsItemTangible(itemBasket.ItemCode);
             return View("AddToBasket", itemBasket);
         }
 
@@ -412,6 +421,7 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
             {
                 ModelState.AddModelError("", Message);
                 ViewBag.EnableElement = true;
+                ViewBag.IsTangible = catalogueBL.IsItemTangible(BasketItem.ItemCode);
                 return View("UpdateCommonSuppliesBasket", BasketItem);
             }
 

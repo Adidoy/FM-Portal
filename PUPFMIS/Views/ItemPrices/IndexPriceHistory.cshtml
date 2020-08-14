@@ -36,17 +36,17 @@
                     </tr>
                     </thead>
                 <tbody>
-                    @foreach (var item in Model)
+                    @foreach (var item in Model.OrderByDescending(d => d.UpdatedAt))
                     {
                         <tr>
                             <td style="vertical-align:middle; text-align:left;">
-                                @Html.DisplayFor(modelItem => item.FKItemReference.ItemCode) - @Html.DisplayFor(modelItem => item.FKItemReference.ItemName)
+                                <b>@Html.DisplayFor(modelItem => item.FKItemReference.ItemFullName)</b> (@Html.DisplayFor(modelItem => item.FKItemReference.ItemCode))
+                            </td>
+                            <td style="vertical-align:middle; text-align:right;">
+                                @( String.Format("{0:C}", item.UnitPrice) )
                             </td>
                             <td style="vertical-align:middle; text-align:center;">
-                                @Html.DisplayFor(modelItem => item.UnitPrice)
-                            </td>
-                            <td style="vertical-align:middle; text-align:center;">
-                                @item.UpdatedAt.ToString()
+                                @item.EffectivityDate.ToString("dd MMMM yyyy hh:mm tt")
                             </td>
                         </tr>
                     }

@@ -3,13 +3,16 @@
     <head>
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <!-- Tell the browser to be responsive to screen width -->
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-        <title>@ViewBag.Title - PUP-FMIS Portal</title>
+        <title>@ViewBag.Title - PUP FM Portal</title>
         @Styles.Render("~/bundles/styles")
+        @Scripts.Render("~/bundles/preScripts")
+        @if (ViewBag.Title == "Dashboard")
+        {
+            @Scripts.Render("~/bundles/dashboardScripts")
+        }
         <link href="~/Scripts/adminlte/components/font-awesome/css/font-awesome.css" rel="stylesheet" />
         <link href="~/Scripts/adminlte/components/ionicons/css/ionicons.min.css" rel="stylesheet" />
-
     </head>
     <body class="hold-transition sidebar-mini layout-fixed">
         <div class="wrapper">
@@ -21,8 +24,20 @@
             <div id="sidebar-overlay"></div>
         </div>
 
-        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/postScripts")
         @RenderSection("scripts", false)
-        @Scripts.Render("~/bundles/scripts")
+        <script type="text/javascript">
+            $(function () {
+                //Initialize Select2 Elements
+                $('.select2').select2({
+                    theme: 'bootstrap4'
+                })
+
+                //Initialize Select2 Elements
+                $('.select2bs4').select2({
+                    theme: 'bootstrap4'
+                })
+            })
+        </script>
     </body>
 </html>

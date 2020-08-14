@@ -1,0 +1,283 @@
+﻿@model PUPFMIS.Models.PPMPEvaluationVM
+
+@{
+    ViewBag.Title = "Budget Proposals";
+    ViewBag.Description = "Items Evaluation";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("PPMP Approval", "index")</li>
+        <li class="breadcrumb-item">Items Evaluation</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-list"></i> @Model.UACS - @Model.AccountTitle</h3>
+}
+
+@using (Html.BeginForm("update-details", "PPMPApproval", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(d => d.OfficeCode, htmlAttributes: new { OfficeCode = ViewBag.OfficeCode })
+    @Html.HiddenFor(d => d.UACS)
+    @Html.HiddenFor(d => d.AccountTitle)
+    
+    <div class="row">
+        <div class="col-12 pl-0 pr-0 ml-0 mr-0">
+            <div class="card card-info">
+                <div class="card-header">
+                    <h3 class="card-title">PPMP References</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-12 pl-0 pr-0 ml-0 mr-0">
+                            <div class="card-body table-responsive p-sm-0">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align:center" width="30%">@Html.DisplayNameFor(model => model.PPMPReferences.First().ReferenceNo)</th>
+                                            <th style="text-align:center" width="30%">@Html.DisplayNameFor(model => model.PPMPReferences.First().SubmittedAt)</th>
+                                            <th style="text-align:center" width="20%">@Html.DisplayNameFor(model => model.PPMPReferences.First().Amount)</th>
+                                            <th width="20%"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for(var item = 0; item < Model.PPMPReferences.Count; item++)
+                                        {
+                                            <tr>
+                                                <td style="text-align:center;">
+                                                    @Html.HiddenFor(modelItem => Model.PPMPReferences[item].ReferenceNo)
+                                                    <b>@Html.DisplayFor(modelItem => Model.PPMPReferences[item].ReferenceNo)</b>
+                                                </td>
+                                                <td style="text-align:center;">
+                                                    @Html.HiddenFor(modelItem => Model.PPMPReferences[item].SubmittedAt)
+                                                    @Model.PPMPReferences[item].SubmittedAt.ToString("dd MMMM yyyy hh:mm tt")
+                                                </td>
+                                                <td style="text-align:right;">
+                                                    @Html.HiddenFor(modelItem => Model.PPMPReferences[item].Amount)
+                                                    @( String.Format("{0:C}", Model.PPMPReferences[item].Amount) )
+                                                </td>
+                                                <td style="text-align:center">
+                                                    <a class="btn btn-sm btn-primary" href="@Url.Action("print-ppmp", "PPMPApproval", new { Area = "budget", ReferenceNo = Model.PPMPReferences[item].ReferenceNo })" target="_blank"><i class="fa fa-eye"></i> View PPMP</a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="2" style="text-align:right"><h6 style="font-size:14pt;">TOTAL PROPOSED BUDGET:</h6></td>
+                                            <td style="text-align:right"><h6 style="font-size:14pt;">@( String.Format("{0:C}", Model.PPMPReferences.Sum(d => d.Amount)) )</h6></td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-sm-12 pl-0 pr-0 ml-0 mr-0">
+            <div class="card card-info">
+                <div class="card-header">
+                    <h3 class="card-title">Items List: @Model.NewSpendingItems.Count Items</h3>
+                </div>
+                <div class="card-body table-responsive">
+                    <table class="table table-striped table-hover" id="lineItems">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center; vertical-align:middle;" width="50%">Item and Specifications</th>
+                                <th style="text-align:center; vertical-align:middle;" width="15%">Approval Action</th>
+                                <th style="text-align:center; vertical-align:middle;" width="13%">Quantity</th>
+                                <th style="text-align:center; vertical-align:middle;" width="22%">Total Unit Cost<br />&amp; Fund Sources</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int item = 0; item < Model.NewSpendingItems.Count(); item++)
+                            {
+                                <tr>
+                                    <td style="text-align:justify;">
+                                        @Html.HiddenFor(modelItem => Model.NewSpendingItems[item].ProjectCode)
+                                        @Html.HiddenFor(modelItem => Model.NewSpendingItems[item].ItemCode)
+                                        @Html.HiddenFor(modelItem => Model.NewSpendingItems[item].ItemName)
+                                        @Html.HiddenFor(modelItem => Model.NewSpendingItems[item].IsTangible)
+                                        <span style="font-size:13pt;"><b>@(item + 1)</b>. <b>@Html.DisplayFor(modelItem => Model.NewSpendingItems[item].ItemName)</b></span>
+                                        <hr />
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                @Html.HiddenFor(modelItem => Model.NewSpendingItems[item].UnitCost)
+                                                <b>Requested Quantity :</b> @Html.DisplayFor(modelItem => Model.NewSpendingItems[item].Quantity) @Html.DisplayFor(modelItem => Model.NewSpendingItems[item].UnitOfMeasure)
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                @Html.HiddenFor(modelItem => Model.NewSpendingItems[item].UnitCost)
+                                                <b>Unit Cost :</b> @String.Format("{0:C}", Model.NewSpendingItems[item].UnitCost)
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                @Html.HiddenFor(modelItem => Model.NewSpendingItems[item].ReferenceNo)
+                                                <b>Reference No. :</b> @Html.DisplayFor(modelItem => Model.NewSpendingItems[item].ReferenceNo)
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                @Html.HiddenFor(modelItem => Model.NewSpendingItems[item].ProjectTitle)
+                                                <b>Project Title :</b> @Html.DisplayFor(modelItem => Model.NewSpendingItems[item].ProjectTitle)
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                @Html.HiddenFor(modelItem => Model.NewSpendingItems[item].Remarks)
+                                                <b>Remarks :</b> @Html.DisplayFor(modelItem => Model.NewSpendingItems[item].Remarks)
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td style="text-align:justify; vertical-align:top;">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-radio">
+                                                @{ string id = "NewSpendingItems[" + item + "].ApprovalAction_radioApproved"; }
+                                                @Html.RadioButtonFor(modelItem => Model.NewSpendingItems[item].ApprovalAction, "Approved", htmlAttributes: new { @class = "custom-control-input", id = id, @checked = "", onclick = "enableElements(" + item + ")" })
+                                                @Html.LabelFor(modelItem => Model.NewSpendingItems[item].ApprovalAction, "Approved", htmlAttributes: new { @class = "custom-control-label", @for = id })
+                                            </div>
+                                            <div class="custom-control custom-radio">
+                                                @{ id = "NewSpendingItems[" + item + "].ApprovalAction_radioDisapproved"; }
+                                                @Html.RadioButtonFor(modelItem => Model.NewSpendingItems[item].ApprovalAction, "Disapproved", htmlAttributes: new { @class = "custom-control-input", id = id, onclick = "disableElements(" + item + ")" })
+                                                @Html.LabelFor(modelItem => Model.NewSpendingItems[item].ApprovalAction, "Disapproved", htmlAttributes: new { @class = "custom-control-label", @for = id })
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td style="text-align:center; vertical-align:top;">
+                                        <div class="form-group">
+                                            @Html.HiddenFor(modelItem => Model.NewSpendingItems[item].Quantity)
+                                            @Html.EditorFor(model => Model.NewSpendingItems[item].ReducedQuantity, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%; text-align:center;", type = "number", step = "1", min = "0", max = Model.NewSpendingItems[item].Quantity } })
+                                        </div>
+                                    </td>
+                                    <td style="">
+                                        <div class="form-group">
+                                            @Html.HiddenFor(d => Model.NewSpendingItems[item].EstimatedCost, htmlAttributes: new { Value = Model.NewSpendingItems[item].EstimatedCost })
+                                            @Html.EditorFor(d => d.NewSpendingItems[item].EstimatedCost, new { htmlAttributes = new { @class = "form-control form-control-sm", id = "NewSpendingItems[" + item + "].ReducedCostDisplay", Value = String.Format("{0:C}", Model.NewSpendingItems[item].EstimatedCost), disabled = "disabled", style = "text-align:right;" } })
+                                        </div>
+                                        <div class="form-group-sm">
+                                            @if (Model.NewSpendingItems[item].ApprovalAction == "Approved")
+                                            {
+                                                @Html.DropDownListFor(modelItem => Model.NewSpendingItems[item].FundSource, ViewBag.FundSource as SelectList, htmlAttributes: new { @class = "form-control form-control-sm", style = "font-size:100%;" })
+                                            }
+                                            else
+                                            {
+                                                @Html.DropDownListFor(modelItem => Model.NewSpendingItems[item].FundSource, ViewBag.FundSource as SelectList, htmlAttributes: new { @class = "form-control form-control-sm", style = "font-size:100%;", disabled = "disabled" })
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-sm-12 pr-3 pb-3 pt-3">
+                            <div class="float-right">
+                                <button type="submit" name="updateAction" value="update" class="btn btn-md btn-info"><i class="fa fa-redo-alt"></i> Update Item List</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-info">
+                <div class="card-header">
+                    <h4 class="card-title">Budget Proposal Summary</h4>
+                </div>
+                <div class="card-body">
+                    @*<div class="row mb-2">
+                        <div class="col-9">
+                            <h6>@Html.DisplayNameFor(d => d.ActualObligation)</h6>
+                        </div>
+                        <div class="col-3">
+                            <div class="float-right">
+                                @Html.HiddenFor(d => Model.ActualObligation, htmlAttributes: new { Value = Model.ActualObligation })
+                                <h6>@( String.Format("{0:C}", Model.ActualObligation) )</h6>
+                            </div>
+                        </div>
+                    </div>*@
+                    <div class="row">
+                        <div class="col-9">
+                            <h6>@Html.DisplayNameFor(d => d.TotalProposedBudget)</h6>
+                        </div>
+                        <div class="col-3">
+                            <div class="float-right">
+                                @Html.HiddenFor(d => Model.TotalProposedBudget, htmlAttributes: new { Value = Model.TotalProposedBudget })
+                                <h6>@( String.Format("{0:C}", Model.TotalProposedBudget) )</h6>
+                            </div>
+                        </div>
+                        <hr />
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-9">
+                            <h6>@Html.DisplayNameFor(d => d.ApprovedBudget)</h6>
+                        </div>
+                        <div class="col-3">
+                            <div class="float-right">
+                                @Html.HiddenFor(d => Model.ApprovedBudget, htmlAttributes: new { Value = Model.ApprovedBudget })
+                                <h6>@( String.Format("{0:C}", Model.ApprovedBudget) )</h6>
+                            </div>
+                        </div>
+                        <hr />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <div class="row">
+            <div class="col-sm-12">
+                <div style="text-align: right;">
+                    <button type="submit" name="updateAction" value="save" class="btn btn-md btn-primary"><i class="fa fa-plus-circle"></i> Save Changes</button>
+                    <button type="button" class="btn btn-md btn-danger"><i class="fa fa-arrow-circle-left"></i> Back to Projects List</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script src="~/Scripts/adminlte/components/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('#lineItems').DataTable({
+            "paging": false,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": false,
+            "info": false,
+            "autoWidth": false,
+        });
+    });
+
+    function disableElements(item) {
+        document.getElementsByName('NewSpendingItems[' + item + '].ReducedQuantity')[0].disabled = true;
+        document.getElementsByName('NewSpendingItems[' + item + '].FundSource')[0].disabled = true;
+    };
+
+    function enableElements(item) {
+        document.getElementsByName('NewSpendingItems[' + item + '].ReducedQuantity')[0].disabled = false;
+        document.getElementsByName('NewSpendingItems[' + item + '].FundSource')[0].disabled = false;
+    };
+    $("#updateList").on('click', function (e) {
+        e.preventDefault();
+        $("#addUnit").submit();
+    });
+
+</script>

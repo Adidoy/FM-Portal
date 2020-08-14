@@ -5,7 +5,7 @@ using System.Data.Entity.Infrastructure;
 
 namespace PUPFMIS.Models
 {
-    [Table("logs_master_tables")]
+    [Table("PP_LOGS_MASTER_TABLES")]
     public class LogsMasterTables
     {
         [Key]
@@ -65,13 +65,13 @@ namespace PUPFMIS.Models
                 }
                 else
                 {
-                    if(!Equals(CurrentValues[_propertyName],OriginalValues[_propertyName]))
+                    if(!Equals(CurrentValues[_propertyName], OriginalValues[_propertyName]))
                     {
                         if (_propertyName != "ID" && _propertyName != "CreatedAt" && _propertyName != "UpdatedAt" && _propertyName != "DeletedAt")
                         {
                             _log.ColumnName = _propertyName;
-                            _log.NewValue = (CurrentValues[_propertyName].ToString() == null) ? null : CurrentValues[_propertyName].ToString();
-                            _log.OldValue = (OriginalValues[_propertyName].ToString() == null) ? null : OriginalValues[_propertyName].ToString();
+                            _log.NewValue = (CurrentValues[_propertyName] == null) ? null : CurrentValues[_propertyName].ToString();
+                            _log.OldValue = (OriginalValues[_propertyName] == null) ? null : OriginalValues[_propertyName].ToString();
                             db.LogsMasterTables.Add(_log);
                             db.SaveChanges();
                         }

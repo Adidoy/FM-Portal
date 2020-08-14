@@ -1,0 +1,27 @@
+﻿@{
+    ViewBag.Title = "Item Types";
+    ViewBag.Description = "Details";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Item Types List", "item-list", "ItemTypes", new { Area = "admin" }, null)</li>
+        <li class="breadcrumb-item">Details</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-right">
+        <h1 class="card-title"><i class="fa fa-bookmark"></i> Item Type Details</h1>
+    </div>
+}
+
+@Html.Partial("_Details")
+
+@section FormFooter {
+    <div class="form-group float-right">
+        <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("list","ItemTypes", new { Area = "admin" })'"><i class="fa fa-arrow-circle-left"></i> Back to List</button>
+    </div>
+}

@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
-using System.Net;
-using System.Web;
-using System.Web.Mvc;
+﻿using PUPFMIS.BusinessAndDataLogic;
 using PUPFMIS.Models;
-using PUPFMIS.BusinessAndDataLogic;
+using System.Collections.Generic;
+using System.Net;
+using System.Web.Mvc;
 
 namespace PUPFMIS.Areas.EndUsers.Controllers
 {
@@ -20,13 +15,12 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
         private ProjectProcurementManagementPlanBL ppmpBL = new ProjectProcurementManagementPlanBL();
         private ProjectProcurementManagementPlanDAL ppmpDAL = new ProjectProcurementManagementPlanDAL();
 
-        [Route("")]
-        [Route("list")]
+        [Route("{FiscalYear}")]
         [ActionName("list")]
-        public ActionResult Index()
+        public ActionResult Index(int FiscalYear)
         {
-            var ppmpList = ppmpDAL.GetPPMPList(User.Identity.Name);
-            return View("index", ppmpList);
+            BudgetPropsalVM budgetProposal = ppmpDAL.GetBudgetProposalDetails(User.Identity.Name, FiscalYear);
+            return View("index", budgetProposal);
         }
 
         [Route("{ReferenceNo}/details")]
@@ -63,20 +57,38 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
             return RedirectToAction("list", new { Area = "end-users" });
         }
 
+        [ActionName("print-budget-proposal")]
+        [Route("{FiscalYear}/budget-proposal/print")]
+        public ActionResult PrintBudgetProposal(int FiscalYear)
+        {
+            var stream = ppmpBL.GenerateBudgetProposalReport(Server.MapPath("~/Content/imgs/PUPLogo.png"), User.Identity.Name, FiscalYear);
+            Response.Clear();
+            Response.ClearContent();
+            Response.ClearHeaders();
+            Response.AddHeader("content-length", stream.Length.ToString());
+            //Response.AddHeader("content-disposition", "attachment; filename=" + ReferenceNo + ".pdf");
+            Response.ContentType = "application/pdf";
+            Response.BinaryWrite(stream.ToArray());
+            stream.Close();
+            Response.End();
+
+            return RedirectToAction("list", new { Area = "end-users" });
+        }
+
         [HttpPost]
         [Route("submit-ppmp")]
         [ValidateAntiForgeryToken]
         [ActionName("submit-ppmp")]
-        public ActionResult SubmitPPMP(List<PPMPHeaderViewModel> PPMP)
+        public ActionResult SubmitPPMP(BudgetPropsalVM BudgetProposal)
         {
-            foreach(var item in PPMP)
+            foreach(var item in BudgetProposal.PPMPList)
             {
                 if(item.IsSelected == true)
                 {
                     ppmpDAL.SubmitPPMP(item.ReferenceNo, User.Identity.Name);
                 }
             }
-            return RedirectToAction("list", "ProjectProcurementManagementPlans", new { Area = "end-users" });
+            return RedirectToAction("list", "ProjectProcurementManagementPlans", new { Area = "end-users", FiscalYear = BudgetProposal.FiscalYear });
         }
         
         protected override void Dispose(bool disposing)

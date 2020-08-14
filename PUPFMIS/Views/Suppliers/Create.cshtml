@@ -7,7 +7,7 @@
     </button>
 </div>
 
-@using (Ajax.BeginForm("create", "UnitOfMeasure", new AjaxOptions() { HttpMethod = "POST", UpdateTargetId = "modal-container", OnSuccess = "CloseModal" }, htmlAttributes: new { id = "addUnit" }))
+@using (Ajax.BeginForm("create", "Suppliers", new AjaxOptions() { HttpMethod = "POST", UpdateTargetId = "modal-container", OnSuccess = "CloseModal" }, htmlAttributes: new { id = "addUnit" }))
 {
     <div class="modal-body" id="form-body">
         @Html.AntiForgeryToken()

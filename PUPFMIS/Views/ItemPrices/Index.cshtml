@@ -15,7 +15,7 @@
 }
 
 @section Header {
-    <h3 class="card-title"><i class="fa fa-list"></i> Prevailing Prices as of @DateTime.Now.ToString("dd MMMM yyyy")</h3>
+    <h3 class="card-title"><i class="fa fa-list"></i> PS-DBM Prevailing Prices as of @DateTime.Now.ToString("dd MMMM yyyy")</h3>
 }
 
 <div class="row">
@@ -43,16 +43,16 @@
                     {
                         <tr>
                             <td style="vertical-align:middle; text-align:left;">
-                                @Html.DisplayFor(modelItem => item.FKItemReference.ItemCode) - @Html.DisplayFor(modelItem => item.FKItemReference.ItemName)
+                                <b>@Html.DisplayFor(modelItem => item.FKItemReference.ItemFullName)</b> (@Html.DisplayFor(modelItem => item.FKItemReference.ItemCode))
                             </td>
-                            <td style="vertical-align:middle; text-align:center;">
-                                @Html.DisplayFor(modelItem => item.UnitPrice)
+                            <td style="vertical-align:middle; text-align:right;">
+                                @( String.Format("{0:C}", item.UnitPrice) )
                             </td>
                             <td style="vertical-align:middle; text-align:center;">
                                 @item.EffectivityDate.ToString("dd MMMM yyyy")
                             </td>
                             <td style="vertical-align:middle; text-align:center;">
-                                <button type="button" class="btn btn-sm btn-primary" style="width: 175px; margin-top: 2.5px; margin-bottom: 2.5px;" data-toggle="tooltip" title="View Details" onclick="window.location = '@Url.Action("IndexPriceHistory","ItemPrices")'"><i class="fa fa-eye"></i> View Price History</button>
+                                <button type="button" class="btn btn-sm btn-primary" style="width: 175px; margin-top: 2.5px; margin-bottom: 2.5px;" data-toggle="tooltip" title="View Details" onclick="window.location = '@Url.Action("IndexPriceHistory","ItemPrices", new { ItemCode = item.FKItemReference.ItemCode })'"><i class="fa fa-eye"></i> View Price History</button>
                                 <br />
                                 <button type="button" class="btn btn-sm btn-warning" style="width: 175px; margin-top: 2.5px; margin-bottom: 2.5px;" onclick="loadModal('@Url.Action("updateprices","ItemPrices", new { id = item.ID })')"><i class="fa fa-edit"></i> Update Prices</button>
                             </td>

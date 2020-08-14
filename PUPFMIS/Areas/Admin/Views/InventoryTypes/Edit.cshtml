@@ -1,0 +1,115 @@
+﻿@model PUPFMIS.Models.InventoryType
+
+<div class="modal-header">
+    <h4 class="modal-title">Default Responsibility Center</h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+@using (Ajax.BeginForm("edit", "InventoryTypes", new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "addItem", Area = "admin" }))
+{
+    <div class="modal-body" id="form-body">
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="table table-striped table-hover" id="example2">
+                    <tbody>
+                        <tr>
+                            <td style="text-align:left; vertical-align: middle;" width="30%">
+                                <b>@Html.DisplayNameFor(model => model.InventoryCode)</b>
+                            </td>
+                            <td style="text-align:left; vertical-align: middle;">
+                                @Html.HiddenFor(d => d.InventoryCode)
+                                : @Html.DisplayFor(model => model.InventoryCode)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left; vertical-align: middle;" width="30%">
+                                <b>@Html.DisplayNameFor(model => model.InventoryTypeName)</b>
+                            </td>
+                            <td style="text-align:left; vertical-align: middle;">
+                                @Html.HiddenFor(d => d.InventoryTypeName)
+                                : <b>@Html.DisplayFor(model => model.InventoryTypeName).ToString().ToUpper()</b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left; vertical-align: middle;" width="30%">
+                                <b>@Html.DisplayNameFor(model => model.IsTangible)</b>
+                            </td>
+                            <td style="text-align:left; vertical-align: middle;">
+                                : @( Model.IsTangible == true ? "Yes" : "No" )
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left; vertical-align: middle;" width="30%">
+                                <b>@Html.DisplayNameFor(model => model.ResponsibilityCenter)</b>
+                            </td>
+                            <td style="text-align:left; vertical-align: middle;">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        : &nbsp;
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fa fa-building"></i></span>
+                                        </div>
+                                        @Html.DropDownList("ResponsibilityCenter", null, htmlAttributes: new { @class = "form-control form-control-sm select2", style = "font-size:100%;" })
+                                    </div>
+                                    @Html.ValidationMessageFor(model => model.ResponsibilityCenter, "", new { @class = "text-danger" })
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="modal-footer">
+    <div class="form-group">
+        <button type="button" class="btn btn-primary" id="save-btn" onclick="SaveItem()"><i class="fa fa-save"></i>&nbsp; Save changes</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i>&nbsp; Close</button>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function SaveItem() {
+        swal.fire({
+            title: "Save record?",
+            text: "You are about to update the Responsibility Center for this Inventory Type, continue?",
+            type: "warning",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#addItem").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    type: "error"
+                })
+            }
+        })
+    }
+    function CreateResult(data) {
+        if (data.result == true) {
+            swal.fire({
+                title: "Record Saved!",
+                text: "Responsibility Center is updated!",
+                type: "success"
+            }).then((result) => {
+                if (result.value) {
+                    window.location.href = "@Url.Action("list", "InventoryTypes", new { Area = "admin" })";
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                type: "error"
+            })
+        }
+    }
+</script>

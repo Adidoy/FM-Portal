@@ -1,62 +1,117 @@
-﻿@model PUPFMIS.Models.UserInformation
+﻿@model PUPFMIS.Models.UsersVM
 
-@{
-    ViewBag.Title = "Edit";
-    Layout = "~/Views/Shared/_BodyLayout.cshtml";
-}
+<div class="modal-header">
+    <h4 class="modal-title">Register New User</h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
 
-<h2>Edit</h2>
-
-@using (Html.BeginForm())
+@using (Ajax.BeginForm("update", "Users", new AjaxOptions() { HttpMethod = "POST", UpdateTargetId = "modal-container", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "addUser", Area = "" }))
 {
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>UserInformation</h4>
-        <hr />
+    <div class="modal-body" id="form-body">
+        @Html.AntiForgeryToken()
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.ID)
+        @Html.HiddenFor(d => d.UserID)
 
         <div class="form-group">
-            @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+            @Html.Label("Department", htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-building"></i></span>
+                </div>
+                @Html.EditorFor(model => model.Office, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%;", disabled = "disabled" } })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+            @Html.Label("Employee Name", htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-user"></i></span>
+                </div>
+                @Html.EditorFor(model => model.Employee, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%;", disabled = "disabled" } })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.MiddleName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.MiddleName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.MiddleName, "", new { @class = "text-danger" })
+            @Html.LabelFor(model => model.Designation, htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-book"></i></span>
+                </div>
+                @Html.EditorFor(model => model.Designation, new { htmlAttributes = new { id = "Designation", @class = "form-control form-control-sm", style = "font-size:100%;", disabled = "disabled" } })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.Designation, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Designation, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Designation, "", new { @class = "text-danger" })
+            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-at"></i></span>
+                </div>
+                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { id = "Email", @class = "form-control form-control-sm", style = "font-size:100%;", disabled = "disabled" } })
             </div>
         </div>
 
         <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+            @Html.Label("System Role", htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-user-cog"></i></span>
+                </div>
+                @Html.DropDownList("UserRole", null, htmlAttributes: new { @class = "form-control form-control-sm" })
             </div>
         </div>
+
     </div>
 }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
+<div class="modal-footer">
+    <div class="form-group">
+        <button type="button" class="btn btn-primary" onclick="Save()"><i class="fa fa-save"></i>&nbsp; Save changes</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i>&nbsp; Close</button>
+    </div>
 </div>
+
+<script type="text/javascript">
+    function Save() {
+        swal.fire({
+            title: "Save record?",
+            text: "You are about to update the User Account Record, continue?",
+            type: "warning",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#addUser").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    type: "error"
+                })
+            }
+        })
+    }
+    function CreateResult(data) {
+        if (data.result == true) {
+            swal.fire({
+                title: "Record Saved!",
+                text: "User Account is successfully updated!",
+                type: "success"
+            }).then((result) => {
+                if (result.value) {
+                    window.location.href = "@Url.Action("users-management", "Users", new { Area = "" })";
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                type: "error"
+            })
+        }
+    }
+</script>

@@ -14,6 +14,8 @@ namespace PUPFMIS
 
             bundles.Add(new StyleBundle("~/bundles/styles")
                 .Include(ltecomponents + "bootstrap/dist/css/bootstrap.min.css")
+                .Include(ltecomponents + "select2/css/select2.css")
+                .Include(ltecomponents + "select2/css/select2-bootstrap4.css")
                 .Include(ltecomponents + "tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css")
                 .Include(ltecomponents + "icheck-bootstrap/icheck-bootstrap.min.css")
                 .Include(ltecomponents + "jqvmap/jqvmap.min.css")
@@ -27,31 +29,33 @@ namespace PUPFMIS
                 .Include(ltecomponents + "toastr/toastr.min.css")
                 );
 
-            bundles.Add(new ScriptBundle("~/bundles/jquery")
+            bundles.Add(new ScriptBundle("~/bundles/preScripts")
                 .Include(ltecomponents + "jquery/dist/jquery.js")
-                .Include(ltecomponents + "jquery-ui/jquery-ui.min.js")
                 .Include("~/Scripts/jquery.validate.min.js")
                 .Include("~/Scripts/jquery.unobtrusive-ajax.min.js")
-                .Include(ltecomponents + "jquery-knob/jquery.knob.min.js")
-                .Include(ltecomponents + "datatables/jquery.dataTables.js")
-                .Include(ltecomponents + "jqvmap/jquery.vmap.min.js")
-                .Include(ltecomponents + "jqvmap/maps/jquery.vmap.usa.js")
-                );
+                .Include(ltecomponents + "jquery-ui/jquery-ui.min.js")
+                .Include(ltecomponents + "bootstrap/dist/js/bootstrap.min.js")
+                .Include("~/Scripts/adminlte/js/adminlte.js")
+                .Include(ltecomponents + "datatables/jquery.dataTables.js"));
 
-            bundles.Add(new ScriptBundle("~/bundles/scripts")
-                .Include(ltecomponents + "sweetalert2/sweetalert2.all.min.js")
-                .Include(ltecomponents + "toastr/toastr.min.js")
-                .Include(ltecomponents + "bootstrap/dist/js/bootstrap.bundle.min.js")
-                .Include("~/Scripts/adminlte/js/demo.js")
+            bundles.Add(new ScriptBundle("~/bundles/dashboardScripts")
                 .Include(ltecomponents + "chart.js/Chart.min.js")
                 .Include(ltecomponents + "sparklines/sparkline.js")
-                .Include(ltecomponents + "moment/moment.min.js")
-                .Include(ltecomponents + "daterangepicker/daterangepicker.js")
+                .Include(ltecomponents + "jqvmap/jquery.vmap.min.js")
+                .Include(ltecomponents + "jqvmap/maps/jquery.vmap.usa.js")
+                .Include(ltecomponents + "jquery-knob/dist/jquery.knob.min.js")
+                .Include(ltecomponents + "moment/moment.js")
                 .Include(ltecomponents + "tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js")
+                .Include(ltecomponents + "daterangepicker/daterangepicker.js")
                 .Include(ltecomponents + "summernote/summernote-bs4.min.js")
                 .Include(ltecomponents + "overlayScrollbars/js/jquery.overlayScrollbars.min.js")
-                .Include("~/Scripts/adminlte/js/adminlte.js")
-                .Include("~/Scripts/adminlte/js/pages/dashboard.js")
+                .Include("~/Scripts/adminlte/js/pages/dashboard.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/postScripts")
+                .Include(ltecomponents + "select2/js/select2.full.js")
+                .Include(ltecomponents + "sweetalert2/sweetalert2.all.min.js")
+                .Include(ltecomponents + "toastr/toastr.min.js")
+                .Include("~/Scripts/adminlte/js/demo.js")
                 .Include(ltecomponents + "datatables-bs4/js/dataTables.bootstrap4.js"));
 
             BundleTable.EnableOptimizations = true;

@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PUPFMIS.Models
 {
-    [Table("master.Plants")]
+    [Table("PP_MASTER_PLANTS")]
     public class PlantsMaster
     {
         [Key]

@@ -1,0 +1,222 @@
+﻿using PUPFMIS.Models;
+using PUPFMIS.Models.HRIS;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
+
+namespace PUPFMIS.BusinessAndDataLogic
+{
+    public class DashboardDAL : Controller
+    {
+        private FMISDbContext db = new FMISDbContext();
+        private SystemBDL systemBDL = new SystemBDL();
+        private HRISDataAccess hrisDataAccess = new HRISDataAccess();
+
+        public List<int> GetProjectFiscalYears(string UserEmail)
+        {
+            var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
+            var office = hrisDataAccess.GetFullDepartmentDetails(user.DepartmentCode);
+            var FiscalYears = db.ProjectPlans.Where(d => (office.SectionCode == null ? d.Department == office.DepartmentCode : d.Unit == office.SectionCode)).GroupBy(d => d.FiscalYear).Select(d => d.Key).ToList();
+            return FiscalYears;
+        }
+        public List<int> GetPPMPFiscalYears(string UserEmail)
+        {
+            var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
+            var office = hrisDataAccess.GetFullDepartmentDetails(user.DepartmentCode);
+            var FiscalYears = db.PPMPHeader.Where(d => (office.SectionCode == null ? d.Department == office.DepartmentCode : d.Unit == office.SectionCode)).GroupBy(d => d.FiscalYear).Select(d => d.Key).ToList();
+            return FiscalYears;
+        }
+        public int GetNumberOfProjects(string UserEmail)
+        {
+            var fiscalYear = db.ProjectPlans.OrderByDescending(d => d.FiscalYear).FirstOrDefault();
+            if (fiscalYear != null)
+            {
+                var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
+                var office = hrisDataAccess.GetFullDepartmentDetails(user.DepartmentCode);
+                return db.ProjectPlans.Where(d => (office.SectionCode == null ? d.Department == office.DepartmentCode : d.Unit == office.SectionCode)).Count();
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        public int GetNumberOfProjectsPosted(string UserEmail)
+        {
+            var fiscalYear = db.ProjectPlans.OrderByDescending(d => d.FiscalYear).FirstOrDefault();
+            if (fiscalYear != null)
+            {
+                var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
+                var office = hrisDataAccess.GetFullDepartmentDetails(user.DepartmentCode);
+                return db.ProjectPlans.Where(d => (office.SectionCode == null ? d.Department == office.DepartmentCode : d.Unit == office.SectionCode) && d.ProjectStatus != "New Project" && d.FiscalYear == fiscalYear.FiscalYear).Count();
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        public int GetNumberOfNewPPMP(string UserEmail)
+        {
+            var fiscalYear = db.ProjectPlans.OrderByDescending(d => d.FiscalYear).FirstOrDefault();
+            if (fiscalYear != null)
+            {
+                var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
+                var office = hrisDataAccess.GetFullDepartmentDetails(user.DepartmentCode);
+                return db.PPMPHeader.Where(d => (office.SectionCode == null ? d.Department == office.DepartmentCode : d.Unit == office.SectionCode) && d.Status == "New PPMP" && d.FiscalYear == fiscalYear.FiscalYear).Count();
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        public int GetNumberOfPPMPSubmitted(string UserEmail)
+        {
+            var FiscalYear = db.PPMPHeader.Any() ? (int?)db.PPMPHeader.GroupBy(d => d.FiscalYear).Select(d => new { FiscalYear = d.Key }).OrderByDescending(d => d.FiscalYear).FirstOrDefault().FiscalYear : null;
+            if(FiscalYear != null)
+            {
+                var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
+                var office = hrisDataAccess.GetFullDepartmentDetails(user.DepartmentCode);
+                return db.PPMPHeader.Where(d => (office.SectionCode == null ? d.Department == office.DepartmentCode : d.Unit == office.SectionCode) && (d.Status == "PPMP Submitted" || d.Status == "PPMP Evaluated") && d.FiscalYear == FiscalYear).Count();
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        public int GetNumberOfPPMPs(string UserEmail)
+        {
+            var fiscalYear = db.ProjectPlans.OrderByDescending(d => d.FiscalYear).FirstOrDefault();
+            if(fiscalYear != null)
+            {
+                var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
+                var office = hrisDataAccess.GetFullDepartmentDetails(user.DepartmentCode);
+                return db.PPMPHeader.Where(d => (office.SectionCode == null ? d.Department == office.DepartmentCode : d.Unit == office.SectionCode) && d.FiscalYear == fiscalYear.FiscalYear).Count();
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        public int GetNumberOfApprovedPPMPs(string UserEmail)
+        {
+            var fiscalYear = db.ProjectPlans.OrderByDescending(d => d.FiscalYear).FirstOrDefault();
+            if(fiscalYear != null)
+            {
+                var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
+                var office = hrisDataAccess.GetFullDepartmentDetails(user.DepartmentCode);
+                return db.PPMPHeader.Where(d => (office.SectionCode == null ? d.Department == office.DepartmentCode : d.Unit == office.SectionCode) && d.Status == "PPMP Evaluated" && d.FiscalYear == fiscalYear.FiscalYear).Count();
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        public string GetProposedBudget(string UserEmail)
+        {
+            var fiscalYear = db.ProjectPlans.OrderByDescending(d => d.FiscalYear).FirstOrDefault();
+            if (fiscalYear != null)
+            {
+                var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
+                var office = hrisDataAccess.GetFullDepartmentDetails(user.DepartmentCode);
+                var projectItems = db.ProjectPlanItems.Where(d => (office.SectionCode == null ? d.FKPPMPReference.Department == office.DepartmentCode : d.FKPPMPReference.Unit == office.SectionCode) && d.FKPPMPReference.FiscalYear == fiscalYear.FiscalYear).ToList();
+                var projectService = db.ProjectPlanServices.Where(d => (office.SectionCode == null ? d.FKPPMPReference.Department == office.DepartmentCode : d.FKPPMPReference.Unit == office.SectionCode) && d.FKPPMPReference.FiscalYear == fiscalYear.FiscalYear).ToList();
+                var proposedItemsBudget = projectItems.Count != 0 ? projectItems.Sum(d => d.ProjectEstimatedBudget) : 0.00m;
+                var proposedServicesBudget = projectService.Count != 0 ? projectService.Sum(d => d.ProjectEstimatedBudget) : 0.00m;
+                var estimatedBudget = String.Format("{0:C}", proposedItemsBudget + proposedServicesBudget);
+                return estimatedBudget;
+            }
+            return String.Format("{0:C}", 0.00m);
+        }
+        public string GetApprovedBudget(string UserEmail)
+        {
+            var fiscalYear = db.ProjectPlans.OrderByDescending(d => d.FiscalYear).FirstOrDefault();
+            if(fiscalYear != null)
+            {
+                var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
+                var office = hrisDataAccess.GetFullDepartmentDetails(user.DepartmentCode);
+                var budget = db.PPMPHeader.Where(d => (office.SectionCode == null ? d.Department == office.DepartmentCode : d.Unit == office.SectionCode) && d.Status == "PPMP Evaluated" && d.FiscalYear == fiscalYear.FiscalYear).Sum(d => (decimal?)d.ABC);
+                var approvedBudget = (budget == null) ? String.Format("{0:C}", 0.00m) : String.Format("{0:C}", budget);
+                return approvedBudget;
+            }
+            return String.Format("{0:C}", 0.00m);
+        }
+        public string GetOngoingBudget(string UserEmail)
+        {
+            var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
+            var office = hrisDataAccess.GetFullDepartmentDetails(user.DepartmentCode);
+            var budget = db.PPMPHeader.Where(d => (office.SectionCode == null ? d.Department == office.DepartmentCode : d.Unit == office.SectionCode) && d.Status == "Procurement On-going").Sum(d => (decimal?)d.ABC);
+            var ongoingBudget = (budget == null) ? String.Format("{0:C}", 0.00m) : String.Format("{0:C}", budget);
+            return ongoingBudget;
+        }
+        public List<SwitchBoardVM> GetSwitchBoard(string UserEmail)
+        {
+            var employee = hrisDataAccess.GetEmployee(UserEmail);
+            var switchBoardList = (from switchBoard in db.SwitchBoard
+                                   join switchBoardBody in db.SwitchBoardBody on switchBoard.ID equals switchBoardBody.SwitchBoardReference
+                                   where switchBoard.DepartmentCode == employee.DepartmentCode
+                                   select new
+                                   {
+                                       MessageType = switchBoard.MessageType,
+                                       Reference = switchBoard.Reference,
+                                       Subject = switchBoard.Subject,
+                                       UpdatedAt = switchBoardBody.UpdatedAt
+                                   } into results
+                                   group results by new { results.MessageType, results.Reference, results.Subject } into groupedResults
+                                   select new
+                                   {
+                                       MessageType = groupedResults.Key.MessageType,
+                                       Reference = groupedResults.Key.Reference,
+                                       Subject = groupedResults.Key.Subject,
+                                       UpdatedAt = groupedResults.Max(d => d.UpdatedAt)
+                                   }).OrderByDescending(d => d.UpdatedAt).ToList();
+
+            List<SwitchBoardVM> switchBoardVMList = new List<SwitchBoardVM>();
+            foreach(var item in switchBoardList.OrderByDescending(d => d.UpdatedAt).ToList())
+            {
+                switchBoardVMList.Add(new SwitchBoardVM
+                {
+                    MessageType = item.MessageType,
+                    Reference = item.Reference,
+                    Subject = item.Subject,
+                    UpdatedAt = item.UpdatedAt.ToString("dd MMMM yyyy hh:mm:ss tt")
+                });
+            }
+            return switchBoardVMList;
+        }
+        public List<SwitchBoardBodyVM> GetSwitchBoardBody(string ReferenceNo)
+        {
+            var switchBoardBodyList = db.SwitchBoardBody.Where(d => d.FKSwitchBoardReference.Reference == ReferenceNo)
+                                        .Select(d => new
+                                        {
+                                            UpdatedAt = d.UpdatedAt,
+                                            Remarks = d.Remarks,
+                                            Department = d.DepartmentCode,
+                                            ActionBy = d.ActionBy
+                                        }).ToList();
+
+            List<SwitchBoardBodyVM> switchBoardBodyVMList = new List<SwitchBoardBodyVM>();
+            foreach(var item in switchBoardBodyList)
+            {
+                switchBoardBodyVMList.Add(new SwitchBoardBodyVM
+                {
+                    UpdatedAt = item.UpdatedAt.ToString("dd MMMM yyyy hh:mm:ss tt"),
+                    Remarks = item.Remarks,
+                    Department = hrisDataAccess.GetFullDepartmentDetails(item.Department).Department,
+                    ActionBy = hrisDataAccess.GetEmployeeByCode(item.ActionBy).EmployeeName
+                });
+            }
+
+            return switchBoardBodyVMList.ToList();
+        }
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+                hrisDataAccess.Dispose();
+                systemBDL.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+    }
+}

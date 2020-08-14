@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using FluentValidation;
 using System.Web.Mvc;
 
 namespace PUPFMIS.Models
 {
-    [Table("planning_projectPlans")]
+    [Table("PP_PLANNING_PROJECTPLAN_HEADER")]
     public class ProjectPlans
     {
         [Key]
@@ -17,7 +14,7 @@ namespace PUPFMIS.Models
 
         [Display(Name = "Project Code")]
         [Column(TypeName = "VARCHAR")]
-        [MaxLength(20, ErrorMessage = "{0} is up to {1} characters only.")]
+        [MaxLength(40, ErrorMessage = "{0} is up to {1} characters only.")]
         public string ProjectCode { get; set; }
 
         [Display(Name = "Project Name")]
@@ -34,27 +31,36 @@ namespace PUPFMIS.Models
         public string Description { get; set; }
 
         [Display(Name = "Fiscal Year")]
-        [Column(TypeName = "VARCHAR")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
-        [MinLength(4, ErrorMessage = "{0} field must consist of {1} characters only.")]
-        [MaxLength(4, ErrorMessage = "{0} field must consist of {1} characters only.")]
-        public string FiscalYear { get; set; }
+        public int FiscalYear { get; set; }
 
-        [Display(Name = "Office")]
-        public int? Office { get; set; }
+        [MaxLength(20)]
+        [Display(Name = "Sector")]
+        [Column(TypeName = "VARCHAR")]
+        public string Sector { get; set; }
+
+        [MaxLength(20)]
+        [Display(Name = "Department")]
+        [Column(TypeName = "VARCHAR")]
+        public string Department { get; set; }
+
+        [MaxLength(20)]
+        [Display(Name = "Unit")]
+        [Column(TypeName = "VARCHAR")]
+        public string Unit { get; set; }
 
         [Display(Name = "Prepared By")]
-        public int? PreparedBy { get; set; }
+        public string PreparedBy { get; set; }
 
         [Display(Name = "Submitted By")]
-        public int? SubmittedBy { get; set; }
+        public string SubmittedBy { get; set; }
 
         [Display(Name = "Project Status")]
         [Column(TypeName = "VARCHAR")]
         public string ProjectStatus { get; set; }
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
-        [Display(Name = "Start Month")]
+        [Display(Name = "Delivery Month")]
         public int ProjectMonthStart { get; set; }
 
         [Display(Name = "Total Estimated Budget")]
@@ -75,7 +81,7 @@ namespace PUPFMIS.Models
         public DateTime? DeletedAt { get; set; }
     }
 
-    [Table("planning_projectPlanItems")]
+    [Table("PP_PLANNING_PROJECTPLAN_ITEMS")]
     public class ProjectPlanItems
     {
         [Key, Column(Order = 0)]
@@ -89,56 +95,54 @@ namespace PUPFMIS.Models
         [Key, Column(Order = 2)]
         public BudgetProposalType ProposalType { get; set; }
 
-        [Display(Name = "JAN")]
-        public int? JanQty { get; set; }
-
-        [Display(Name = "FEB")]
-        public int? FebQty { get; set; }
-
-        [Display(Name = "MAR")]
-        public int? MarQty { get; set; }
-
-        [Display(Name = "APR")]
-        public int? AprQty { get; set; }
-
-        [Display(Name = "MAY")]
-        public int? MayQty { get; set; }
-
-        [Display(Name = "JUN")]
-        public int? JunQty { get; set; }
-
-        [Display(Name = "JUL")]
-        public int? JulQty { get; set; }
-
-        [Display(Name = "AUG")]
-        public int? AugQty { get; set; }
-
-        [Display(Name = "SEP")]
-        public int? SepQty { get; set; }
-
-        [Display(Name = "OCT")]
-        public int? OctQty { get; set; }
-
-        [Display(Name = "NOV")]
-        public int? NovQty { get; set; }
-
-        [Display(Name = "DEC")]
-        public int? DecQty { get; set; }
-
-        [Display(Name = "Total Qty.")]
-        public int TotalQty { get; set; }
-
-        [Display(Name = "Estimated Budget")]
-        public decimal EstimatedBudget { get; set; }
-
-        [Display(Name = "Remarks")]
-        public string Remarks { get; set; }
-
-        [Display(Name = "Status")]
-        public string Status { get; set; }
-
         [Display(Name = "Unit Cost")]
         public decimal UnitCost { get; set; }
+
+        //Project Item Distribution
+        [Display(Name = "JAN")]
+        public int? ProjectJanQty { get; set; }
+
+        [Display(Name = "FEB")]
+        public int? ProjectFebQty { get; set; }
+
+        [Display(Name = "MAR")]
+        public int? ProjectMarQty { get; set; }
+
+        [Display(Name = "APR")]
+        public int? ProjectAprQty { get; set; }
+
+        [Display(Name = "MAY")]
+        public int? ProjectMayQty { get; set; }
+
+        [Display(Name = "JUN")]
+        public int? ProjectJunQty { get; set; }
+
+        [Display(Name = "JUL")]
+        public int? ProjectJulQty { get; set; }
+
+        [Display(Name = "AUG")]
+        public int? ProjectAugQty { get; set; }
+
+        [Display(Name = "SEP")]
+        public int? ProjectSepQty { get; set; }
+
+        [Display(Name = "OCT")]
+        public int? ProjectOctQty { get; set; }
+
+        [Display(Name = "NOV")]
+        public int? ProjectNovQty { get; set; }
+
+        [Display(Name = "DEC")]
+        public int? ProjectDecQty { get; set; }
+
+        [Display(Name = "Total Qty.")]
+        public int ProjectTotalQty { get; set; }
+
+        [Display(Name = "Estimated Budget")]
+        public decimal ProjectEstimatedBudget { get; set; }
+
+        [Display(Name = "Remarks")]
+        public string Justification { get; set; }
 
         [Display(Name = "Supplier 1")]
         public int Supplier1 { get; set; }
@@ -157,6 +161,83 @@ namespace PUPFMIS.Models
 
         [Display(Name = "Supplier 3 Unit Cost")]
         public decimal? Supplier3UnitCost { get; set; }
+        //End Project Items Distribution
+
+        //PPMP Items Distribution
+        public int? PPMPReference { get; set; }
+
+        [Display(Name = "JAN")]
+        public string PPMPJan { get; set; }
+
+        [Display(Name = "FEB")]
+        public string PPMPFeb { get; set; }
+
+        [Display(Name = "MAR")]
+        public string PPMPMar { get; set; }
+
+        [Display(Name = "APR")]
+        public string PPMPApr { get; set; }
+
+        [Display(Name = "MAY")]
+        public string PPMPMay { get; set; }
+
+        [Display(Name = "JUN")]
+        public string PPMPJun { get; set; }
+
+        [Display(Name = "JUL")]
+        public string PPMPJul { get; set; }
+
+        [Display(Name = "AUG")]
+        public string PPMPAug { get; set; }
+
+        [Display(Name = "SEP")]
+        public string PPMPSep { get; set; }
+
+        [Display(Name = "OCT")]
+        public string PPMPOct { get; set; }
+
+        [Display(Name = "NOV")]
+        public string PPMPNov { get; set; }
+
+        [Display(Name = "DEC")]
+        public string PPMPDec { get; set; }
+
+        [Display(Name = "Total Qty.")]
+        public int PPMPTotalQty { get; set; }
+
+        [Display(Name = "Estimated Budget")]
+        public decimal PPMPEstimatedBudget { get; set; }
+
+        [Display(Name = "FundSource")]
+        public string FundSource { get; set; }
+        //End PPMP Items Distribution
+
+        [Display(Name = "APP Reference")]
+        public int? APPReference { get; set; }
+
+        [Display(Name = "Purchase Request Reference")]
+        public int? PRReference { get; set; }
+
+        [Display(Name = "Purchase Request Reference")]
+        public int? Q1PRReference { get; set; }
+
+        [Display(Name = "Purchase Request Reference")]
+        public int? Q2PRReference { get; set; }
+
+        [Display(Name = "Purchase Request Reference")]
+        public int? Q3PRReference { get; set; }
+
+        [Display(Name = "Purchase Request Reference")]
+        public int? Q4PRReference { get; set; }
+
+        [Display(Name = "Purchase Order Reference")]
+        public int? POReference { get; set; }
+
+        [Display(Name = "Agency Procurement Request Reference")]
+        public int? APRReference { get; set; }
+
+        [Display(Name = "Status")]
+        public string Status { get; set; }
 
         [Display(Name = "Item Specifications")]
         [ForeignKey("ItemReference")]
@@ -164,9 +245,42 @@ namespace PUPFMIS.Models
 
         [ForeignKey("ProjectReference")]
         public virtual ProjectPlans FKProjectReference { get; set; }
+
+        [ForeignKey("PPMPReference")]
+        public virtual PPMPHeader FKPPMPReference { get; set; }
+
+        [ForeignKey("APPReference")]
+        public virtual APPHeader FKAPPReference { get; set; }
+
+        [ForeignKey("Supplier1")]
+        public virtual Supplier FKSupplier1Reference { get; set; }
+
+        [ForeignKey("Supplier2")]
+        public virtual Supplier FKSupplier2Reference { get; set; }
+
+        [ForeignKey("Supplier3")]
+        public virtual Supplier FKSupplier3Reference { get; set; }
+
+        [ForeignKey("PRReference")]
+        public virtual PurchaseRequestHeader FKPurchaseRequestReference { get; set; }
+
+        [ForeignKey("Q1PRReference")]
+        public virtual PurchaseRequestHeader FKQ1PurchaseRequestReference { get; set; }
+
+        [ForeignKey("Q2PRReference")]
+        public virtual PurchaseRequestHeader FKQ2PurchaseRequestReference { get; set; }
+
+        [ForeignKey("Q3PRReference")]
+        public virtual PurchaseRequestHeader FKQ3PurchaseRequestReference { get; set; }
+
+        [ForeignKey("Q4PRReference")]
+        public virtual PurchaseRequestHeader FKQ4PurchaseRequestReference { get; set; }
+
+        [ForeignKey("APRReference")]
+        public virtual APRHeader FKAPRHeaderReference { get; set; }
     }
 
-    [Table("planning_projectPlanServices")]
+    [Table("PP_PLANNING_PROJECTPLAN_SERVICES")]
     public class ProjectPlanServices
     {
         [Key, Column(Order = 0)]
@@ -174,11 +288,13 @@ namespace PUPFMIS.Models
         public int ProjectReference { get; set; }
 
         [Key, Column(Order = 1)]
-        [Display(Name = "Service")]
-        public int ServiceReference { get; set; }
+        [Display(Name = "ItemReference")]
+        public int ItemReference { get; set; }
 
         [Key, Column(Order = 2)]
         public BudgetProposalType ProposalType { get; set; }
+
+        public int? PPMPReference { get; set; }
 
         [AllowHtml]
         [DataType(DataType.MultilineText)]
@@ -187,19 +303,73 @@ namespace PUPFMIS.Models
         public string ItemSpecifications { get; set; }
 
         [Display(Name = "Quantity/Size")]
-        public int Quantity { get; set; }
+        public int ProjectQuantity { get; set; }
 
         [Display(Name = "Estimated Budget")]
-        public decimal EstimatedBudget { get; set; }
+        public decimal ProjectEstimatedBudget { get; set; }
 
-        [Display(Name = "Remarks")]
-        public string Remarks { get; set; }
+        [Display(Name = "JAN")]
+        public string PPMPJan { get; set; }
+
+        [Display(Name = "FEB")]
+        public string PPMPFeb { get; set; }
+
+        [Display(Name = "MAR")]
+        public string PPMPMar { get; set; }
+
+        [Display(Name = "APR")]
+        public string PPMPApr { get; set; }
+
+        [Display(Name = "MAY")]
+        public string PPMPMay { get; set; }
+
+        [Display(Name = "JUN")]
+        public string PPMPJun { get; set; }
+
+        [Display(Name = "JUL")]
+        public string PPMPJul { get; set; }
+
+        [Display(Name = "AUG")]
+        public string PPMPAug { get; set; }
+
+        [Display(Name = "SEP")]
+        public string PPMPSep { get; set; }
+
+        [Display(Name = "OCT")]
+        public string PPMPOct { get; set; }
+
+        [Display(Name = "NOV")]
+        public string PPMPNov { get; set; }
+
+        [Display(Name = "DEC")]
+        public string PPMPDec { get; set; }
+
+        [Display(Name = "Quantity/Size")]
+        public int PPMPQuantity { get; set; }
+
+        [Display(Name = "Estimated Budget")]
+        public decimal PPMPEstimatedBudget { get; set; }
+
+        [Display(Name = "FundSource")]
+        public string FundSource { get; set; }
+
+        [Display(Name = "Justification")]
+        public string Justification { get; set; }
 
         [Display(Name = "Status")]
         public string Status { get; set; }
 
         [Display(Name = "Unit Cost")]
         public decimal UnitCost { get; set; }
+
+        [Display(Name = "APP Reference")]
+        public int? APPReference { get; set; }
+
+        [Display(Name = "Purchase Request Reference")]
+        public int? PRReference { get; set; }
+
+        [Display(Name = "Purchase Order Reference")]
+        public int? POReference { get; set; }
 
         [Display(Name = "Supplier 1")]
         public int Supplier1 { get; set; }
@@ -220,11 +390,29 @@ namespace PUPFMIS.Models
         public decimal? Supplier3UnitCost { get; set; }
 
         [Display(Name = "Service Specifications")]
-        [ForeignKey("ServiceReference")]
-        public virtual Services FKServiceReference { get; set; }
+        [ForeignKey("ItemReference")]
+        public virtual Item FKItemReference { get; set; }
 
         [ForeignKey("ProjectReference")]
         public virtual ProjectPlans FKProjectReference { get; set; }
+
+        [ForeignKey("PPMPReference")]
+        public virtual PPMPHeader FKPPMPReference { get; set; }
+
+        [ForeignKey("Supplier1")]
+        public virtual Supplier FKSupplier1Reference { get; set; }
+
+        [ForeignKey("Supplier2")]
+        public virtual Supplier FKSupplier2Reference { get; set; }
+
+        [ForeignKey("Supplier3")]
+        public virtual Supplier FKSupplier3Reference { get; set; }
+
+        [ForeignKey("APPReference")]
+        public virtual APPHeader FKAPPHeaderReference { get; set; }
+
+        [ForeignKey("PRReference")]
+        public virtual PurchaseRequestHeader FKPurchaseRequestReference { get; set; }
     }
 
     public class ProjectPlanItemsVM
@@ -409,13 +597,30 @@ namespace PUPFMIS.Models
         public string Description { get; set; }
 
         [Display(Name = "Fiscal Year")]
-        public string FiscalYear { get; set; }
+        public int FiscalYear { get; set; }
 
-        [Display(Name = "Office")]
-        public string Office { get; set; }
+        [Display(Name = "Sector Code")]
+        public string SectorCode { get; set; }
+
+        [Display(Name = "Sector")]
+        public string Sector { get; set; }
+
+        [Display(Name = "Department Code")]
+        public string DepartmentCode { get; set; }
+
+        [Display(Name = "Department")]
+        public string Department { get; set; }
+
+        [Display(Name = "Unit Code")]
+        public string UnitCode { get; set; }
+
+        [Display(Name = "Unit")]
+        public string Unit { get; set; }
 
         [Display(Name = "Prepared By")]
         public string PreparedBy { get; set; }
+
+        public string PreparedByEmpCode { get; set; }
 
         [Display(Name = "Submitted By")]
         public string SubmittedBy { get; set; }
@@ -428,6 +633,8 @@ namespace PUPFMIS.Models
 
         [Display(Name = "Total Estimated Budget")]
         public decimal? TotalEstimatedBudget { get; set; }
+
+        public bool CanPost { get; set; }
 
         public List<ProjectPlanItemsVM> ProjectPlanItems { get; set; }
         public List<ProjectPlanItemsVM> NewItemProposals { get; set; }

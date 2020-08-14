@@ -1,0 +1,552 @@
+﻿@model PUPFMIS.Models.ProcurementProjectsVM
+
+@Html.HiddenFor(d => d.APPReference)
+<div class="row">
+    <div class="col-sm-12">
+        <div class="bg-info">
+            <h6 class="p-2">Procurement Project Details</h6>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.HiddenFor(d => d.PAPCode)
+                    @Html.LabelFor(model => model.PAPCode, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-id-card"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.PAPCode, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PAPCode, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.HiddenFor(d => d.ProcurementProgram)
+                    @Html.LabelFor(model => model.ProcurementProgram, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-bookmark"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.ProcurementProgram, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ProcurementProgram, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.HiddenFor(d => d.ObjectClassification)
+                    @Html.LabelFor(model => model.ObjectClassification, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-book-open"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.ObjectClassification, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ObjectClassification, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.HiddenFor(d => d.FundSource)
+                    @Html.LabelFor(model => model.FundSource, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-book-dead"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.FundSource, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ProcurementProgram, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.HiddenFor(d => d.StartMonth)
+                    @Html.LabelFor(model => model.StartMonth, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.StartMonth, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.StartMonth, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.HiddenFor(d => d.EndMonth)
+                    @Html.LabelFor(model => model.EndMonth, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.EndMonth, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.EndMonth, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.HiddenFor(d => d.ModeOfProcurement)
+                    @Html.LabelFor(model => model.ModeOfProcurement, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-list"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.ModeOfProcurement, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", rows = 4 } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ModeOfProcurement, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.HiddenFor(d => d.Remarks)
+                    @Html.LabelFor(model => model.Remarks, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-paragraph"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.Remarks, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", rows = 4 } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Remarks, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.HiddenFor(d => d.EndUser)
+                    @Html.LabelFor(model => model.EndUser, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.EndUser, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.EndUser, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.HiddenFor(d => d.MOOETotal)
+                    @Html.LabelFor(model => model.MOOETotal, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-coins"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.MOOETotal, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "text-align: right;", Value = Model.MOOETotal.ToString("C", new System.Globalization.CultureInfo("en-ph")), disabled = "disabled" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MOOETotal, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                @Html.HiddenFor(d => d.CapitalOutlayTotal)
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CapitalOutlayTotal, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-coins"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.CapitalOutlayTotal, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "text-align: right;", Value = Model.CapitalOutlayTotal.ToString("C", new System.Globalization.CultureInfo("en-ph")), disabled = "disabled" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CapitalOutlayTotal, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.HiddenFor(d => d.TotalEstimatedBudget)
+                    @Html.LabelFor(model => model.TotalEstimatedBudget, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-money-bill"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.TotalEstimatedBudget, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "text-align: right;", Value = Model.TotalEstimatedBudget.ToString("C", new System.Globalization.CultureInfo("en-ph")), disabled = "disabled" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.TotalEstimatedBudget, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.HiddenFor(d => d.ProjectCoordinator)
+                    @Html.LabelFor(model => model.ProjectCoordinator, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-user"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.ProjectCoordinator, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ProjectCoordinator, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.HiddenFor(d => d.ProjectSupport)
+                    @Html.LabelFor(model => model.ProjectSupport, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-user-alt"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.ProjectSupport, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ProjectSupport, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-sm-12">
+        <div class="bg-info">
+            <h6 class="p-2">Set Procurement Project Timeline</h6>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-sm-12 pl-0 pr-0 ml-0 mr-0">
+        <div class="card card-primary card-outline">
+            <div class="card-header d-flex p-0">
+                <ul class="nav nav-pills p-2">
+                    <li class="nav-item" style="font-size:12pt;"><a class="nav-link active" href="#appHeader" data-toggle="tab"><i class="fa fa-list"></i>&nbsp; PROJECT TIMELINE</a></li>
+                    <li class="nav-item" style="font-size:12pt;"><a class="nav-link" href="#appLineItems" data-toggle="tab"><i class="fa fa-list"></i>&nbsp; PROJECT ITEMS DISTRIBUTION</a></li>
+                </ul>
+            </div>
+            <div class="tab-content">
+                <div class="tab-pane active" id="appHeader">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                        <br />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-4 col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            @Html.LabelFor(d => d.Schedule.PurchaseRequestSubmission, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                                </div>
+                                                @Html.EditorFor(model => model.Schedule.PurchaseRequestSubmission, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%" } })
+                                            </div>
+                                            @Html.ValidationMessageFor(model => model.Schedule.PurchaseRequestSubmission, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(d => d.Schedule.PreProcurementConference, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                                </div>
+                                                @Html.EditorFor(model => model.Schedule.PreProcurementConference, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%" } })
+                                            </div>
+                                            @Html.ValidationMessageFor(model => model.Schedule.PreProcurementConference, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(d => d.Schedule.PostingOfIB, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                                </div>
+                                                @Html.EditorFor(model => model.Schedule.PostingOfIB, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%" } })
+                                            </div>
+                                            @Html.ValidationMessageFor(model => model.Schedule.PostingOfIB, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(d => d.Schedule.PreBidConference, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                                </div>
+                                                @Html.EditorFor(model => model.Schedule.PreBidConference, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%" } })
+                                            </div>
+                                            @Html.ValidationMessageFor(model => model.Schedule.PreBidConference, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            @Html.LabelFor(d => d.Schedule.SubmissionOfBids, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                                </div>
+                                                @Html.EditorFor(model => model.Schedule.SubmissionOfBids, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%" } })
+                                            </div>
+                                            @Html.ValidationMessageFor(model => model.Schedule.SubmissionOfBids, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(d => d.Schedule.BidEvaluation, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                                </div>
+                                                @Html.EditorFor(model => model.Schedule.BidEvaluation, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%" } })
+                                            </div>
+                                            @Html.ValidationMessageFor(model => model.Schedule.BidEvaluation, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(d => d.Schedule.PostQualification, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                                </div>
+                                                @Html.EditorFor(model => model.Schedule.PostQualification, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%" } })
+                                            </div>
+                                            @Html.ValidationMessageFor(model => model.Schedule.PostQualification, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(d => d.Schedule.NOAIssuance, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                                </div>
+                                                @Html.EditorFor(model => model.Schedule.NOAIssuance, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%" } })
+                                            </div>
+                                            @Html.ValidationMessageFor(model => model.Schedule.NOAIssuance, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            @Html.LabelFor(d => d.Schedule.ContractSigning, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                                </div>
+                                                @Html.EditorFor(model => model.Schedule.ContractSigning, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%" } })
+                                            </div>
+                                            @Html.ValidationMessageFor(model => model.Schedule.ContractSigning, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(d => d.Schedule.Approval, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                                </div>
+                                                @Html.EditorFor(model => model.Schedule.Approval, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%" } })
+                                            </div>
+                                            @Html.ValidationMessageFor(model => model.Schedule.Approval, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(d => d.Schedule.NTPIssuance, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                                </div>
+                                                @Html.EditorFor(model => model.Schedule.NTPIssuance, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%" } })
+                                            </div>
+                                            @Html.ValidationMessageFor(model => model.Schedule.NTPIssuance, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(d => d.Schedule.POReceived, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                                </div>
+                                                @Html.EditorFor(model => model.Schedule.POReceived, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%" } })
+                                            </div>
+                                            @Html.ValidationMessageFor(model => model.Schedule.POReceived, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="appLineItems">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="bg-info">
+                                                    <h6 class="p-2">PROJECT ITEMS DISTRIBUTION</h6>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <div class="card-body table-responsive p-sm-0">
+                                                            <table class="table table-striped table-hover" id="example2">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th style="text-align:center; vertical-align:middle;" width="20%">End-User</th>
+                                                                        <th style="text-align:center; vertical-align:middle;" width="30%">Project Details</th>
+                                                                        <th style="text-align:center; vertical-align:middle;" width="50%">Item Details</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @{ int count = 0; }
+                                                                    @foreach (var item in Model.Items.OrderBy(d => d.EndUser).ThenBy(d => d.ProjectCode))
+                                                                    {
+                                                                        <tr>
+                                                                            <td style="text-align:justify; vertical-align:middle;">
+                                                                                @Html.HiddenFor(d => Model.Items[count].EndUser)
+                                                                                <b>@Html.DisplayFor(d => item.EndUser).ToString().ToUpper()</b>
+                                                                            </td>
+                                                                            <td style="text-align:justify; vertical-align:middle;">
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-3">
+                                                                                        @Html.HiddenFor(d => Model.Items[count].ProjectCode)
+                                                                                        <b>@Html.DisplayNameFor(d => item.ProjectCode)</b>
+                                                                                    </div>
+                                                                                    <div class="col-sm-9">
+                                                                                        : @Html.DisplayFor(d => item.ProjectCode)
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-3">
+                                                                                        @Html.HiddenFor(d => Model.Items[count].ProjectName)
+                                                                                        <b>@Html.DisplayNameFor(d => item.ProjectName)</b>
+                                                                                    </div>
+                                                                                    <div class="col-sm-9">
+                                                                                        : @Html.DisplayFor(d => item.ProjectName)
+                                                                                    </div>
+                                                                                </div>
+                                                                            </td>
+                                                                            <td style="text-align:justify; vertical-align:middle;">
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-3">
+                                                                                        @Html.HiddenFor(d => Model.Items[count].ItemCode)
+                                                                                        <b>@Html.DisplayNameFor(d => item.ItemCode)</b>
+                                                                                    </div>
+                                                                                    <div class="col-sm-9">
+                                                                                        : @Html.DisplayFor(d => item.ItemCode)
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-3">
+                                                                                        @Html.HiddenFor(d => Model.Items[count].ItemName)
+                                                                                        <b>@Html.DisplayNameFor(d => item.ItemName)</b>
+                                                                                    </div>
+                                                                                    <div class="col-sm-9">
+                                                                                        : @Html.DisplayFor(d => item.ItemName)
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-3">
+                                                                                        @Html.HiddenFor(d => Model.Items[count].ItemSpecifications)
+                                                                                        <b>@Html.DisplayNameFor(d => item.ItemSpecifications)</b>
+                                                                                    </div>
+                                                                                    <div class="col-sm-9">
+                                                                                        : @Html.DisplayFor(d => item.ItemSpecifications)
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-3">
+                                                                                        @Html.HiddenFor(d => Model.Items[count].ProcurementSource)
+                                                                                        <b>@Html.DisplayNameFor(d => item.ProcurementSource)</b>
+                                                                                    </div>
+                                                                                    <div class="col-sm-9">
+                                                                                        : @Html.DisplayFor(d => item.ProcurementSource)
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-3">
+                                                                                        @Html.HiddenFor(d => Model.Items[count].InventoryType)
+                                                                                        <b>@Html.DisplayNameFor(d => item.InventoryType)</b>
+                                                                                    </div>
+                                                                                    <div class="col-sm-9">
+                                                                                        : @Html.DisplayFor(d => item.InventoryType)
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-3">
+                                                                                        @Html.HiddenFor(d => Model.Items[count].ItemCategory)
+                                                                                        <b>@Html.DisplayNameFor(d => item.ItemCategory)</b>
+                                                                                    </div>
+                                                                                    <div class="col-sm-9">
+                                                                                        : @Html.DisplayFor(d => item.ItemCategory)
+                                                                                    </div>
+                                                                                </div>
+                                                                                @if (item.IndividualUOMReference != null)
+                                                                                {
+                                                                                    <div class="row">
+                                                                                        <div class="col-sm-3">
+                                                                                            @Html.HiddenFor(d => Model.Items[count].IndividualUOMReference)
+                                                                                            <b>@Html.DisplayNameFor(d => item.IndividualUOMReference)</b>
+                                                                                        </div>
+                                                                                        <div class="col-sm-9">
+                                                                                            : @Html.DisplayFor(d => item.IndividualUOMReference)
+                                                                                        </div>
+                                                                                    </div>
+                                                                                }
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-3">
+                                                                                        @Html.HiddenFor(d => Model.Items[count].UnitCost)
+                                                                                        <b>@Html.DisplayNameFor(d => item.UnitCost)</b>
+                                                                                    </div>
+                                                                                    <div class="col-sm-9">
+                                                                                        : @( item.UnitCost.ToString("C", new System.Globalization.CultureInfo("en-ph")) )
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-3">
+                                                                                        @Html.HiddenFor(d => Model.Items[count].TotalQty)
+                                                                                        <b>@Html.DisplayNameFor(d => item.TotalQty)</b>
+                                                                                    </div>
+                                                                                    <div class="col-sm-9">
+                                                                                        : @Html.DisplayFor(d => item.TotalQty)
+                                                                                        @if (item.IndividualUOMReference != null)
+                                                                                        {
+                                                                                            @Html.DisplayFor(d => item.IndividualUOMReference)
+                                                                                        }
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-3">
+                                                                                        @Html.HiddenFor(d => Model.Items[count].EstimatedBudget)
+                                                                                        <b>@Html.DisplayNameFor(d => item.EstimatedBudget)</b>
+                                                                                    </div>
+                                                                                    <div class="col-sm-9">
+                                                                                        : @( item.EstimatedBudget.ToString("C", new System.Globalization.CultureInfo("en-ph")) )
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-3">
+                                                                                        @Html.HiddenFor(d => Model.Items[count].DeliveryMonth)
+                                                                                        <b>@Html.DisplayNameFor(d => item.DeliveryMonth)</b>
+                                                                                    </div>
+                                                                                    <div class="col-sm-9">
+                                                                                        : @Html.DisplayFor(d => item.DeliveryMonth)
+                                                                                    </div>
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                        count++;
+                                                                    }
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

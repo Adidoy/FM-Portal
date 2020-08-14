@@ -13,11 +13,13 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
     public class ProjectPlansController : Controller
     {
         ProjectPlansDAL projectPlanDAL = new ProjectPlansDAL();
+        HRISDataAccess hrisDataAccess = new HRISDataAccess();
 
-        [ActionName("dashboard")]
-        public ActionResult Dashboard()
+        [ActionName("list")]
+        [Route("{FiscalYear}")]
+        public ActionResult ViewProjectList(int FiscalYear)
         {
-            return View("dashboard");
+            return View("Index", projectPlanDAL.GetProjects(User.Identity.Name, FiscalYear));
         }
 
         [Route("create/common-supplies")]
@@ -30,6 +32,7 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
             header.Description = "Procurement of  common use office supplies to be used for daily transactions of the Office.";
             header.ProjectMonthStart = 1;
 
+            ViewBag.Unit = new SelectList(hrisDataAccess.GetUserDepartments(User.Identity.Name), "DepartmentCode", "Department");
             ViewBag.StartMonth = "January";
             ViewBag.FiscalYear = projectPlanDAL.GetFiscalYears();
 
@@ -48,9 +51,10 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
             if (ModelState.IsValid)
             {
                 string Message = string.Empty;
-                if(!projectPlanDAL.ValidateProjectPlan(projectPlan, out Message))
+                if(!projectPlanDAL.ValidateProjectPlan(projectPlan, User.Identity.Name, out Message))
                 {
                     ModelState.AddModelError("", Message);
+                    ViewBag.Unit = new SelectList(hrisDataAccess.GetUserDepartments(User.Identity.Name), "DepartmentCode", "Department");
                     ViewBag.StartMonth = "January";
                     ViewBag.FiscalYear = projectPlanDAL.GetFiscalYears();
                     return View("CreateSupplies", projectPlan);
@@ -66,11 +70,11 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
                     return RedirectToAction("project-details", "ProjectPlans", new { Area = "end-users", ProjectCode = projectCode });
                 }
             }
+            ViewBag.Unit = new SelectList(hrisDataAccess.GetUserDepartments(User.Identity.Name), "DepartmentCode", "Department");
             ViewBag.StartMonth = "January";
             ViewBag.FiscalYear = projectPlanDAL.GetFiscalYears();
             return View("CreateSupplies", projectPlan);
         }
-
 
         [Route("create/project-plan")]
         [ActionName("create-project-plan")]
@@ -78,6 +82,8 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
         {
             ProjectPlans header = new ProjectPlans();
             header.ProjectCode = "EUPR-XXXX-0000-0000";
+
+            ViewBag.Unit = new SelectList(hrisDataAccess.GetUserDepartments(User.Identity.Name), "DepartmentCode", "Department");
             ViewBag.ProjectMonthStart = projectPlanDAL.GetMonths();
             ViewBag.FiscalYear = projectPlanDAL.GetFiscalYears();
             return View("CreateProjectPlan", header);
@@ -95,9 +101,10 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
             if (ModelState.IsValid)
             {
                 string Message = string.Empty;
-                if (!projectPlanDAL.ValidateProjectPlan(projectPlan, out Message))
+                if (!projectPlanDAL.ValidateProjectPlan(projectPlan, User.Identity.Name, out Message))
                 {
                     ModelState.AddModelError("", Message);
+                    ViewBag.Unit = new SelectList(hrisDataAccess.GetUserDepartments(User.Identity.Name), "DepartmentCode", "Department");
                     ViewBag.ProjectMonthStart = projectPlanDAL.GetMonths();
                     ViewBag.FiscalYear = projectPlanDAL.GetFiscalYears();
                     return View("CreateProjectPlan", projectPlan);
@@ -113,6 +120,8 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
                     return RedirectToAction("project-details", "ProjectPlans", new { Area = "end-users", ProjectCode = projectCode });
                 }
             }
+
+            ViewBag.Unit = new SelectList(hrisDataAccess.GetUserDepartments(User.Identity.Name), "DepartmentCode", "Department");
             ViewBag.ProjectMonthStart = projectPlanDAL.GetMonths();
             ViewBag.FiscalYear = projectPlanDAL.GetFiscalYears();
             return View("CreateProjectPlan", projectPlan);
@@ -126,7 +135,7 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var projectPlan = projectPlanDAL.GetProjectDetails(ProjectCode);
+            var projectPlan = projectPlanDAL.GetProjectDetails(ProjectCode, User.Identity.Name);
             if(projectPlan == null)
             {
                 return HttpNotFound();
@@ -193,13 +202,6 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
             return RedirectToAction("project-details", "ProjectPlans", new { Area = "end-users", ProjectCode = item.ProjectCode });
         }
 
-        [Route("")]
-        [ActionName("list")]
-        public ActionResult ViewProjectList()
-        {
-            return View("Index", projectPlanDAL.GetProjects(User.Identity.Name));
-        }
-
         [ActionName("add-supplies-to-ppmp")]
         [Route("common-supplies/{ProjectCode}/add-to-ppmp")]
         public ActionResult AddToPPMP(string ProjectCode)
@@ -208,16 +210,16 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
             {
                 return HttpNotFound();
             }
-            var projectPlan = projectPlanDAL.GetProjectDetails(ProjectCode);
+            var projectPlan = projectPlanDAL.GetProjectDetails(ProjectCode, User.Identity.Name);
             if (projectPlan == null)
             {
                 return HttpNotFound();
             }
             if(projectPlanDAL.PostToPPMP(projectPlan, User.Identity.Name))
             {
-                return View("Index", projectPlanDAL.GetProjects(User.Identity.Name));
+                return View("Index", projectPlanDAL.GetProjects(User.Identity.Name, projectPlan.FiscalYear));
             }
-            return View("Index", projectPlanDAL.GetProjects(User.Identity.Name));
+            return View("Index", projectPlanDAL.GetProjects(User.Identity.Name, projectPlan.FiscalYear));
         }
 
         protected override void Dispose(bool disposing)
@@ -225,6 +227,7 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
             if (disposing)
             {
                 projectPlanDAL.Dispose();
+                hrisDataAccess.Dispose();
             }
             base.Dispose(disposing);
         }

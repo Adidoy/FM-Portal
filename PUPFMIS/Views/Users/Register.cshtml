@@ -1,109 +1,137 @@
 ﻿@model PUPFMIS.Models.UsersVM
 
-@{
-    ViewBag.Title = "Register";
-    Layout = "~/Views/Shared/_LayoutBlank.cshtml";
-}
 
-@using (Html.BeginForm("Register", "Users", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+@using (Ajax.BeginForm("register", "Users", new AjaxOptions() { HttpMethod = "POST", UpdateTargetId = "modal-container", OnSuccess = "CloseModal" }, htmlAttributes: new { id = "addUser", Area = "" }))
 {
-    <div class="row vh-100">
-        <div class="col-sm-12 my-auto">
-            <div class="login-logo">
-                <h4>Financial Management Portal</h4>
-            </div>
-            <div class="card card-outline card-info w-75 mx-auto">
-                <div class="card-header">
-                    <h4>Register an Account</h4>
+    <div class="modal-body" id="form-body">
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.Label("Department", htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-building"></i></span>
                 </div>
-                <div class="card-body">
-                    @Html.AntiForgeryToken()
-                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h3 class="card-title">Employee Data</h3>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label" })
-                                                @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control form-control-sm", @autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.FirstName) } })
-                                                @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
-                                            </div>
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.MiddleName, htmlAttributes: new { @class = "control-label" })
-                                                @Html.EditorFor(model => model.MiddleName, new { htmlAttributes = new { @class = "form-control form-control-sm", @autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.MiddleName) } })
-                                                @Html.ValidationMessageFor(model => model.MiddleName, "", new { @class = "text-danger" })
-                                            </div>
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label" })
-                                                @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control form-control-sm", @autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.LastName) } })
-                                                @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
-                                            </div>
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.Office, htmlAttributes: new { @class = "control-label" })
-                                                @Html.DropDownList("Office", null, htmlAttributes: new { @class = "form-control form-control-sm" })
-                                                @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
-                                            </div>
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.Designation, htmlAttributes: new { @class = "control-label" })
-                                                @Html.EditorFor(model => model.Designation, new { htmlAttributes = new { @class = "form-control form-control-sm", @autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.Designation) } })
-                                                @Html.ValidationMessageFor(model => model.Designation, "", new { @class = "text-danger" })
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <div class="card">
-                                                <div class="card-header">
-                                                    <h3 class="card-title">Account Credentials</h3>
-                                                </div>
-                                                <div class="card-body">
-                                                    <div class="form-group">
-                                                        @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label" })
-                                                        <div class="input-group mb-3">
-                                                            <div class="input-group-prepend">
-                                                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                                            </div>
-                                                            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control form-control-sm", @autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.Email) } })
-                                                        </div>
-                                                        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
-                                                    </div>
-                                                    <div class="form-group">
-                                                        @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label" })
-                                                        <div class="input-group mb-3">
-                                                            <div class="input-group-prepend">
-                                                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                                            </div>
-                                                            @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control form-control-sm", @autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.Password) } })
-                                                        </div>
-                                                        @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <hr />
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <input type="submit" value="Register" class="btn btn-primary col-md-12" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @Html.DropDownList("OfficeCode", null, htmlAttributes: new { @class = "form-control form-control-sm select2", onchange = "GetEmployees()" })
             </div>
         </div>
+
+        <div class="form-group">
+            @Html.Label("Employee Name", htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-user"></i></span>
+                </div>
+                @Html.DropDownList("EmpCode", null, htmlAttributes: new { @class = "form-control form-control-sm select2", onchange = "GetEmployeeDetails()" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Designation, htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-book"></i></span>
+                </div>
+                @Html.HiddenFor(model => model.Designation)
+                @Html.EditorFor(model => model.Designation, new { htmlAttributes = new { id = "DesignationDisplay", @class = "form-control form-control-sm", style = "font-size:100%;", disabled = "disabled" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-at"></i></span>
+                </div>
+                @Html.HiddenFor(model => model.Email)
+                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { id = "EmailDisplay", @class = "form-control form-control-sm", style = "font-size:100%;", disabled = "disabled" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("System Role", htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-user-cog"></i></span>
+                </div>
+                @Html.DropDownList("UserRole", null, htmlAttributes: new { @class = "form-control form-control-sm" })
+            </div>
+        </div>
+
     </div>
 }
+
+<div class="modal-footer">
+    <div class="form-group">
+        <button type="button" class="btn btn-primary" id="save-btn"><i class="fa fa-save"></i>&nbsp; Save changes</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i>&nbsp; Close</button>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $("#save-btn").on('click', function (e) {
+        e.preventDefault();
+        swal.fire({
+            title: "Save record?",
+            text: "You are about to save this record, continue?",
+            type: "warning",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#addUser").submit();
+            }
+        })
+    });
+    function CloseModal(data) {
+        if (data.status === "success") {
+            $('#modal-default').modal('hide');
+            window.location.href = "@Url.Action("index", "Users", new { Area = "" })";
+            toastr.success('User Account is saved!', 'Save', { timeOut: 10000, preventDuplicates: false });
+        }
+    };
+    function GetEmployees() {
+        var deptCode = $('#OfficeCode').val();
+        var url = '@Url.Action("get-employees", "Users")';
+        $.ajax({
+            url: url,
+            data: { DepartmentCode: deptCode },
+            type: "GET",
+            success: function (data) {
+                var s = '<option value="-1">Please Select an Employee</option>';
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].EmpCode + '">' + data[i].EmployeeName + '</option>';
+                }
+                $("#EmpCode").html(s);
+            }
+        });
+    };
+    function GetEmployeeDetails() {
+        var empCode = $('#EmpCode').val();
+        var url = '@Url.Action("get-employee-details", "Users")';
+        $.ajax({
+            url: url,
+            data: { EmpCode: empCode },
+            type: "GET",
+            success: function (data) {
+                var email = data.Data.Email;
+                var designation = data.Data.Designation
+                $('#Email').val(email);
+                $('#Designation').val(designation);
+                $('#EmailDisplay').val(email);
+                $('#DesignationDisplay').val(designation);
+            }
+        });
+    };
+    $(function () {
+        //Initialize Select2 Elements
+        $('.select2').select2({
+            theme: 'bootstrap4'
+        })
+
+        //Initialize Select2 Elements
+        $('.select2bs4').select2({
+            theme: 'bootstrap4'
+        })
+    })
+</script>

@@ -1,4 +1,4 @@
-﻿@model PUPFMIS.Models.Services
+﻿@model PUPFMIS.Models.ServicesVM
 
 @{
     ViewBag.Title = "Services";
@@ -8,8 +8,8 @@
 
 @section BreadCrumb {
     <ol class="breadcrumb float-sm-right">
-        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
-        <li class="breadcrumb-item">@Html.ActionLink("Services Master", "index")</li>
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Services Master", "list", new { Area = "" }, null)</li>
         <li class="breadcrumb-item">Details</li>
     </ol>
 }
@@ -22,37 +22,144 @@
 
 <div class="row">
     <div class="col-sm-12">
-        <h5>@Model.ServiceName <small>(@Model.ServiceCode)</small></h5>
-        <br />
-        <div class="row">
-            <div class="col-sm-1"></div>
-            <div class="col-sm-10">
-                <h6>Other Details:</h6>
-                <table class="table">
-                    <tr>
-                        <td><strong>@Html.DisplayNameFor(model => model.ItemShortSpecifications)</strong></td>
-                        <td>@Html.DisplayFor(model => model.ItemShortSpecifications)</td>
-                    </tr>
-                    <tr>
-                        <td><strong>@Html.DisplayNameFor(model => model.FKCategoryReference.ItemCategoryName)</strong></td>
-                        <td>@Html.DisplayFor(model => model.FKCategoryReference.ItemCategoryName)</td>
-                    </tr>
-                    <tr>
-                        <td><strong>@Html.DisplayNameFor(model => model.FKInventoryTypeReference.InventoryTypeName)</strong></td>
-                        <td>@Html.DisplayFor(model => model.FKInventoryTypeReference.InventoryTypeName)</td>
-                    </tr>
-                    <tr>
-                        <td><strong>@Html.DisplayNameFor(model => model.CreatedAt)</strong></td>
-                        <td>@Model.CreatedAt.ToString("dd MMMM yyyy hh:mm tt")</td>
-                    </tr>
-                </table>
-            </div>
-            <div class="col-sm-1"></div>
+        <div class="bg-info">
+            <h5 class="p-2">@Model.ServiceName.ToUpper(); @Model.ItemShortSpecifications (@Model.ServiceCode)</h5>
         </div>
     </div>
 </div>
+<br />
+<div class="row">
+    <div class="col-sm-12">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ServiceName, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class=" fa fa-id-badge"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.ServiceName, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ItemShortSpecifications, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-asterisk"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.ItemShortSpecifications, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ServiceType, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-book"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.ServiceType, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ProcurementSource, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-building"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.ProcurementSource, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.AccountClass, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-bookmark"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.AccountClass, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ServiceCategory, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-question"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.ServiceCategory, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-sm-12">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PurgeFlag, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-trash"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.PurgeFlag, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CreatedAt, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.CreatedAt, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.UpdatedAt, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.UpdatedAt, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DeletedAt, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.DeletedAt, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section FormFooter {
     <div class="form-group float-right">
-        <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("list", "Services", new { Area = "" })'"><i class="fa fa-arrow-circle-left"></i> Back</button>
+        <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("list", "Services", new { Area = "" })'"><i class="fa fa-arrow-circle-left"></i> Back to List</button>
     </div>
 }

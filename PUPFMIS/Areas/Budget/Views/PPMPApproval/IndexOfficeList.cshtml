@@ -1,0 +1,71 @@
+﻿@model IEnumerable<PUPFMIS.Models.PPMPByOfficeVM>
+
+@{
+    ViewBag.Title = "Budget Proposals";
+    ViewBag.Description = "Offices List";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("PPMP Approval", "dashboard", "Dashboard", new { Area = "budget" }, null)</li>
+        <li class="breadcrumb-item">Offices List</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-list"></i> Offices List</h3>
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card-body table-responsive p-sm-0">
+            <table class="table table-striped table-hover" id="example2">
+                <thead>
+                    <tr>
+                        <th style="text-align:center;" width="20%">
+                            @Html.DisplayNameFor(model => model.FiscalYear)
+                        </th>
+                        <th style="text-align:center;" width="30%">
+                            @Html.DisplayNameFor(model => model.Department)
+                        </th>
+                        <th style="text-align:center;" width="30%">
+                            @Html.DisplayNameFor(model => model.EstimatedBudget)
+                        </th>
+                        <th style="text-align:center;" width="20%">
+                            Action
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td style="text-align:center; vertical-align:middle;">
+                                <b>@Html.DisplayFor(modelItem => item.FiscalYear)</b>
+                            </td>
+                            <td style="text-align:left; vertical-align:middle;">
+                                @Html.DisplayFor(modelItem => item.Department)
+                            </td>
+                            <td style="text-align:right; vertical-align:middle;">
+                                @( String.Format("{0:C}", item.EstimatedBudget) )
+                            </td>
+                            <td style="text-align:center; vertical-align:middle;">
+                                <button style="text-align:left;" class="btn btn-primary btn-sm" onclick="window.location = '@Url.Action("office-ppmp-list", "PPMPApproval", new { Area = "budget", OfficeCode = item.DepartmentCode, FiscalYear = item.FiscalYear })'"><i class="fa fa-eye"></i> View Account Objects</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-sm-12">
+        <div style="text-align: right;">
+            <button type="button" class="btn btn-md btn-danger" onclick="window.location = '@Url.Action("dashboard", "Dashboard", new { Area = "budget" })'"><i class="fa fa-arrow-circle-left"></i> Back to Dashboard</button>
+        </div>
+    </div>
+</div>

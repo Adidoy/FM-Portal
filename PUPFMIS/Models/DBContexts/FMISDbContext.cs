@@ -1,5 +1,6 @@
 ﻿//using MySql.Data.Entity;
 using System.Data.Entity;
+using PUPFMIS.Models.AIS;
 
 namespace PUPFMIS.Models
 {
@@ -19,40 +20,42 @@ namespace PUPFMIS.Models
                 .HasRequired<InventoryType>(s => s.FKPPMPTypeReference)
                 .WithMany()
                 .WillCascadeOnDelete(false);
-            modelBuilder.Entity<Services>()
-                .HasRequired<InventoryType>(s => s.FKInventoryTypeReference)
-                .WithMany()
-                .WillCascadeOnDelete(false);
-            modelBuilder.Entity<Services>()
-                .HasRequired<PhilGEPSCategories>(s => s.FKCategoryReference)
-                .WithMany()
-                .WillCascadeOnDelete(false);
         }
-
+        public DbSet<AgencyDetails> AgencyDetails { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
         public DbSet<UnitOfMeasure> UOM { get; set; }
         public DbSet<ItemCategory> ItemCategories { get; set; }
-        public DbSet<DBMCategories> DBMCategories { get; set; }
-        public DbSet<PhilGEPSCategories> PhilGEPSCategories { get; set; }
         public DbSet<InventoryType> InventoryTypes { get; set; }
+        public DbSet<ItemType> ItemTypes { get; set; }
         public DbSet<Item> Items { get; set; }
-        public DbSet<Services> Services { get; set; }
+        public DbSet<ItemAllowedUsers> ItemAllowedUsers { get; set; } 
         public DbSet<ItemPrice> ItemPrices { get; set; } 
+        public DbSet<ModeOfProcurement> ProcurementModes { get; set; }
 
+        public DbSet<PPMPHeader> PPMPHeader { get; set; }
         public DbSet<ProjectPlans> ProjectPlans { get; set; }
         public DbSet<ProjectPlanItems> ProjectPlanItems { get; set; }
         public DbSet<ProjectPlanServices> ProjectPlanServices { get; set; }
-        public DbSet<PPMPHeader> PPMPHeader { get; set; }
-        public DbSet<PPMPItemDetails> PPMPItemDetails { get; set; }
-        public DbSet<PPMPServiceDetails> PPMPServiceDetails { get; set; }
         public DbSet<PPMPDeadlines> PPMPDeadlines { get; set; }
         public DbSet<PPMPApprovalWorkflow> PPMPApprovalWorkflow { get; set; }
+        public DbSet<APPHeader> APPHeader { get; set; }
+        public DbSet<APPProjectItems> APPProjectItems { get; set; }
+        public DbSet<APPInstitutionalItems> APPInstitutionalItems { get; set; }
+        public DbSet<APPCSEDetails> APPCSEDetails { get; set; }
+        public DbSet<ProcurementTimeline> ProcurementTimeline { get; set; }
+        public DbSet<PurchaseRequestHeader> PurchaseRequestHeader { get; set; }
+        public DbSet<PurchaseRequestDetails> PurchaseRequestDetails { get; set; }
+        public DbSet<APRHeader> APRHeader { get; set; }
+        public DbSet<APRDetail> APRDetail { get; set; }
         public DbSet<Supply> Supplies { get; set; }
         public DbSet<StockCard> StockCard { get; set; }
         public DbSet<RequestHeader> RequestHeader { get; set; }
         public DbSet<SuppliesRequestDetails> SuppliesRequestDetails { get; set; }
         public DbSet<SuppliesIssueDetails> SuppliesIssueDetails { get; set; }
         public DbSet<SystemVariables> SystemVariables { get; set; }
+
+        public DbSet<SwitchBoard> SwitchBoard { get; set; }
+        public DbSet<SwitchBoardBody> SwitchBoardBody { get; set; }
 
         //===============================================================//
         //=================== PROCUREMENT TABLES ========================//
@@ -122,9 +125,7 @@ namespace PUPFMIS.Models
         //===============================================================//
         //=============== ACCOUNTS MANAGEMENT TABLES ====================//
         //===============================================================//
-        public DbSet<UserInformation> UserInformation { get; set; }
         public DbSet<UserAccounts> UserAccounts { get; set; }
         public DbSet<Roles> Roles { get; set; }
-        public DbSet<UserRoles> UserRoles { get; set; }
     }
 }

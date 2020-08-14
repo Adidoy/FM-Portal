@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PUPFMIS.Models
 {
-    [Table("property_stockcards")]
+    [Table("PP_SUPPLY_STOCKCARDS")]
     public class StockCard
     {
         [Key]

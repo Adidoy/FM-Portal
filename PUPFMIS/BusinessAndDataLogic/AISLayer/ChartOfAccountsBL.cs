@@ -8,16 +8,20 @@ namespace PUPFMIS.BusinessAndDataLogic
 {
     public class ChartOfAccountsBL
     {
-        private ABDBContext accountingContext = new ABDBContext();
+        private TEMPAccounting accountingContext = new TEMPAccounting();
 
         public List<ChartOfAccounts> GetChartOfAccounts()
         {
             return accountingContext.ChartOfAccounts.ToList();
         }
+        public ChartOfAccounts GetChartOfAccounts(string UACS)
+        {
+            return accountingContext.ChartOfAccounts.Where(d => d.UACS_Code == UACS).FirstOrDefault();
+        }
     }
     public class ChartOfAccountsDAL
     {
-        private ABDBContext accountingContext = new ABDBContext();
+        private TEMPAccounting accountingContext = new TEMPAccounting();
 
         public List<ChartOfAccounts> GetChartOfAccounts()
         {

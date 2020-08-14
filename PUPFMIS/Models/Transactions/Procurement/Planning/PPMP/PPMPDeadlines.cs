@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace PUPFMIS.Models
 {
-    [Table("procurement_ppmpdeadlines")]
+    [Table("PP_PPMP_DEADLINES")]
     public class PPMPDeadlines
     {
         [Key]

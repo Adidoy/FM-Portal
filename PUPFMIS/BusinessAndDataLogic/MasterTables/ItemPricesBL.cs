@@ -16,12 +16,12 @@ namespace PUPFMIS.BusinessAndDataLogic
 
         public List<ItemPrice> GetPrevailingPrices()
         {
-            return db.ItemPrices.Where(d => d.IsPrevailingPrice == true).ToList();
+            return db.ItemPrices.Where(d => d.IsPrevailingPrice == true && d.FKItemReference.ProcurementSource == ProcurementSources.PS_DBM).ToList();
         }
 
-        public List<ItemPrice> GetPriceHistory()
+        public List<ItemPrice> GetPriceHistory(string ItemCode)
         {
-            return db.ItemPrices.Where(d => d.IsPrevailingPrice == false).OrderBy(d => d.Item).OrderByDescending(d => d.UpdatedAt).ToList();
+            return db.ItemPrices.Where(d => d.FKItemReference.ItemCode == ItemCode).OrderByDescending(d => d.UpdatedAt).ToList();
         }
 
         public ItemPrice GetPriceDetails(int? PriceID)

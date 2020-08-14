@@ -6,46 +6,46 @@ using System.Linq;
 
 namespace PUPFMIS.Models
 {
-    [Table("master_suppliers")]
+    [Table("PP_MASTER_SUPPLIERS")]
     public class Supplier
     {
         [Key]
         public int ID { get; set; }
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
-        [MaxLength(75, ErrorMessage = "{0} field must be up to {1} characters only")]
+        [MaxLength(75, ErrorMessage = "{0} field must be up to {1} characters only.")]
         [Display(Name = "Supplier Name")]
         public string SupplierName { get; set; }
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
-        [MaxLength(100, ErrorMessage = "{0} field must be up to {1} characters only")]
+        [MaxLength(100, ErrorMessage = "{0} field must be up to {1} characters only.")]
         [Display(Name = "Address")]
         public string Address { get; set; }
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
-        [MaxLength(75, ErrorMessage = "{0} field must be up to {1} characters only")]
+        [MaxLength(75, ErrorMessage = "{0} field must be up to {1} characters only.")]
         [Display(Name = "Contact Person")]
         public string ContactPerson { get; set; }
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
-        [MaxLength(20, ErrorMessage = "{0} field must be up to {1} characters only")]
+        [MaxLength(20, ErrorMessage = "{0} field must be up to {1} characters only.")]
         [Display(Name = "Contact Number")]
         public string ContactNumber { get; set; }
 
-        [MaxLength(20, ErrorMessage = "{0} field must be up to {1} characters only")]
+        [MaxLength(20, ErrorMessage = "{0} field must be up to {1} characters only.")]
         [Display(Name = "Alternate Contact Number")]
         public string AlternateContactNumber { get; set; }
 
-        [MaxLength(20, ErrorMessage = "{0} field must be up to {1} characters only")]
+        [MaxLength(20, ErrorMessage = "{0} field must be up to {1} characters only.")]
         [Display(Name = "Tax Identification Number", ShortName = "TIN")]
         public string TaxIdNumber { get; set; }
 
         [DataType(DataType.EmailAddress)]
-        [MaxLength(75, ErrorMessage = "{0} field must be up to {1} characters only")]
+        [MaxLength(75, ErrorMessage = "{0} field must be up to {1} characters only.")]
         [Display(Name = "Email Address")]
         public string EmailAddress { get; set; }
 
-        [MaxLength(75, ErrorMessage = "{0} field must be up to {1} characters only")]
+        [MaxLength(75, ErrorMessage = "{0} field must be up to {1} characters only.")]
         [Display(Name = "Website")]
         public string Website { get; set; }
 

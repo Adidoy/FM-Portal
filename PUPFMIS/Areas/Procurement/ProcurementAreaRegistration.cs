@@ -8,15 +8,15 @@ namespace PUPFMIS.Areas.Procurement
         {
             get 
             {
-                return "Procurement";
+                return "procurement";
             }
         }
 
         public override void RegisterArea(AreaRegistrationContext context) 
         {
             context.MapRoute(
-                "Procurement_default",
-                "Procurement/{controller}/{action}/{id}",
+                "procurement_default",
+                "procurement/{controller}/{action}/{id}",
                 new { action = "Index", id = UrlParameter.Optional },
                 new[] { "PUPFMIS.Areas.Procurement.Controllers" }
             );

@@ -72,134 +72,134 @@
                                                 <b>@Html.DisplayNameFor(modelItem => Model.NewItemProposals[item].UnitCost) : </b>@( String.Format("{0:C}", Model.NewItemProposals[item].UnitCost) )
                                             </td>
                                             <td style="text-align:left; vertical-align:top;" width="1%">
-                                                @if (Model.NewItemProposals[item].JanQty != null)
+                                                @if (Model.NewItemProposals[item].JanQty != 0 && Model.NewItemProposals[item].JanQty != null)
                                                 {
                                                     @Html.DisplayNameFor(modelItem => Model.NewItemProposals[item].JanQty)<span>:</span>
-                                                                            <br />
+                                                    <br />
                                                 }
-                                                @if (Model.NewItemProposals[item].FebQty != null)
+                                                @if (Model.NewItemProposals[item].FebQty != 0 && Model.NewItemProposals[item].FebQty != null)
                                                 {
                                                     @Html.DisplayNameFor(modelItem => Model.NewItemProposals[item].FebQty)<span>:</span>
                                                                             <br />
                                                 }
-                                                @if (Model.NewItemProposals[item].MarQty != null)
+                                                @if (Model.NewItemProposals[item].MarQty != 0 && Model.NewItemProposals[item].MarQty != null)
                                                 {
                                                     @Html.DisplayNameFor(modelItem => Model.NewItemProposals[item].MarQty)<span>:</span>
                                                                             <br />
                                                 }
-                                                @if (Model.NewItemProposals[item].AprQty != null)
+                                                @if (Model.NewItemProposals[item].AprQty != 0 && Model.NewItemProposals[item].AprQty != null)
                                                 {
                                                     @Html.DisplayNameFor(modelItem => Model.NewItemProposals[item].AprQty)<span>:</span>
                                                                             <br />
                                                 }
-                                                @if (Model.NewItemProposals[item].MayQty != null)
+                                                @if (Model.NewItemProposals[item].MayQty != 0 && Model.NewItemProposals[item].MayQty != null)
                                                 {
                                                     @Html.DisplayNameFor(modelItem => Model.NewItemProposals[item].MayQty)<span>:</span>
                                                                             <br />
                                                 }
-                                                @if (Model.NewItemProposals[item].JunQty != null)
+                                                @if (Model.NewItemProposals[item].JunQty != 0 && Model.NewItemProposals[item].JunQty != null)
                                                 {
                                                     @Html.DisplayNameFor(modelItem => Model.NewItemProposals[item].JunQty)<span>:</span>
                                                                             <br />
                                                 }
-                                                @if (Model.NewItemProposals[item].JulQty != null)
+                                                @if (Model.NewItemProposals[item].JulQty != 0 && Model.NewItemProposals[item].JulQty != null)
                                                 {
                                                     @Html.DisplayNameFor(modelItem => Model.NewItemProposals[item].JulQty)<span>:</span>
                                                                             <br />
                                                 }
-                                                @if (Model.NewItemProposals[item].AugQty != null)
+                                                @if (Model.NewItemProposals[item].AugQty != 0 && Model.NewItemProposals[item].AugQty != null)
                                                 {
                                                     @Html.DisplayNameFor(modelItem => Model.NewItemProposals[item].AugQty)<span>:</span>
                                                                             <br />
                                                 }
-                                                @if (Model.NewItemProposals[item].SepQty != null)
+                                                @if (Model.NewItemProposals[item].SepQty != 0 && Model.NewItemProposals[item].SepQty != null)
                                                 {
                                                     @Html.DisplayNameFor(modelItem => Model.NewItemProposals[item].SepQty)<span>:</span>
                                                                             <br />
                                                 }
-                                                @if (Model.NewItemProposals[item].OctQty != null)
+                                                @if (Model.NewItemProposals[item].OctQty != 0 && Model.NewItemProposals[item].OctQty != null)
                                                 {
                                                     @Html.DisplayNameFor(modelItem => Model.NewItemProposals[item].OctQty)<span>:</span>
                                                                             <br />
                                                 }
-                                                @if (Model.NewItemProposals[item].NovQty != null)
+                                                @if (Model.NewItemProposals[item].NovQty != 0 && Model.NewItemProposals[item].NovQty != null)
                                                 {
                                                     @Html.DisplayNameFor(modelItem => Model.NewItemProposals[item].NovQty)<span>:</span>
                                                                             <br />
                                                 }
-                                                @if (Model.NewItemProposals[item].DecQty != null)
+                                                @if (Model.NewItemProposals[item].DecQty != 0 && Model.NewItemProposals[item].DecQty != null)
                                                 {
                                                     @Html.DisplayNameFor(modelItem => Model.NewItemProposals[item].DecQty)<span>:</span>
                                                 }
                                             </td>
                                             <td style="text-align:right; vertical-align:top;" width="5%">
-                                                @if (Model.NewItemProposals[item].JanQty != null)
+                                                @if (Model.NewItemProposals[item].JanQty != 0 && Model.NewItemProposals[item].JanQty != null)
                                                 {
                                                     @Html.HiddenFor(modelItem => Model.NewItemProposals[item].JanQty)
                                                     @Html.DisplayFor(modelItem => Model.NewItemProposals[item].JanQty)
                                                     <br />
                                                 }
-                                                @if (Model.NewItemProposals[item].FebQty != null)
+                                                @if (Model.NewItemProposals[item].FebQty != 0 && Model.NewItemProposals[item].FebQty != null)
                                                 {
                                                     @Html.HiddenFor(modelItem => Model.NewItemProposals[item].FebQty)
                                                     @Html.DisplayFor(modelItem => Model.NewItemProposals[item].FebQty)
                                                     <br />
                                                 }
-                                                @if (Model.NewItemProposals[item].MarQty != null)
+                                                @if (Model.NewItemProposals[item].MarQty != 0 && Model.NewItemProposals[item].MarQty != null)
                                                 {
                                                     @Html.HiddenFor(modelItem => Model.NewItemProposals[item].MarQty)
                                                     @Html.DisplayFor(modelItem => Model.NewItemProposals[item].MarQty)
                                                     <br />
                                                 }
-                                                @if (Model.NewItemProposals[item].AprQty != null)
+                                                @if (Model.NewItemProposals[item].AprQty != 0 && Model.NewItemProposals[item].AprQty != null)
                                                 {
                                                     @Html.HiddenFor(modelItem => Model.NewItemProposals[item].AprQty)
                                                     @Html.DisplayFor(modelItem => Model.NewItemProposals[item].AprQty)
                                                     <br />
                                                 }
-                                                @if (Model.NewItemProposals[item].MayQty != null)
+                                                @if (Model.NewItemProposals[item].MayQty != 0 && Model.NewItemProposals[item].MayQty != null)
                                                 {
                                                     @Html.HiddenFor(modelItem => Model.NewItemProposals[item].MayQty)
                                                     @Html.DisplayFor(modelItem => Model.NewItemProposals[item].MayQty)
                                                     <br />
                                                 }
-                                                @if (Model.NewItemProposals[item].JunQty != null)
+                                                @if (Model.NewItemProposals[item].JunQty != 0 && Model.NewItemProposals[item].JunQty != null)
                                                 {
                                                     @Html.HiddenFor(modelItem => Model.NewItemProposals[item].JunQty)
                                                     @Html.DisplayFor(modelItem => Model.NewItemProposals[item].JunQty)
                                                     <br />
                                                 }
-                                                @if (Model.NewItemProposals[item].JulQty != null)
+                                                @if (Model.NewItemProposals[item].JulQty != 0 && Model.NewItemProposals[item].JulQty != null)
                                                 {
                                                     @Html.HiddenFor(modelItem => Model.NewItemProposals[item].JulQty)
                                                     @Html.DisplayFor(modelItem => Model.NewItemProposals[item].JulQty)
                                                     <br />
                                                 }
-                                                @if (Model.NewItemProposals[item].AugQty != null)
+                                                @if (Model.NewItemProposals[item].AugQty != 0 && Model.NewItemProposals[item].AugQty != null)
                                                 {
                                                     @Html.HiddenFor(modelItem => Model.NewItemProposals[item].AugQty)
                                                     @Html.DisplayFor(modelItem => Model.NewItemProposals[item].AugQty)
                                                     <br />
                                                 }
-                                                @if (Model.NewItemProposals[item].SepQty != null)
+                                                @if (Model.NewItemProposals[item].SepQty != 0 && Model.NewItemProposals[item].SepQty != null)
                                                 {
                                                     @Html.HiddenFor(modelItem => Model.NewItemProposals[item].SepQty)
                                                     @Html.DisplayFor(modelItem => Model.NewItemProposals[item].SepQty)
                                                     <br />
                                                 }
-                                                @if (Model.NewItemProposals[item].OctQty != null)
+                                                @if (Model.NewItemProposals[item].OctQty != 0 && Model.NewItemProposals[item].OctQty != null)
                                                 {
                                                     @Html.HiddenFor(modelItem => Model.NewItemProposals[item].OctQty)
                                                     @Html.DisplayFor(modelItem => Model.NewItemProposals[item].OctQty)
                                                     <br />
                                                 }
-                                                @if (Model.NewItemProposals[item].NovQty != null)
+                                                @if (Model.NewItemProposals[item].NovQty != 0 && Model.NewItemProposals[item].NovQty != null)
                                                 {
                                                     @Html.HiddenFor(modelItem => Model.NewItemProposals[item].NovQty)
                                                     @Html.DisplayFor(modelItem => Model.NewItemProposals[item].NovQty)
                                                     <br />
                                                 }
-                                                @if (Model.NewItemProposals[item].DecQty != null)
+                                                @if (Model.NewItemProposals[item].DecQty != 0 && Model.NewItemProposals[item].DecQty != null)
                                                 {
                                                     @Html.HiddenFor(modelItem => Model.NewItemProposals[item].DecQty)
                                                     @Html.DisplayFor(modelItem => Model.NewItemProposals[item].DecQty)

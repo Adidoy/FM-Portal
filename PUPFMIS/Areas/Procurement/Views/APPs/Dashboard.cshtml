@@ -1,0 +1,107 @@
+﻿@model PUPFMIS.Models.APPDashboardVM
+
+@{
+    ViewBag.Title = "Annual Procurement Plan";
+    ViewBag.Description = "Dashboard";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">Annual Procurement Plan</li>
+        <li class="breadcrumb-item">Dashboard</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-home"></i> Project Plans Home</h3>
+}
+
+<div class="row">
+    <div class="col-lg-3 col-md-3 col-sm-12">
+        <div class="bg-info">
+            <h5 class="p-2">Statistics</h5>
+        </div>
+        <div class="small-box bg-warning">
+            <div class="inner">
+                <h3>@Model.PPMPsToBeReviewed</h3>
+                <p>APPs Created</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-file"></i>
+            </div>
+        </div>
+        <div class="small-box bg-secondary">
+            <div class="inner">
+                <h3>@Model.PPMPsEvaluated</h3>
+                <p>Projects Assigned</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-project-diagram"></i>
+            </div>
+        </div>
+        <div class="small-box bg-success">
+            <div class="inner">
+                <h3>0<sup style="font-size: 20px">%</sup></h3>
+                <p>Projects Completed</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-chart-bar"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-9 col-md-9 col-sm-12">
+        <div class="bg-info">
+            <h5 class="p-2">Annual Procurement Plan Actions</h5>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-danger"><i class="fa fa-plus"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text" style="font-size:12pt; font-weight:bold;"> @Html.ActionLink("Create Annual Procurement Plan", "create-app", "APPs", new { area = "procurement" }, null)</span>
+                        <span class="info-box-number" style="font-size:8pt;">
+                            Create Annual Procurement Plan for various projects.
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-primary"><i class="fa fa-plus"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text" style="font-size:12pt; font-weight:bold;"> @Html.ActionLink("Create APP-CSE", "create-cse", "AnnualProcurementPlans", new { area = "property-and-supplies", FiscalYear = 2021 }, null)</span>
+                        <span class="info-box-number" style="font-size:8pt;">
+                            Create APP for common-use office supplies.
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="bg-info">
+            <h5 class="p-2">View Annual Procurement Plans</h5>
+        </div>
+        <div class="col-sm-12">
+            <table class="table table-hover table-striped" id="appFiscalYears">
+                <thead>
+                    <tr>
+                        <th width="50%">Fiscal Year</th>
+                        <th width="50%">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.APPFiscalYears)
+                    {
+                        <tr>
+                            <td style="text-align:center;">@Html.DisplayFor(modelItem => item)</td>
+                            <td style="text-align:center;"><button class="btn btn-sm btn-primary" onclick="window.location = '@Url.Action("list", "APPs", new { Area = "procurement", FiscalYear = item })'"><i class="fa fa-eye"></i> View Details</button></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>

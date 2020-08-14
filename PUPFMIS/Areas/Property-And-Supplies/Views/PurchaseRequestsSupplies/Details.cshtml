@@ -1,0 +1,163 @@
+﻿@model PUPFMIS.Models.PurchaseRequestCSEVM
+
+@{
+    ViewBag.Title = "Purchase Request";
+    ViewBag.Description = "Items";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Procurement Pipeline Home", "dashboard", "ProcurementPipelines", new { Area = "procurement" }, null)</li>
+        <li class="breadcrumb-item">Home</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-bookmark"></i> New Supplies Purchase Request</h3>
+}
+
+@using (Ajax.BeginForm("post-pr", "PurchaseRequestsSupplies", new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "details", Area = "end-user" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="form-group">
+                @Html.LabelFor(model => model.FiscalYear, htmlAttributes: new { @class = "control-label" })
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                    </div>
+                    @Html.EditorFor(model => model.FiscalYear, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%; text-transform:uppercase;" } })
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Period, htmlAttributes: new { @class = "control-label" })
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                    </div>
+                    @Html.EditorFor(model => model.Period, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%; text-transform:uppercase;" } })
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card-body table-responsive p-sm-0">
+                <table class="table table-striped table-hover" id="example2">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center; vertical-align:middle">
+                                @Html.DisplayNameFor(d => d.CSEItems.FirstOrDefault().ItemCode)
+                            </th>
+                            <th style="text-align:center; vertical-align:middle">
+                                @Html.DisplayNameFor(d => d.CSEItems.FirstOrDefault().ItemName)
+                            </th>
+                            <th style="text-align:center; vertical-align:middle">
+                                @Html.DisplayNameFor(d => d.CSEItems.FirstOrDefault().UOM)
+                            </th>
+                            <th style="text-align:center; vertical-align:middle">
+                                @Html.DisplayNameFor(d => d.CSEItems.FirstOrDefault().Quantity)
+                            </th>
+                            <th style="text-align:center; vertical-align:middle">
+                                @Html.DisplayNameFor(d => d.CSEItems.FirstOrDefault().UnitCost)
+                            </th>
+                            <th style="text-align:center; vertical-align:middle">
+                                @Html.DisplayNameFor(d => d.CSEItems.FirstOrDefault().TotalCost)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int item = 0; item < Model.CSEItems.Count; item++)
+                        {
+                            <tr>
+                                <td style="text-align:center; vertical-align:middle">
+                                    @Html.HiddenFor(d => Model.CSEItems[item].ItemCode)
+                                    @Html.DisplayFor(d => Model.CSEItems[item].ItemCode)
+                                </td>
+                                <td style="text-align:left; vertical-align:middle">
+                                    @Html.HiddenFor(d => Model.CSEItems[item].ItemName)
+                                    @Html.DisplayFor(d => Model.CSEItems[item].ItemName)
+                                </td>
+                                <td style="text-align:center; vertical-align:middle">
+                                    @Html.HiddenFor(d => Model.CSEItems[item].UOM)
+                                    @Html.DisplayFor(d => Model.CSEItems[item].UOM)
+                                </td>
+                                <td style="text-align:center; vertical-align:middle">
+                                    @Html.HiddenFor(d => Model.CSEItems[item].Quantity)
+                                    @Html.DisplayFor(d => Model.CSEItems[item].Quantity)
+                                </td>
+                                <td style="text-align:center; vertical-align:middle">
+                                    @Html.HiddenFor(d => Model.CSEItems[item].UnitCost)
+                                    @( Model.CSEItems[item].UnitCost.ToString("C", new System.Globalization.CultureInfo("en-ph")) )
+                                </td>
+                                <td style="text-align:center; vertical-align:middle">
+                                    @Html.HiddenFor(d => Model.CSEItems[item].TotalCost)
+                                    @( Model.CSEItems[item].TotalCost.ToString("C", new System.Globalization.CultureInfo("en-ph")) )
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+@section FormFooter {
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" onclick="OpenSubmission()"><i class="fa fa-save"></i>&nbsp; Post Purchase Request</button>
+                <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("index", "PurchaseRequestsSupplies", new { Area = "property-and-supplies" })'"><i class="fa fa-arrow-alt-circle-left"></i>&nbsp; Back to List</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    function OpenSubmission() {
+        swal.fire({
+            title: "Save record?",
+            text: "You are about to save this record, continue?",
+            type: "warning",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#details").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    type: "error"
+                })
+            };
+        })
+    }
+    function CreateResult(data) {
+        if (data.result == true) {
+            swal.fire({
+                title: "Record Saved!",
+                text: "Purchase Request is successfully posted.",
+                type: "success"
+            }).then((result) => {
+                if (result.value) {
+                    window.location.href = "@Url.Action("index", "PurchaseRequestsSupplies", new { Area = "property-and-supplies" })";
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                type: "error"
+            });
+        }
+    }
+</script>

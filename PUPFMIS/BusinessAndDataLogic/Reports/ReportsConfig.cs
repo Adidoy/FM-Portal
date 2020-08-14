@@ -6,8 +6,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Web;
-using System.Web.Mvc;
 
 namespace PUPFMIS.BusinessAndDataLogic
 {
@@ -53,7 +51,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             Image logo = new Image(LogoPath);
             logo.Height = "0.5cm";
 
-             section.PageSetup = pageSetup;
+            section.PageSetup = pageSetup;
 
             var table = section.AddTable();
             table.Style = "Table";
@@ -79,7 +77,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             row.Cells[1].Format.Font.Size = 8;
             if(!String.IsNullOrEmpty(ReportFormTitle))
             {
-                row.Cells[2].AddParagraph("Form D");
+                row.Cells[2].AddParagraph(ReportFormTitle);
                 row.Cells[2].Format.Font.Size = 8;
             }
 

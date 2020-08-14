@@ -1,0 +1,46 @@
+﻿@{
+    ViewBag.Title = "Purchase Request";
+    ViewBag.Description = "Items";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Procurement Pipeline Home", "dashboard", "ProcurementPipelines", new { Area = "procurement" }, null)</li>
+        <li class="breadcrumb-item">Home</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-bookmark"></i> New Supplies Purchase Request</h3>
+}
+
+@using (Html.BeginForm("create", "PurchaseRequestsSupplies", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="form-group">
+                @Html.Label("Fiscal Year", htmlAttributes: new { @class = "control-label" })
+                @Html.DropDownList("FiscalYear", null, htmlAttributes: new { @class = "form-control form-control-sm", style = "font-size: 100%" })
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="form-group">
+                @Html.Label("Period", htmlAttributes: new { @class = "control-label" })
+                @Html.DropDownList("Period", null, htmlAttributes: new { @class = "form-control form-control-sm", style = "font-size: 100%" })
+            </div>
+        </div>
+    </div>
+    <hr />
+
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i>&nbsp; Get Common Supplies Items</button>
+                <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("index", "PurchaseRequestsSupplies", new { Area = "property-and-supplies" })'"><i class="fa fa-arrow-alt-circle-left"></i>&nbsp; Back to List</button>
+            </div>
+        </div>
+    </div>
+}

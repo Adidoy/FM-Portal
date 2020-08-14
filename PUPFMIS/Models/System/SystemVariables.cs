@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PUPFMIS.Models
 {
-    [Table("system_variables")]
+    [Table("PP_SYSTEM_VARIABLES")]
     public class SystemVariables
     {
         [Key]

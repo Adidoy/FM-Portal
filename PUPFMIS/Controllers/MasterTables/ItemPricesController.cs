@@ -5,8 +5,9 @@ using System.Web.Mvc;
 
 namespace PUPFMIS.Controllers
 {
+    [RouteArea("")]
     [Authorize]
-    [Route("ops/master-tables/items/prices/{action}")]
+    [Route("ops/master-tables/items-prices/{action}")]
     public class ItemPricesController : Controller
     {
         private ItemPricesBL itemPricesBL = new ItemPricesBL();
@@ -16,10 +17,14 @@ namespace PUPFMIS.Controllers
             return View(itemPricesBL.GetPrevailingPrices());
         }
 
-        [Route("ops/master-tables/items/prices/history")]
-        public ActionResult IndexPriceHistory()
+        [Route("ops/master-tables/items-prices/{ItemCode}/history")]
+        public ActionResult IndexPriceHistory(string ItemCode)
         {
-            return View(itemPricesBL.GetPriceHistory());
+            if(ItemCode == null)
+            {
+                return HttpNotFound();
+            }
+            return View(itemPricesBL.GetPriceHistory(ItemCode));
         }
 
         public ActionResult UpdatePrices(int? id)

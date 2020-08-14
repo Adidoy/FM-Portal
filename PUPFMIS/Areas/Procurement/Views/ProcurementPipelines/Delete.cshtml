@@ -1,0 +1,193 @@
+﻿@model PUPFMIS.Models.ProcurementPipeline
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>ProcurementPipeline</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.APPReference)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.APPReference)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PreProcurementConference)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PreProcurementConference)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PostingOfIB)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PostingOfIB)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PreBidConference)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PreBidConference)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SubmissionOfBids)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SubmissionOfBids)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.BidEvaluation)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.BidEvaluation)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PostQualification)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PostQualification)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NOAIssuance)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NOAIssuance)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ContractSigning)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ContractSigning)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Approval)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Approval)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NTPIssuance)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NTPIssuance)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ActualPreProcurementConference)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ActualPreProcurementConference)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ActualPostingOfIB)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ActualPostingOfIB)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ActualPreBidConference)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ActualPreBidConference)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ActualSubmissionOfBids)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ActualSubmissionOfBids)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ActualBidEvaluation)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ActualBidEvaluation)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AcutalPostQualification)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AcutalPostQualification)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ActualNOAIssuance)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ActualNOAIssuance)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ActualContractSigning)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ActualContractSigning)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ActualApproval)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ActualApproval)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ActualNTPIssuance)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ActualNTPIssuance)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

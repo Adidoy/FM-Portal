@@ -10,13 +10,13 @@ using System.Web.Mvc;
 
 namespace PUPFMIS.BusinessAndDataLogic
 {
-    public class UnitOfMeasureBL : Controller
+    public class UnitOfMeasureDataAccess : Controller
     {
         private FMISDbContext db = new FMISDbContext();
 
-        public List<UnitOfMeasure> GetUOMs()
+        public List<UnitOfMeasure> GetUOMs(bool DeleteFlag)
         {
-            return db.UOM.Where(d => d.PurgeFlag == false).OrderBy(d => d.UnitName).ToList();
+            return db.UOM.Where(d => d.PurgeFlag == DeleteFlag).OrderBy(d => d.UnitName).ToList();
         }
 
         public UnitOfMeasure GetUOMs(int? ID)

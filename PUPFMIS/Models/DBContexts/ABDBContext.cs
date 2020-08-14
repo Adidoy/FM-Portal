@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Data.Entity;
+﻿using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 
 namespace PUPFMIS.Models.AIS
 {
-    public class ABDBContext : DbContext
+    public class TEMPAccounting : DbContext
     {
-        public ABDBContext() : base("ABDbContext")
+        public TEMPAccounting() : base("ABDbContext")
         {
-            Database.SetInitializer<ABDBContext>(null);
+            Database.SetInitializer<TEMPAccounting>(null);
+            ((IObjectContextAdapter)this).ObjectContext.CommandTimeout = 250;
         }
 
         public DbSet<ChartOfAccounts> ChartOfAccounts { get; set; }
+        public DbSet<FundSources> FundSources { get; set; }
     }
 }

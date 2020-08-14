@@ -8,6 +8,9 @@ namespace PUPFMIS.Models
 {
     public class ActualSuppliesObligation
     {
+        [Display(Name = "Item ID")]
+        public int ItemID { get; set; }
+
         [Display(Name = "Item Code")]
         public string ItemCode { get; set; }
 
@@ -67,5 +70,8 @@ namespace PUPFMIS.Models
 
         [Display(Name = "Actual Obligation")]
         public int? ActualObligation { get; set; }
+
+        [Display(Name = "Unit Cost")]
+        public decimal UnitCost { get; set; }
     }
 }

@@ -2,64 +2,111 @@
 using Microsoft.Owin.Security;
 using PUPFMIS.BusinessAndDataLogic;
 using PUPFMIS.Models;
-using System.Data.Entity;
 using System.Linq;
-using System.Net;
 using System.Security.Claims;
 using System.Web;
 using System.Web.Mvc;
 
 namespace PUPFMIS.Controllers
 {
-    [Route("users-management/accounts/{action}")]
+    [Route("{action}")]
     public class UsersController : Controller
     {
         private FMISDbContext db = new FMISDbContext();
         private AccountsManagementBL accountsManagementBL = new AccountsManagementBL();
-        private OfficesBL officesBL = new OfficesBL();
 
+        [ActionName("index")]
+        [Route("users-management")]
+        [Route("users-management/list")]
         public ActionResult Index()
         {
-            return View(db.UserInformation.ToList());
+            return View("Index", accountsManagementBL.GetUserAccountsList());
         }
 
-        [Route("login")]
         [AllowAnonymous]
-        public ActionResult Login(string returnUrl)
+        [Route("login")]
+        public ActionResult Login(string ReturnUrl)
         {
-            ViewBag.ReturnUrl = returnUrl;
-            return View();
+            TempData["ReturnUrl"] = ReturnUrl;
+            return RedirectToAction("user-login");
+        }
+
+        [AllowAnonymous]
+        [Route("user-login")]
+        [ActionName("user-login")]
+        public ActionResult LoginView()
+        {
+            ViewBag.ReturnUrl = TempData["ReturnUrl"];
+            return View("login");
         }
 
         [HttpPost]
-        [Route("login")]
         [AllowAnonymous]
-        public ActionResult Login(LoginVM login, string returnUrl)
+        [Route("login")]
+        public ActionResult Login(LoginVM login)
         {
-            string Message = string.Empty;
+            ModelState.Remove("NoOfAttempts");
+            string Error = string.Empty;
+            Claim[] claims;
+
             if (ModelState.IsValid)
             {
-                UsersVM user;
-                if (accountsManagementBL.VerifyUserCredentials(login, out user))
+                UsersVM User;
+                if (accountsManagementBL.VerifyUserCredentials(login, out User, out Error))
                 {
-                    var claims = new[]
+                    claims = new[]
                     {
-                        new Claim(ClaimTypes.Name, user.Email)
+                        new Claim(ClaimTypes.Name, User.Email),
+                        new Claim(ClaimTypes.Role, User.UserRole),
+                        new Claim("Employee", User.Employee.ToUpperInvariant()),
+                        new Claim("Designation", User.UserRole)
                     };
                     var identity = new ClaimsIdentity(claims, "ApplicationCookie");
                     var context = Request.GetOwinContext();
                     var authManager = context.Authentication;
                     authManager.SignIn(new AuthenticationProperties { IsPersistent = false }, identity);
-                    return RedirectToLocal(returnUrl);
+                    return RedirectToLocal(login.ReturnUrl);
+                }
+                else
+                {
+                    if (Error == "Invalid Email")
+                    {
+                        ModelState.AddModelError("", "Couldn't find account. Please contact the System Administrator.");
+                    }
+                    else if (Error == "Incorrect Password")
+                    {
+                        login.NoOfAttempts += 1;
+                        ModelState.AddModelError("", "Incorrect Password. Please try again. Number of attempts left: " + (5 - login.NoOfAttempts) + ".");
+                    }
+                    else if (Error == "Locked Out")
+                    {
+                        ModelState.AddModelError("", "You have been locked out of the system. Please try logging in after one (1) hour.");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Couldn't find account. Please contact the System Administrator.");
+                    }
                 }
             }
             return View(login);
         }
 
         [HttpPost]
-        [Route("logout")]   
+        [Route("logout")]
         [AllowAnonymous]
         public ActionResult Logout()
+        {
+            var ctx = Request.GetOwinContext();
+            var authManager = ctx.Authentication;
+
+            authManager.SignOut("ApplicationCookie");
+            return RedirectToAction("login");
+        }
+
+        [Route("logout")]
+        [ActionName("logout-link")]
+        [AllowAnonymous]
+        public ActionResult LogoutLink()
         {
             var ctx = Request.GetOwinContext();
             var authManager = ctx.Authentication;
@@ -77,123 +124,86 @@ namespace PUPFMIS.Controllers
             return RedirectToAction("index", "Home");
         }
 
-        //[Authorize(Roles = SystemRoles.SuperUser + ", " + SystemRoles.SystemAdmin)]
+        [Route("register")]
         [ActionName("register")]
         public ActionResult Register()
         {
-            ViewBag.Office = new SelectList(officesBL.GetOffices(), "ID", "OfficeName");
-            ViewBag.Roles = new SelectList(accountsManagementBL.GetRoles(), "ID", "Role");
-            return View();
+            ViewBag.OfficeCode = new SelectList(accountsManagementBL.GetDepartment(), "DepartmentCode", "Department");
+            var DepartmentCode = accountsManagementBL.GetDepartment().First().DepartmentCode;
+            ViewBag.EmpCode = new SelectList(accountsManagementBL.GetEmployees(DepartmentCode), "EmpCode", "EmployeeName");
+            ViewBag.UserRole = new SelectList(accountsManagementBL.GetRoles(), "ID", "Role");
+            return PartialView("Register");
         }
 
         [HttpPost]
-        //[Authorize(Roles = SystemRoles.SuperUser + ", " + SystemRoles.SystemAdmin)]
-        [ValidateAntiForgeryToken]
+        [Route("register")]
         [ActionName("register")]
-        public ActionResult Register(UsersVM user)
+        [ValidateAntiForgeryToken]
+        public ActionResult Register(UsersVM User)
         {
-            ModelState.Remove("PasswordSalt");
+            if(User == null)
+            {
+                return HttpNotFound();
+            }
             string Message = string.Empty;
-            ValidateUser(user);
-            if (ModelState.IsValid)
+            if (accountsManagementBL.RegisterUser(User, out Message))
             {
-                if(accountsManagementBL.RegisterUser(user, out Message))
-                {
-                    return RedirectToAction("Index", "Home");
-                }
+                return Json(new { status = "success" });
             }
-            ViewBag.Offices = new SelectList(officesBL.GetOffices(), "ID", "OfficeName");
-            return View(user);
+            else
+            {
+                return Json(new { status = "failed" });
+            }
         }
 
-        public ActionResult Details(int? id)
+        [Route("update")]
+        [ActionName("update")]
+        public ActionResult Update(int? UserID)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            UserInformation userInformation = db.UserInformation.Find(id);
-            if (userInformation == null)
+            if(UserID == null)
             {
                 return HttpNotFound();
             }
-            return View(userInformation);
-        }
-
-        public ActionResult Create()
-        {
-            return View();
+            var user = accountsManagementBL.GetUser((int)UserID);
+            if(user == null)
+            {
+                return HttpNotFound();
+            }
+            ViewBag.UserRole = new SelectList(accountsManagementBL.GetRoles(), "ID", "Role", user.UserRole);
+            return PartialView("Edit", user);
         }
 
         [HttpPost]
+        [Route("update")]
+        [ActionName("update")]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,LastName,FirstName,MiddleName,Designation")] UserInformation userInformation)
+        public ActionResult Update(UsersVM User)
         {
-            if (ModelState.IsValid)
-            {
-                db.UserInformation.Add(userInformation);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
-            return View(userInformation);
-        }
-
-        // GET: Users/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            UserInformation userInformation = db.UserInformation.Find(id);
-            if (userInformation == null)
+            if (User == null)
             {
                 return HttpNotFound();
             }
-            return View(userInformation);
+            
+            if (accountsManagementBL.UpdateUser(User))
+            {
+                return Json(new { result = true });
+            }
+            else
+            {
+                return Json(new { result = false });
+            }
         }
 
-        // POST: Users/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,LastName,FirstName,MiddleName,Designation")] UserInformation userInformation)
+        [ActionName("get-employees")]
+        public ActionResult GetEmployees(string DepartmentCode)
         {
-            if (ModelState.IsValid)
-            {
-                db.Entry(userInformation).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(userInformation);
+            return Json(accountsManagementBL.GetEmployees(DepartmentCode), JsonRequestBehavior.AllowGet);
         }
 
-        // GET: Users/Delete/5
-        public ActionResult Delete(int? id)
+        [ActionName("get-employee-details")]
+        public ActionResult GetEmployeeDetails(string EmpCode)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            UserInformation userInformation = db.UserInformation.Find(id);
-            if (userInformation == null)
-            {
-                return HttpNotFound();
-            }
-            return View(userInformation);
-        }
-
-        // POST: Users/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            UserInformation userInformation = db.UserInformation.Find(id);
-            db.UserInformation.Remove(userInformation);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            return Json(accountsManagementBL.GetEmployeeDetails(EmpCode), JsonRequestBehavior.AllowGet);
         }
 
         private void ValidateUser(UsersVM user)

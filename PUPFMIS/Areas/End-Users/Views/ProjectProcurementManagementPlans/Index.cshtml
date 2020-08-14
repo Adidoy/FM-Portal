@@ -1,10 +1,9 @@
-﻿@model IEnumerable<PUPFMIS.Models.PPMPHeaderViewModel>
+﻿@model PUPFMIS.Models.BudgetPropsalVM
 
 @{
-    ViewBag.Title = "PPMP";
+    ViewBag.Title = "Budget Proposal";
     ViewBag.Description = "Home";
     Layout = "~/Views/Shared/_IndexLayout.cshtml";
-    var PPMP = Model as List<PUPFMIS.Models.PPMPHeaderViewModel>;
 }
 
 @section BreadCrumb {
@@ -16,22 +15,166 @@
 }
 
 @section Header {
-    <h3 class="card-title"><i class="fa fa-list"></i> PPMP List</h3>
+    <h3 class="card-title"><i class="fa fa-list"></i> Budget Proposal - @Model.OfficeName</h3>
 }
+<h4>Summary</h4>
 
-@using (Html.BeginForm("submit-ppmp", "ProjectProcurementManagementPlans", FormMethod.Post, new { Area = "end-users" }))
-{
-    @Html.AntiForgeryToken()
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="text-right">
-                <button style="text-align:left;" class="btn btn-warning btn-md"><i class="fa fa-share"></i> Submit Selected PPMP</button>
-                <button style="text-align:left;" class="btn btn-danger btn-md" onclick="window.location = '@Url.Action("dashboard", "PPMP")'"><i class="fa fa-arrow-circle-left"></i> Back to Dashboard</button>
+<hr />
+<div class="row">
+    <div class="col-sm-12 pl-0 pr-0 ml-0 mr-0">
+        <div class="card card-primary card-outline">
+            <div class="card-header d-flex p-0">
+                <ul class="nav nav-pills p-2">
+                    <li class="nav-item" style="font-size:12pt;"><a class="nav-link active" href="#mooe" data-toggle="tab"><i class="fa fa-list"></i>&nbsp; Maintenance and Other Operating Expenses</a></li>
+                    <li class="nav-item" style="font-size:12pt;"><a class="nav-link" href="#capitalOutlay" data-toggle="tab"><i class="fa fa-list"></i>&nbsp; Capital Outlay</a></li>
+                </ul>
+            </div>
+            <div class="tab-content">
+                <div class="tab-pane active" id="mooe">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="card card-info">
+                                    <div class="card-header"><h3 class="card-title">Summary of Proposed Maintenance and Other Operating Expenses (MOOE)</h3></div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="card-body table-responsive p-sm-0">
+                                                    <table class="table table-striped table-hover" id="example2">
+                                                        <thead>
+                                                            <tr>
+                                                                <th style="text-align:center; vertical-align:middle" width="10%">
+                                                                    @Html.DisplayNameFor(model => model.MOOE.FirstOrDefault().UACS)
+                                                                </th>
+                                                                <th style="text-align:center; vertical-align:middle" width="45%">
+                                                                    @Html.DisplayNameFor(model => model.MOOE.FirstOrDefault().ObjectClassification)
+                                                                </th>
+                                                                <th style="text-align:center; vertical-align:middle" width="15%">
+                                                                    @Html.DisplayNameFor(model => model.MOOE.FirstOrDefault().Tier1)
+                                                                </th>
+                                                                <th style="text-align:center; vertical-align:middle" width="15%">
+                                                                    @Html.DisplayNameFor(model => model.MOOE.FirstOrDefault().Tier2)
+                                                                </th>
+                                                                <th style="text-align:center; vertical-align:middle" width="15%">
+                                                                    @Html.DisplayNameFor(model => model.MOOE.FirstOrDefault().TotalProposedProgram)
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach(var item in Model.MOOE)
+                                                            {
+                                                                <tr>
+                                                                    <td style="text-align:center;">@Html.DisplayFor(modelItem => item.UACS)</td>
+                                                                    <td style="text-align:left;"><b>@Html.DisplayFor(modelItem => item.ObjectClassification)</b></td>
+                                                                    <td style="text-align:right">@( String.Format("{0:C}", item.Tier1) )</td>
+                                                                    <td style="text-align:right">@( String.Format("{0:C}", item.Tier2) )</td>
+                                                                    <td style="text-align:right">@( String.Format("{0:C}", item.TotalProposedProgram) )</td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                        <tfoot>
+                                                            <tr>
+                                                                <td style="text-align:right;" colspan="2"><h6>TOTAL:</h6></td>
+                                                                <td style="text-align:right;"><h6>@( String.Format("{0:C}", Model.MOOE.Sum(d => d.Tier1)) )</h6></td>
+                                                                <td style="text-align:right;"><h6>@( String.Format("{0:C}", Model.MOOE.Sum(d => d.Tier2)) )</h6></td>
+                                                                <td style="text-align:right;"><h6>@( String.Format("{0:C}", Model.MOOE.Sum(d => d.TotalProposedProgram)) )</h6></td>
+                                                            </tr>
+                                                        </tfoot>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="capitalOutlay">
+                    <div class="card-body">
+                        <div class="card card-info">
+                            <div class="card-header"><h3 class="card-title">Summary of Proposed Capital Outlays</h3></div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="card-body table-responsive p-sm-0">
+                                            <table class="table table-striped table-hover" id="workflowItems">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="text-align:center; vertical-align:middle" width="10%">
+                                                            @Html.DisplayNameFor(model => model.CaptialOutlay.FirstOrDefault().UACS)
+                                                        </th>
+                                                        <th style="text-align:center; vertical-align:middle" width="45%">
+                                                            @Html.DisplayNameFor(model => model.CaptialOutlay.FirstOrDefault().ObjectClassification)
+                                                        </th>
+                                                        <th style="text-align:center; vertical-align:middle" width="15%">
+                                                            @Html.DisplayNameFor(model => model.CaptialOutlay.FirstOrDefault().Tier1)
+                                                        </th>
+                                                        <th style="text-align:center; vertical-align:middle" width="15%">
+                                                            @Html.DisplayNameFor(model => model.CaptialOutlay.FirstOrDefault().Tier2)
+                                                        </th>
+                                                        <th style="text-align:center; vertical-align:middle" width="15%">
+                                                            @Html.DisplayNameFor(model => model.CaptialOutlay.FirstOrDefault().TotalProposedProgram)
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.CaptialOutlay)
+                                                    {
+                                                        <tr>
+                                                            <td style="text-align:center;">@Html.DisplayFor(modelItem => item.UACS)</td>
+                                                            <td style="text-align:left;"><b>@Html.DisplayFor(modelItem => item.ObjectClassification)</b></td>
+                                                            <td style="text-align:right">@( String.Format("{0:C}", item.Tier1) )</td>
+                                                            <td style="text-align:right">@( String.Format("{0:C}", item.Tier2) )</td>
+                                                            <td style="text-align:right">@( String.Format("{0:C}", item.TotalProposedProgram) )</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td style="text-align:right;" colspan="2"><h6>TOTAL:</h6></td>
+                                                        <td style="text-align:right;"><h6>@( String.Format("{0:C}", Model.CaptialOutlay.Sum(d => d.Tier1)) )</h6></td>
+                                                        <td style="text-align:right;"><h6>@( String.Format("{0:C}", Model.CaptialOutlay.Sum(d => d.Tier2)) )</h6></td>
+                                                        <td style="text-align:right;"><h6>@( String.Format("{0:C}", Model.CaptialOutlay.Sum(d => d.TotalProposedProgram)) )</h6></td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-12 bg-info">
+                        <div class="float-right">
+                            <h3 class="mt-2 mb-2" style="font-size:16pt;">TOTAL PROPOSED BUDGET : @( String.Format("{0:C}", Model.TotalProposedBudget) ) &emsp;</h3>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <hr />
-
+    <div class="col-sm-12 pl-0 pr-0 ml-0 mr-0">
+        <div class="row">
+            <div class="col-12">
+                <div class="float-right">
+                    <a class="btn btn-primary btn-md" href="@Url.Action("print-budget-proposal", "ProjectProcurementManagementPlans", new { Area = "end-users", FiscalYear = Model.FiscalYear })" target="_blank"><i class="fa fa-print"></i> Print Budget Summary</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br /><br />
+<h4>PPMP List</h4>
+<hr />
+@using (Html.BeginForm("submit-ppmp", "ProjectProcurementManagementPlans", FormMethod.Post, new { Area = "end-users" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.FiscalYear)
     <div class="row">
         <div class="col-sm-12">
             <div class="card-body table-responsive p-sm-0">
@@ -39,69 +182,92 @@
                     <thead>
                         <tr>
                             <th style="text-align:center; vertical-align:middle" width="25%">
-                                @Html.DisplayNameFor(model => model.ReferenceNo)
+                                @Html.DisplayNameFor(model => model.PPMPList.FirstOrDefault().ReferenceNo)
+                            </th>
+                            <th style="text-align:center; vertical-align:middle" width="10%">
+                                @Html.DisplayNameFor(model => model.PPMPList.FirstOrDefault().FiscalYear)
                             </th>
                             <th style="text-align:center; vertical-align:middle" width="15%">
-                                @Html.DisplayNameFor(model => model.FiscalYear)
+                                @Html.DisplayNameFor(model => model.PPMPList.FirstOrDefault().EstimatedBudget)
                             </th>
                             <th style="text-align:center; vertical-align:middle" width="15%">
-                                @Html.DisplayNameFor(model => model.EstimatedBudget)
-                            </th>
-                            <th style="text-align:center; vertical-align:middle" width="25%">
-                                @Html.DisplayNameFor(model => model.Status)
+                                @Html.DisplayNameFor(model => model.PPMPList.FirstOrDefault().ApprovedBudget)
                             </th>
                             <th style="text-align:center; vertical-align:middle" width="20%">
+                                @Html.DisplayNameFor(model => model.PPMPList.FirstOrDefault().Status)
+                            </th>
+                            <th style="text-align:center; vertical-align:middle" width="15%">
                                 Action
                             </th>
                         </tr>
                     </thead>
                     <tbody>
                         
-                        @for (var item = 0; item < PPMP.Count; item++)
+                        @for (var item = 0; item < Model.PPMPList.Count; item++)
                         {
                             <tr>
                                 <td align="justify">
-                                    @if (PPMP[item].Status != "New PPMP")
+                                    @if (Model.PPMPList[item].Status != "New PPMP")
                                     {
-                                        @Html.CheckBoxFor(m => PPMP[item].IsSelected, htmlAttributes: new { disabled = "disabled" })<span>&emsp;</span><b>@Html.DisplayFor(modelItem => PPMP[item].ReferenceNo)</b>
+                                        @Html.CheckBoxFor(m => Model.PPMPList[item].IsSelected, htmlAttributes: new { disabled = "disabled" })<span>&emsp;</span><b>@Html.DisplayFor(modelItem => Model.PPMPList[item].ReferenceNo)</b>
                                     }
                                     else
                                     {
-                                        @Html.HiddenFor(modelItem => PPMP[item].ReferenceNo)
-                                        @Html.CheckBoxFor(m => PPMP[item].IsSelected)<span>&emsp;</span><b>@Html.DisplayFor(modelItem => PPMP[item].ReferenceNo)</b>
+                                        @Html.HiddenFor(modelItem => Model.PPMPList[item].ReferenceNo)
+                                        @Html.CheckBoxFor(m => Model.PPMPList[item].IsSelected)<span>&emsp;</span><b>@Html.DisplayFor(modelItem => Model.PPMPList[item].ReferenceNo)</b>
                                     }
                                     
                                 </td>
                                 <td align="center">
-                                    @Html.HiddenFor(modelItem => PPMP[item].FiscalYear)
-                                    @Html.DisplayFor(modelItem => PPMP[item].FiscalYear)
+                                    @Html.HiddenFor(modelItem => Model.PPMPList[item].FiscalYear)
+                                    @Html.DisplayFor(modelItem => Model.PPMPList[item].FiscalYear)
                                 </td>
                                 <td align="right">
-                                    @Html.HiddenFor(modelItem => PPMP[item].EstimatedBudget)
-                                    @( String.Format("{0:C}", PPMP[item].EstimatedBudget) )
+                                    @Html.HiddenFor(modelItem => Model.PPMPList[item].EstimatedBudget)
+                                    @( String.Format("{0:C}", Model.PPMPList[item].EstimatedBudget) )
+                                </td>
+                                <td align="right">
+                                    @*@Html.HiddenFor(modelItem => Model.PPMPList[item].ApprovedBudget)*@
+                                    @( String.Format("{0:C}", Model.PPMPList[item].ApprovedBudget) )
                                 </td>
                                 <td align="center">
-                                    @Html.HiddenFor(modelItem => PPMP[item].Status)
-                                    @if (PPMP[item].Status == "New PPMP")
+                                    @Html.HiddenFor(modelItem => Model.PPMPList[item].Status)
+                                    @if (Model.PPMPList[item].Status == "New PPMP")
                                     {
-                                        <span class="badge bg-secondary" style="font-size:100%;">@Html.DisplayFor(modelItem => PPMP[item].Status)</span>
+                                        <span class="badge bg-secondary p-1" style="font-size:100%;">@Html.DisplayFor(modelItem => Model.PPMPList[item].Status)</span>
                                     }
-                                    else if (PPMP[item].Status == "PPMP Submitted")
+                                    else if (Model.PPMPList[item].Status == "PPMP Submitted")
                                     {
-                                        <span class="badge bg-warning" style="font-size:100%;">@Html.DisplayFor(modelItem => PPMP[item].Status)</span>
+                                        <span class="badge bg-warning p-1" style="font-size:100%;">@Html.DisplayFor(modelItem => Model.PPMPList[item].Status)</span>
                                     }
-                                    else if (PPMP[item].Status == "Submission Accepted")
+                                    else if (Model.PPMPList[item].Status == "PPMP Evaluated")
                                     {
-                                        <span class="badge bg-success" style="font-size:100%;">@Html.DisplayFor(modelItem => PPMP[item].Status)</span>
+                                        <span class="badge bg-success p-1" style="font-size:100%;">@Html.DisplayFor(modelItem => Model.PPMPList[item].Status)</span>
+                                    }
+                                    else if (Model.PPMPList[item].Status == "Posted to APPP")
+                                    {
+                                        <span class="badge bg-primary p-1" style="font-size:100%;">@Html.DisplayFor(modelItem => Model.PPMPList[item].Status)</span>
                                     }
                                 </td>
                                 <td style="vertical-align:middle; text-align:center;">
-                                    <button type="button" class="btn btn-sm btn-primary" onclick="window.location = '@Url.Action("view-ppmp-details", "ProjectProcurementManagementPlans", new { Area = "end-users", ReferenceNo = PPMP[item].ReferenceNo })'"><i class="fa fa-eye"></i> View Details</button>
+                                    <a class="btn btn-sm btn-primary" href = "@Url.Action("print-ppmp", "ProjectProcurementManagementPlans", new { Area = "end-users", ReferenceNo = Model.PPMPList[item].ReferenceNo })" target="_blank"><i class="fa fa-print"></i> Print PPMP</a>
                                 </td>
                             </tr>
                         }
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="text-right">
+                @if (Model.CanPost == true)
+                {
+                    <button type="submit" style="text-align:left;" class="btn btn-primary btn-md"><i class="fa fa-share"></i> Submit Selected PPMP</button>
+                }
+                <button type="button" style="text-align:left;" class="btn btn-danger btn-md" onclick="window.location = '@Url.Action("dashboard", "Dashboard")'"><i class="fa fa-arrow-circle-left"></i> Back to Dashboard</button>
             </div>
         </div>
     </div>

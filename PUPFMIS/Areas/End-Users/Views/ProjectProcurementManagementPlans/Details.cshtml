@@ -19,6 +19,8 @@
         <h1 class="card-title"><i class="fa fa-bookmark"></i> @Model.Header.PPMPType: @Model.Header.ReferenceNo</h1>
     </div>
 }
+
+@Html.HiddenFor(d => d.Header.Unit)
 <div class="row">
     <div class="col-sm-12">
         <div class="text-right">
@@ -193,7 +195,7 @@
                                                                             <br />
                                                                             @Html.DisplayFor(modelItem => item.ItemSpecifications)
                                                                             <br /><br />
-                                                                            <b>@Html.DisplayNameFor(modelItem => item.IndividualUOMReference) : </b>@Html.DisplayFor(model => item.IndividualUOMReference)
+                                                                            <b>Unit of Measure : </b>@Html.DisplayFor(model => item.IndividualUOMReference)
                                                                             <br />
                                                                             <b>@Html.DisplayNameFor(modelItem => item.Remarks) : </b>@Html.DisplayFor(model => item.Remarks)
                                                                             <br />
@@ -382,7 +384,7 @@
                                                                 <br />
                                                                 @Html.DisplayFor(modelItem => item.ItemSpecifications)
                                                                 <br /><br />
-                                                                <b>@Html.DisplayNameFor(modelItem => item.IndividualUOMReference) : </b>@Html.DisplayFor(model => item.IndividualUOMReference)
+                                                                <b>Unit of Measure : </b>@Html.DisplayFor(model => item.IndividualUOMReference)
                                                                 <br />
                                                                 <b>@Html.DisplayNameFor(modelItem => item.Remarks) : </b>@Html.DisplayFor(model => item.Remarks)
                                                                 <br />

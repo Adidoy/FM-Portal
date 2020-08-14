@@ -17,11 +17,11 @@ namespace PUPFMIS.BusinessAndDataLogic
             var item = db.Items.Where(d => d.ItemCode == ItemCode).FirstOrDefault();
             if(item == null)
             {
-                return db.Services.Where(d => d.ServiceCode == ItemCode).FirstOrDefault().FKInventoryTypeReference.IsTangible;
+                return db.Items.Where(d => d.ItemFullName == ItemCode).FirstOrDefault().FKItemTypeReference.FKInventoryTypeReference.IsTangible;
             }
             else
             {
-                return db.Items.Where(d => d.ItemCode == ItemCode).FirstOrDefault().FKInventoryTypeReference.IsTangible;
+                return db.Items.Where(d => d.ItemCode == ItemCode).FirstOrDefault().FKItemTypeReference.FKInventoryTypeReference.IsTangible;
             }
         }
         public bool ItemBelongsToProject(string ProjectCode, string ItemCode)
@@ -63,7 +63,7 @@ namespace PUPFMIS.BusinessAndDataLogic
                 item.OctQty = (item.OctQty == null) ? 0 : item.OctQty;
                 item.NovQty = (item.NovQty == null) ? 0 : item.NovQty;
                 item.DecQty = (item.DecQty == null) ? 0 : item.DecQty;
-                item.TotalQty = (int)(item.JanQty + item.FebQty + item.MarQty + item.AprQty + item.MayQty + item.JunQty + item.JulQty + item.AugQty + item.OctQty + item.NovQty + item.DecQty);
+                item.TotalQty = (int)(item.JanQty + item.FebQty + item.MarQty + item.AprQty + item.MayQty + item.JunQty + item.JulQty + item.AugQty + item.SepQty + item.OctQty + item.NovQty + item.DecQty);
             }
             else
             {
@@ -197,45 +197,11 @@ namespace PUPFMIS.BusinessAndDataLogic
         private HRISDbContext hrdb = new HRISDbContext();
         private SystemBDL systemBDL = new SystemBDL();
         private ProjectPlansDAL projectPlanDAL = new ProjectPlansDAL();
+        private HRISDataAccess hrisDataAccess = new HRISDataAccess();
 
         public List<Supplier> GetSuppliers()
         {
             return db.Suppliers.Where(d => d.PurgeFlag == false).ToList();
-        }
-        public List<CatalogueVM> GetCatalogue()
-        {
-            List<CatalogueVM> catalogue = new List<CatalogueVM>();
-            var items = db.Items.Select(d => new CatalogueVM
-            {
-                ItemCode = d.ItemCode,
-                ItemName = d.ItemName.ToUpper() + ", " + d.ItemShortSpecifications,
-                ItemSpecifications = d.ItemSpecifications,
-                ItemImage = d.ItemImage,
-                ItemInventoryType = d.FKInventoryTypeReference.InventoryTypeName,
-                ItemCategory = d.FKItemCategoryReference.ItemCategoryName,
-                ProcurementSource = d.ProcurementSource,
-                IndividualUOMReference = d.FKIndividualUnitReference.UnitName,
-                PackagingUOMReference = d.FKPackagingUnitReference.UnitName,
-                DistributionQtyPerPack = d.DistributionQtyPerPack,
-                MinimumIssuanceQty = d.MinimumIssuanceQty
-            }).ToList();
-            var services = db.Services.Select(d => new CatalogueVM
-            {
-                ItemCode = d.ServiceCode,
-                ItemName = d.ServiceName.ToUpper(),
-                ItemSpecifications = d.ItemShortSpecifications,
-                ItemImage = null,
-                ItemInventoryType = d.FKInventoryTypeReference.InventoryTypeName,
-                ItemCategory = d.FKCategoryReference.ItemCategoryName,
-                ProcurementSource = ProcurementSources.Non_DBM,
-                IndividualUOMReference = null,
-                PackagingUOMReference = null,
-                DistributionQtyPerPack = null,
-                MinimumIssuanceQty = null,
-            }).ToList();
-            catalogue.AddRange(items);
-            catalogue.AddRange(services);
-            return catalogue;
         }
         public List<string> GetItemCategories()
         {
@@ -247,48 +213,26 @@ namespace PUPFMIS.BusinessAndDataLogic
         }
         public ProjectPlanVM GetProject(string ProjectCode)
         {
-            ProjectPlanVM projectPlan = new ProjectPlanVM();
-
             var projectPlanHeader = db.ProjectPlans.Where(d => d.ProjectCode == ProjectCode).FirstOrDefault();
-            var user = db.UserAccounts.Find(projectPlanHeader.PreparedBy);
-            var office = hrdb.OfficeModel.Find(projectPlanHeader.Office);
-            projectPlan.ProjectCode = projectPlanHeader.ProjectCode;
-            projectPlan.ProjectName = projectPlanHeader.ProjectName;
-            projectPlan.Description = projectPlanHeader.Description;
-            projectPlan.FiscalYear = projectPlanHeader.FiscalYear;
-            projectPlan.Office = office.OfficeName;
-            projectPlan.PreparedBy = user.FKUserInformationReference.FirstName.ToUpper() + " " + user.FKUserInformationReference.LastName.ToUpper() + ", " + user.FKUserInformationReference.Designation;
-            projectPlan.SubmittedBy = office.OfficeHead;
-            projectPlan.ProjectMonthStart = systemBDL.GetMonthName(projectPlanHeader.ProjectMonthStart);
-            projectPlan.TotalEstimatedBudget = projectPlanHeader.TotalEstimatedBudget;
-            projectPlan.NewItemProposals = new List<ProjectPlanItemsVM>();
-
-            return projectPlan;
-        }
-        public List<CatalogueVM> GetCommonSuppliesCatalogue()
-        {
-            return db.Items.Where(d => d.FKInventoryTypeReference.InventoryCode == "CUOS")
-                   .Select(d => new CatalogueVM
-                   {
-                       ItemCode = d.ItemCode,
-                       ItemName = d.ItemName.ToUpper() + ", " + d.ItemShortSpecifications,
-                       ItemSpecifications = d.ItemSpecifications,
-                       ItemImage = d.ItemImage,
-                       ItemInventoryType = d.FKInventoryTypeReference.InventoryTypeName,
-                       ItemCategory = d.FKItemCategoryReference.ItemCategoryName,
-                       ProcurementSource = d.ProcurementSource,
-                       IndividualUOMReference = d.FKIndividualUnitReference.UnitName,
-                       PackagingUOMReference = d.FKPackagingUnitReference.UnitName,
-                       DistributionQtyPerPack = d.DistributionQtyPerPack,
-                       MinimumIssuanceQty = d.MinimumIssuanceQty
-                   }).ToList();
-        }
-        public decimal GetEstimatedBudget(int TotalQty, decimal UnitCost)
-        {
-            var estimatedBudget = (TotalQty * UnitCost);
-            var inflation = Convert.ToDecimal(db.SystemVariables.Where(d => d.VariableName == "Inflation Rate").FirstOrDefault().Value);
-            estimatedBudget = estimatedBudget + (estimatedBudget * (inflation / 100));
-            return estimatedBudget;
+            var user = db.UserAccounts.Where(d => d.EmpCode == projectPlanHeader.PreparedBy).FirstOrDefault();
+            var employee = hrisDataAccess.GetEmployee(user.Email);
+            var office = hrisDataAccess.GetFullDepartmentDetails(user.DepartmentCode);
+            return new ProjectPlanVM {
+                ProjectCode = projectPlanHeader.ProjectCode,
+                ProjectName = projectPlanHeader.ProjectName,
+                Description = projectPlanHeader.Description,
+                FiscalYear = projectPlanHeader.FiscalYear,
+                SectorCode = office.SectorCode,
+                Sector = office.Sector,
+                DepartmentCode = office.DepartmentCode,
+                Department = office.Department,
+                UnitCode = office.SectionCode,
+                Unit = office.Section,
+                PreparedBy = employee.EmployeeName,
+                ProjectMonthStart = systemBDL.GetMonthName(projectPlanHeader.ProjectMonthStart),
+                TotalEstimatedBudget = projectPlanHeader.TotalEstimatedBudget,
+                NewItemProposals = new List<ProjectPlanItemsVM>() 
+            };
         }
         public bool SaveBasket(ProjectPlanVM projectPlan, out string Message)
         {
@@ -299,7 +243,6 @@ namespace PUPFMIS.BusinessAndDataLogic
             }
 
             var project = db.ProjectPlans.Where(d => d.ProjectCode == projectPlan.ProjectCode).FirstOrDefault();
-            //var projectDetails = db.ProjectPlanItems.Where(d => d.FKProjectReference.ProjectCode == projectPlan.ProjectCode).ToList();
 
             List<ProjectPlanItems> projectPlanItems = new List<ProjectPlanItems>();
             List<ProjectPlanServices> projectPlanServices = new List<ProjectPlanServices>();
@@ -316,19 +259,19 @@ namespace PUPFMIS.BusinessAndDataLogic
                             ItemReference = itemInfo.ID,
                             ProjectReference = project.ID,
                             ProposalType = BudgetProposalType.NewProposal,
-                            JanQty = items.JanQty,
-                            FebQty = items.FebQty,
-                            MarQty = items.MarQty,
-                            AprQty = items.AprQty,
-                            MayQty = items.MayQty,
-                            JunQty = items.JunQty,
-                            JulQty = items.JulQty,
-                            AugQty = items.AugQty,
-                            SepQty = items.SepQty,
-                            OctQty = items.OctQty,
-                            NovQty = items.NovQty,
-                            DecQty = items.DecQty,
-                            TotalQty = items.TotalQty,
+                            ProjectJanQty = items.JanQty,
+                            ProjectFebQty = items.FebQty,
+                            ProjectMarQty = items.MarQty,
+                            ProjectAprQty = items.AprQty,
+                            ProjectMayQty = items.MayQty,
+                            ProjectJunQty = items.JunQty,
+                            ProjectJulQty = items.JulQty,
+                            ProjectAugQty = items.AugQty,
+                            ProjectSepQty = items.SepQty,
+                            ProjectOctQty = items.OctQty,
+                            ProjectNovQty = items.NovQty,
+                            ProjectDecQty = items.DecQty,
+                            ProjectTotalQty = items.TotalQty,
                             UnitCost = (decimal)items.UnitCost,
                             Supplier1 = items.Supplier1ID,
                             Supplier1UnitCost = items.Supplier1UnitCost,
@@ -336,21 +279,21 @@ namespace PUPFMIS.BusinessAndDataLogic
                             Supplier2UnitCost = items.Supplier2UnitCost,
                             Supplier3 = items.Supplier3ID,
                             Supplier3UnitCost = items.Supplier3UnitCost,
-                            EstimatedBudget = items.EstimatedBudget,
-                            Remarks = items.Remarks
+                            ProjectEstimatedBudget = items.EstimatedBudget,
+                            Justification = items.Remarks
                         };
                         projectPlanItems.Add(projectItem);
                     }
                     else
                     {
-                        var service = db.Services.Where(d => d.ServiceCode == items.ItemCode).FirstOrDefault();
+                        var service = db.Items.Where(d => d.ItemCode == items.ItemCode).FirstOrDefault();
                         ProjectPlanServices projectService = new ProjectPlanServices()
                         {
                             ProjectReference = project.ID,
-                            ServiceReference = service.ID,
+                            ItemReference = service.ID,
                             ProposalType = items.ProposalType,
                             ItemSpecifications = items.ItemSpecifications,
-                            Quantity = items.TotalQty,
+                            ProjectQuantity = items.TotalQty,
                             UnitCost = (decimal)items.UnitCost,
                             Supplier1 = items.Supplier1ID,
                             Supplier1UnitCost = items.Supplier1UnitCost,
@@ -358,8 +301,8 @@ namespace PUPFMIS.BusinessAndDataLogic
                             Supplier2UnitCost = items.Supplier2UnitCost,
                             Supplier3 = items.Supplier3ID,
                             Supplier3UnitCost = items.Supplier3UnitCost,
-                            EstimatedBudget = items.EstimatedBudget,
-                            Remarks = items.Remarks
+                            ProjectEstimatedBudget = items.EstimatedBudget,
+                            Justification = items.Remarks
                         };
                         projectPlanServices.Add(projectService);
                     }
@@ -381,6 +324,23 @@ namespace PUPFMIS.BusinessAndDataLogic
                 return false;
             }
 
+            var switchBoard = db.SwitchBoard.Where(d => d.Reference == project.ProjectCode).FirstOrDefault();
+            var employee = hrisDataAccess.GetEmployeeByCode(project.PreparedBy);
+            var newProjectSwitchBody = new SwitchBoardBody
+            {
+                SwitchBoardReference = switchBoard.ID,
+                ActionBy = employee.EmployeeCode,
+                Remarks = projectPlan.ProjectCode + " has been updated by " + employee.EmployeeName + ", " + employee.Designation + ". (Added Items) (" + DateTime.Now.ToString("dd MMMM yyyy hh:mm tt") + ")",
+                DepartmentCode = employee.DepartmentCode,
+                UpdatedAt = DateTime.Now
+            };
+            db.SwitchBoardBody.Add(newProjectSwitchBody);
+            if (db.SaveChanges() == 0)
+            {
+                Message = "An error occurred. Please try again.";
+                return false;
+            }
+
             Message = string.Empty;
             return true;
         }
@@ -393,35 +353,34 @@ namespace PUPFMIS.BusinessAndDataLogic
                    .Select(d => new CatalogueBasketItemVM
                    {
                        ItemCode = d.ItemCode,
-                       ItemName = d.ItemName.ToUpper() + ", " + d.ItemShortSpecifications,
+                       ItemName = d.ItemFullName,
                        ItemSpecifications = d.ItemSpecifications,
                        ItemImage = d.ItemImage,
-                       ItemCategory = d.FKItemCategoryReference.ItemCategoryName,
-                       InventoryType = d.FKInventoryTypeReference.InventoryTypeName,
+                       InventoryType = d.FKItemTypeReference.FKInventoryTypeReference.InventoryTypeName,
+                       ItemCategory = d.FKCategoryReference.ItemCategoryName,
                        ProcurementSource = d.ProcurementSource,
                        IndividualUOMReference = d.FKIndividualUnitReference.UnitName,
                        PackagingUOMReference = d.FKPackagingUnitReference.UnitName,
-                       DistributionQtyPerPack = d.DistributionQtyPerPack,
-                       MinimumIssuanceQty = d.MinimumIssuanceQty,
+                       DistributionQtyPerPack = (int)d.QuantityPerPackage,
+                       MinimumIssuanceQty = (int)d.MinimumIssuanceQty,
                        UnitCost = db.ItemPrices.Where(x => x.Item == d.ID && x.IsPrevailingPrice == true).FirstOrDefault().UnitPrice
                    }).FirstOrDefault();
             }
             if(!inventoryType.IsTangible)
             {
-                return db.Services.Where(d => d.ServiceCode == ItemCode)
+                return db.Items.Where(d => d.ItemCode == ItemCode)
                    .Select(d => new CatalogueBasketItemVM
                    {
-                       ItemCode = d.ServiceCode,
-                       ItemName = d.ServiceName.ToUpper() + ", " + d.ItemShortSpecifications,
+                       ItemCode = d.ItemCode,
+                       ItemName = d.ItemFullName,
                        ProcurementSource = d.ProcurementSource,
                        ItemImage = null,
                        ItemCategory = d.FKCategoryReference.ItemCategoryName,
-                       InventoryType = d.FKInventoryTypeReference.InventoryTypeName,
+                       InventoryType = d.FKItemTypeReference.FKInventoryTypeReference.InventoryTypeName,
                    }).FirstOrDefault();
             }
             return null;
         }
-        
         protected override void Dispose(bool disposing)
         {
             if (disposing)

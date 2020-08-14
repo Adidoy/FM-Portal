@@ -117,20 +117,29 @@
                 <i class="far fa-user"></i>
             </a>
             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                <div class="row text-center">
+                    <div class="col-sm-12">
+                        <div class="dropdown-item">
+                            <p style="font-size:11pt; text-align:center">@( ((System.Security.Claims.ClaimsIdentity)User.Identity).FindFirst(d => d.Type == "Employee").Value )</p>
+                        </div>
+                    </div>
+                </div>
                 <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                    <p style="font-size:16pt; text-align:center">@User.Identity.Name.ToString().ToUpper()</p>
-                </a>
+                <div class="row text-center">
+                    <div class="col-sm-12">
+                        <div class="dropdown-item">
+                            <p style="font-size:9pt; text-align:center">@( ((System.Security.Claims.ClaimsIdentity)User.Identity).FindFirst(d => d.Type == "Designation").Value )</p>
+                            <p style="font-size:9pt; text-align:center">@User.Identity.Name</p>
+                        </div>
+                    </div>
+                </div>
                 <div class="dropdown-divider"></div>
                 <a href="#" class="dropdown-item">
                     <div class="row">
-                        <div class="col-sm-6">
-                            <input type="button" value="View Profile" class="btn btn-outline-secondary col-md-12" />
-                        </div>
-                        <div class="col-sm-6">
-                            @using (Html.BeginForm("Logout", "Users", FormMethod.Post))
+                        <div class="col-sm-12">
+                            @using (Html.BeginForm("Logout", "Users", new { Area = "" }, FormMethod.Post))
                             {
-                                <input type="submit" value="Logout" class="btn btn-primary col-md-12" />
+                                <input type="submit" value="Logout" class="btn btn-sm btn-primary col-md-12" />
                             }
                         </div>
                     </div>

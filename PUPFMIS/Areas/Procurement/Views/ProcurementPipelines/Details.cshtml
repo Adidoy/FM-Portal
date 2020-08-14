@@ -1,0 +1,577 @@
+﻿@{
+    ViewBag.Title = "Procurement Activities";
+    ViewBag.Description = "Set Timeline";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Procurement Pipeline Home", "dashboard", "ProcurementPipelines", new { Area = "procurement" }, null)</li>
+        <li class="breadcrumb-item">Home</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-bookmark"></i> @Model.PAPCode - @Model.ProcurementProgram</h3>
+}
+
+@using (Ajax.BeginForm("set-schedule", "ProcurementPipelines", new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult", UpdateTargetId = "set-schedule" }, htmlAttributes: new { id = "set-schedule", Area = "procurement" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Partial("_Form")
+}
+<hr />
+<div class="row">
+    <div class="col-sm-12 text-right">
+        <div class="form-group">
+            <button type="button" class="btn btn-primary" onclick="SaveItem()"><i class="fa fa-save"></i>&nbsp; Save Changes</button>
+            @if (User.IsInRole(PUPFMIS.Models.SystemRoles.ProjectCoordinator))
+            {
+                <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("dashboard", "MyProjects", new { area = "procurement" })'"><i class="fa fa-times-circle"></i>&nbsp; Cancel</button>
+            }
+            else
+            {
+                <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("project-index", "ProcurementPipelines", new { area = "procurement", ReferenceNo = Model.APPReference })'"><i class="fa fa-times-circle"></i>&nbsp; Cancel</button>
+            }
+            
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/adminlte/components/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript">
+    function SaveItem() {
+        swal.fire({
+            title: "Save record?",
+            text: "You are about to save this record, continue?",
+            type: "warning",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#set-schedule").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    type: "error"
+                })
+            };
+        })
+    }
+    function CreateResult(data) {
+        if (data.result == true) {
+            swal.fire({
+                title: "Record Saved!",
+                text: "Procurement Program is successfully assigned.",
+                type: "success"
+            }).then((result) => {
+                if (result.value) {
+                    if (data.role == "Project Coordinator")
+                    {
+                        window.location.href = "@Url.Action("dashboard", "MyProjects", new { Area = "procurement" })";
+                    }
+                    else
+                    {
+                        window.location.href = "@Url.Action("project - index", "ProcurementPipelines", new { Area = "procurement", ReferenceNo = Model.APPReference })";
+                    }
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                type: "error"
+            });
+            $(function () {
+                $("#Schedule_PurchaseRequestSubmission").datepicker({
+                    changeYear: true,
+                    changeMonth: true,
+                    format: "MM dd, yyyy",
+                    startDate: new Date('@( Convert.ToDateTime(Model.StartMonth).ToString("MM/dd/yyyy") )'),
+                    endDate: new Date('@( Convert.ToDateTime(Model.EndMonth).AddDays(29).ToString("MM/dd/yyyy") )'),
+                    autoclose: true
+                }).on('changeDate', function (selected) {
+                    var oldDate = new Date(selected.date);
+                    var newDate = new Date();
+                    newDate.setDate(oldDate.getDate() + 1);
+                    $("#Schedule_PreProcurementConference").datepicker('destroy');
+                    $('#Schedule_PreProcurementConference').datepicker({
+                        changeYear: true,
+                        changeMonth: true,
+                        format: "MM dd, yyyy",
+                        startDate: (oldDate.getMonth() + 1) + "/" + newDate.getDate() + "/" + oldDate.getFullYear(),
+                        endDate: new Date('@( Convert.ToDateTime(Model.EndMonth).AddDays(29).ToString("MM/dd/yyyy") )'),
+                        autoclose: true
+                    });
+                })
+            });
+
+            $(function () {
+                $("#Schedule_PreProcurementConference").datepicker({
+                    changeYear: true,
+                    changeMonth: true,
+                    format: "MM dd, yyyy",
+                    autoclose: true
+                }).on('changeDate', function (selected) {
+                    var oldDate = new Date(selected.date);
+                    var newDate = new Date();
+                    newDate.setDate(oldDate.getDate() + 1);
+                    $("#Schedule_PostingOfIB").datepicker('destroy');
+                    $('#Schedule_PostingOfIB').datepicker({
+                        changeYear: true,
+                        changeMonth: true,
+                        format: "MM dd, yyyy",
+                        startDate: (oldDate.getMonth() + 1) + "/" + newDate.getDate() + "/" + oldDate.getFullYear(),
+                        endDate: new Date('@( Convert.ToDateTime(Model.EndMonth).AddDays(29).ToString("MM/dd/yyyy") )'),
+                        autoclose: true
+                    });
+                })
+            });
+
+            $(function () {
+                $("#Schedule_PostingOfIB").datepicker({
+                    changeYear: true,
+                    changeMonth: true,
+                    format: "MM dd, yyyy",
+                    autoclose: true
+                }).on('changeDate', function (selected) {
+                    var oldDate = new Date(selected.date);
+                    var newDate = new Date();
+                    newDate.setDate(oldDate.getDate() + 1);
+                    $("#Schedule_PreBidConference").datepicker('destroy');
+                    $('#Schedule_PreBidConference').datepicker({
+                        changeYear: true,
+                        changeMonth: true,
+                        format: "MM dd, yyyy",
+                        startDate: (oldDate.getMonth() + 1) + "/" + newDate.getDate() + "/" + oldDate.getFullYear(),
+                        endDate: new Date('@( Convert.ToDateTime(Model.EndMonth).AddDays(29).ToString("MM/dd/yyyy") )'),
+                        autoclose: true
+                    });
+                })
+            });
+
+            $(function () {
+                $("#Schedule_PreBidConference").datepicker({
+                    changeYear: true,
+                    changeMonth: true,
+                    format: "MM dd, yyyy",
+                    autoclose: true
+                }).on('changeDate', function (selected) {
+                    var oldDate = new Date(selected.date);
+                    var newDate = new Date();
+                    newDate.setDate(oldDate.getDate() + 1);
+                    $("#Schedule_SubmissionOfBids").datepicker('destroy');
+                    $('#Schedule_SubmissionOfBids').datepicker({
+                        changeYear: true,
+                        changeMonth: true,
+                        format: "MM dd, yyyy",
+                        startDate: (oldDate.getMonth() + 1) + "/" + newDate.getDate() + "/" + oldDate.getFullYear(),
+                        endDate: new Date('@( Convert.ToDateTime(Model.EndMonth).AddDays(29).ToString("MM/dd/yyyy") )'),
+                        autoclose: true
+                    });
+                })
+            });
+
+            $(function () {
+                $("#Schedule_SubmissionOfBids").datepicker({
+                    changeYear: true,
+                    changeMonth: true,
+                    format: "MM dd, yyyy",
+                    autoclose: true
+                }).on('changeDate', function (selected) {
+                    var oldDate = new Date(selected.date);
+                    var newDate = new Date();
+                    newDate.setDate(oldDate.getDate() + 1);
+                    $("#Schedule_BidEvaluation").datepicker('destroy');
+                    $('#Schedule_BidEvaluation').datepicker({
+                        changeYear: true,
+                        changeMonth: true,
+                        format: "MM dd, yyyy",
+                        startDate: (oldDate.getMonth() + 1) + "/" + newDate.getDate() + "/" + oldDate.getFullYear(),
+                        endDate: new Date('@( Convert.ToDateTime(Model.EndMonth).AddDays(29).ToString("MM/dd/yyyy") )'),
+                        autoclose: true
+                    });
+                })
+            });
+
+            $(function () {
+                $("#Schedule_BidEvaluation").datepicker({
+                    changeYear: true,
+                    changeMonth: true,
+                    format: "MM dd, yyyy",
+                    autoclose: true
+                }).on('changeDate', function (selected) {
+                    var oldDate = new Date(selected.date);
+                    var newDate = new Date();
+                    newDate.setDate(oldDate.getDate() + 1);
+                    $("#Schedule_PostQualification").datepicker('destroy');
+                    $('#Schedule_PostQualification').datepicker({
+                        changeYear: true,
+                        changeMonth: true,
+                        format: "MM dd, yyyy",
+                        startDate: (oldDate.getMonth() + 1) + "/" + newDate.getDate() + "/" + oldDate.getFullYear(),
+                        endDate: new Date('@( Convert.ToDateTime(Model.EndMonth).AddDays(29).ToString("MM/dd/yyyy") )'),
+                        autoclose: true
+                    });
+                })
+            });
+
+            $(function () {
+                $("#Schedule_PostQualification").datepicker({
+                    changeYear: true,
+                    changeMonth: true,
+                    format: "MM dd, yyyy",
+                    autoclose: true
+                }).on('changeDate', function (selected) {
+                    var oldDate = new Date(selected.date);
+                    var newDate = new Date();
+                    newDate.setDate(oldDate.getDate() + 1);
+                    $("#Schedule_NOAIssuance").datepicker('destroy');
+                    $('#Schedule_NOAIssuance').datepicker({
+                        changeYear: true,
+                        changeMonth: true,
+                        format: "MM dd, yyyy",
+                        startDate: (oldDate.getMonth() + 1) + "/" + newDate.getDate() + "/" + oldDate.getFullYear(),
+                        endDate: new Date('@( Convert.ToDateTime(Model.EndMonth).AddDays(29).ToString("MM/dd/yyyy") )'),
+                        autoclose: true
+                    });
+                })
+            });
+
+            $(function () {
+                $("#Schedule_NOAIssuance").datepicker({
+                    changeYear: true,
+                    changeMonth: true,
+                    format: "MM dd, yyyy",
+                    autoclose: true
+                }).on('changeDate', function (selected) {
+                    var oldDate = new Date(selected.date);
+                    var newDate = new Date();
+                    newDate.setDate(oldDate.getDate() + 1);
+                    $("#Schedule_ContractSigning").datepicker('destroy');
+                    $('#Schedule_ContractSigning').datepicker({
+                        changeYear: true,
+                        changeMonth: true,
+                        format: "MM dd, yyyy",
+                        startDate: (oldDate.getMonth() + 1) + "/" + newDate.getDate() + "/" + oldDate.getFullYear(),
+                        endDate: new Date('@( Convert.ToDateTime(Model.EndMonth).AddDays(29).ToString("MM/dd/yyyy") )'),
+                        autoclose: true
+                    });
+                })
+            });
+
+            $(function () {
+                $("#Schedule_ContractSigning").datepicker({
+                    changeYear: true,
+                    changeMonth: true,
+                    format: "MM dd, yyyy",
+                    autoclose: true
+                }).on('changeDate', function (selected) {
+                    var oldDate = new Date(selected.date);
+                    var newDate = new Date();
+                    newDate.setDate(oldDate.getDate() + 1);
+                    $("#Schedule_Approval").datepicker('destroy');
+                    $('#Schedule_Approval').datepicker({
+                        changeYear: true,
+                        changeMonth: true,
+                        format: "MM dd, yyyy",
+                        startDate: (oldDate.getMonth() + 1) + "/" + newDate.getDate() + "/" + oldDate.getFullYear(),
+                        endDate: new Date('@( Convert.ToDateTime(Model.EndMonth).AddDays(29).ToString("MM/dd/yyyy") )'),
+                        autoclose: true
+                    });
+                })
+            });
+
+            $(function () {
+                $("#Schedule_Approval").datepicker({
+                    changeYear: true,
+                    changeMonth: true,
+                    format: "MM dd, yyyy",
+                    autoclose: true
+                }).on('changeDate', function (selected) {
+                    var oldDate = new Date(selected.date);
+                    var newDate = new Date();
+                    newDate.setDate(oldDate.getDate() + 1);
+                    $("#Schedule_NTPIssuance").datepicker('destroy');
+                    $('#Schedule_NTPIssuance').datepicker({
+                        changeYear: true,
+                        changeMonth: true,
+                        format: "MM dd, yyyy",
+                        startDate: (oldDate.getMonth() + 1) + "/" + newDate.getDate() + "/" + oldDate.getFullYear(),
+                        endDate: new Date('@( Convert.ToDateTime(Model.EndMonth).AddDays(29).ToString("MM/dd/yyyy") )'),
+                        autoclose: true
+                    });
+                })
+            });
+
+            $(function () {
+                $("#Schedule_NTPIssuance").datepicker({
+                    changeYear: true,
+                    changeMonth: true,
+                    format: "MM dd, yyyy",
+                    autoclose: true
+                }).on('changeDate', function (selected) {
+                    var oldDate = new Date(selected.date);
+                    var newDate = new Date();
+                    newDate.setDate(oldDate.getDate() + 1);
+                    $("#Schedule_POReceived").datepicker('destroy');
+                    $('#Schedule_POReceived').datepicker({
+                        changeYear: true,
+                        changeMonth: true,
+                        format: "MM dd, yyyy",
+                        startDate: (oldDate.getMonth() + 1) + "/" + newDate.getDate() + "/" + oldDate.getFullYear(),
+                        endDate: new Date('@( Convert.ToDateTime(Model.EndMonth).AddDays(29).ToString("MM/dd/yyyy") )'),
+                        autoclose: true
+                    });
+                })
+            });
+        }
+    }
+
+    $(function () {
+        $("#Schedule_PurchaseRequestSubmission").datepicker({
+            changeYear: true,
+            changeMonth: true,
+            format: "MM dd, yyyy",
+            startDate: new Date('@( Convert.ToDateTime(Model.StartMonth).ToString("MM/dd/yyyy") )'),
+            endDate: new Date('@( Convert.ToDateTime(Model.EndMonth).AddDays(29).ToString("MM/dd/yyyy") )'),
+            autoclose: true
+        }).on('changeDate', function (selected) {
+            var oldDate = new Date(selected.date);
+            var newDate = new Date();
+            newDate.setDate(oldDate.getDate() + 1);
+            $("#Schedule_PreProcurementConference").datepicker('destroy');
+            $('#Schedule_PreProcurementConference').datepicker({
+                changeYear: true,
+                changeMonth: true,
+                format: "MM dd, yyyy",
+                startDate: (oldDate.getMonth() + 1) + "/" + newDate.getDate() + "/" + oldDate.getFullYear(),
+                endDate: new Date('@( Convert.ToDateTime(Model.EndMonth).AddDays(29).ToString("MM/dd/yyyy") )'),
+                autoclose: true
+            });
+        })
+    });
+
+    $(function () {
+        $("#Schedule_PreProcurementConference").datepicker({
+            changeYear: true,
+            changeMonth: true,
+            format: "MM dd, yyyy",
+            autoclose: true
+        }).on('changeDate', function (selected) {
+            var oldDate = new Date(selected.date);
+            var newDate = new Date();
+            newDate.setDate(oldDate.getDate() + 1);
+            $("#Schedule_PostingOfIB").datepicker('destroy');
+            $('#Schedule_PostingOfIB').datepicker({
+                changeYear: true,
+                changeMonth: true,
+                format: "MM dd, yyyy",
+                startDate: (oldDate.getMonth() + 1) + "/" + newDate.getDate() + "/" + oldDate.getFullYear(),
+                endDate: new Date('@( Convert.ToDateTime(Model.EndMonth).AddDays(29).ToString("MM/dd/yyyy") )'),
+                autoclose: true
+            });
+        })
+    });
+
+    $(function () {
+        $("#Schedule_PostingOfIB").datepicker({
+            changeYear: true,
+            changeMonth: true,
+            format: "MM dd, yyyy",
+            autoclose: true
+        }).on('changeDate', function (selected) {
+            var oldDate = new Date(selected.date);
+            var newDate = new Date();
+            newDate.setDate(oldDate.getDate() + 1);
+            $("#Schedule_PreBidConference").datepicker('destroy');
+            $('#Schedule_PreBidConference').datepicker({
+                changeYear: true,
+                changeMonth: true,
+                format: "MM dd, yyyy",
+                startDate: (oldDate.getMonth() + 1) + "/" + newDate.getDate() + "/" + oldDate.getFullYear(),
+                endDate: new Date('@( Convert.ToDateTime(Model.EndMonth).AddDays(29).ToString("MM/dd/yyyy") )'),
+                autoclose: true
+            });
+        })
+    });
+
+    $(function () {
+        $("#Schedule_PreBidConference").datepicker({
+            changeYear: true,
+            changeMonth: true,
+            format: "MM dd, yyyy",
+            autoclose: true
+        }).on('changeDate', function (selected) {
+            var oldDate = new Date(selected.date);
+            var newDate = new Date();
+            newDate.setDate(oldDate.getDate() + 1);
+            $("#Schedule_SubmissionOfBids").datepicker('destroy');
+            $('#Schedule_SubmissionOfBids').datepicker({
+                changeYear: true,
+                changeMonth: true,
+                format: "MM dd, yyyy",
+                startDate: (oldDate.getMonth() + 1) + "/" + newDate.getDate() + "/" + oldDate.getFullYear(),
+                endDate: new Date('@( Convert.ToDateTime(Model.EndMonth).AddDays(29).ToString("MM/dd/yyyy") )'),
+                autoclose: true
+            });
+        })
+    });
+
+    $(function () {
+        $("#Schedule_SubmissionOfBids").datepicker({
+            changeYear: true,
+            changeMonth: true,
+            format: "MM dd, yyyy",
+            autoclose: true
+        }).on('changeDate', function (selected) {
+            var oldDate = new Date(selected.date);
+            var newDate = new Date();
+            newDate.setDate(oldDate.getDate() + 1);
+            $("#Schedule_BidEvaluation").datepicker('destroy');
+            $('#Schedule_BidEvaluation').datepicker({
+                changeYear: true,
+                changeMonth: true,
+                format: "MM dd, yyyy",
+                startDate: (oldDate.getMonth() + 1) + "/" + newDate.getDate() + "/" + oldDate.getFullYear(),
+                endDate: new Date('@( Convert.ToDateTime(Model.EndMonth).AddDays(29).ToString("MM/dd/yyyy") )'),
+                autoclose: true
+            });
+        })
+    });
+
+    $(function () {
+        $("#Schedule_BidEvaluation").datepicker({
+            changeYear: true,
+            changeMonth: true,
+            format: "MM dd, yyyy",
+            autoclose: true
+        }).on('changeDate', function (selected) {
+            var oldDate = new Date(selected.date);
+            var newDate = new Date();
+            newDate.setDate(oldDate.getDate() + 1);
+            $("#Schedule_PostQualification").datepicker('destroy');
+            $('#Schedule_PostQualification').datepicker({
+                changeYear: true,
+                changeMonth: true,
+                format: "MM dd, yyyy",
+                startDate: (oldDate.getMonth() + 1) + "/" + newDate.getDate() + "/" + oldDate.getFullYear(),
+                endDate: new Date('@( Convert.ToDateTime(Model.EndMonth).AddDays(29).ToString("MM/dd/yyyy") )'),
+                autoclose: true
+            });
+        })
+    });
+
+    $(function () {
+        $("#Schedule_PostQualification").datepicker({
+            changeYear: true,
+            changeMonth: true,
+            format: "MM dd, yyyy",
+            autoclose: true
+        }).on('changeDate', function (selected) {
+            var oldDate = new Date(selected.date);
+            var newDate = new Date();
+            newDate.setDate(oldDate.getDate() + 1);
+            $("#Schedule_NOAIssuance").datepicker('destroy');
+            $('#Schedule_NOAIssuance').datepicker({
+                changeYear: true,
+                changeMonth: true,
+                format: "MM dd, yyyy",
+                startDate: (oldDate.getMonth() + 1) + "/" + newDate.getDate() + "/" + oldDate.getFullYear(),
+                endDate: new Date('@( Convert.ToDateTime(Model.EndMonth).AddDays(29).ToString("MM/dd/yyyy") )'),
+                autoclose: true
+            });
+        })
+    });
+
+    $(function () {
+        $("#Schedule_NOAIssuance").datepicker({
+            changeYear: true,
+            changeMonth: true,
+            format: "MM dd, yyyy",
+            autoclose: true
+        }).on('changeDate', function (selected) {
+            var oldDate = new Date(selected.date);
+            var newDate = new Date();
+            newDate.setDate(oldDate.getDate() + 1);
+            $("#Schedule_ContractSigning").datepicker('destroy');
+            $('#Schedule_ContractSigning').datepicker({
+                changeYear: true,
+                changeMonth: true,
+                format: "MM dd, yyyy",
+                startDate: (oldDate.getMonth() + 1) + "/" + newDate.getDate() + "/" + oldDate.getFullYear(),
+                endDate: new Date('@( Convert.ToDateTime(Model.EndMonth).AddDays(29).ToString("MM/dd/yyyy") )'),
+                autoclose: true
+            });
+        })
+    });
+
+    $(function () {
+        $("#Schedule_ContractSigning").datepicker({
+            changeYear: true,
+            changeMonth: true,
+            format: "MM dd, yyyy",
+            autoclose: true
+        }).on('changeDate', function (selected) {
+            var oldDate = new Date(selected.date);
+            var newDate = new Date();
+            newDate.setDate(oldDate.getDate() + 1);
+            $("#Schedule_Approval").datepicker('destroy');
+            $('#Schedule_Approval').datepicker({
+                changeYear: true,
+                changeMonth: true,
+                format: "MM dd, yyyy",
+                startDate: (oldDate.getMonth() + 1) + "/" + newDate.getDate() + "/" + oldDate.getFullYear(),
+                endDate: new Date('@( Convert.ToDateTime(Model.EndMonth).AddDays(29).ToString("MM/dd/yyyy") )'),
+                autoclose: true
+            });
+        })
+    });
+
+    $(function () {
+        $("#Schedule_Approval").datepicker({
+            changeYear: true,
+            changeMonth: true,
+            format: "MM dd, yyyy",
+            autoclose: true
+        }).on('changeDate', function (selected) {
+            var oldDate = new Date(selected.date);
+            var newDate = new Date();
+            newDate.setDate(oldDate.getDate() + 1);
+            $("#Schedule_NTPIssuance").datepicker('destroy');
+            $('#Schedule_NTPIssuance').datepicker({
+                changeYear: true,
+                changeMonth: true,
+                format: "MM dd, yyyy",
+                startDate: (oldDate.getMonth() + 1) + "/" + newDate.getDate() + "/" + oldDate.getFullYear(),
+                endDate: new Date('@( Convert.ToDateTime(Model.EndMonth).AddDays(29).ToString("MM/dd/yyyy") )'),
+                autoclose: true
+            });
+        })
+    });
+
+    $(function () {
+        $("#Schedule_NTPIssuance").datepicker({
+            changeYear: true,
+            changeMonth: true,
+            format: "MM dd, yyyy",
+            autoclose: true
+        }).on('changeDate', function (selected) {
+            var oldDate = new Date(selected.date);
+            var newDate = new Date();
+            newDate.setDate(oldDate.getDate() + 1);
+            $("#Schedule_POReceived").datepicker('destroy');
+            $('#Schedule_POReceived').datepicker({
+                changeYear: true,
+                changeMonth: true,
+                format: "MM dd, yyyy",
+                startDate: (oldDate.getMonth() + 1) + "/" + newDate.getDate() + "/" + oldDate.getFullYear(),
+                endDate: new Date('@( Convert.ToDateTime(Model.EndMonth).AddDays(29).ToString("MM/dd/yyyy") )'),
+                autoclose: true
+            });
+        })
+    });
+</script>
