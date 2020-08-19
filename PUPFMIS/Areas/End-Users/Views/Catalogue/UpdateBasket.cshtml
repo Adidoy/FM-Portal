@@ -20,7 +20,7 @@
     </div>
 }
 
-@using (Html.BeginForm("add-to-basket", "Catalogue", FormMethod.Post, new { Area = "end-users" }))
+@using (Html.BeginForm("update-basket-item", "Catalogue", FormMethod.Post, new { Area = "end-users" }))
 {
     @Html.AntiForgeryToken()
     if (!Html.ViewData.ModelState.IsValid)
@@ -62,8 +62,27 @@
                             <h3>@Model.ItemName.ToString() <span><small><b>(@Model.ItemCode)</b></small></span></h3>
                             <hr />
                             <h5>ITEM SPECIFICATIONS:</h5>
-                            @Html.HiddenFor(model => model.ItemSpecifications)
-                            <p style="text-align:justify; font-size:11pt;">@Model.ItemSpecifications</p>
+                            @if (ViewBag.IsTangible)
+                            {
+                                @Html.HiddenFor(model => model.ItemSpecifications)
+                                <p style="text-align:justify; font-size:11pt;">@Model.ItemSpecifications</p>
+                            }
+                            else
+                            {
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-paragraph"></i></span>
+                                                </div>
+                                                @Html.EditorFor(m => m.ItemSpecifications, new { htmlAttributes = new { @class = "form-control form-control-sm", placeholder = "Enter the specifications here...", style = "font-size: 100%; height: 75px; text-align:justify;" } })
+                                            </div>
+                                            @Html.ValidationMessageFor(model => model.ItemSpecifications, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            }
                         </div>
                     </div>
                     <div class="row">
@@ -198,218 +217,214 @@
     </div>
     <br />
     @Html.HiddenFor(m => m.ProposalType)
-    if (Model.InventoryType != "Common Use Office Supplies")
+    if (Model.ProcurementSource == PUPFMIS.Models.ProcurementSources.Non_DBM)
     {
         <h4>Supplier Information</h4>
-            <hr />
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="card card-info card-outline">
-                        <div class="card-header">
-                            <h3 class="card-title">SUPPLIER INFORMATION:</h3>
-                        </div>
-                        <div class="card-header d-flex p-0">
-                            <ul class="nav nav-pills p-2">
-                                <li class="nav-item"><a class="nav-link active" href="#supplier1" data-toggle="tab"><i class="fa fa-truck"></i>&nbsp; Supplier 1</a></li>
-                                <li class="nav-item"><a class="nav-link" href="#supplier2" data-toggle="tab"><i class="fa fa-truck"></i>&nbsp; Supplier 2</a></li>
-                                <li class="nav-item"><a class="nav-link" href="#supplier3" data-toggle="tab"><i class="fa fa-truck"></i>&nbsp; Supplier 3</a></li>
-                            </ul>
-                        </div>
-                        <div class="tab-content">
-                            <div class="tab-pane active" id="supplier1">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <div class="form-group-sm">
-                                                @Html.LabelFor(model => model.Supplier1Name, htmlAttributes: new { @class = "control-label" })
-                                                <div class="input-group input-group-sm mb-3">
-                                                    <div class="input-group-prepend">
-                                                        <button type="button" class="btn btn-sm btn-primary" onclick="loadSupplier('@Url.Action("view-suppliers","Catalogue", new { Area = "end-users", SupplierNo = 1 })')"><i class="fa fa-search"></i></button>
-                                                    </div>
-                                                    @Html.HiddenFor(m => m.Supplier1ID, htmlAttributes: new { id = "supplierID" })
-                                                    @Html.HiddenFor(m => m.Supplier1Name)
-                                                    @Html.EditorFor(m => m.Supplier1Name, new { htmlAttributes = new { id = "supplierName", @class = "form-control form-control-sm", style = "font-size: 100", disabled = "disabled" } })
+        <hr />
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card card-info card-outline">
+                    <div class="card-header">
+                        <h3 class="card-title">SUPPLIER INFORMATION:</h3>
+                    </div>
+                    <div class="card-header d-flex p-0">
+                        <ul class="nav nav-pills p-2">
+                            <li class="nav-item"><a class="nav-link active" href="#supplier1" data-toggle="tab"><i class="fa fa-truck"></i>&nbsp; Supplier 1</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#supplier2" data-toggle="tab"><i class="fa fa-truck"></i>&nbsp; Supplier 2</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#supplier3" data-toggle="tab"><i class="fa fa-truck"></i>&nbsp; Supplier 3</a></li>
+                        </ul>
+                    </div>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="supplier1">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group-sm">
+                                            @Html.LabelFor(model => model.Supplier1Name, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                    <button type="button" class="btn btn-sm btn-primary" onclick="loadSupplier('@Url.Action("view-suppliers","Catalogue", new { Area = "end-users", SupplierNo = 1 })')"><i class="fa fa-search"></i></button>
                                                 </div>
-                                                @Html.ValidationMessageFor(model => model.Supplier1Name, "", new { @class = "text-danger" })
+                                                @Html.HiddenFor(m => m.Supplier1ID, htmlAttributes: new { id = "supplierID" })
+                                                @Html.HiddenFor(m => m.Supplier1Name)
+                                                @Html.EditorFor(m => m.Supplier1Name, new { htmlAttributes = new { id = "supplierName", @class = "form-control form-control-sm", style = "font-size: 100", disabled = "disabled" } })
                                             </div>
-                                            <div class="form-group-sm">
-                                                @Html.LabelFor(model => model.Supplier1Address, htmlAttributes: new { @class = "control-label" })
-                                                <div class="input-group input-group-sm mb-3">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fa fa-building"></i></span>
-                                                    </div>
-                                                    @Html.HiddenFor(m => m.Supplier1Address)
-                                                    @Html.EditorFor(m => m.Supplier1Address, new { htmlAttributes = new { id = "supplierAddress", @class = "form-control form-control-sm", style = "font-size: 100", disabled = "disabled" } })
-                                                </div>
-                                                @Html.ValidationMessageFor(model => model.Supplier1Address, "", new { @class = "text-danger" })
-                                            </div>
-                                            <div class="form-group-sm">
-                                                @Html.LabelFor(model => model.Supplier1ContactNo, htmlAttributes: new { @class = "control-label" })
-                                                <div class="input-group input-group-sm mb-3">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fa fa-phone"></i></span>
-                                                    </div>
-                                                    @Html.HiddenFor(m => m.Supplier1ContactNo)
-                                                    @Html.EditorFor(m => m.Supplier1ContactNo, new { htmlAttributes = new { id = "supplierContact", @class = "form-control form-control-sm", style = "font-size: 100", disabled = "disabled" } })
-                                                </div>
-                                                @Html.ValidationMessageFor(model => model.Supplier1ContactNo, "", new { @class = "text-danger" })
-                                            </div>
+                                            @Html.ValidationMessageFor(model => model.Supplier1Name, "", new { @class = "text-danger" })
                                         </div>
-                                        <div class="col-sm-6">
-                                            <div class="form-group-sm">
-                                                @Html.LabelFor(model => model.Supplier1EmailAddress, htmlAttributes: new { @class = "control-label" })
-                                                <div class="input-group input-group-sm mb-3">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fa fa-at"></i></span>
-                                                    </div>
-                                                    @Html.HiddenFor(m => m.Supplier1EmailAddress)
-                                                    @Html.EditorFor(m => m.Supplier1EmailAddress, new { htmlAttributes = new { id = "supplierEmail", @class = "form-control form-control-sm", style = "font-size: 100", disabled = "disabled" } })
+                                        <div class="form-group-sm">
+                                            @Html.LabelFor(model => model.Supplier1Address, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-building"></i></span>
                                                 </div>
-                                                @Html.ValidationMessageFor(model => model.Supplier1EmailAddress, "", new { @class = "text-danger" })
+                                                @Html.HiddenFor(m => m.Supplier1Address)
+                                                @Html.EditorFor(m => m.Supplier1Address, new { htmlAttributes = new { id = "supplierAddress", @class = "form-control form-control-sm", style = "font-size: 100", disabled = "disabled" } })
                                             </div>
-                                            <div class="form-group-sm">
-                                                @Html.LabelFor(model => model.Supplier1UnitCost, htmlAttributes: new { @class = "control-label" })
-                                                <div class="input-group input-group-sm mb-3">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fa fa-coins"></i></span>
-                                                    </div>
-                                                    @Html.HiddenFor(m => m.Supplier1UnitCost)
-                                                    @Html.EditorFor(m => m.Supplier1UnitCost, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%;", type = "number" } })
+                                            @Html.ValidationMessageFor(model => model.Supplier1Address, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="form-group-sm">
+                                            @Html.LabelFor(model => model.Supplier1ContactNo, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-phone"></i></span>
                                                 </div>
-                                                @Html.ValidationMessageFor(model => model.Supplier1UnitCost, "", new { @class = "text-danger" })
+                                                @Html.HiddenFor(m => m.Supplier1ContactNo)
+                                                @Html.EditorFor(m => m.Supplier1ContactNo, new { htmlAttributes = new { id = "supplierContact", @class = "form-control form-control-sm", style = "font-size: 100", disabled = "disabled" } })
                                             </div>
+                                            @Html.ValidationMessageFor(model => model.Supplier1ContactNo, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group-sm">
+                                            @Html.LabelFor(model => model.Supplier1EmailAddress, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-at"></i></span>
+                                                </div>
+                                                @Html.HiddenFor(m => m.Supplier1EmailAddress)
+                                                @Html.EditorFor(m => m.Supplier1EmailAddress, new { htmlAttributes = new { id = "supplierEmail", @class = "form-control form-control-sm", style = "font-size: 100", disabled = "disabled" } })
+                                            </div>
+                                            @Html.ValidationMessageFor(model => model.Supplier1EmailAddress, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="form-group-sm">
+                                            @Html.LabelFor(model => model.Supplier1UnitCost, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-coins"></i></span>
+                                                </div>
+                                                @Html.EditorFor(m => m.Supplier1UnitCost, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%;", type = "number" } })
+                                            </div>
+                                            @Html.ValidationMessageFor(model => model.Supplier1UnitCost, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane" id="supplier2">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <div class="form-group-sm">
-                                                @Html.LabelFor(model => model.Supplier2Name, htmlAttributes: new { @class = "control-label" })
-                                                <div class="input-group input-group-sm mb-3">
-                                                    <div class="input-group-prepend">
-                                                        <button type="button" class="btn btn-sm btn-primary" onclick="loadSupplier('@Url.Action("view-suppliers","Catalogue", new { Area = "end-users", SupplierNo = 2 })')"><i class="fa fa-search"></i></button>
-                                                    </div>
-                                                    @Html.HiddenFor(m => m.Supplier2ID, htmlAttributes: new { id = "supplier2ID" })
-                                                    @Html.HiddenFor(m => m.Supplier2Name)
-                                                    @Html.EditorFor(m => m.Supplier2Name, new { htmlAttributes = new { id = "supplier2Name", @class = "form-control form-control-sm", style = "font-size: 100", disabled = "disabled" } })
+                        </div>
+                        <div class="tab-pane" id="supplier2">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group-sm">
+                                            @Html.LabelFor(model => model.Supplier2Name, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                    <button type="button" class="btn btn-sm btn-primary" onclick="loadSupplier('@Url.Action("view-suppliers","Catalogue", new { Area = "end-users", SupplierNo = 2 })')"><i class="fa fa-search"></i></button>
                                                 </div>
-                                                @Html.ValidationMessageFor(model => model.Supplier2Name, "", new { @class = "text-danger" })
+                                                @Html.HiddenFor(m => m.Supplier2ID, htmlAttributes: new { id = "supplier2ID" })
+                                                @Html.HiddenFor(m => m.Supplier2Name)
+                                                @Html.EditorFor(m => m.Supplier2Name, new { htmlAttributes = new { id = "supplier2Name", @class = "form-control form-control-sm", style = "font-size: 100", disabled = "disabled" } })
                                             </div>
-                                            <div class="form-group-sm">
-                                                @Html.LabelFor(model => model.Supplier2Address, htmlAttributes: new { @class = "control-label" })
-                                                <div class="input-group input-group-sm mb-3">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fa fa-building"></i></span>
-                                                    </div>
-                                                    @Html.HiddenFor(m => m.Supplier2Address)
-                                                    @Html.EditorFor(m => m.Supplier2Address, new { htmlAttributes = new { id = "supplier2Address", @class = "form-control form-control-sm", style = "font-size: 100", disabled = "disabled" } })
-                                                </div>
-                                                @Html.ValidationMessageFor(model => model.Supplier2Address, "", new { @class = "text-danger" })
-                                            </div>
-                                            <div class="form-group-sm">
-                                                @Html.LabelFor(model => model.Supplier2ContactNo, htmlAttributes: new { @class = "control-label" })
-                                                <div class="input-group input-group-sm mb-3">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fa fa-phone"></i></span>
-                                                    </div>
-                                                    @Html.HiddenFor(m => m.Supplier2ContactNo)
-                                                    @Html.EditorFor(m => m.Supplier2ContactNo, new { htmlAttributes = new { id = "supplier2Contact", @class = "form-control form-control-sm", style = "font-size: 100", disabled = "disabled" } })
-                                                </div>
-                                                @Html.ValidationMessageFor(model => model.Supplier2ContactNo, "", new { @class = "text-danger" })
-                                            </div>
+                                            @Html.ValidationMessageFor(model => model.Supplier2Name, "", new { @class = "text-danger" })
                                         </div>
-                                        <div class="col-sm-6">
-                                            <div class="form-group-sm">
-                                                @Html.LabelFor(model => model.Supplier2EmailAddress, htmlAttributes: new { @class = "control-label" })
-                                                <div class="input-group input-group-sm mb-3">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fa fa-at"></i></span>
-                                                    </div>
-                                                    @Html.HiddenFor(m => m.Supplier2EmailAddress)
-                                                    @Html.EditorFor(m => m.Supplier2EmailAddress, new { htmlAttributes = new { id = "supplier2Email", @class = "form-control form-control-sm", style = "font-size: 100", disabled = "disabled" } })
+                                        <div class="form-group-sm">
+                                            @Html.LabelFor(model => model.Supplier2Address, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-building"></i></span>
                                                 </div>
-                                                @Html.ValidationMessageFor(model => model.Supplier2EmailAddress, "", new { @class = "text-danger" })
+                                                @Html.HiddenFor(m => m.Supplier2Address)
+                                                @Html.EditorFor(m => m.Supplier2Address, new { htmlAttributes = new { id = "supplier2Address", @class = "form-control form-control-sm", style = "font-size: 100", disabled = "disabled" } })
                                             </div>
-                                            <div class="form-group-sm">
-                                                @Html.LabelFor(model => model.Supplier2UnitCost, htmlAttributes: new { @class = "control-label" })
-                                                <div class="input-group input-group-sm mb-3">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fa fa-coins"></i></span>
-                                                    </div>
-                                                    @Html.HiddenFor(m => m.Supplier2UnitCost)
-                                                    @Html.EditorFor(m => m.Supplier2UnitCost, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%;", type = "number" } })
+                                            @Html.ValidationMessageFor(model => model.Supplier2Address, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="form-group-sm">
+                                            @Html.LabelFor(model => model.Supplier2ContactNo, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-phone"></i></span>
                                                 </div>
-                                                @Html.ValidationMessageFor(model => model.Supplier2UnitCost, "", new { @class = "text-danger" })
+                                                @Html.HiddenFor(m => m.Supplier2ContactNo)
+                                                @Html.EditorFor(m => m.Supplier2ContactNo, new { htmlAttributes = new { id = "supplier2Contact", @class = "form-control form-control-sm", style = "font-size: 100", disabled = "disabled" } })
                                             </div>
+                                            @Html.ValidationMessageFor(model => model.Supplier2ContactNo, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group-sm">
+                                            @Html.LabelFor(model => model.Supplier2EmailAddress, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-at"></i></span>
+                                                </div>
+                                                @Html.HiddenFor(m => m.Supplier2EmailAddress)
+                                                @Html.EditorFor(m => m.Supplier2EmailAddress, new { htmlAttributes = new { id = "supplier2Email", @class = "form-control form-control-sm", style = "font-size: 100", disabled = "disabled" } })
+                                            </div>
+                                            @Html.ValidationMessageFor(model => model.Supplier2EmailAddress, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="form-group-sm">
+                                            @Html.LabelFor(model => model.Supplier2UnitCost, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-coins"></i></span>
+                                                </div>
+                                                @Html.EditorFor(m => m.Supplier2UnitCost, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%;", type = "number" } })
+                                            </div>
+                                            @Html.ValidationMessageFor(model => model.Supplier2UnitCost, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane" id="supplier3">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <div class="form-group-sm">
-                                                @Html.LabelFor(model => model.Supplier3Name, htmlAttributes: new { @class = "control-label" })
-                                                <div class="input-group input-group-sm mb-3">
-                                                    <div class="input-group-prepend">
-                                                        <button type="button" class="btn btn-sm btn-primary" onclick="loadSupplier('@Url.Action("view-suppliers","Catalogue", new { Area = "end-users", SupplierNo = 3 })')"><i class="fa fa-search"></i></button>
-                                                    </div>
-                                                    @Html.HiddenFor(m => m.Supplier3ID, htmlAttributes: new { id = "supplier3ID" })
-                                                    @Html.HiddenFor(m => m.Supplier3Name)
-                                                    @Html.EditorFor(m => m.Supplier3Name, new { htmlAttributes = new { id = "supplier3Name", @class = "form-control form-control-sm", style = "font-size: 100", disabled = "disabled" } })
+                        </div>
+                        <div class="tab-pane" id="supplier3">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group-sm">
+                                            @Html.LabelFor(model => model.Supplier3Name, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                    <button type="button" class="btn btn-sm btn-primary" onclick="loadSupplier('@Url.Action("view-suppliers","Catalogue", new { Area = "end-users", SupplierNo = 3 })')"><i class="fa fa-search"></i></button>
                                                 </div>
-                                                @Html.ValidationMessageFor(model => model.Supplier3Name, "", new { @class = "text-danger" })
+                                                @Html.HiddenFor(m => m.Supplier3ID, htmlAttributes: new { id = "supplier3ID" })
+                                                @Html.HiddenFor(m => m.Supplier3Name)
+                                                @Html.EditorFor(m => m.Supplier3Name, new { htmlAttributes = new { id = "supplier3Name", @class = "form-control form-control-sm", style = "font-size: 100", disabled = "disabled" } })
                                             </div>
-                                            <div class="form-group-sm">
-                                                @Html.LabelFor(model => model.Supplier3Address, htmlAttributes: new { @class = "control-label" })
-                                                <div class="input-group input-group-sm mb-3">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fa fa-building"></i></span>
-                                                    </div>
-                                                    @Html.HiddenFor(m => m.Supplier3Address)
-                                                    @Html.EditorFor(m => m.Supplier3Address, new { htmlAttributes = new { id = "supplier3Address", @class = "form-control form-control-sm", style = "font-size: 100", disabled = "disabled" } })
-                                                </div>
-                                                @Html.ValidationMessageFor(model => model.Supplier3Address, "", new { @class = "text-danger" })
-                                            </div>
-                                            <div class="form-group-sm">
-                                                @Html.LabelFor(model => model.Supplier3ContactNo, htmlAttributes: new { @class = "control-label" })
-                                                <div class="input-group input-group-sm mb-3">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fa fa-phone"></i></span>
-                                                    </div>
-                                                    @Html.HiddenFor(m => m.Supplier3ContactNo)
-                                                    @Html.EditorFor(m => m.Supplier3ContactNo, new { htmlAttributes = new { id = "supplier3Contact", @class = "form-control form-control-sm", style = "font-size: 100", disabled = "disabled" } })
-                                                </div>
-                                                @Html.ValidationMessageFor(model => model.Supplier3ContactNo, "", new { @class = "text-danger" })
-                                            </div>
+                                            @Html.ValidationMessageFor(model => model.Supplier3Name, "", new { @class = "text-danger" })
                                         </div>
-                                        <div class="col-sm-6">
-                                            <div class="form-group-sm">
-                                                @Html.LabelFor(model => model.Supplier3EmailAddress, htmlAttributes: new { @class = "control-label" })
-                                                <div class="input-group input-group-sm mb-3">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fa fa-at"></i></span>
-                                                    </div>
-                                                    @Html.HiddenFor(m => m.Supplier3EmailAddress)
-                                                    @Html.EditorFor(m => m.Supplier3EmailAddress, new { htmlAttributes = new { id = "supplier3Email", @class = "form-control form-control-sm", style = "font-size: 100", disabled = "disabled" } })
+                                        <div class="form-group-sm">
+                                            @Html.LabelFor(model => model.Supplier3Address, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-building"></i></span>
                                                 </div>
-                                                @Html.ValidationMessageFor(model => model.Supplier3EmailAddress, "", new { @class = "text-danger" })
+                                                @Html.HiddenFor(m => m.Supplier3Address)
+                                                @Html.EditorFor(m => m.Supplier3Address, new { htmlAttributes = new { id = "supplier3Address", @class = "form-control form-control-sm", style = "font-size: 100", disabled = "disabled" } })
                                             </div>
-                                            <div class="form-group-sm">
-                                                @Html.LabelFor(model => model.Supplier3UnitCost, htmlAttributes: new { @class = "control-label" })
-                                                <div class="input-group input-group-sm mb-3">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fa fa-coins"></i></span>
-                                                    </div>
-                                                    @Html.HiddenFor(m => m.Supplier3UnitCost)
-                                                    @Html.EditorFor(m => m.Supplier3UnitCost, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%;", type = "number" } })
+                                            @Html.ValidationMessageFor(model => model.Supplier3Address, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="form-group-sm">
+                                            @Html.LabelFor(model => model.Supplier3ContactNo, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-phone"></i></span>
                                                 </div>
-                                                @Html.ValidationMessageFor(model => model.Supplier3UnitCost, "", new { @class = "text-danger" })
+                                                @Html.HiddenFor(m => m.Supplier3ContactNo)
+                                                @Html.EditorFor(m => m.Supplier3ContactNo, new { htmlAttributes = new { id = "supplier3Contact", @class = "form-control form-control-sm", style = "font-size: 100", disabled = "disabled" } })
                                             </div>
+                                            @Html.ValidationMessageFor(model => model.Supplier3ContactNo, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group-sm">
+                                            @Html.LabelFor(model => model.Supplier3EmailAddress, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-at"></i></span>
+                                                </div>
+                                                @Html.HiddenFor(m => m.Supplier3EmailAddress)
+                                                @Html.EditorFor(m => m.Supplier3EmailAddress, new { htmlAttributes = new { id = "supplier3Email", @class = "form-control form-control-sm", style = "font-size: 100", disabled = "disabled" } })
+                                            </div>
+                                            @Html.ValidationMessageFor(model => model.Supplier3EmailAddress, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="form-group-sm">
+                                            @Html.LabelFor(model => model.Supplier3UnitCost, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-coins"></i></span>
+                                                </div>
+                                                @Html.EditorFor(m => m.Supplier3UnitCost, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%;", type = "number" } })
+                                            </div>
+                                            @Html.ValidationMessageFor(model => model.Supplier3UnitCost, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                 </div>
@@ -418,7 +433,15 @@
                     </div>
                 </div>
             </div>
+        </div>
     }
+
+    if (Model.ProcurementSource == PUPFMIS.Models.ProcurementSources.PS_DBM)
+    {
+        @Html.HiddenFor(d => d.Supplier1ID)
+        @Html.HiddenFor(d => d.Supplier1UnitCost)
+    }
+
     <div class="row">
         <div class="col-sm-12">
             <div style="text-align: right;">

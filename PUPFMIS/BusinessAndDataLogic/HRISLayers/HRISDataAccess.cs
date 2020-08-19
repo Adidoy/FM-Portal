@@ -238,16 +238,24 @@ namespace PUPFMIS.BusinessAndDataLogic
         }
         public List<HRISDepartment> GetUserDepartments(string EmailAddress)
         {
+            var departmentList = new List<HRISDepartment>();
+
             var departmentCode = fmis.UserAccounts.Where(d => d.Email == EmailAddress).FirstOrDefault().DepartmentCode;
             var motherUnit = db.HRISDepartments.Where(d => d.DepartmentCode == departmentCode).FirstOrDefault();
+            if(motherUnit.ParentDepartment == "")
+            {
+                departmentList.Add(motherUnit);
+                return departmentList;
+            }
             var departments = db.HRISDepartments.Where(d => d.RootID == motherUnit.DepartmentID || d.DepartmentID == motherUnit.DepartmentID).ToList();
             //departments.Add(motherUnit);
             var designations = db.HRISEmployeeDesignation.Where(d => DateTime.Now >= d.IncStart && DateTime.Now <= d.IncEnd).OrderBy(d => d.DepartmentID).ToList();
-            var departmentList = (from designation in designations
+            var departmentResult = (from designation in designations
                                   join depts in departments
                                   on designation.DepartmentID equals depts.DepartmentID
                                   select depts
                                  ).ToList();
+            departmentList.AddRange(departmentResult.Distinct());
             return departmentList.OrderBy(d => d.DepartmentID).ToList();
         }
         public HRISEmployeeDetailsVM GetEmployee(string EmailAddress)

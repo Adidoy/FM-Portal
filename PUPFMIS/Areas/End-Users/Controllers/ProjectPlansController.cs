@@ -162,10 +162,12 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
             }
             if(projectItem.ProjectCode.Substring(0, 4) == "CSPR")
             {
+                ViewBag.IsTangible = projectPlanDAL.IsItemTangible(projectItem.ItemCode);
                 return View("UpdateCommonSupplyItem", projectItem);
             }
             else
             {
+                ViewBag.IsTangible = projectPlanDAL.IsItemTangible(projectItem.ItemCode);
                 return View("UpdateItem", projectItem);
             }
         }
@@ -183,6 +185,10 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
                 return View("UpdateItem", item);
             }
             if(projectPlanDAL.UpdateItem(item, out Message))
+            {
+                return RedirectToAction("project-details", "ProjectPlans", new { Area = "end-users", ProjectCode = item.ProjectCode });
+            }
+            else
             {
                 return RedirectToAction("project-details", "ProjectPlans", new { Area = "end-users", ProjectCode = item.ProjectCode });
             }

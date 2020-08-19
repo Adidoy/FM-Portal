@@ -384,11 +384,15 @@
             @Html.ValidationMessageFor(model => model.Remarks, "", new { @class = "text-danger" })
         </div>
     </div>
+
+    @Html.HiddenFor(d => d.Supplier1ID)
+    @Html.HiddenFor(d => d.Supplier1UnitCost)
+
     <div class="row">
         <div class="col-sm-12">
             <div style="text-align: right;">
                 <button type="submit" class="btn btn-md btn-primary"> <i class="fa fa-edit"></i> Update Basket Item</button>
-                <button type="button" class="btn btn-md btn-danger" onclick="window.location = '@Url.Action("common-supplies-catalogue-from-basket", "Catalogue", new { Area = "end-users" })'"> <i class="fa fa-arrow-circle-left"></i> Back to Catalogue</button>
+                <button type="button" class="btn btn-md btn-danger" onclick="window.location = '@Url.Action("common-supplies-basket", "Catalogue", new { Area = "end-users" })'"> <i class="fa fa-arrow-circle-left"></i> Back to Catalogue</button>
             </div>
         </div>
     </div>

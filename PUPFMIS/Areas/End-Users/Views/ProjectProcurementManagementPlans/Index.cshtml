@@ -263,10 +263,7 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="text-right">
-                @if (Model.CanPost == true)
-                {
-                    <button type="submit" style="text-align:left;" class="btn btn-primary btn-md"><i class="fa fa-share"></i> Submit Selected PPMP</button>
-                }
+                <button type="submit" style="text-align:left;" class="btn btn-primary btn-md"><i class="fa fa-share"></i> Submit Selected PPMP</button>
                 <button type="button" style="text-align:left;" class="btn btn-danger btn-md" onclick="window.location = '@Url.Action("dashboard", "Dashboard")'"><i class="fa fa-arrow-circle-left"></i> Back to Dashboard</button>
             </div>
         </div>

@@ -48,8 +48,8 @@ namespace PUPFMIS.BusinessAndDataLogic
         public List<ProjectPlanListVM> GetProjects(string UserEmail, int FiscalYear)
         {
             var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
-            var office = hrisDataAccess.GetFullDepartmentDetails(user.DepartmentCode);
-            var projects = db.ProjectPlans.Where(d => (office.SectionCode == null ? d.Department == office.DepartmentCode : d.Unit == office.SectionCode) && d.FiscalYear == FiscalYear).ToList();
+            var office = hrisDataAccess.GetDepartmentDetails(user.DepartmentCode);
+            var projects = db.ProjectPlans.Where(d => d.Department == office.DepartmentCode && d.FiscalYear == FiscalYear).ToList();
             List<ProjectPlanListVM> projectPlans = new List<ProjectPlanListVM>();
             
             foreach (var project in projects)
@@ -69,7 +69,7 @@ namespace PUPFMIS.BusinessAndDataLogic
                 ProjectPlanListVM plan = new ProjectPlanListVM() {
                     ProjectCode = project.ProjectCode,
                     ProjectName = project.ProjectName,
-                    Office = office.Department,
+                    Office = hrisDataAccess.GetDepartmentDetails(project.Unit).Department,
                     ProjectStatus = project.ProjectStatus,
                     EstimatedBudget = estimatedBudget
                 };
@@ -102,7 +102,6 @@ namespace PUPFMIS.BusinessAndDataLogic
                 ProjectMonthStart = systemBDL.GetMonthName(projectPlanHeader.ProjectMonthStart),
                 TotalEstimatedBudget = projectPlanHeader.TotalEstimatedBudget,
                 ProjectStatus = projectPlanHeader.ProjectStatus,
-                CanPost = hrisDataAccess.GetAllDepartments().Where(d => d.DepartmentCode == currentUser.DepartmentCode).FirstOrDefault().Lvl == 1 ? true : false,
                 NewItemProposals =  new List<ProjectPlanItemsVM>(),
                 ProjectPlanItems = new List<ProjectPlanItemsVM>()
             };
@@ -114,7 +113,7 @@ namespace PUPFMIS.BusinessAndDataLogic
                 {
                     ProjectCode = ProjectCode,
                     ItemCode = item.FKItemReference.ItemCode,
-                    ItemName = item.FKItemReference.FKItemTypeReference.ItemTypeName.ToUpper(),
+                    ItemName = item.FKItemReference.ItemFullName,
                     ItemSpecifications = item.FKItemReference.ItemSpecifications,
                     InventoryType = item.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryTypeName,
                     ItemCategory = item.FKItemReference.FKCategoryReference.ItemCategoryName,
@@ -184,7 +183,7 @@ namespace PUPFMIS.BusinessAndDataLogic
                 {
                     ProjectCode = ProjectCode,
                     ItemCode = item.FKItemReference.ItemCode,
-                    ItemName = item.FKItemReference.FKItemTypeReference.ItemTypeName.ToUpper(),
+                    ItemName = item.FKItemReference.ItemFullName,
                     ItemSpecifications = item.FKItemReference.ItemSpecifications,
                     ItemImage = item.FKItemReference.ItemImage,
                     ProcurementSource = item.FKItemReference.ProcurementSource,
@@ -363,13 +362,13 @@ namespace PUPFMIS.BusinessAndDataLogic
         public bool ValidateProjectPlan(ProjectPlans projectPlan, string UserEmail, out string ErrorMessage)
         {
             var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
-            var office = hrisDataAccess.GetFullDepartmentDetails(projectPlan.Unit);
+            var office = hrisDataAccess.GetDepartmentDetails(projectPlan.Unit);
             if (projectPlan.ProjectCode.Substring(0,4) == "CSPR")
             {
-                var prefix = "CSPR-" + (office.DepartmentCode.Contains("-") ? office.DepartmentCode.Replace("-", "") : office.DepartmentCode) + "-";
-                if(db.ProjectPlans.Where(d => d.ProjectCode.StartsWith(prefix) && d.FiscalYear == projectPlan.FiscalYear).Count() == 1)
+                //var prefix = "CSPR-" + (office.DepartmentCode.Contains("-") ? office.DepartmentCode.Replace("-", "") : office.DepartmentCode) + "-";
+                if(db.ProjectPlans.Where(d => d.Unit == office.DepartmentCode && d.FiscalYear == projectPlan.FiscalYear).Count() >= 1)
                 {
-                    ErrorMessage = "Office Project already exists. Only one Common-use Office Supplies Project is allowed per Fiscal Year";
+                    ErrorMessage = "Common-use Supplies Project for " + office.Department.ToUpper() +" already exists. Only one Common-use Office Supplies Project is allowed per Fiscal Year";
                     return false;
                 }
                 ErrorMessage = string.Empty;
@@ -387,7 +386,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             projectPlan.PreparedBy = user.EmpCode;
             projectPlan.SubmittedBy = office.DepartmentHead;
             projectPlan.ProjectStatus = "New Project";
-            projectPlan.ProjectCode = GenerateProjectCode(projectPlan.FiscalYear, office.DepartmentCode, projectPlan.ProjectCode.Substring(0,4));
+            projectPlan.ProjectCode = GenerateProjectCode(projectPlan.FiscalYear, projectPlan.Unit, projectPlan.ProjectCode.Substring(0,4));
             db.ProjectPlans.Add(projectPlan);
             if(db.SaveChanges() == 0)
             {
@@ -489,6 +488,18 @@ namespace PUPFMIS.BusinessAndDataLogic
             ProjectCode = db.ProjectPlans.Find(projectPlan.ID).ProjectCode;
             return true;
         }
+        public bool IsItemTangible(string ItemCode)
+        {
+            var item = db.Items.Where(d => d.ItemCode == ItemCode).FirstOrDefault();
+            if (item == null)
+            {
+                return db.Items.Where(d => d.ItemFullName == ItemCode).FirstOrDefault().FKItemTypeReference.FKInventoryTypeReference.IsTangible;
+            }
+            else
+            {
+                return db.Items.Where(d => d.ItemCode == ItemCode).FirstOrDefault().FKItemTypeReference.FKInventoryTypeReference.IsTangible;
+            }
+        }
         public ProjectPlanItemsVM GetProjectItem(string ProjectCode, string InventoryType, string ItemCode)
         {
             var IsTangible = db.InventoryTypes.Where(d => d.InventoryTypeName == InventoryType).FirstOrDefault().IsTangible;
@@ -507,8 +518,9 @@ namespace PUPFMIS.BusinessAndDataLogic
                     ProjectCode = ProjectCode,
                     ItemCode = ItemCode,
                     ProposalType = projectItem.ProposalType,
-                    //ItemName = projectItem.FKItemReference.FKItemTypeReference.ItemTypeName.ToUpper() + ((projectItem.FKItemReference.ItemShortSpecifications == null) ? "" : ", " + projectItem.FKItemReference.ItemShortSpecifications),
+                    ItemName = projectItem.FKItemReference.ItemFullName,
                     ItemSpecifications = projectItem.FKItemReference.ItemSpecifications,
+                    ItemCategory = projectItem.FKItemReference.FKCategoryReference.ItemCategoryName,
                     InventoryType = projectItem.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryTypeName,
                     ItemImage = projectItem.FKItemReference.ItemImage,
                     IndividualUOMReference = projectItem.FKItemReference.FKIndividualUnitReference.UnitName,
@@ -555,13 +567,13 @@ namespace PUPFMIS.BusinessAndDataLogic
             {
                 projectService = db.ProjectPlanServices.Where(d => d.FKProjectReference.ProjectCode == ProjectCode && d.FKItemReference.ItemCode == ItemCode).FirstOrDefault();
                 var supplier1 = db.Suppliers.Find(projectService.Supplier1);
-                Supplier supplier2 = (projectItem.Supplier2 == null) ? new Supplier() : db.Suppliers.Find(projectService.Supplier2);
-                Supplier supplier3 = (projectItem.Supplier3 == null) ? new Supplier() : db.Suppliers.Find(projectService.Supplier3);
+                Supplier supplier2 = (projectService.Supplier2 == null) ? new Supplier() : db.Suppliers.Find(projectService.Supplier2);
+                Supplier supplier3 = (projectService.Supplier3 == null) ? new Supplier() : db.Suppliers.Find(projectService.Supplier3);
                 return new ProjectPlanItemsVM()
                 {
                     ProjectCode = ProjectCode,
                     ItemCode = ItemCode,
-                    ProposalType = projectItem.ProposalType,
+                    ProposalType = projectService.ProposalType,
                     ItemName = projectService.FKItemReference.ItemFullName,
                     ItemSpecifications = projectService.ItemSpecifications,
                     ItemImage = null,
@@ -572,27 +584,27 @@ namespace PUPFMIS.BusinessAndDataLogic
                     ProcurementSource = projectService.FKItemReference.ProcurementSource,
                     MinimumIssuanceQty = null,
                     DistributionQtyPerPack = null,
-                    UnitCost = projectItem.UnitCost,
+                    UnitCost = projectService.UnitCost,
                     TotalQty = projectService.ProjectQuantity,
                     Remarks = projectService.Justification,
                     Supplier1ID = supplier1.ID,
                     Supplier1Name = supplier1.SupplierName,
                     Supplier1Address = supplier1.Address,
-                    Supplier1ContactNo = supplier1.EmailAddress,
-                    Supplier1EmailAddress = supplier1.EmailAddress,
-                    Supplier1UnitCost = projectItem.Supplier1UnitCost,
+                    Supplier1ContactNo = supplier1.ContactNumber,
+                    Supplier1EmailAddress = supplier1.EmailAddress == null ? "Not Provided" : supplier1.EmailAddress,
+                    Supplier1UnitCost = (decimal)projectService.Supplier1UnitCost,
                     Supplier2ID = supplier2.ID,
                     Supplier2Name = supplier2.SupplierName,
                     Supplier2Address = supplier2.Address,
-                    Supplier2ContactNo = supplier2.EmailAddress,
-                    Supplier2EmailAddress = supplier2.EmailAddress,
-                    Supplier2UnitCost = projectItem.Supplier2UnitCost,
+                    Supplier2ContactNo = supplier2.ContactNumber,
+                    Supplier2EmailAddress = supplier2.EmailAddress == null ? "Not Provided" : supplier2.EmailAddress,
+                    Supplier2UnitCost = projectService.Supplier2UnitCost,
                     Supplier3ID = supplier3.ID,
                     Supplier3Name = supplier3.SupplierName,
                     Supplier3Address = supplier3.Address,
-                    Supplier3ContactNo = supplier3.EmailAddress,
-                    Supplier3EmailAddress = supplier3.EmailAddress,
-                    Supplier3UnitCost = projectItem.Supplier3UnitCost
+                    Supplier3ContactNo = supplier3.ContactNumber,
+                    Supplier3EmailAddress = supplier3.EmailAddress == null ? "Not Provided" : supplier3.EmailAddress,
+                    Supplier3UnitCost = projectService.Supplier3UnitCost
                 };
             }
         }
@@ -638,7 +650,7 @@ namespace PUPFMIS.BusinessAndDataLogic
         }
         private string GenerateProjectCode(int FiscalYear, string DepartmentCode, string Type)
         {
-            var prefix = Type + "-" + (DepartmentCode.Contains("-") ? DepartmentCode.Replace("-", "").ToString() : DepartmentCode);
+            var prefix = Type + "-" + (DepartmentCode.Contains("-") ? DepartmentCode.Replace("-", "").ToString().ToUpper() : DepartmentCode.ToUpper());
             var series = db.ProjectPlans.Where(d => d.ProjectCode.StartsWith(prefix) && d.FiscalYear == FiscalYear).Count() + 1;
             var seriesStr = (series.ToString().Length == 1) ? "00" + series.ToString() : (series.ToString().Length == 2) ? "0" + series.ToString() : series.ToString();
             return prefix + "-" + seriesStr + "-" + FiscalYear.ToString();
@@ -854,6 +866,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             }
 
             var projectItem = db.ProjectPlanItems.Where(d => d.FKProjectReference.ProjectCode == Item.ProjectCode && d.FKItemReference.ItemCode == Item.ItemCode).FirstOrDefault();
+            var projectService = db.ProjectPlanServices.Where(d => d.FKProjectReference.ProjectCode == Item.ProjectCode && d.FKItemReference.ItemCode == Item.ItemCode).FirstOrDefault();
 
             if (Item.ProcurementSource == ProcurementSources.PS_DBM && Item.InventoryType == "Common Use Office Supplies")
             {
@@ -867,34 +880,63 @@ namespace PUPFMIS.BusinessAndDataLogic
                 Item.UnitCost = ComputeUnitCost(Item.Supplier1UnitCost, Item.Supplier2UnitCost, Item.Supplier3UnitCost);
                 Item.EstimatedBudget = (decimal)Item.UnitCost * Item.TotalQty;
             }
+            if(projectItem != null)
+            {
+                projectItem.ItemReference = db.Items.Where(d => d.ItemCode == Item.ItemCode).FirstOrDefault().ID;
+                projectItem.ProjectReference = db.ProjectPlans.Where(d => d.ProjectCode == Item.ProjectCode).FirstOrDefault().ID;
+                projectItem.ProposalType = Item.ProposalType;
+                projectItem.ProjectJanQty = Item.JanQty;
+                projectItem.ProjectFebQty = Item.FebQty;
+                projectItem.ProjectMarQty = Item.MarQty;
+                projectItem.ProjectAprQty = Item.AprQty;
+                projectItem.ProjectMayQty = Item.MayQty;
+                projectItem.ProjectJunQty = Item.JunQty;
+                projectItem.ProjectJulQty = Item.JulQty;
+                projectItem.ProjectAugQty = Item.AugQty;
+                projectItem.ProjectSepQty = Item.SepQty;
+                projectItem.ProjectOctQty = Item.OctQty;
+                projectItem.ProjectNovQty = Item.NovQty;
+                projectItem.ProjectDecQty = Item.DecQty;
+                projectItem.ProjectTotalQty = Item.TotalQty;
+                projectItem.UnitCost = (decimal)Item.UnitCost;
+                projectItem.Supplier1 = Item.Supplier1ID;
+                projectItem.Supplier1UnitCost = Item.Supplier1UnitCost;
+                projectItem.Supplier2 = Item.Supplier2ID == 0 ? null : Item.Supplier2ID;
+                projectItem.Supplier2UnitCost = Item.Supplier2UnitCost;
+                projectItem.Supplier3 = Item.Supplier3ID == 0 ? null : Item.Supplier3ID;
+                projectItem.Supplier3UnitCost = Item.Supplier3UnitCost;
+                projectItem.ProjectEstimatedBudget = Item.EstimatedBudget;
+                projectItem.Justification = Item.Remarks;
 
-            projectItem.ItemReference = db.Items.Where(d => d.ItemCode == Item.ItemCode).FirstOrDefault().ID;
-            projectItem.ProjectReference = db.ProjectPlans.Where(d => d.ProjectCode == Item.ProjectCode).FirstOrDefault().ID;
-            projectItem.ProposalType = Item.ProposalType;
-            projectItem.ProjectJanQty = Item.JanQty;
-            projectItem.ProjectFebQty = Item.FebQty;
-            projectItem.ProjectMarQty = Item.MarQty;
-            projectItem.ProjectAprQty = Item.AprQty;
-            projectItem.ProjectMayQty = Item.MayQty;
-            projectItem.ProjectJunQty = Item.JunQty;
-            projectItem.ProjectJulQty = Item.JulQty;
-            projectItem.ProjectAugQty = Item.AugQty;
-            projectItem.ProjectSepQty = Item.SepQty;
-            projectItem.ProjectOctQty = Item.OctQty;
-            projectItem.ProjectNovQty = Item.NovQty;
-            projectItem.ProjectDecQty = Item.DecQty;
-            projectItem.ProjectTotalQty = Item.TotalQty;
-            projectItem.UnitCost = (decimal)Item.UnitCost;
-            projectItem.Supplier1 = Item.Supplier1ID;
-            projectItem.Supplier1UnitCost = Item.Supplier1UnitCost;
-            projectItem.Supplier2 = Item.Supplier2ID;
-            projectItem.Supplier2UnitCost = Item.Supplier2UnitCost;
-            projectItem.Supplier3 = Item.Supplier3ID;
-            projectItem.Supplier3UnitCost = Item.Supplier3UnitCost;
-            projectItem.ProjectEstimatedBudget = Item.EstimatedBudget;
-            projectItem.Justification = Item.Remarks;
+                if(db.SaveChanges() == 0)
+                {
+                    Message = "Error";
+                    return false;
+                }
+            }
+            
+            if(projectService != null)
+            {
+                projectService.ItemReference = db.Items.Where(d => d.ItemCode == Item.ItemCode).FirstOrDefault().ID;
+                projectService.ProjectReference = db.ProjectPlans.Where(d => d.ProjectCode == Item.ProjectCode).FirstOrDefault().ID;
+                projectService.ProposalType = Item.ProposalType;
+                projectService.ProjectQuantity = Item.TotalQty;
+                projectService.UnitCost = (decimal)Item.UnitCost;
+                projectService.Supplier1 = Item.Supplier1ID;
+                projectService.Supplier1UnitCost = Item.Supplier1UnitCost;
+                projectService.Supplier2 = Item.Supplier2ID == 0 ? null : Item.Supplier2ID;
+                projectService.Supplier2UnitCost = Item.Supplier2UnitCost;
+                projectService.Supplier3 = Item.Supplier3ID == 0 ? null : Item.Supplier3ID;
+                projectService.Supplier3UnitCost = Item.Supplier3UnitCost;
+                projectService.ProjectEstimatedBudget = Item.EstimatedBudget;
+                projectService.Justification = Item.Remarks;
 
-            db.SaveChanges();
+                if (db.SaveChanges() == 0)
+                {
+                    Message = "Error";
+                    return false;
+                }
+            }
 
             Message = string.Empty;
             return true;

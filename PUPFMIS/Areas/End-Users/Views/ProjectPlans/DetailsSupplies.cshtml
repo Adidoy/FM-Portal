@@ -736,10 +736,7 @@
     <div class="row">
         <div class="col-sm-12">
             <div style="text-align: right;">
-                @if (Model.ProjectStatus == "New Project" && Model.CanPost == true)
-                {
-                    <button type="button" class="btn btn-md btn-primary" onclick='window.location = "@Url.Action("add-supplies-to-ppmp", "ProjectPlans", new { Area = "end-users", ProjectCode = Model.ProjectCode })"'><i class="fa fa-plus-circle"></i> Finalize and Post to PPMP</button>
-                }
+                <button type="button" class="btn btn-md btn-primary" onclick='window.location = "@Url.Action("add-supplies-to-ppmp", "ProjectPlans", new { Area = "end-users", ProjectCode = Model.ProjectCode })"'><i class="fa fa-plus-circle"></i> Finalize and Post to PPMP</button>
                 <button type="button" class="btn btn-md btn-danger" onclick='window.location = "@Url.Action("list", "ProjectPlans", new { Area = "end-users", FiscalYear = Model.FiscalYear })"'><i class="fa fa-arrow-circle-left"></i> Back to Projects List</button>
             </div>
         </div>

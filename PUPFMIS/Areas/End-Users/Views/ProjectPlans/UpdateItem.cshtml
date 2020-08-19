@@ -62,8 +62,27 @@
                             <h3>@Model.ItemName.ToString() <span><small><b>(@Model.ItemCode)</b></small></span></h3>
                             <hr />
                             <h5>ITEM SPECIFICATIONS:</h5>
-                            @Html.HiddenFor(model => model.ItemSpecifications)
-                            <p style="text-align:justify; font-size:11pt;">@Model.ItemSpecifications</p>
+                            @if (ViewBag.IsTangible)
+                            {
+                                @Html.HiddenFor(model => model.ItemSpecifications)
+                                <p style="text-align:justify; font-size:11pt;">@Model.ItemSpecifications</p>
+                            }
+                            else
+                            {
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <div class="input-group input-group-sm mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-paragraph"></i></span>
+                                                </div>
+                                                @Html.EditorFor(m => m.ItemSpecifications, new { htmlAttributes = new { @class = "form-control form-control-sm", placeholder = "Enter the specifications here...", style = "font-size: 100%; height: 75px; text-align:justify;" } })
+                                            </div>
+                                            @Html.ValidationMessageFor(model => model.ItemSpecifications, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            }
                         </div>
                     </div>
                     <div class="row">
@@ -182,7 +201,7 @@
     </div>
     <br />
     @Html.HiddenFor(m => m.ProposalType)
-    if (Model.InventoryType != "Common Use Office Supplies")
+    if (Model.ProcurementSource == PUPFMIS.Models.ProcurementSources.Non_DBM)
     {
         <h4>Supplier Information</h4>
         <hr />
@@ -388,11 +407,17 @@
             </div>
         </div>
     }
+    if (Model.ProcurementSource == PUPFMIS.Models.ProcurementSources.PS_DBM)
+    {
+        @Html.HiddenFor(d => d.Supplier1ID)
+        @Html.HiddenFor(d => d.Supplier1UnitCost)
+    }
+
     <div class="row">
         <div class="col-sm-12">
             <div style="text-align: right;">
                 <button type="submit" class="btn btn-md btn-warning"> <i class="fa fa-edit"></i> Update Item</button>
-                <button type="button" class="btn btn-md btn-danger" onclick='window.location = "@Url.Action("common-supplies-details", "ProjectPlans", new { Area = "end-users", ProjectCode = Model.ProjectCode })"'> <i class="fa fa-arrow-circle-left"></i> Back to Project Details</button>
+                <button type="button" class="btn btn-md btn-danger" onclick='window.location = "@Url.Action("project-details", "ProjectPlans", new { Area = "end-users", ProjectCode = Model.ProjectCode })"'> <i class="fa fa-arrow-circle-left"></i> Back to Project Details</button>
             </div>
         </div>
     </div>

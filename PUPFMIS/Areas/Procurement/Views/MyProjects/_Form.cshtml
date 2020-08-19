@@ -196,318 +196,164 @@
 <hr />
 <div class="row">
     <div class="col-sm-12">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="bg-info">
-                    <h6 class="p-2">PROJECT ITEMS DISTRIBUTION</h6>
-                </div>
-            </div>
-            <div class="col-sm-12">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="card-body table-responsive p-sm-0">
-                            <table class="table table-striped table-hover" id="example2">
-                                <thead>
-                                    <tr>
-                                        <th style="text-align:center; vertical-align:middle;" width="20%">End-User</th>
-                                        <th style="text-align:center; vertical-align:middle;" width="30%">Project Details</th>
-                                        <th style="text-align:center; vertical-align:middle;" width="50%">Item Details</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in Model.Items.OrderBy(d => d.EndUser).ThenBy(d => d.ProjectCode))
-                                    {
-                                        <tr>
-                                            <td style="text-align:justify; vertical-align:middle;">
-                                                <b>@Html.DisplayFor(d => item.EndUser).ToString().ToUpper()</b>
-                                            </td>
-                                            <td style="text-align:justify; vertical-align:middle;">
-                                                <div class="row">
-                                                    <div class="col-sm-3">
-                                                        <b>@Html.DisplayNameFor(d => item.ProjectCode)</b>
-                                                    </div>
-                                                    <div class="col-sm-9">
-                                                        : @Html.DisplayFor(d => item.ProjectCode)
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-3">
-                                                        <b>@Html.DisplayNameFor(d => item.ProjectName)</b>
-                                                    </div>
-                                                    <div class="col-sm-9">
-                                                        : @Html.DisplayFor(d => item.ProjectName)
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td style="text-align:justify; vertical-align:middle;">
-                                                <div class="row">
-                                                    <div class="col-sm-3">
-                                                        <b>@Html.DisplayNameFor(d => item.ItemCode)</b>
-                                                    </div>
-                                                    <div class="col-sm-9">
-                                                        : @Html.DisplayFor(d => item.ItemCode)
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-3">
-                                                        <b>@Html.DisplayNameFor(d => item.ItemName)</b>
-                                                    </div>
-                                                    <div class="col-sm-9">
-                                                        : @Html.DisplayFor(d => item.ItemName)
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-3">
-                                                        <b>@Html.DisplayNameFor(d => item.ItemSpecifications)</b>
-                                                    </div>
-                                                    <div class="col-sm-9">
-                                                        : @Html.DisplayFor(d => item.ItemSpecifications)
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-3">
-                                                        <b>@Html.DisplayNameFor(d => item.ProcurementSource)</b>
-                                                    </div>
-                                                    <div class="col-sm-9">
-                                                        : @Html.DisplayFor(d => item.ProcurementSource)
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-3">
-                                                        <b>@Html.DisplayNameFor(d => item.InventoryType)</b>
-                                                    </div>
-                                                    <div class="col-sm-9">
-                                                        : @Html.DisplayFor(d => item.InventoryType)
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-3">
-                                                        <b>@Html.DisplayNameFor(d => item.ItemCategory)</b>
-                                                    </div>
-                                                    <div class="col-sm-9">
-                                                        : @Html.DisplayFor(d => item.ItemCategory)
-                                                    </div>
-                                                </div>
-                                                @if (item.IndividualUOMReference != null)
-                                                {
-                                                    <div class="row">
-                                                        <div class="col-sm-3">
-                                                            <b>@Html.DisplayNameFor(d => item.IndividualUOMReference)</b>
-                                                        </div>
-                                                        <div class="col-sm-9">
-                                                            : @Html.DisplayFor(d => item.IndividualUOMReference)
-                                                        </div>
-                                                    </div>
-                                                }
-                                                <div class="row">
-                                                    <div class="col-sm-3">
-                                                        <b>@Html.DisplayNameFor(d => item.UnitCost)</b>
-                                                    </div>
-                                                    <div class="col-sm-9">
-                                                        : @( item.UnitCost.ToString("C", new System.Globalization.CultureInfo("en-ph")) )
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-3">
-                                                        <b>@Html.DisplayNameFor(d => item.TotalQty)</b>
-                                                    </div>
-                                                    <div class="col-sm-9">
-                                                        : @Html.DisplayFor(d => item.TotalQty)
-                                                        @if (item.IndividualUOMReference != null)
-                                                        {
-                                                            @Html.DisplayFor(d => item.IndividualUOMReference)
-                                                        }
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-3">
-                                                        <b>@Html.DisplayNameFor(d => item.EstimatedBudget)</b>
-                                                    </div>
-                                                    <div class="col-sm-9">
-                                                        : @( item.EstimatedBudget.ToString("C", new System.Globalization.CultureInfo("en-ph")) )
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-3">
-                                                        <b>@Html.DisplayNameFor(d => item.DeliveryMonth)</b>
-                                                    </div>
-                                                    <div class="col-sm-9">
-                                                        : @Html.DisplayFor(d => item.DeliveryMonth)
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th style="text-align:center; vertical-align:middle" width="20%">Procurement Activity</th>
+                    <th style="text-align:center; vertical-align:middle" width="20%">Target Dates</th>
+                    <th style="text-align:center; vertical-align:middle" width="20%">Actual Accomplishment</th>
+                    <th style="text-align:center; vertical-align:middle" width="20%">Action</th>
+                    <th style="text-align:center; vertical-align:middle" width="20%">Remarks</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align:justify; vertical-align:middle">
+                        @Html.DisplayNameFor(d => d.Schedule.PurchaseRequestSubmission)
+                    </td>
+                    <td style="text-align:center; vertical-align:middle;">
+                        <div class="form-group">
+                            <div class="input-group mt-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                </div>
+                                @Html.EditorFor(model => model.Schedule.PurchaseRequestSubmission, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%", disabled = "disabled" } })
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                    </td>
+                    <td style="text-align:center; vertical-align:middle;">
+                        <div class="form-group">
+                            <div class="input-group mt-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                </div>
+                                @Html.EditorFor(model => model.Actual.ActualPurchseRequestSubmission, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%", disabled = "disabled" } })
+                            </div>
+                        </div>
+                    </td>
+                    <td style="text-align:center; vertical-align:middle;">
+                        @if(Model.ProjectStatus == "Project Assigned")
+                        {
+                            <button class="btn btn-sm btn-primary"><i class="fa fa-envelope-open"></i> &nbsp; Open P/R Submission</button>
+                        }
+                        @if(Model.ProjectStatus == "PR Submission Open")
+                        {
+                            <button class="btn btn-sm btn-danger"><i class="fa fa-stop-circle"></i> &nbsp; Close P/R Submission</button>
+                        }
+                    </td>
+                    <td style="text-align:center; vertical-align:middle;">
+                        @if (Model.Actual.ActualPreProcurementConference == null)
+                        {
+                            @Html.EditorFor(model => model.Actual.PRRemarks, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%" } })
+                        }
+                        @if (Model.Actual.ActualPreProcurementConference != null)
+                        {
+                            @Html.EditorFor(model => model.Actual.PRRemarks, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%", disabled = "disabled" } })
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align:justify; vertical-align:middle">
+                        @Html.DisplayNameFor(d => d.Schedule.PreProcurementConference)
+                    </td>
+                    <td style="text-align:center; vertical-align:middle;">
+                        <div class="form-group">
+                            <div class="input-group mt-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                </div>
+                                @Html.EditorFor(model => model.Schedule.PreProcurementConference, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%", disabled = "disabled" } })
+                            </div>
+                        </div>
+                    </td>
+                    <td style="text-align:center; vertical-align:middle;">
+                        @if (Model.ProjectStatus == "PR Submission Closed")
+                        {
+                            <div class="form-group">
+                                <div class="input-group mt-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                    </div>
+                                    @Html.EditorFor(model => model.Schedule.PreProcurementConference, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%" } })
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="form-group">
+                                <div class="input-group mt-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                    </div>
+                                    @Html.EditorFor(model => model.Actual.ActualPreProcurementConference, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%", disabled = "disabled" } })
+                                </div>
+                            </div>
+                        }
+                    </td>
+                    <td style="text-align:center; vertical-align:middle;">
+                    </td>
+                    <td style="text-align:center; vertical-align:middle;">
+                        @if (Model.ProjectStatus == "PR Submission Closed")
+                        {
+                            @Html.EditorFor(model => model.Actual.PRRemarks, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%" } })
+                        }
+                        else
+                        {
+                            @Html.EditorFor(model => model.Actual.PRRemarks, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%", disabled = "disabled" } })
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align:justify; vertical-align:middle">
+                        @Html.DisplayNameFor(d => d.Schedule.PreProcurementConference)
+                    </td>
+                    <td style="text-align:center; vertical-align:middle;">
+                        <div class="form-group">
+                            <div class="input-group mt-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                </div>
+                                @Html.EditorFor(model => model.Schedule.PostingOfIB, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%", disabled = "disabled" } })
+                            </div>
+                        </div>
+                    </td>
+                    <td style="text-align:center; vertical-align:middle;">
+                        @if (Model.ProjectStatus == "PR Submission Closed")
+                        {
+                            <div class="form-group">
+                                <div class="input-group mt-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                    </div>
+                                    @Html.EditorFor(model => model.Actual.ActualPostingOfIB, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%" } })
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="form-group">
+                                <div class="input-group mt-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                    </div>
+                                    @Html.EditorFor(model => model.Actual.ActualPreProcurementConference, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%", disabled = "disabled" } })
+                                </div>
+                            </div>
+                        }
+                    </td>
+                    <td style="text-align:center; vertical-align:middle;"></td>
+                    <td style="text-align:center; vertical-align:middle;">
+                        @if (Model.ProjectStatus == "PR Submission Closed")
+                        {
+                            @Html.EditorFor(model => model.Actual.PRRemarks, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%" } })
+                        }
+                        else
+                        {
+                            @Html.EditorFor(model => model.Actual.PRRemarks, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%", disabled = "disabled" } })
+                        }
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
-@*<hr />
-    <div class="row">
-        <div class="col-sm-12">
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th style="text-align:center; vertical-align:middle" width="20%">Procurement Activity</th>
-                        <th style="text-align:center; vertical-align:middle" width="20%">Target Dates</th>
-                        <th style="text-align:center; vertical-align:middle" width="20%">Actual Accomplishment</th>
-                        <th style="text-align:center; vertical-align:middle" width="20%">Action</th>
-                        <th style="text-align:center; vertical-align:middle" width="20%">Remarks</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td style="text-align:justify; vertical-align:middle">
-                            @Html.DisplayNameFor(d => d.Schedule.PurchaseRequestSubmission)
-                        </td>
-                        <td style="text-align:center; vertical-align:middle;">
-                            <div class="form-group">
-                                <div class="input-group mt-3">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                                    </div>
-                                    @Html.EditorFor(model => model.Schedule.PurchaseRequestSubmission, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%", disabled = "disabled" } })
-                                </div>
-                            </div>
-                        </td>
-                        <td style="text-align:center; vertical-align:middle;">
-                            <div class="form-group">
-                                <div class="input-group mt-3">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                                    </div>
-                                    @Html.EditorFor(model => model.Actual.ActualPurchseRequestSubmission, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%", disabled = "disabled" } })
-                                </div>
-                            </div>
-                        </td>
-                        <td style="text-align:center; vertical-align:middle;">
-                            @if(Model.ProjectStatus == "Project Assigned")
-                            {
-                                <button class="btn btn-sm btn-primary"><i class="fa fa-envelope-open"></i> &nbsp; Open P/R Submission</button>
-                            }
-                            @if(Model.ProjectStatus == "PR Submission Open")
-                            {
-                                <button class="btn btn-sm btn-danger"><i class="fa fa-stop-circle"></i> &nbsp; Close P/R Submission</button>
-                            }
-                        </td>
-                        <td style="text-align:center; vertical-align:middle;">
-                            @if (Model.Actual.ActualPreProcurementConference == null)
-                            {
-                                @Html.EditorFor(model => model.Actual.PRRemarks, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%" } })
-                            }
-                            @if (Model.Actual.ActualPreProcurementConference != null)
-                            {
-                                @Html.EditorFor(model => model.Actual.PRRemarks, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%", disabled = "disabled" } })
-                            }
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="text-align:justify; vertical-align:middle">
-                            @Html.DisplayNameFor(d => d.Schedule.PreProcurementConference)
-                        </td>
-                        <td style="text-align:center; vertical-align:middle;">
-                            <div class="form-group">
-                                <div class="input-group mt-3">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                                    </div>
-                                    @Html.EditorFor(model => model.Schedule.PreProcurementConference, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%", disabled = "disabled" } })
-                                </div>
-                            </div>
-                        </td>
-                        <td style="text-align:center; vertical-align:middle;">
-                            @if (Model.ProjectStatus == "PR Submission Closed")
-                            {
-                                <div class="form-group">
-                                    <div class="input-group mt-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                                        </div>
-                                        @Html.EditorFor(model => model.Schedule.PreProcurementConference, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%" } })
-                                    </div>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="form-group">
-                                    <div class="input-group mt-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                                        </div>
-                                        @Html.EditorFor(model => model.Actual.ActualPreProcurementConference, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%", disabled = "disabled" } })
-                                    </div>
-                                </div>
-                            }
-                        </td>
-                        <td style="text-align:center; vertical-align:middle;">
-                        </td>
-                        <td style="text-align:center; vertical-align:middle;">
-                            @if (Model.ProjectStatus == "PR Submission Closed")
-                            {
-                                @Html.EditorFor(model => model.Actual.PRRemarks, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%" } })
-                            }
-                            else
-                            {
-                                @Html.EditorFor(model => model.Actual.PRRemarks, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%", disabled = "disabled" } })
-                            }
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="text-align:justify; vertical-align:middle">
-                            @Html.DisplayNameFor(d => d.Schedule.PreProcurementConference)
-                        </td>
-                        <td style="text-align:center; vertical-align:middle;">
-                            <div class="form-group">
-                                <div class="input-group mt-3">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                                    </div>
-                                    @Html.EditorFor(model => model.Schedule.PostingOfIB, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%", disabled = "disabled" } })
-                                </div>
-                            </div>
-                        </td>
-                        <td style="text-align:center; vertical-align:middle;">
-                            @if (Model.ProjectStatus == "PR Submission Closed")
-                            {
-                                <div class="form-group">
-                                    <div class="input-group mt-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                                        </div>
-                                        @Html.EditorFor(model => model.Actual.ActualPostingOfIB, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%" } })
-                                    </div>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="form-group">
-                                    <div class="input-group mt-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                                        </div>
-                                        @Html.EditorFor(model => model.Actual.ActualPreProcurementConference, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%", disabled = "disabled" } })
-                                    </div>
-                                </div>
-                            }
-                        </td>
-                        <td style="text-align:center; vertical-align:middle;"></td>
-                        <td style="text-align:center; vertical-align:middle;">
-                            @if (Model.ProjectStatus == "PR Submission Closed")
-                            {
-                                @Html.EditorFor(model => model.Actual.PRRemarks, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%" } })
-                            }
-                            else
-                            {
-                                @Html.EditorFor(model => model.Actual.PRRemarks, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%", disabled = "disabled" } })
-                            }
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>*@

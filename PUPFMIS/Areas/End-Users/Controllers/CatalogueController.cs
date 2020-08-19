@@ -159,6 +159,7 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
             if (catalogueBL.ItemBelongsToProject(ProjectPlan.ProjectCode, Item.ItemCode))
             {
                 ModelState.AddModelError("", "Item is included in the Project.");
+                ViewBag.IsTangible = catalogueBL.IsItemTangible(Item.ItemCode);
                 ViewBag.EnableElement = false;
                 return View("AddToBasket", Item);
             }
@@ -228,7 +229,15 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
                 ModelState.AddModelError("", Message);
                 ViewBag.IsTangible = catalogueBL.IsItemTangible(itemBasket.ItemCode);
                 ViewBag.EnableElement = true;
-                return View("AddToBasket", itemBasket);
+                if(projectPlan.ProjectCode.StartsWith("CSPR"))
+                {
+                    return View("AddCommonSuppliesToBasket", itemBasket);
+                }
+                else
+                {
+                    return View("AddToBasket", itemBasket);
+                }
+                
             }
 
             if (itemBasket.ProcurementSource == ProcurementSources.PS_DBM)
@@ -362,17 +371,17 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
             item.Supplier1ContactNo = supplier1.ContactNumber;
             item.Supplier1EmailAddress = (supplier1.EmailAddress == null) ? "No data provided." : supplier1.EmailAddress;
             item.Supplier1UnitCost = basketItem.Supplier1UnitCost;
-            item.Supplier2ID = supplier2.ID;
-            item.Supplier2Name = supplier2.SupplierName;
-            item.Supplier2Address = supplier2.Address;
-            item.Supplier2ContactNo = supplier2.ContactNumber;
-            item.Supplier2EmailAddress = (supplier2.EmailAddress == null) ? "No data provided." : supplier2.EmailAddress;
+            item.Supplier2ID = supplier2 == null ? null : (int?)supplier2.ID;
+            item.Supplier2Name = supplier2 == null ? null : supplier2.SupplierName;
+            item.Supplier2Address = supplier2 == null ? null : supplier2.Address;
+            item.Supplier2ContactNo = supplier2 == null ? null : supplier2.ContactNumber;
+            item.Supplier2EmailAddress = supplier2 == null ? null : (supplier2.EmailAddress == null) ? "No data provided." : supplier2.EmailAddress;
             item.Supplier2UnitCost = basketItem.Supplier2UnitCost;
-            item.Supplier3ID = supplier3.ID;
-            item.Supplier3Name = supplier3.SupplierName;
-            item.Supplier3Address = supplier3.Address;
-            item.Supplier3ContactNo = supplier3.ContactNumber;
-            item.Supplier3EmailAddress = (supplier3.EmailAddress == null) ? "No data provided." : supplier3.EmailAddress;
+            item.Supplier3ID = supplier3 == null ? null : (int?)supplier3.ID;
+            item.Supplier3Name = supplier3 == null ? null : supplier3.SupplierName;
+            item.Supplier3Address = supplier3 == null ? null : supplier3.Address;
+            item.Supplier3ContactNo = supplier3 == null ? null : supplier3.ContactNumber;
+            item.Supplier3EmailAddress = supplier3 == null ? null : (supplier3.EmailAddress == null) ? "No data provided." : supplier3.EmailAddress;
             item.Supplier3UnitCost = basketItem.Supplier3UnitCost;
 
             if (projectPlan.ProjectCode.Substring(0, 4) == "CSPR")
@@ -382,6 +391,7 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
             }
             else
             {
+                ViewBag.IsTangible = catalogueBL.IsItemTangible(item.ItemCode);
                 ViewBag.EnableElement = true;
                 return View("UpdateBasket", item);
             }
@@ -425,6 +435,11 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
                 return View("UpdateCommonSuppliesBasket", BasketItem);
             }
 
+            var supplier1UnitCost = item.Supplier1ID == 0 ? 0.00m : (decimal)item.Supplier1UnitCost;
+            var supplier2UnitCost = item.Supplier2ID == null ? 0.00m : (decimal)item.Supplier2UnitCost;
+            var supplier3UnitCost = item.Supplier3ID == null ? 0.00m : (decimal)item.Supplier3UnitCost;
+            var newUnitCost = supplier1UnitCost + supplier2UnitCost + supplier3UnitCost;
+
             projectPlan.NewItemProposals.Remove(item);
             projectPlan.NewItemProposals.Add(new ProjectPlanItemsVM
             {
@@ -452,14 +467,14 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
                 NovQty = BasketItem.NovQty,
                 DecQty = BasketItem.DecQty,
                 TotalQty = BasketItem.TotalQty,
-                UnitCost = (decimal)BasketItem.UnitCost,
+                UnitCost = newUnitCost,
                 Supplier1ID = BasketItem.Supplier1ID,
                 Supplier1UnitCost = BasketItem.Supplier1UnitCost,
                 Supplier2ID = BasketItem.Supplier2ID,
                 Supplier2UnitCost = BasketItem.Supplier2UnitCost,
                 Supplier3ID = BasketItem.Supplier3ID,
                 Supplier3UnitCost = BasketItem.Supplier3UnitCost,
-                EstimatedBudget = (int)BasketItem.TotalQty * (decimal)BasketItem.UnitCost,
+                EstimatedBudget = (int)BasketItem.TotalQty * newUnitCost,
                 Remarks = BasketItem.Remarks
             });
             Session["ProjectPlan"] = projectPlan;

@@ -574,7 +574,7 @@ namespace PUPFMIS.Models
         [Display(Name = "Project Name")]
         public string ProjectName { get; set; }
 
-        [Display(Name = "Office")]
+        [Display(Name = "Unit")]
         public string Office { get; set; }
 
         [Display(Name = "Project Status")]
@@ -628,13 +628,11 @@ namespace PUPFMIS.Models
         [Display(Name = "Project Status")]
         public string ProjectStatus { get; set; }
 
-        [Display(Name = "Start Month")]
+        [Display(Name = "Delivery Month")]
         public string ProjectMonthStart { get; set; }
 
         [Display(Name = "Total Estimated Budget")]
         public decimal? TotalEstimatedBudget { get; set; }
-
-        public bool CanPost { get; set; }
 
         public List<ProjectPlanItemsVM> ProjectPlanItems { get; set; }
         public List<ProjectPlanItemsVM> NewItemProposals { get; set; }

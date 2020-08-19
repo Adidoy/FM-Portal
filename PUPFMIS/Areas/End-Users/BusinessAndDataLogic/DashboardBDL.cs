@@ -43,12 +43,12 @@ namespace PUPFMIS.BusinessAndDataLogic
         }
         public int GetNumberOfProjectsPosted(string UserEmail)
         {
-            var fiscalYear = db.ProjectPlans.OrderByDescending(d => d.FiscalYear).FirstOrDefault();
+            var fiscalYear = db.ProjectPlans.Any() ? db.ProjectPlans.GroupBy(d => d.FiscalYear).Select(d => new { FiscalYear = d.Key }).OrderByDescending(d => d.FiscalYear).Select(d => d.FiscalYear).ToList() : null;
             if (fiscalYear != null)
             {
                 var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
                 var office = hrisDataAccess.GetFullDepartmentDetails(user.DepartmentCode);
-                return db.ProjectPlans.Where(d => (office.SectionCode == null ? d.Department == office.DepartmentCode : d.Unit == office.SectionCode) && d.ProjectStatus != "New Project" && d.FiscalYear == fiscalYear.FiscalYear).Count();
+                return db.ProjectPlans.Where(d => d.Department == office.DepartmentCode && d.ProjectStatus != "New Project" && fiscalYear.Contains(d.FiscalYear)).Count();
             }
             else
             {
@@ -62,7 +62,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             {
                 var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
                 var office = hrisDataAccess.GetFullDepartmentDetails(user.DepartmentCode);
-                return db.PPMPHeader.Where(d => (office.SectionCode == null ? d.Department == office.DepartmentCode : d.Unit == office.SectionCode) && d.Status == "New PPMP" && d.FiscalYear == fiscalYear.FiscalYear).Count();
+                return db.PPMPHeader.Where(d => d.Department == office.DepartmentCode && d.Status == "New PPMP" && d.FiscalYear == fiscalYear.FiscalYear).Count();
             }
             else
             {
@@ -71,12 +71,12 @@ namespace PUPFMIS.BusinessAndDataLogic
         }
         public int GetNumberOfPPMPSubmitted(string UserEmail)
         {
-            var FiscalYear = db.PPMPHeader.Any() ? (int?)db.PPMPHeader.GroupBy(d => d.FiscalYear).Select(d => new { FiscalYear = d.Key }).OrderByDescending(d => d.FiscalYear).FirstOrDefault().FiscalYear : null;
+            var FiscalYear = db.PPMPHeader.Any() ? db.PPMPHeader.GroupBy(d => d.FiscalYear).Select(d => new { FiscalYear = d.Key }).OrderByDescending(d => d.FiscalYear).Select(d => d.FiscalYear).ToList() : null;
             if(FiscalYear != null)
             {
                 var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
                 var office = hrisDataAccess.GetFullDepartmentDetails(user.DepartmentCode);
-                return db.PPMPHeader.Where(d => (office.SectionCode == null ? d.Department == office.DepartmentCode : d.Unit == office.SectionCode) && (d.Status == "PPMP Submitted" || d.Status == "PPMP Evaluated") && d.FiscalYear == FiscalYear).Count();
+                return db.PPMPHeader.Where(d => d.Department == office.DepartmentCode && (d.Status == "PPMP Submitted" || d.Status == "PPMP Evaluated") && FiscalYear.Contains(d.FiscalYear)).Count();
             }
             else
             {
@@ -85,12 +85,12 @@ namespace PUPFMIS.BusinessAndDataLogic
         }
         public int GetNumberOfPPMPs(string UserEmail)
         {
-            var fiscalYear = db.ProjectPlans.OrderByDescending(d => d.FiscalYear).FirstOrDefault();
-            if(fiscalYear != null)
+            var FiscalYear = db.PPMPHeader.Any() ? db.PPMPHeader.GroupBy(d => d.FiscalYear).Select(d => new { FiscalYear = d.Key }).OrderByDescending(d => d.FiscalYear).Select(d => d.FiscalYear).ToList() : null;
+            if (FiscalYear != null)
             {
                 var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
                 var office = hrisDataAccess.GetFullDepartmentDetails(user.DepartmentCode);
-                return db.PPMPHeader.Where(d => (office.SectionCode == null ? d.Department == office.DepartmentCode : d.Unit == office.SectionCode) && d.FiscalYear == fiscalYear.FiscalYear).Count();
+                return db.PPMPHeader.Where(d => d.Department == office.DepartmentCode && FiscalYear.Contains(d.FiscalYear)).Count();
             }
             else
             {
@@ -99,12 +99,12 @@ namespace PUPFMIS.BusinessAndDataLogic
         }
         public int GetNumberOfApprovedPPMPs(string UserEmail)
         {
-            var fiscalYear = db.ProjectPlans.OrderByDescending(d => d.FiscalYear).FirstOrDefault();
-            if(fiscalYear != null)
+            var FiscalYear = db.PPMPHeader.Any() ? db.PPMPHeader.GroupBy(d => d.FiscalYear).Select(d => new { FiscalYear = d.Key }).OrderByDescending(d => d.FiscalYear).Select(d => d.FiscalYear).ToList() : null;
+            if (FiscalYear != null)
             {
                 var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
                 var office = hrisDataAccess.GetFullDepartmentDetails(user.DepartmentCode);
-                return db.PPMPHeader.Where(d => (office.SectionCode == null ? d.Department == office.DepartmentCode : d.Unit == office.SectionCode) && d.Status == "PPMP Evaluated" && d.FiscalYear == fiscalYear.FiscalYear).Count();
+                return db.PPMPHeader.Where(d => d.Department == office.DepartmentCode && d.Status == "PPMP Evaluated" && FiscalYear.Contains(d.FiscalYear)).Count();
             }
             else
             {
@@ -113,39 +113,39 @@ namespace PUPFMIS.BusinessAndDataLogic
         }
         public string GetProposedBudget(string UserEmail)
         {
-            var fiscalYear = db.ProjectPlans.OrderByDescending(d => d.FiscalYear).FirstOrDefault();
-            if (fiscalYear != null)
+            var FiscalYear = db.PPMPHeader.Any() ? db.PPMPHeader.GroupBy(d => d.FiscalYear).Select(d => new { FiscalYear = d.Key }).OrderByDescending(d => d.FiscalYear).Select(d => d.FiscalYear).ToList() : null;
+            if (FiscalYear != null)
             {
                 var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
                 var office = hrisDataAccess.GetFullDepartmentDetails(user.DepartmentCode);
-                var projectItems = db.ProjectPlanItems.Where(d => (office.SectionCode == null ? d.FKPPMPReference.Department == office.DepartmentCode : d.FKPPMPReference.Unit == office.SectionCode) && d.FKPPMPReference.FiscalYear == fiscalYear.FiscalYear).ToList();
-                var projectService = db.ProjectPlanServices.Where(d => (office.SectionCode == null ? d.FKPPMPReference.Department == office.DepartmentCode : d.FKPPMPReference.Unit == office.SectionCode) && d.FKPPMPReference.FiscalYear == fiscalYear.FiscalYear).ToList();
+                var projectItems = db.ProjectPlanItems.Where(d => (office.SectionCode == null ? d.FKPPMPReference.Department == office.DepartmentCode : d.FKPPMPReference.Unit == office.SectionCode) && FiscalYear.Contains(d.FKPPMPReference.FiscalYear)).ToList();
+                var projectService = db.ProjectPlanServices.Where(d => (office.SectionCode == null ? d.FKPPMPReference.Department == office.DepartmentCode : d.FKPPMPReference.Unit == office.SectionCode) && FiscalYear.Contains(d.FKPPMPReference.FiscalYear)).ToList();
                 var proposedItemsBudget = projectItems.Count != 0 ? projectItems.Sum(d => d.ProjectEstimatedBudget) : 0.00m;
                 var proposedServicesBudget = projectService.Count != 0 ? projectService.Sum(d => d.ProjectEstimatedBudget) : 0.00m;
-                var estimatedBudget = String.Format("{0:C}", proposedItemsBudget + proposedServicesBudget);
+                var estimatedBudget = (proposedItemsBudget + proposedServicesBudget).ToString("C", new System.Globalization.CultureInfo("en-ph"));
                 return estimatedBudget;
             }
-            return String.Format("{0:C}", 0.00m);
+            return (0.00m).ToString("C", new System.Globalization.CultureInfo("en-ph"));
         }
         public string GetApprovedBudget(string UserEmail)
         {
-            var fiscalYear = db.ProjectPlans.OrderByDescending(d => d.FiscalYear).FirstOrDefault();
-            if(fiscalYear != null)
+            var FiscalYear = db.PPMPHeader.Any() ? db.PPMPHeader.GroupBy(d => d.FiscalYear).Select(d => new { FiscalYear = d.Key }).OrderByDescending(d => d.FiscalYear).Select(d => d.FiscalYear).ToList() : null;
+            if (FiscalYear != null)
             {
                 var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
                 var office = hrisDataAccess.GetFullDepartmentDetails(user.DepartmentCode);
-                var budget = db.PPMPHeader.Where(d => (office.SectionCode == null ? d.Department == office.DepartmentCode : d.Unit == office.SectionCode) && d.Status == "PPMP Evaluated" && d.FiscalYear == fiscalYear.FiscalYear).Sum(d => (decimal?)d.ABC);
-                var approvedBudget = (budget == null) ? String.Format("{0:C}", 0.00m) : String.Format("{0:C}", budget);
+                var budget = db.PPMPHeader.Where(d => (office.SectionCode == null ? d.Department == office.DepartmentCode : d.Unit == office.SectionCode) && d.Status == "PPMP Evaluated" && FiscalYear.Contains(d.FiscalYear)).Sum(d => (decimal?)d.ABC);
+                var approvedBudget = (budget == null) ? (0.00m).ToString("C", new System.Globalization.CultureInfo("en-ph")) : ((decimal)budget).ToString("C", new System.Globalization.CultureInfo("en-ph"));
                 return approvedBudget;
             }
-            return String.Format("{0:C}", 0.00m);
+            return (0.00m).ToString("C", new System.Globalization.CultureInfo("en-ph"));
         }
         public string GetOngoingBudget(string UserEmail)
         {
             var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
             var office = hrisDataAccess.GetFullDepartmentDetails(user.DepartmentCode);
             var budget = db.PPMPHeader.Where(d => (office.SectionCode == null ? d.Department == office.DepartmentCode : d.Unit == office.SectionCode) && d.Status == "Procurement On-going").Sum(d => (decimal?)d.ABC);
-            var ongoingBudget = (budget == null) ? String.Format("{0:C}", 0.00m) : String.Format("{0:C}", budget);
+            var ongoingBudget = (budget == null) ? (0.00m).ToString("C", new System.Globalization.CultureInfo("en-ph")) : ((decimal)budget).ToString("C", new System.Globalization.CultureInfo("en-ph"));
             return ongoingBudget;
         }
         public List<SwitchBoardVM> GetSwitchBoard(string UserEmail)

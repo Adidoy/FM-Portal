@@ -275,10 +275,10 @@ namespace PUPFMIS.BusinessAndDataLogic
                             UnitCost = (decimal)items.UnitCost,
                             Supplier1 = items.Supplier1ID,
                             Supplier1UnitCost = items.Supplier1UnitCost,
-                            Supplier2 = items.Supplier2ID,
-                            Supplier2UnitCost = items.Supplier2UnitCost,
-                            Supplier3 = items.Supplier3ID,
-                            Supplier3UnitCost = items.Supplier3UnitCost,
+                            Supplier2 = items.Supplier2ID == 0 ? null : items.Supplier2ID,
+                            Supplier2UnitCost = items.Supplier2ID == 0 ? null : items.Supplier2UnitCost,
+                            Supplier3 = items.Supplier3ID == 0 ? null : items.Supplier3ID,
+                            Supplier3UnitCost = items.Supplier3ID == 0 ? null : items.Supplier3UnitCost,
                             ProjectEstimatedBudget = items.EstimatedBudget,
                             Justification = items.Remarks
                         };

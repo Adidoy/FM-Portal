@@ -354,6 +354,5 @@ namespace PUPFMIS.Models
         public List<CapitalOutlayVM> CaptialOutlay { get; set; }
         public List<PPMPHeaderViewModel> PPMPList { get; set; }
         public decimal TotalProposedBudget { get; set; }
-        public bool CanPost { get; set; }
     }
 }

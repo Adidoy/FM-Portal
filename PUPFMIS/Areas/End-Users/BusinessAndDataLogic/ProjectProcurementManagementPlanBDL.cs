@@ -2808,7 +2808,6 @@ namespace PUPFMIS.BusinessAndDataLogic
             budgetProposal.MOOE = GetMOOE(UserEmail, FiscalYear);
             budgetProposal.CaptialOutlay = GetCapitalOutlay(UserEmail, FiscalYear);
             budgetProposal.TotalProposedBudget = budgetProposal.MOOE.Sum(d => d.TotalProposedProgram) + budgetProposal.CaptialOutlay.Sum(d => d.TotalProposedProgram);
-            budgetProposal.CanPost = office.Section == null ? true : false;
             return budgetProposal;
         }
         public ProjectPlanItems AssignPPMPItemMilestones(ProjectPlanItems Item)
