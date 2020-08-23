@@ -955,6 +955,11 @@ namespace PUPFMIS.BusinessAndDataLogic
         }
         public bool PostToPPMP(ProjectPlanVM ProjectPlan, string UserEmail)
         {
+            if(ProjectPlan.NewItemProposals.Count == 0)
+            {
+                return false;
+            }
+
             if(ppmpDAL.PostToPPMP(ProjectPlan, UserEmail))
             {
                 var project = db.ProjectPlans.Where(d => d.ProjectCode == ProjectPlan.ProjectCode).FirstOrDefault();

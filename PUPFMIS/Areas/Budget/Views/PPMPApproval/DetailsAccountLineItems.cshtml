@@ -201,17 +201,6 @@
                     <h4 class="card-title">Budget Proposal Summary</h4>
                 </div>
                 <div class="card-body">
-                    @*<div class="row mb-2">
-                        <div class="col-9">
-                            <h6>@Html.DisplayNameFor(d => d.ActualObligation)</h6>
-                        </div>
-                        <div class="col-3">
-                            <div class="float-right">
-                                @Html.HiddenFor(d => Model.ActualObligation, htmlAttributes: new { Value = Model.ActualObligation })
-                                <h6>@( String.Format("{0:C}", Model.ActualObligation) )</h6>
-                            </div>
-                        </div>
-                    </div>*@
                     <div class="row">
                         <div class="col-9">
                             <h6>@Html.DisplayNameFor(d => d.TotalProposedBudget)</h6>
@@ -246,7 +235,7 @@
             <div class="col-sm-12">
                 <div style="text-align: right;">
                     <button type="submit" name="updateAction" value="save" class="btn btn-md btn-primary"><i class="fa fa-plus-circle"></i> Save Changes</button>
-                    <button type="button" class="btn btn-md btn-danger"><i class="fa fa-arrow-circle-left"></i> Back to Projects List</button>
+                    <button type="button" class="btn btn-md btn-danger" onclick="window.location = '@Url.Action("office-ppmp-list", "PPMPApproval", new { Area = "budget" })'"><i class="fa fa-arrow-circle-left"></i> Back to Accounts List</button>
                 </div>
             </div>
         </div>

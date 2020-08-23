@@ -1114,7 +1114,7 @@ namespace PUPFMIS.BusinessAndDataLogic
                     rows = new List<ContentCell>();
                     rows.Add(new ContentCell(item.ProjectCode, 0, 7, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
                     rows.Add(new ContentCell(item.ItemName + "\n\n" + item.ItemSpecifications, 1, 7, true, false, ParagraphAlignment.Justify, VerticalAlignment.Center));
-                    rows.Add(new ContentCell(item.TotalQty + "\n" + item.IndividualUOMReference, 2, 7, false, false, ParagraphAlignment.Center, VerticalAlignment.Center));
+                    rows.Add(new ContentCell(item.TotalQty + (item.IndividualUOMReference == null ? "" : "\n" + item.IndividualUOMReference), 2, 7, false, false, ParagraphAlignment.Center, VerticalAlignment.Center));
                     rows.Add(new ContentCell(String.Format("{0:#,##0.00}", item.EstimatedBudget), 3, 7, false, false, ParagraphAlignment.Right, VerticalAlignment.Center));
                     rows.Add(new ContentCell(item.JanMilestone, 4, 7, false, false, ParagraphAlignment.Center, VerticalAlignment.Center));
                     rows.Add(new ContentCell(item.FebMilestone, 5, 7, false, false, ParagraphAlignment.Center, VerticalAlignment.Center));
@@ -1266,8 +1266,8 @@ namespace PUPFMIS.BusinessAndDataLogic
 
                     columns = new List<ContentColumn>();
                     columns.Add(new ContentColumn(1.00));
-                    columns.Add(new ContentColumn(5.50));
-                    columns.Add(new ContentColumn(6.00));
+                    columns.Add(new ContentColumn(8.50));
+                    columns.Add(new ContentColumn(3.00));
                     reports.AddTable(columns, false);
 
                     rows = new List<ContentCell>();
@@ -1325,7 +1325,7 @@ namespace PUPFMIS.BusinessAndDataLogic
                         rows = new List<ContentCell>();
                         rows.Add(new ContentCell(itemNo.ToString(), 0, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center, 0, 2));
                         rows.Add(new ContentCell(item.ItemName + "\n\n" + item.ItemSpecifications, 1, 8, true, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 2));
-                        rows.Add(new ContentCell(item.TotalQty + "\n" + item.IndividualUOMReference, 2, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center, 0, 2));
+                        rows.Add(new ContentCell(item.TotalQty + (item.IndividualUOMReference == null ? "" : "\n" + item.IndividualUOMReference), 2, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center, 0, 2));
                         rows.Add(new ContentCell("1", 3, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
                         rows.Add(new ContentCell("Name: " + item.Supplier1Name + "\nAddress: " + item.Supplier1Address + "\nContact No.: " + item.Supplier1ContactNo + "\nEmail Address: " + item.Supplier1EmailAddress, 4, 8, true, false, ParagraphAlignment.Left, VerticalAlignment.Center));
                         rows.Add(new ContentCell(String.Format("{0:C}", item.Supplier1UnitCost), 5, 8, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
@@ -1333,18 +1333,19 @@ namespace PUPFMIS.BusinessAndDataLogic
                         rows.Add(new ContentCell(String.Format("{0:C}", item.EstimatedBudget), 7, 8, true, false, ParagraphAlignment.Right, VerticalAlignment.Center, 0, 2));
                         reports.AddRowContent(rows, 0.25);
 
+
                         rows = new List<ContentCell>();
                         rows.Add(new ContentCell("2", 3, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
-                        rows.Add(new ContentCell("Name: " + item.Supplier2Name + "\nAddress: " + item.Supplier2Address + "\nContact No.: " + item.Supplier2ContactNo + "\nEmail Address: " + item.Supplier2EmailAddress, 4, 8, true, false, ParagraphAlignment.Left, VerticalAlignment.Center));
-                        rows.Add(new ContentCell(String.Format("{0:C}", item.Supplier2UnitCost), 5, 8, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
-                        rows.Add(new ContentCell(String.Format("{0:C}", ((decimal)item.Supplier2UnitCost * int.Parse(item.TotalQty))), 6, 8, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
+                        rows.Add(new ContentCell("Name: " + item.Supplier2 == null ? "N/A" : item.Supplier2Name + "\nAddress: " + item.Supplier2 == null ? "N/A" : item.Supplier2Address + "\nContact No.: " + item.Supplier2 == null ? "N/A" : item.Supplier2ContactNo + "\nEmail Address: " + item.Supplier2 == null ? "N/A" : item.Supplier2EmailAddress, 4, 8, true, false, ParagraphAlignment.Left, VerticalAlignment.Center));
+                        rows.Add(new ContentCell(item.Supplier2 == null ? (0.00m).ToString("C", new System.Globalization.CultureInfo("en-ph")) : ((decimal)(item.Supplier2UnitCost)).ToString("C", new System.Globalization.CultureInfo("en-ph")), 5, 8, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
+                        rows.Add(new ContentCell(item.Supplier2 == null ? (0.00m).ToString("C", new System.Globalization.CultureInfo("en-ph")) : ((decimal)item.Supplier2UnitCost * int.Parse(item.TotalQty)).ToString("C", new System.Globalization.CultureInfo("en-ph")), 6, 8, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
                         reports.AddRowContent(rows, 0.25);
 
                         rows = new List<ContentCell>();
                         rows.Add(new ContentCell("3", 3, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
-                        rows.Add(new ContentCell("Name: " + item.Supplier3Name + "\nAddress: " + item.Supplier3Address + "\nContact No.: " + item.Supplier3ContactNo + "\nEmail Address: " + item.Supplier3EmailAddress, 4, 8, true, false, ParagraphAlignment.Left, VerticalAlignment.Center));
-                        rows.Add(new ContentCell(String.Format("{0:C}", item.Supplier3UnitCost), 5, 8, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
-                        rows.Add(new ContentCell(String.Format("{0:C}", ((decimal)item.Supplier3UnitCost * int.Parse(item.TotalQty))), 6, 8, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
+                        rows.Add(new ContentCell("Name: " + item.Supplier3 == null ? "N/A" : item.Supplier3Name + "\nAddress: " + item.Supplier3 == null ? "N/A" : item.Supplier3Address + "\nContact No.: " + item.Supplier3 == null ? "N/A" : item.Supplier3ContactNo + "\nEmail Address: " + item.Supplier3 == null ? "N/A" : item.Supplier3EmailAddress, 4, 8, true, false, ParagraphAlignment.Left, VerticalAlignment.Center));
+                        rows.Add(new ContentCell(item.Supplier3 == null ? (0.00m).ToString("C", new System.Globalization.CultureInfo("en-ph")) : ((decimal)(item.Supplier3UnitCost)).ToString("C", new System.Globalization.CultureInfo("en-ph")), 5, 8, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
+                        rows.Add(new ContentCell(item.Supplier3 == null ? (0.00m).ToString("C", new System.Globalization.CultureInfo("en-ph")) : ((decimal)item.Supplier3UnitCost * int.Parse(item.TotalQty)).ToString("C", new System.Globalization.CultureInfo("en-ph")), 6, 8, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
                         reports.AddRowContent(rows, 0.25);
 
                         itemNo++;
@@ -1811,10 +1812,7 @@ namespace PUPFMIS.BusinessAndDataLogic
                 rows.Add(new ContentCell((ppmpVM.Header.SubmittedAt == null ? "(Submission Pending)" : ((DateTime)ppmpVM.Header.SubmittedAt).ToString("dd MMMM yyyy hh:mm tt")), 3, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                 rows.Add(new ContentCell("", 4));
                 reports.AddRowContent(rows, 0);
-
-            }//
-
-            
+            }
 
             return reports.GenerateReport();
         }
@@ -1822,348 +1820,354 @@ namespace PUPFMIS.BusinessAndDataLogic
         {
             Reports reports = new Reports();
             BudgetPropsalVM BudgetProposal = ppmpDAL.GetBudgetProposalDetails(UserEmail, FiscalYear);
-
-            reports.ReportFilename = "BP Form A - " + BudgetProposal.OfficeName + "-" + FiscalYear.ToString();
-            reports.CreateDocument();
-            reports.AddDoubleColumnHeader(LogoPath);
-            reports.AddColumnHeader(
-                new HeaderLine { Content = "", Bold = false, Italic = false, FontSize = 5, ParagraphAlignment = ParagraphAlignment.Left },
-                new HeaderLine { Content = "PUP-MOOE-7-BUSO-001", Bold = false, Italic = false, FontSize = 8, ParagraphAlignment = ParagraphAlignment.Left, LeftIndent = 80 }
-            );
-            reports.AddColumnHeader(
-                new HeaderLine { Content = "Republic of the Philippines", Bold = false, Italic = false, FontSize = 10, ParagraphAlignment = ParagraphAlignment.Left },
-                new HeaderLine { Content = "Rev.0", Bold = false, Italic = false, FontSize = 8, ParagraphAlignment = ParagraphAlignment.Left, LeftIndent = 80 }
-            );
-            reports.AddColumnHeader(
-                new HeaderLine { Content = "POLYTECHNIC UNIVERSITY OF THE PHILIPPINES", Bold = true, Italic = false, FontSize = 12, ParagraphAlignment = ParagraphAlignment.Left },
-                new HeaderLine { Content = "May 15, 2018", Bold = false, Italic = false, FontSize = 8, ParagraphAlignment = ParagraphAlignment.Left, LeftIndent = 80 }
-            );
-            reports.AddColumnHeader(
-                new HeaderLine { Content = "Anonas St., Sta. Mesa, Manila", Bold = false, Italic = false, FontSize = 9, ParagraphAlignment = ParagraphAlignment.Left },
-                new HeaderLine { Content = "Date Printed: " + DateTime.Now.ToString("dd MMMM yyyy hh:mm tt"), Bold = true, Italic = false, FontSize = 9, ParagraphAlignment = ParagraphAlignment.Left, LeftIndent = 80 }
-            );
-
-            reports.AddNewLine();
-            reports.AddNewLine();
-
-            reports.AddSingleColumnHeader();
-            reports.AddColumnHeader(
-                new HeaderLine { Content = "SUMMARY OF PROPOSED MAINTENANCE AND OTHER OPERATING EXPENSES (MOOE)", Bold = true, Italic = false, FontSize = 10, ParagraphAlignment = ParagraphAlignment.Center }
-            );
-            reports.AddColumnHeader(
-                new HeaderLine { Content = "Fiscal Year " + BudgetProposal.FiscalYear.ToString(), Bold = false, Italic = false, FontSize = 8, ParagraphAlignment = ParagraphAlignment.Center }
-            );
-
-            reports.AddNewLine();
-
-            var columns = new List<ContentColumn>();
-            columns.Add(new ContentColumn(10.10));
-            columns.Add(new ContentColumn(2.40));
-            reports.AddTable(columns, false);
-
-            var rows = new List<ContentCell>();
-            rows.Add(new ContentCell("", 0, 10, true, true, ParagraphAlignment.Left, VerticalAlignment.Center));
-            rows.Add(new ContentCell("BP FORM A", 1, 10, true, false, ParagraphAlignment.Left, VerticalAlignment.Center));
-            reports.AddRowContent(rows, 0);
-
-            columns = new List<ContentColumn>();
-            columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
-            columns.Add(new ContentColumn(2.00));
-            columns.Add(new ContentColumn(5.00));
-            columns.Add(new ContentColumn(4.50));
-            reports.AddTable(columns, false);
-
-            rows = new List<ContentCell>();
-            rows.Add(new ContentCell("", 0));
-            rows.Add(new ContentCell("College/Division/Office/Unit: ", 1, 10, true));
-            rows.Add(new ContentCell(BudgetProposal.OfficeName, 2, 10, true, true, ParagraphAlignment.Left, VerticalAlignment.Center, 0, 0, true));
-            rows.Add(new ContentCell("", 3));
-            reports.AddRowContent(rows, 0);
-
-            reports.AddNewLine();
-
-            columns = new List<ContentColumn>();
-            columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
-            columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(254, 159, 89)));
-            columns.Add(new ContentColumn(5.00, new MigraDoc.DocumentObjectModel.Color(254, 159, 89)));
-            columns.Add(new ContentColumn(1.50, new MigraDoc.DocumentObjectModel.Color(254, 159, 89)));
-            columns.Add(new ContentColumn(1.50, new MigraDoc.DocumentObjectModel.Color(254, 159, 89)));
-            columns.Add(new ContentColumn(1.50, new MigraDoc.DocumentObjectModel.Color(254, 159, 89)));
-            columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
-            reports.AddTable(columns, true);
-
-            rows = new List<ContentCell>();
-            rows.Add(new ContentCell("", 0));
-            rows.Add(new ContentCell("UACS", 1, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
-            rows.Add(new ContentCell("Object Classification", 2, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
-            rows.Add(new ContentCell("Tier 1*\n(On-going/existing programs/projects)", 3, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
-            rows.Add(new ContentCell("Tier 2**\n(New Spending Proposals)", 4, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
-            rows.Add(new ContentCell("Total Proposed Budget\nTier 1 + Tier 2", 5, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
-            rows.Add(new ContentCell("", 6));
-            reports.AddRowContent(rows, 0.50);
-
-            var subAccounts = BudgetProposal.MOOE.GroupBy(d => d.SubClassification).Select(d => d.Key).ToList();
-            foreach(var subAcct in subAccounts)
+            
+            if(BudgetProposal.MOOE.Count > 0)
             {
+                reports.ReportFilename = "BP Form A - " + BudgetProposal.OfficeName + "-" + FiscalYear.ToString();
+                reports.CreateDocument();
+                reports.AddDoubleColumnHeader(LogoPath);
+                reports.AddColumnHeader(
+                    new HeaderLine { Content = "", Bold = false, Italic = false, FontSize = 5, ParagraphAlignment = ParagraphAlignment.Left },
+                    new HeaderLine { Content = "PUP-MOOE-7-BUSO-001", Bold = false, Italic = false, FontSize = 8, ParagraphAlignment = ParagraphAlignment.Left, LeftIndent = 80 }
+                );
+                reports.AddColumnHeader(
+                    new HeaderLine { Content = "Republic of the Philippines", Bold = false, Italic = false, FontSize = 10, ParagraphAlignment = ParagraphAlignment.Left },
+                    new HeaderLine { Content = "Rev.0", Bold = false, Italic = false, FontSize = 8, ParagraphAlignment = ParagraphAlignment.Left, LeftIndent = 80 }
+                );
+                reports.AddColumnHeader(
+                    new HeaderLine { Content = "POLYTECHNIC UNIVERSITY OF THE PHILIPPINES", Bold = true, Italic = false, FontSize = 12, ParagraphAlignment = ParagraphAlignment.Left },
+                    new HeaderLine { Content = "May 15, 2018", Bold = false, Italic = false, FontSize = 8, ParagraphAlignment = ParagraphAlignment.Left, LeftIndent = 80 }
+                );
+                reports.AddColumnHeader(
+                    new HeaderLine { Content = "Anonas St., Sta. Mesa, Manila", Bold = false, Italic = false, FontSize = 9, ParagraphAlignment = ParagraphAlignment.Left },
+                    new HeaderLine { Content = "Date Printed: " + DateTime.Now.ToString("dd MMMM yyyy hh:mm tt"), Bold = true, Italic = false, FontSize = 9, ParagraphAlignment = ParagraphAlignment.Left, LeftIndent = 80 }
+                );
+
+                reports.AddNewLine();
+                reports.AddNewLine();
+
+                reports.AddSingleColumnHeader();
+                reports.AddColumnHeader(
+                    new HeaderLine { Content = "SUMMARY OF PROPOSED MAINTENANCE AND OTHER OPERATING EXPENSES (MOOE)", Bold = true, Italic = false, FontSize = 10, ParagraphAlignment = ParagraphAlignment.Center }
+                );
+                reports.AddColumnHeader(
+                    new HeaderLine { Content = "Fiscal Year " + BudgetProposal.FiscalYear.ToString(), Bold = false, Italic = false, FontSize = 8, ParagraphAlignment = ParagraphAlignment.Center }
+                );
+
+                reports.AddNewLine();
+
+                var columns = new List<ContentColumn>();
+                columns.Add(new ContentColumn(10.10));
+                columns.Add(new ContentColumn(2.40));
+                reports.AddTable(columns, false);
+
+                var rows = new List<ContentCell>();
+                rows.Add(new ContentCell("", 0, 10, true, true, ParagraphAlignment.Left, VerticalAlignment.Center));
+                rows.Add(new ContentCell("BP FORM A", 1, 10, true, false, ParagraphAlignment.Left, VerticalAlignment.Center));
+                reports.AddRowContent(rows, 0);
+
                 columns = new List<ContentColumn>();
                 columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
-                columns.Add(new ContentColumn(10.50, new MigraDoc.DocumentObjectModel.Color(74, 132, 249)));
+                columns.Add(new ContentColumn(2.00));
+                columns.Add(new ContentColumn(5.00));
+                columns.Add(new ContentColumn(4.50));
+                reports.AddTable(columns, false);
+
+                rows = new List<ContentCell>();
+                rows.Add(new ContentCell("", 0));
+                rows.Add(new ContentCell("College/Division/Office/Unit: ", 1, 10, true));
+                rows.Add(new ContentCell(BudgetProposal.OfficeName, 2, 10, true, true, ParagraphAlignment.Left, VerticalAlignment.Center, 0, 0, true));
+                rows.Add(new ContentCell("", 3));
+                reports.AddRowContent(rows, 0);
+
+                reports.AddNewLine();
+
+                columns = new List<ContentColumn>();
+                columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
+                columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(254, 159, 89)));
+                columns.Add(new ContentColumn(5.00, new MigraDoc.DocumentObjectModel.Color(254, 159, 89)));
+                columns.Add(new ContentColumn(1.50, new MigraDoc.DocumentObjectModel.Color(254, 159, 89)));
+                columns.Add(new ContentColumn(1.50, new MigraDoc.DocumentObjectModel.Color(254, 159, 89)));
+                columns.Add(new ContentColumn(1.50, new MigraDoc.DocumentObjectModel.Color(254, 159, 89)));
                 columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
                 reports.AddTable(columns, true);
 
                 rows = new List<ContentCell>();
                 rows.Add(new ContentCell("", 0));
-                rows.Add(new ContentCell(subAcct, 1, 8, true, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-                rows.Add(new ContentCell("", 0));
-                reports.AddRowContent(rows, 0.25);
+                rows.Add(new ContentCell("UACS", 1, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
+                rows.Add(new ContentCell("Object Classification", 2, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
+                rows.Add(new ContentCell("Tier 1*\n(On-going/existing programs/projects)", 3, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
+                rows.Add(new ContentCell("Tier 2**\n(New Spending Proposals)", 4, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
+                rows.Add(new ContentCell("Total Proposed Budget\nTier 1 + Tier 2", 5, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
+                rows.Add(new ContentCell("", 6));
+                reports.AddRowContent(rows, 0.50);
 
-                foreach (var item in BudgetProposal.MOOE.Where(d => d.SubClassification == subAcct))
+                var subAccounts = BudgetProposal.MOOE.GroupBy(d => d.SubClassification).Select(d => d.Key).ToList();
+                foreach (var subAcct in subAccounts)
                 {
                     columns = new List<ContentColumn>();
                     columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
-                    columns.Add(new ContentColumn(1.00));
-                    columns.Add(new ContentColumn(5.00));
-                    columns.Add(new ContentColumn(1.50));
-                    columns.Add(new ContentColumn(1.50));
-                    columns.Add(new ContentColumn(1.50));
+                    columns.Add(new ContentColumn(10.50, new MigraDoc.DocumentObjectModel.Color(74, 132, 249)));
                     columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
                     reports.AddTable(columns, true);
 
                     rows = new List<ContentCell>();
                     rows.Add(new ContentCell("", 0));
-                    rows.Add(new ContentCell(item.UACS, 1, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
-                    rows.Add(new ContentCell(item.ObjectClassification, 2, 8, false, false, ParagraphAlignment.Left, VerticalAlignment.Center));
-                    rows.Add(new ContentCell(String.Format("{0:C}", item.Tier1), 3, 8, false, false, ParagraphAlignment.Right, VerticalAlignment.Center));
-                    rows.Add(new ContentCell(String.Format("{0:C}", item.Tier2), 4, 8, false, false, ParagraphAlignment.Right, VerticalAlignment.Center));
-                    rows.Add(new ContentCell(String.Format("{0:C}", item.TotalProposedProgram), 5, 8, false, false, ParagraphAlignment.Right, VerticalAlignment.Center));
-                    rows.Add(new ContentCell("", 6));
+                    rows.Add(new ContentCell(subAcct, 1, 8, true, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+                    rows.Add(new ContentCell("", 0));
                     reports.AddRowContent(rows, 0.25);
+
+                    foreach (var item in BudgetProposal.MOOE.Where(d => d.SubClassification == subAcct))
+                    {
+                        columns = new List<ContentColumn>();
+                        columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
+                        columns.Add(new ContentColumn(1.00));
+                        columns.Add(new ContentColumn(5.00));
+                        columns.Add(new ContentColumn(1.50));
+                        columns.Add(new ContentColumn(1.50));
+                        columns.Add(new ContentColumn(1.50));
+                        columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
+                        reports.AddTable(columns, true);
+
+                        rows = new List<ContentCell>();
+                        rows.Add(new ContentCell("", 0));
+                        rows.Add(new ContentCell(item.UACS, 1, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
+                        rows.Add(new ContentCell(item.ObjectClassification, 2, 8, false, false, ParagraphAlignment.Left, VerticalAlignment.Center));
+                        rows.Add(new ContentCell(String.Format("{0:C}", item.Tier1), 3, 8, false, false, ParagraphAlignment.Right, VerticalAlignment.Center));
+                        rows.Add(new ContentCell(String.Format("{0:C}", item.Tier2), 4, 8, false, false, ParagraphAlignment.Right, VerticalAlignment.Center));
+                        rows.Add(new ContentCell(String.Format("{0:C}", item.TotalProposedProgram), 5, 8, false, false, ParagraphAlignment.Right, VerticalAlignment.Center));
+                        rows.Add(new ContentCell("", 6));
+                        reports.AddRowContent(rows, 0.25);
+                    }
                 }
-            }
-            columns = new List<ContentColumn>();
-            columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
-            columns.Add(new ContentColumn(1.00));
-            columns.Add(new ContentColumn(5.00));
-            columns.Add(new ContentColumn(1.50));
-            columns.Add(new ContentColumn(1.50));
-            columns.Add(new ContentColumn(1.50));
-            columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
-            reports.AddTable(columns, true);
-
-            rows = new List<ContentCell>();
-            rows.Add(new ContentCell("", 0));
-            rows.Add(new ContentCell("TOTAL", 1, 9, true, false, ParagraphAlignment.Right, VerticalAlignment.Center, 1));
-            rows.Add(new ContentCell(String.Format("{0:C}", BudgetProposal.MOOE.Sum(d => d.Tier1)), 3, 10, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
-            rows.Add(new ContentCell(String.Format("{0:C}", BudgetProposal.MOOE.Sum(d => d.Tier2)), 4, 10, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
-            rows.Add(new ContentCell(String.Format("{0:C}", BudgetProposal.MOOE.Sum(d => d.TotalProposedProgram)), 5, 10, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
-            rows.Add(new ContentCell("", 6));
-            reports.AddRowContent(rows, 0.25);
-
-            columns = new List<ContentColumn>();
-            columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
-            columns.Add(new ContentColumn(9.00));
-            columns.Add(new ContentColumn(1.50));
-            columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
-            reports.AddTable(columns, true);
-
-            rows = new List<ContentCell>();
-            rows.Add(new ContentCell("", 0));
-            rows.Add(new ContentCell("Submitted By:\n\n\n\n"+ BudgetProposal.SubmittedBy + "\n" + BudgetProposal.Designation, 1, 9, true, false, ParagraphAlignment.Left, VerticalAlignment.Top));
-            rows.Add(new ContentCell("Date:\n\n\n\n" + BudgetProposal.SubmittedAt, 2, 9, true, false, ParagraphAlignment.Left, VerticalAlignment.Top));
-            rows.Add(new ContentCell("", 3));
-            reports.AddRowContent(rows, 0.25);
-
-            reports.AddNewLine();
-            reports.AddNewLine();
-
-            columns = new List<ContentColumn>();
-            columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
-            columns.Add(new ContentColumn(10.50));
-            columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
-            reports.AddTable(columns, false);
-
-            rows = new List<ContentCell>();
-            rows.Add(new ContentCell("", 0));
-            rows.Add(new ContentCell("* Tier I - Annual cost of on-going programs and projects based on actual obligations for FY " + (BudgetProposal.FiscalYear - 1).ToString() + " plus adjustments\narising from changes in inflation rate.", 1, 9, false, false, ParagraphAlignment.Left, VerticalAlignment.Top));
-            rows.Add(new ContentCell("", 2));
-            reports.AddRowContent(rows, 0.25);
-
-            rows = new List<ContentCell>();
-            rows.Add(new ContentCell("", 0));
-            rows.Add(new ContentCell("\n\n** Tier II - New Spending Proposals.", 1, 9, false, false, ParagraphAlignment.Left, VerticalAlignment.Top));
-            rows.Add(new ContentCell("", 2));
-            reports.AddRowContent(rows, 0.25);
-
-            reports.ReportFilename = "BP Form A - " + BudgetProposal.OfficeName + "-" + FiscalYear.ToString();
-            reports.CreateDocument();
-            reports.AddDoubleColumnHeader(LogoPath);
-            reports.AddColumnHeader(
-                new HeaderLine { Content = "", Bold = false, Italic = false, FontSize = 5, ParagraphAlignment = ParagraphAlignment.Left },
-                new HeaderLine { Content = "PUP-MOOE-7-BUSO-002", Bold = false, Italic = false, FontSize = 8, ParagraphAlignment = ParagraphAlignment.Left, LeftIndent = 80 }
-            );
-            reports.AddColumnHeader(
-                new HeaderLine { Content = "Republic of the Philippines", Bold = false, Italic = false, FontSize = 10, ParagraphAlignment = ParagraphAlignment.Left },
-                new HeaderLine { Content = "Rev.0", Bold = false, Italic = false, FontSize = 8, ParagraphAlignment = ParagraphAlignment.Left, LeftIndent = 80 }
-            );
-            reports.AddColumnHeader(
-                new HeaderLine { Content = "POLYTECHNIC UNIVERSITY OF THE PHILIPPINES", Bold = true, Italic = false, FontSize = 12, ParagraphAlignment = ParagraphAlignment.Left },
-                new HeaderLine { Content = "May 15, 2018", Bold = false, Italic = false, FontSize = 8, ParagraphAlignment = ParagraphAlignment.Left, LeftIndent = 80 }
-            );
-            reports.AddColumnHeader(
-                new HeaderLine { Content = "Anonas St., Sta. Mesa, Manila", Bold = false, Italic = false, FontSize = 9, ParagraphAlignment = ParagraphAlignment.Left },
-                new HeaderLine { Content = "Date Printed: " + DateTime.Now.ToString("dd MMMM yyyy hh:mm tt"), Bold = true, Italic = false, FontSize = 9, ParagraphAlignment = ParagraphAlignment.Left, LeftIndent = 80 }
-            );
-
-            reports.AddNewLine();
-            reports.AddNewLine();
-
-            reports.AddSingleColumnHeader();
-            reports.AddColumnHeader(
-                new HeaderLine { Content = "SUMMARY OF PROPOSED CAPITAL OUTLAYS", Bold = true, Italic = false, FontSize = 10, ParagraphAlignment = ParagraphAlignment.Center }
-            );
-            reports.AddColumnHeader(
-                new HeaderLine { Content = "Fiscal Year " + BudgetProposal.FiscalYear.ToString(), Bold = false, Italic = false, FontSize = 8, ParagraphAlignment = ParagraphAlignment.Center }
-            );
-
-            reports.AddNewLine();
-
-            columns = new List<ContentColumn>();
-            columns.Add(new ContentColumn(10.10));
-            columns.Add(new ContentColumn(2.40));
-            reports.AddTable(columns, false);
-
-            rows = new List<ContentCell>();
-            rows.Add(new ContentCell("", 0, 10, true, true, ParagraphAlignment.Left, VerticalAlignment.Center));
-            rows.Add(new ContentCell("BP FORM B", 1, 10, true, false, ParagraphAlignment.Left, VerticalAlignment.Center));
-            reports.AddRowContent(rows, 0);
-
-            columns = new List<ContentColumn>();
-            columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
-            columns.Add(new ContentColumn(2.00));
-            columns.Add(new ContentColumn(5.00));
-            columns.Add(new ContentColumn(4.50));
-            reports.AddTable(columns, false);
-
-            rows = new List<ContentCell>();
-            rows.Add(new ContentCell("", 0));
-            rows.Add(new ContentCell("College/Division/Office/Unit: ", 1, 10, true));
-            rows.Add(new ContentCell(BudgetProposal.OfficeName, 2, 10, true, true, ParagraphAlignment.Left, VerticalAlignment.Center, 0, 0, true));
-            rows.Add(new ContentCell("", 3));
-            reports.AddRowContent(rows, 0);
-
-            reports.AddNewLine();
-
-            columns = new List<ContentColumn>();
-            columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
-            columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(254, 159, 89)));
-            columns.Add(new ContentColumn(5.00, new MigraDoc.DocumentObjectModel.Color(254, 159, 89)));
-            columns.Add(new ContentColumn(1.50, new MigraDoc.DocumentObjectModel.Color(254, 159, 89)));
-            columns.Add(new ContentColumn(1.50, new MigraDoc.DocumentObjectModel.Color(254, 159, 89)));
-            columns.Add(new ContentColumn(1.50, new MigraDoc.DocumentObjectModel.Color(254, 159, 89)));
-            columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
-            reports.AddTable(columns, true);
-
-            rows = new List<ContentCell>();
-            rows.Add(new ContentCell("", 0));
-            rows.Add(new ContentCell("UACS", 1, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
-            rows.Add(new ContentCell("Object Classification", 2, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
-            rows.Add(new ContentCell("Tier 1*\n(On-going/existing programs/projects)", 3, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
-            rows.Add(new ContentCell("Tier 2**\n(New Spending Proposals)", 4, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
-            rows.Add(new ContentCell("Total Proposed Budget\nTier 1 + Tier 2", 5, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
-            rows.Add(new ContentCell("", 6));
-            reports.AddRowContent(rows, 0.50);
-
-            subAccounts = BudgetProposal.CaptialOutlay.GroupBy(d => d.SubClassification).Select(d => d.Key).ToList();
-            foreach (var subAcct in subAccounts)
-            {
                 columns = new List<ContentColumn>();
                 columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
-                columns.Add(new ContentColumn(10.50, new MigraDoc.DocumentObjectModel.Color(74, 132, 249)));
+                columns.Add(new ContentColumn(1.00));
+                columns.Add(new ContentColumn(5.00));
+                columns.Add(new ContentColumn(1.50));
+                columns.Add(new ContentColumn(1.50));
+                columns.Add(new ContentColumn(1.50));
                 columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
                 reports.AddTable(columns, true);
 
                 rows = new List<ContentCell>();
                 rows.Add(new ContentCell("", 0));
-                rows.Add(new ContentCell(subAcct, 1, 8, true, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-                rows.Add(new ContentCell("", 0));
+                rows.Add(new ContentCell("TOTAL", 1, 9, true, false, ParagraphAlignment.Right, VerticalAlignment.Center, 1));
+                rows.Add(new ContentCell(String.Format("{0:C}", BudgetProposal.MOOE.Sum(d => d.Tier1)), 3, 10, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
+                rows.Add(new ContentCell(String.Format("{0:C}", BudgetProposal.MOOE.Sum(d => d.Tier2)), 4, 10, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
+                rows.Add(new ContentCell(String.Format("{0:C}", BudgetProposal.MOOE.Sum(d => d.TotalProposedProgram)), 5, 10, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
+                rows.Add(new ContentCell("", 6));
                 reports.AddRowContent(rows, 0.25);
 
-                foreach (var item in BudgetProposal.CaptialOutlay.Where(d => d.SubClassification == subAcct))
+                columns = new List<ContentColumn>();
+                columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
+                columns.Add(new ContentColumn(9.00));
+                columns.Add(new ContentColumn(1.50));
+                columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
+                reports.AddTable(columns, true);
+
+                rows = new List<ContentCell>();
+                rows.Add(new ContentCell("", 0));
+                rows.Add(new ContentCell("Submitted By:\n\n\n\n" + BudgetProposal.SubmittedBy + "\n" + BudgetProposal.Designation, 1, 9, true, false, ParagraphAlignment.Left, VerticalAlignment.Top));
+                rows.Add(new ContentCell("Date:\n\n\n\n" + BudgetProposal.SubmittedAt, 2, 9, true, false, ParagraphAlignment.Left, VerticalAlignment.Top));
+                rows.Add(new ContentCell("", 3));
+                reports.AddRowContent(rows, 0.25);
+
+                reports.AddNewLine();
+                reports.AddNewLine();
+
+                columns = new List<ContentColumn>();
+                columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
+                columns.Add(new ContentColumn(10.50));
+                columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
+                reports.AddTable(columns, false);
+
+                rows = new List<ContentCell>();
+                rows.Add(new ContentCell("", 0));
+                rows.Add(new ContentCell("* Tier I - Annual cost of on-going programs and projects based on actual obligations for FY " + (BudgetProposal.FiscalYear - 1).ToString() + " plus adjustments\narising from changes in inflation rate.", 1, 9, false, false, ParagraphAlignment.Left, VerticalAlignment.Top));
+                rows.Add(new ContentCell("", 2));
+                reports.AddRowContent(rows, 0.25);
+
+                rows = new List<ContentCell>();
+                rows.Add(new ContentCell("", 0));
+                rows.Add(new ContentCell("\n\n** Tier II - New Spending Proposals.", 1, 9, false, false, ParagraphAlignment.Left, VerticalAlignment.Top));
+                rows.Add(new ContentCell("", 2));
+                reports.AddRowContent(rows, 0.25);
+            }
+
+            if(BudgetProposal.CaptialOutlay.Count > 0)
+            {
+                reports.ReportFilename = "BP Form A - " + BudgetProposal.OfficeName + "-" + FiscalYear.ToString();
+                reports.CreateDocument();
+                reports.AddDoubleColumnHeader(LogoPath);
+                reports.AddColumnHeader(
+                    new HeaderLine { Content = "", Bold = false, Italic = false, FontSize = 5, ParagraphAlignment = ParagraphAlignment.Left },
+                    new HeaderLine { Content = "PUP-MOOE-7-BUSO-002", Bold = false, Italic = false, FontSize = 8, ParagraphAlignment = ParagraphAlignment.Left, LeftIndent = 80 }
+                );
+                reports.AddColumnHeader(
+                    new HeaderLine { Content = "Republic of the Philippines", Bold = false, Italic = false, FontSize = 10, ParagraphAlignment = ParagraphAlignment.Left },
+                    new HeaderLine { Content = "Rev.0", Bold = false, Italic = false, FontSize = 8, ParagraphAlignment = ParagraphAlignment.Left, LeftIndent = 80 }
+                );
+                reports.AddColumnHeader(
+                    new HeaderLine { Content = "POLYTECHNIC UNIVERSITY OF THE PHILIPPINES", Bold = true, Italic = false, FontSize = 12, ParagraphAlignment = ParagraphAlignment.Left },
+                    new HeaderLine { Content = "May 15, 2018", Bold = false, Italic = false, FontSize = 8, ParagraphAlignment = ParagraphAlignment.Left, LeftIndent = 80 }
+                );
+                reports.AddColumnHeader(
+                    new HeaderLine { Content = "Anonas St., Sta. Mesa, Manila", Bold = false, Italic = false, FontSize = 9, ParagraphAlignment = ParagraphAlignment.Left },
+                    new HeaderLine { Content = "Date Printed: " + DateTime.Now.ToString("dd MMMM yyyy hh:mm tt"), Bold = true, Italic = false, FontSize = 9, ParagraphAlignment = ParagraphAlignment.Left, LeftIndent = 80 }
+                );
+
+                reports.AddNewLine();
+                reports.AddNewLine();
+
+                reports.AddSingleColumnHeader();
+                reports.AddColumnHeader(
+                    new HeaderLine { Content = "SUMMARY OF PROPOSED CAPITAL OUTLAYS", Bold = true, Italic = false, FontSize = 10, ParagraphAlignment = ParagraphAlignment.Center }
+                );
+                reports.AddColumnHeader(
+                    new HeaderLine { Content = "Fiscal Year " + BudgetProposal.FiscalYear.ToString(), Bold = false, Italic = false, FontSize = 8, ParagraphAlignment = ParagraphAlignment.Center }
+                );
+
+                reports.AddNewLine();
+
+                var columns = new List<ContentColumn>();
+                columns.Add(new ContentColumn(10.10));
+                columns.Add(new ContentColumn(2.40));
+                reports.AddTable(columns, false);
+
+                var rows = new List<ContentCell>();
+                rows.Add(new ContentCell("", 0, 10, true, true, ParagraphAlignment.Left, VerticalAlignment.Center));
+                rows.Add(new ContentCell("BP FORM B", 1, 10, true, false, ParagraphAlignment.Left, VerticalAlignment.Center));
+                reports.AddRowContent(rows, 0);
+
+                columns = new List<ContentColumn>();
+                columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
+                columns.Add(new ContentColumn(2.00));
+                columns.Add(new ContentColumn(5.00));
+                columns.Add(new ContentColumn(4.50));
+                reports.AddTable(columns, false);
+
+                rows = new List<ContentCell>();
+                rows.Add(new ContentCell("", 0));
+                rows.Add(new ContentCell("College/Division/Office/Unit: ", 1, 10, true));
+                rows.Add(new ContentCell(BudgetProposal.OfficeName, 2, 10, true, true, ParagraphAlignment.Left, VerticalAlignment.Center, 0, 0, true));
+                rows.Add(new ContentCell("", 3));
+                reports.AddRowContent(rows, 0);
+
+                reports.AddNewLine();
+
+                columns = new List<ContentColumn>();
+                columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
+                columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(254, 159, 89)));
+                columns.Add(new ContentColumn(5.00, new MigraDoc.DocumentObjectModel.Color(254, 159, 89)));
+                columns.Add(new ContentColumn(1.50, new MigraDoc.DocumentObjectModel.Color(254, 159, 89)));
+                columns.Add(new ContentColumn(1.50, new MigraDoc.DocumentObjectModel.Color(254, 159, 89)));
+                columns.Add(new ContentColumn(1.50, new MigraDoc.DocumentObjectModel.Color(254, 159, 89)));
+                columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
+                reports.AddTable(columns, true);
+
+                rows = new List<ContentCell>();
+                rows.Add(new ContentCell("", 0));
+                rows.Add(new ContentCell("UACS", 1, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
+                rows.Add(new ContentCell("Object Classification", 2, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
+                rows.Add(new ContentCell("Tier 1*\n(On-going/existing programs/projects)", 3, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
+                rows.Add(new ContentCell("Tier 2**\n(New Spending Proposals)", 4, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
+                rows.Add(new ContentCell("Total Proposed Budget\nTier 1 + Tier 2", 5, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
+                rows.Add(new ContentCell("", 6));
+                reports.AddRowContent(rows, 0.50);
+
+                var subAccounts = BudgetProposal.CaptialOutlay.GroupBy(d => d.SubClassification).Select(d => d.Key).ToList();
+                foreach (var subAcct in subAccounts)
                 {
                     columns = new List<ContentColumn>();
                     columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
-                    columns.Add(new ContentColumn(1.00));
-                    columns.Add(new ContentColumn(5.00));
-                    columns.Add(new ContentColumn(1.50));
-                    columns.Add(new ContentColumn(1.50));
-                    columns.Add(new ContentColumn(1.50));
+                    columns.Add(new ContentColumn(10.50, new MigraDoc.DocumentObjectModel.Color(74, 132, 249)));
                     columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
                     reports.AddTable(columns, true);
 
                     rows = new List<ContentCell>();
                     rows.Add(new ContentCell("", 0));
-                    rows.Add(new ContentCell(item.UACS, 1, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
-                    rows.Add(new ContentCell(item.ObjectClassification, 2, 8, false, false, ParagraphAlignment.Left, VerticalAlignment.Center));
-                    rows.Add(new ContentCell(String.Format("{0:C}", item.Tier1), 3, 8, false, false, ParagraphAlignment.Right, VerticalAlignment.Center));
-                    rows.Add(new ContentCell(String.Format("{0:C}", item.Tier2), 4, 8, false, false, ParagraphAlignment.Right, VerticalAlignment.Center));
-                    rows.Add(new ContentCell(String.Format("{0:C}", item.TotalProposedProgram), 5, 8, false, false, ParagraphAlignment.Right, VerticalAlignment.Center));
-                    rows.Add(new ContentCell("", 6));
+                    rows.Add(new ContentCell(subAcct, 1, 8, true, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+                    rows.Add(new ContentCell("", 0));
                     reports.AddRowContent(rows, 0.25);
+
+                    foreach (var item in BudgetProposal.CaptialOutlay.Where(d => d.SubClassification == subAcct))
+                    {
+                        columns = new List<ContentColumn>();
+                        columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
+                        columns.Add(new ContentColumn(1.00));
+                        columns.Add(new ContentColumn(5.00));
+                        columns.Add(new ContentColumn(1.50));
+                        columns.Add(new ContentColumn(1.50));
+                        columns.Add(new ContentColumn(1.50));
+                        columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
+                        reports.AddTable(columns, true);
+
+                        rows = new List<ContentCell>();
+                        rows.Add(new ContentCell("", 0));
+                        rows.Add(new ContentCell(item.UACS, 1, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
+                        rows.Add(new ContentCell(item.ObjectClassification, 2, 8, false, false, ParagraphAlignment.Left, VerticalAlignment.Center));
+                        rows.Add(new ContentCell(String.Format("{0:C}", item.Tier1), 3, 8, false, false, ParagraphAlignment.Right, VerticalAlignment.Center));
+                        rows.Add(new ContentCell(String.Format("{0:C}", item.Tier2), 4, 8, false, false, ParagraphAlignment.Right, VerticalAlignment.Center));
+                        rows.Add(new ContentCell(String.Format("{0:C}", item.TotalProposedProgram), 5, 8, false, false, ParagraphAlignment.Right, VerticalAlignment.Center));
+                        rows.Add(new ContentCell("", 6));
+                        reports.AddRowContent(rows, 0.25);
+                    }
                 }
+                columns = new List<ContentColumn>();
+                columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
+                columns.Add(new ContentColumn(1.00));
+                columns.Add(new ContentColumn(5.00));
+                columns.Add(new ContentColumn(1.50));
+                columns.Add(new ContentColumn(1.50));
+                columns.Add(new ContentColumn(1.50));
+                columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
+                reports.AddTable(columns, true);
+
+                rows = new List<ContentCell>();
+                rows.Add(new ContentCell("", 0));
+                rows.Add(new ContentCell("TOTAL", 1, 9, true, false, ParagraphAlignment.Right, VerticalAlignment.Center, 1));
+                rows.Add(new ContentCell(String.Format("{0:C}", BudgetProposal.CaptialOutlay.Sum(d => d.Tier1)), 3, 10, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
+                rows.Add(new ContentCell(String.Format("{0:C}", BudgetProposal.CaptialOutlay.Sum(d => d.Tier2)), 4, 10, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
+                rows.Add(new ContentCell(String.Format("{0:C}", BudgetProposal.CaptialOutlay.Sum(d => d.TotalProposedProgram)), 5, 10, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
+                rows.Add(new ContentCell("", 6));
+                reports.AddRowContent(rows, 0.25);
+
+                columns = new List<ContentColumn>();
+                columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
+                columns.Add(new ContentColumn(9.00));
+                columns.Add(new ContentColumn(1.50));
+                columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
+                reports.AddTable(columns, true);
+
+                rows = new List<ContentCell>();
+                rows.Add(new ContentCell("", 0));
+                rows.Add(new ContentCell("Submitted By:\n\n\n\n" + BudgetProposal.SubmittedBy + "\n" + BudgetProposal.Designation, 1, 9, true, false, ParagraphAlignment.Left, VerticalAlignment.Top));
+                rows.Add(new ContentCell("Date:\n\n\n\n" + BudgetProposal.SubmittedAt, 2, 9, true, false, ParagraphAlignment.Left, VerticalAlignment.Top));
+                rows.Add(new ContentCell("", 3));
+                reports.AddRowContent(rows, 0.25);
+
+                reports.AddNewLine();
+                reports.AddNewLine();
+
+                columns = new List<ContentColumn>();
+                columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
+                columns.Add(new ContentColumn(10.50));
+                columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
+                reports.AddTable(columns, false);
+
+                rows = new List<ContentCell>();
+                rows.Add(new ContentCell("", 0));
+                rows.Add(new ContentCell("* Tier I - Annual cost of on-going programs and projects based on actual obligations for FY " + (BudgetProposal.FiscalYear - 1).ToString() + " plus adjustments\narising from changes in inflation rate.", 1, 9, false, false, ParagraphAlignment.Left, VerticalAlignment.Top));
+                rows.Add(new ContentCell("", 2));
+                reports.AddRowContent(rows, 0.25);
+
+                rows = new List<ContentCell>();
+                rows.Add(new ContentCell("", 0));
+                rows.Add(new ContentCell("\n\n** Tier II - New Spending Proposals.", 1, 9, false, false, ParagraphAlignment.Left, VerticalAlignment.Top));
+                rows.Add(new ContentCell("", 2));
+                reports.AddRowContent(rows, 0.25);
             }
-            columns = new List<ContentColumn>();
-            columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
-            columns.Add(new ContentColumn(1.00));
-            columns.Add(new ContentColumn(5.00));
-            columns.Add(new ContentColumn(1.50));
-            columns.Add(new ContentColumn(1.50));
-            columns.Add(new ContentColumn(1.50));
-            columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
-            reports.AddTable(columns, true);
-
-            rows = new List<ContentCell>();
-            rows.Add(new ContentCell("", 0));
-            rows.Add(new ContentCell("TOTAL", 1, 9, true, false, ParagraphAlignment.Right, VerticalAlignment.Center, 1));
-            rows.Add(new ContentCell(String.Format("{0:C}", BudgetProposal.CaptialOutlay.Sum(d => d.Tier1)), 3, 10, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
-            rows.Add(new ContentCell(String.Format("{0:C}", BudgetProposal.CaptialOutlay.Sum(d => d.Tier2)), 4, 10, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
-            rows.Add(new ContentCell(String.Format("{0:C}", BudgetProposal.CaptialOutlay.Sum(d => d.TotalProposedProgram)), 5, 10, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
-            rows.Add(new ContentCell("", 6));
-            reports.AddRowContent(rows, 0.25);
-
-            columns = new List<ContentColumn>();
-            columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
-            columns.Add(new ContentColumn(9.00));
-            columns.Add(new ContentColumn(1.50));
-            columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
-            reports.AddTable(columns, true);
-
-            rows = new List<ContentCell>();
-            rows.Add(new ContentCell("", 0));
-            rows.Add(new ContentCell("Submitted By:\n\n\n\n" + BudgetProposal.SubmittedBy + "\n" + BudgetProposal.Designation, 1, 9, true, false, ParagraphAlignment.Left, VerticalAlignment.Top));
-            rows.Add(new ContentCell("Date:\n\n\n\n" + BudgetProposal.SubmittedAt, 2, 9, true, false, ParagraphAlignment.Left, VerticalAlignment.Top));
-            rows.Add(new ContentCell("", 3));
-            reports.AddRowContent(rows, 0.25);
-
-            reports.AddNewLine();
-            reports.AddNewLine();
-
-            columns = new List<ContentColumn>();
-            columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
-            columns.Add(new ContentColumn(10.50));
-            columns.Add(new ContentColumn(1.00, new MigraDoc.DocumentObjectModel.Color(255, 255, 255), true));
-            reports.AddTable(columns, false);
-
-            rows = new List<ContentCell>();
-            rows.Add(new ContentCell("", 0));
-            rows.Add(new ContentCell("* Tier I - Annual cost of on-going programs and projects based on actual obligations for FY " + (BudgetProposal.FiscalYear - 1).ToString() + " plus adjustments\narising from changes in inflation rate.", 1, 9, false, false, ParagraphAlignment.Left, VerticalAlignment.Top));
-            rows.Add(new ContentCell("", 2));
-            reports.AddRowContent(rows, 0.25);
-
-            rows = new List<ContentCell>();
-            rows.Add(new ContentCell("", 0));
-            rows.Add(new ContentCell("\n\n** Tier II - New Spending Proposals.", 1, 9, false, false, ParagraphAlignment.Left, VerticalAlignment.Top));
-            rows.Add(new ContentCell("", 2));
-            reports.AddRowContent(rows, 0.25);
 
             return reports.GenerateReport();
         }
@@ -2389,7 +2393,7 @@ namespace PUPFMIS.BusinessAndDataLogic
                 ReferenceNo = ppmpHeader.ReferenceNo,
                 FiscalYear = ppmpHeader.FiscalYear,
                 PPMPType = ppmpHeader.FKPPMPTypeReference.InventoryTypeName,
-                Sector = office.Sector,
+                Sector = office.Sector == null ? office.Department : office.Sector,
                 Department = office.Department,
                 Unit = office.Section,
                 EstimatedBudget = (db.InventoryTypes.Where(x => x.ID == ppmpHeader.PPMPType).FirstOrDefault().IsTangible) ? (decimal)db.ProjectPlanItems.Where(x => x.PPMPReference == ppmpHeader.ID).Sum(x => x.ProjectEstimatedBudget) : (decimal)db.ProjectPlanServices.Where(x => x.PPMPReference == ppmpHeader.ID).Sum(x => x.ProjectEstimatedBudget),
@@ -2556,16 +2560,16 @@ namespace PUPFMIS.BusinessAndDataLogic
                     Supplier1ContactNo = d.FKSupplier1Reference.ContactNumber,
                     Supplier1EmailAddress = d.FKSupplier1Reference.EmailAddress,
                     Supplier1UnitCost = (decimal)d.Supplier1UnitCost,
-                    Supplier2Name = d.FKSupplier2Reference.SupplierName,
-                    Supplier2Address = d.FKSupplier2Reference.Address,
-                    Supplier2ContactNo = d.FKSupplier2Reference.ContactNumber,
-                    Supplier2EmailAddress = d.FKSupplier2Reference.EmailAddress,
-                    Supplier2UnitCost = d.Supplier2UnitCost,
-                    Supplier3Name = d.FKSupplier3Reference.SupplierName,
-                    Supplier3Address = d.FKSupplier3Reference.Address,
-                    Supplier3ContactNo = d.FKSupplier3Reference.ContactNumber,
-                    Supplier3EmailAddress = d.FKSupplier3Reference.EmailAddress,
-                    Supplier3UnitCost = d.Supplier3UnitCost,
+                    Supplier2Name = d.Supplier2 == null ? null : d.FKSupplier2Reference.SupplierName,
+                    Supplier2Address = d.Supplier2 == null ? null : d.FKSupplier2Reference.Address,
+                    Supplier2ContactNo = d.Supplier2 == null ? null : d.FKSupplier2Reference.ContactNumber,
+                    Supplier2EmailAddress = d.Supplier2 == null ? null : d.FKSupplier2Reference.EmailAddress,
+                    Supplier2UnitCost = d.Supplier2 == null ? null : d.Supplier2UnitCost,
+                    Supplier3Name = d.Supplier3 == null ? null : d.FKSupplier3Reference.SupplierName,
+                    Supplier3Address = d.Supplier3 == null ? null : d.FKSupplier3Reference.Address,
+                    Supplier3ContactNo = d.Supplier3 == null ? null : d.FKSupplier3Reference.ContactNumber,
+                    Supplier3EmailAddress = d.Supplier3 == null ? null : d.FKSupplier3Reference.EmailAddress,
+                    Supplier3UnitCost = d.Supplier3 == null ? null : d.Supplier3UnitCost,
                     TotalQty = String.Format("{0:#,##0}", d.ProjectQuantity),
                     UnitCost = String.Format("{0:#,##0.00}", d.UnitCost),
                     EstimatedBudget = d.ProjectEstimatedBudget,

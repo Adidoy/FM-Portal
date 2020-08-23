@@ -192,8 +192,6 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
             {
                 return RedirectToAction("project-details", "ProjectPlans", new { Area = "end-users", ProjectCode = item.ProjectCode });
             }
-            ModelState.AddModelError("", Message);
-            return View("UpdateItem", item);
         }
 
         [ActionName("remove-common-supply-item")]

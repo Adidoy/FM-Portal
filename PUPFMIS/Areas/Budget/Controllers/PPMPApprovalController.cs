@@ -57,38 +57,32 @@ namespace PUPFMIS.Areas.Budget.Controllers
         [Route("{FiscalYear}/{OfficeCode}/{UACS}/details")]
         public ActionResult UpdateDetails(PPMPEvaluationVM PPMPEvaluationVM, string FiscalYear, string OfficeCode, string UACS, string updateAction)
         {
+            if(!ModelState.IsValid)
+            {
+                return View("DetailsAccountLineItems", PPMPEvaluationVM);
+            }
             if(updateAction == "update")
             {
-                return UpdateItems(PPMPEvaluationVM);
+                foreach (var item in PPMPEvaluationVM.NewSpendingItems)
+                {
+                    if (item.ApprovalAction == "Approved")
+                    {
+                        item.EstimatedCost = item.UnitCost * item.ReducedQuantity;
+                    }
+                    if (item.ApprovalAction == "Disapproved")
+                    {
+                        item.EstimatedCost = 0.00m;
+                    }
+                }
+                PPMPEvaluationVM.ApprovedBudget = PPMPEvaluationVM.NewSpendingItems.Sum(d => d.EstimatedCost);
+                ViewBag.FundSource = new SelectList(ppmpApprovalDAL.GetFundSource(), "FUND_CLUSTER", "FUND_DESC");
+                return View("DetailsAccountLineItems", PPMPEvaluationVM);
             }
             else
             {
-                return ApproveBudget(PPMPEvaluationVM, FiscalYear);
+                ppmpApprovalDAL.SaveApproval(PPMPEvaluationVM, User.Identity.Name);
+                return RedirectToAction("office-ppmp-list", "PPMPApproval", new { Area = "budget", OfficeCode = PPMPEvaluationVM.OfficeCode, FiscalYear = FiscalYear });
             }
-        }
-
-        public ActionResult ApproveBudget(PPMPEvaluationVM PPMPEvaluationVM, string FiscalYear)
-        {
-            ppmpApprovalDAL.SaveApproval(PPMPEvaluationVM, User.Identity.Name);
-            return RedirectToAction("office-ppmp-list", "PPMPApproval", new { Area = "budget", OfficeCode = PPMPEvaluationVM.OfficeCode, FiscalYear = FiscalYear });
-        }
-
-        public ActionResult UpdateItems(PPMPEvaluationVM PPMPEvaluationVM)
-        {
-            foreach (var item in PPMPEvaluationVM.NewSpendingItems)
-            {
-                if (item.ApprovalAction == "Approved")
-                {
-                    item.EstimatedCost = item.UnitCost * item.ReducedQuantity;
-                }
-                if (item.ApprovalAction == "Disapproved")
-                {
-                    item.EstimatedCost = 0.00m;
-                }
-            }
-            PPMPEvaluationVM.ApprovedBudget = PPMPEvaluationVM.NewSpendingItems.Sum(d => d.EstimatedCost);
-            ViewBag.FundSource = new SelectList(ppmpApprovalDAL.GetFundSource(), "FUND_CLUSTER", "FUND_DESC");
-            return View("DetailsAccountLineItems", PPMPEvaluationVM);
         }
 
         [ActionName("print-ppmp")]
