@@ -171,7 +171,7 @@
 <br /><br />
 <h4>PPMP List</h4>
 <hr />
-@using (Html.BeginForm("submit-ppmp", "ProjectProcurementManagementPlans", FormMethod.Post, new { Area = "end-users" }))
+@using (Ajax.BeginForm("submit-ppmp", "ProjectProcurementManagementPlans", new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "addItem", Area = "end-users" }))
 {
     @Html.AntiForgeryToken()
     @Html.HiddenFor(model => model.FiscalYear)
@@ -244,7 +244,7 @@
                                     {
                                         <span class="badge bg-success p-1" style="font-size:100%;">@Html.DisplayFor(modelItem => Model.PPMPList[item].Status)</span>
                                     }
-                                    else if (Model.PPMPList[item].Status == "Posted to APPP")
+                                    else if (Model.PPMPList[item].Status == "Posted to APP")
                                     {
                                         <span class="badge bg-primary p-1" style="font-size:100%;">@Html.DisplayFor(modelItem => Model.PPMPList[item].Status)</span>
                                     }
@@ -263,9 +263,60 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="text-right">
-                <button type="submit" style="text-align:left;" class="btn btn-primary btn-md"><i class="fa fa-share"></i> Submit Selected PPMP</button>
+                <button type="button" style="text-align:left;" class="btn btn-primary btn-md" onclick="SubmitPPMP()"><i class="fa fa-share"></i> Submit Selected PPMP</button>
                 <button type="button" style="text-align:left;" class="btn btn-danger btn-md" onclick="window.location = '@Url.Action("dashboard", "Dashboard")'"><i class="fa fa-arrow-circle-left"></i> Back to Dashboard</button>
             </div>
         </div>
     </div>
 }
+
+<script type="text/javascript">
+    function SubmitPPMP() {
+        if ($("#addItem input:checkbox:checked").length == 0) {
+            swal.fire({
+                title: "Oops!",
+                html: "<p>Please select a PPMP first by ticking the check box.<br /><i style = 'font-size: 10.5pt;'>If the check boxes are disabled, it means that the PPMP is already submitted.</i></p>",
+                type: "warning"
+            })
+        }
+        else {
+            swal.fire({
+                title: "Submit PPMP?",
+                text: "You are about to submit your PPMP, continue?",
+                type: "warning",
+                showCancelButton: true,
+            }).then((result) => {
+                if (result.value) {
+                    $("#addItem").submit();
+                }
+                else {
+                    swal.fire({
+                        title: "Cancelled!",
+                        text: "You have cancelled saving the record.",
+                        type: "error"
+                    })
+                };
+            })
+        }
+    }
+    function CreateResult(data) {
+        if (data == true) {
+            swal.fire({
+                title: "PPMP Submitted!",
+                html: "<p>PPMP is successfully submitted!</p><p style = 'font-size: 10pt; text-align: justify;'><b>REMINDER:</b> Duly signed copy of PPMP must be forwarded to the Budget Services Office.</p>",
+                type: "success"
+            }).then((result) => {
+                if (result.value) {
+                    window.location.href = "@Url.Action("list", "ProjectProcurementManagementPlans", new { Area = "end-users", FiscalYear = Model.FiscalYear })";
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                type: "error"
+            });
+        }
+    }
+</script>

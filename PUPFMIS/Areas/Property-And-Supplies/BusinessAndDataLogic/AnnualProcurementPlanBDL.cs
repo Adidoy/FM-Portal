@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web.Mvc;
 
 namespace PUPFMIS.BusinessAndDataLogic
@@ -550,6 +551,13 @@ namespace PUPFMIS.BusinessAndDataLogic
             var fiscalYears = db.PPMPHeader.Where(d => d.Status == "PPMP Evaluated").GroupBy(d => d.FiscalYear).Select(d => d.Key).ToList();
             return fiscalYears;
         }
+        public List<int> GetPPMPFiscalYears()
+        {
+            var itemYears = db.ProjectPlanItems.Where(d => d.Status == "Approved").Select(d => d.FKPPMPReference.FiscalYear).Distinct().ToList();
+            var serviceYears = db.ProjectPlanServices.Where(d => d.Status == "Approved").Select(d => d.FKPPMPReference.FiscalYear).Distinct().ToList();
+            var fiscalYears = itemYears.Union(serviceYears).Distinct().ToList();
+            return fiscalYears;
+        }
         public AnnualProcurementPlanCSEVM GetAPPCSE(int FiscalYear)
         {
             AgencyDetails agencyDetails = db.AgencyDetails.First();
@@ -680,18 +688,18 @@ namespace PUPFMIS.BusinessAndDataLogic
                                  ItemName = items.FKItemReference.ItemFullName.ToUpper(),
                                  UnitOfMeasure = items.FKItemReference.FKIndividualUnitReference.UnitName,
                                  PriceCatalogue = items.UnitCost,
-                                 Jan = items.PPMPJan == null ? "0" : items.PPMPJan,
-                                 Feb = items.PPMPFeb == null ? "0" : items.PPMPFeb,
-                                 Mar = items.PPMPMar == null ? "0" : items.PPMPMar,
-                                 Apr = items.PPMPApr == null ? "0" : items.PPMPApr,
-                                 May = items.PPMPMay == null ? "0" : items.PPMPMay,
-                                 Jun = items.PPMPJun == null ? "0" : items.PPMPJun,
-                                 Jul = items.PPMPJul == null ? "0" : items.PPMPJul,
-                                 Aug = items.PPMPAug == null ? "0" : items.PPMPAug,
-                                 Sep = items.PPMPSep == null ? "0" : items.PPMPSep,
-                                 Oct = items.PPMPOct == null ? "0" : items.PPMPOct,
-                                 Nov = items.PPMPNov == null ? "0" : items.PPMPNov,
-                                 Dec = items.PPMPDec == null ? "0" : items.PPMPDec
+                                 Jan = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPJan == null ? "0" : items.PPMPJan : items.FKProjectReference.ProjectMonthStart == 1 ?  items.PPMPTotalQty.ToString() : "0",
+                                 Feb = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPFeb == null ? "0" : items.PPMPFeb : items.FKProjectReference.ProjectMonthStart == 2 ?  items.PPMPTotalQty.ToString() : "0",
+                                 Mar = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPMar == null ? "0" : items.PPMPMar : items.FKProjectReference.ProjectMonthStart == 3 ?  items.PPMPTotalQty.ToString() : "0",
+                                 Apr = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPApr == null ? "0" : items.PPMPApr : items.FKProjectReference.ProjectMonthStart == 4 ?  items.PPMPTotalQty.ToString() : "0",
+                                 May = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPMay == null ? "0" : items.PPMPMay : items.FKProjectReference.ProjectMonthStart == 5 ?  items.PPMPTotalQty.ToString() : "0",
+                                 Jun = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPJun == null ? "0" : items.PPMPJun : items.FKProjectReference.ProjectMonthStart == 6 ?  items.PPMPTotalQty.ToString() : "0",
+                                 Jul = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPJul == null ? "0" : items.PPMPJul : items.FKProjectReference.ProjectMonthStart == 7 ?  items.PPMPTotalQty.ToString() : "0",
+                                 Aug = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPAug == null ? "0" : items.PPMPAug : items.FKProjectReference.ProjectMonthStart == 8 ?  items.PPMPTotalQty.ToString() : "0",
+                                 Sep = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPSep == null ? "0" : items.PPMPSep : items.FKProjectReference.ProjectMonthStart == 9 ?  items.PPMPTotalQty.ToString() : "0",
+                                 Oct = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPOct == null ? "0" : items.PPMPOct : items.FKProjectReference.ProjectMonthStart == 10 ? items.PPMPTotalQty.ToString() : "0",
+                                 Nov = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPNov == null ? "0" : items.PPMPNov : items.FKProjectReference.ProjectMonthStart == 11 ? items.PPMPTotalQty.ToString() : "0",
+                                 Dec = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPDec == null ? "0" : items.PPMPDec : items.FKProjectReference.ProjectMonthStart == 12 ? items.PPMPTotalQty.ToString() : "0"
                              }).ToList();
 
             var appcseItems = (from ppmpItem in ppmpItems
@@ -759,18 +767,19 @@ namespace PUPFMIS.BusinessAndDataLogic
                                  ItemName = items.FKItemReference.ItemFullName.ToUpper(),
                                  UnitOfMeasure = items.FKItemReference.FKIndividualUnitReference.UnitName,
                                  PriceCatalogue = items.UnitCost,
-                                 Jan = items.PPMPJan == null ? "0" : items.PPMPJan,
-                                 Feb = items.PPMPFeb == null ? "0" : items.PPMPFeb,
-                                 Mar = items.PPMPMar == null ? "0" : items.PPMPMar,
-                                 Apr = items.PPMPApr == null ? "0" : items.PPMPApr,
-                                 May = items.PPMPMay == null ? "0" : items.PPMPMay,
-                                 Jun = items.PPMPJun == null ? "0" : items.PPMPJun,
-                                 Jul = items.PPMPJul == null ? "0" : items.PPMPJul,
-                                 Aug = items.PPMPAug == null ? "0" : items.PPMPAug,
-                                 Sep = items.PPMPSep == null ? "0" : items.PPMPSep,
-                                 Oct = items.PPMPOct == null ? "0" : items.PPMPOct,
-                                 Nov = items.PPMPNov == null ? "0" : items.PPMPNov,
-                                 Dec = items.PPMPDec == null ? "0" : items.PPMPDec
+
+                                 Jan = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPJan == null ? "0" : items.PPMPJan : items.FKProjectReference.ProjectMonthStart == 1 ? items.PPMPTotalQty.ToString() : "0",
+                                 Feb = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPFeb == null ? "0" : items.PPMPFeb : items.FKProjectReference.ProjectMonthStart == 2 ? items.PPMPTotalQty.ToString() : "0",
+                                 Mar = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPMar == null ? "0" : items.PPMPMar : items.FKProjectReference.ProjectMonthStart == 3 ? items.PPMPTotalQty.ToString() : "0",
+                                 Apr = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPApr == null ? "0" : items.PPMPApr : items.FKProjectReference.ProjectMonthStart == 4 ? items.PPMPTotalQty.ToString() : "0",
+                                 May = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPMay == null ? "0" : items.PPMPMay : items.FKProjectReference.ProjectMonthStart == 5 ? items.PPMPTotalQty.ToString() : "0",
+                                 Jun = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPJun == null ? "0" : items.PPMPJun : items.FKProjectReference.ProjectMonthStart == 6 ? items.PPMPTotalQty.ToString() : "0",
+                                 Jul = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPJul == null ? "0" : items.PPMPJul : items.FKProjectReference.ProjectMonthStart == 7 ? items.PPMPTotalQty.ToString() : "0",
+                                 Aug = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPAug == null ? "0" : items.PPMPAug : items.FKProjectReference.ProjectMonthStart == 8 ? items.PPMPTotalQty.ToString() : "0",
+                                 Sep = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPSep == null ? "0" : items.PPMPSep : items.FKProjectReference.ProjectMonthStart == 9 ? items.PPMPTotalQty.ToString() : "0",
+                                 Oct = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPOct == null ? "0" : items.PPMPOct : items.FKProjectReference.ProjectMonthStart == 10 ? items.PPMPTotalQty.ToString() : "0",
+                                 Nov = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPNov == null ? "0" : items.PPMPNov : items.FKProjectReference.ProjectMonthStart == 11 ? items.PPMPTotalQty.ToString() : "0",
+                                 Dec = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPDec == null ? "0" : items.PPMPDec : items.FKProjectReference.ProjectMonthStart == 12 ? items.PPMPTotalQty.ToString() : "0"
                              }).ToList();
 
             var appcseItems = (from ppmpItem in ppmpItems
@@ -793,35 +802,35 @@ namespace PUPFMIS.BusinessAndDataLogic
                                    Nov = int.Parse(ppmpItem.Nov),
                                    Dec = int.Parse(ppmpItem.Dec)
                                } into results
-                               group results by new { results.ItemID, results.ItemName, results.UnitOfMeasure, results.PriceCatalogue } into groupResults
+                               group results by new { results.ItemID, results.ItemName, results.UnitOfMeasure } into groupResults
                                select new AnnualProcurementPlanCSEItemsVM
                                {
                                    ItemID = groupResults.Key.ItemID,
                                    ItemSpecifications = groupResults.Key.ItemName,
                                    UnitOfMeasure = groupResults.Key.UnitOfMeasure,
-                                   PriceCatalogue = groupResults.Key.PriceCatalogue,
+                                   PriceCatalogue = groupResults.Average(x => x.PriceCatalogue),
                                    JanQty = groupResults.Sum(x => x.Jan),
                                    FebQty = groupResults.Sum(x => x.Feb),
                                    MarQty = groupResults.Sum(x => x.Mar),
                                    Q1Total = groupResults.Sum(x => x.Jan) + groupResults.Sum(x => x.Feb) + groupResults.Sum(x => x.Mar),
-                                   Q1Amount = groupResults.Key.PriceCatalogue * (groupResults.Sum(x => x.Jan) + groupResults.Sum(x => x.Feb) + groupResults.Sum(x => x.Mar)),
+                                   Q1Amount = groupResults.Average(x => x.PriceCatalogue) * (groupResults.Sum(x => x.Jan) + groupResults.Sum(x => x.Feb) + groupResults.Sum(x => x.Mar)),
                                    AprQty = groupResults.Sum(x => x.Apr),
                                    MayQty = groupResults.Sum(x => x.May),
                                    JunQty = groupResults.Sum(x => x.Jun),
                                    Q2Total = groupResults.Sum(x => x.Apr) + groupResults.Sum(x => x.May) + groupResults.Sum(x => x.Jun),
-                                   Q2Amount = groupResults.Key.PriceCatalogue * (groupResults.Sum(x => x.Apr) + groupResults.Sum(x => x.May) + groupResults.Sum(x => x.Jun)),
+                                   Q2Amount = groupResults.Average(x => x.PriceCatalogue) * (groupResults.Sum(x => x.Apr) + groupResults.Sum(x => x.May) + groupResults.Sum(x => x.Jun)),
                                    JulQty = groupResults.Sum(x => x.Jul),
                                    AugQty = groupResults.Sum(x => x.Aug),
                                    SepQty = groupResults.Sum(x => x.Sep),
                                    Q3Total = groupResults.Sum(x => x.Jul) + groupResults.Sum(x => x.Aug) + groupResults.Sum(x => x.Sep),
-                                   Q3Amount = groupResults.Key.PriceCatalogue * (groupResults.Sum(x => x.Jul) + groupResults.Sum(x => x.Aug) + groupResults.Sum(x => x.Sep)),
+                                   Q3Amount = groupResults.Average(x => x.PriceCatalogue) * (groupResults.Sum(x => x.Jul) + groupResults.Sum(x => x.Aug) + groupResults.Sum(x => x.Sep)),
                                    OctQty = groupResults.Sum(x => x.Oct),
                                    NovQty = groupResults.Sum(x => x.Nov),
                                    DecQty = groupResults.Sum(x => x.Dec),
                                    Q4Total = groupResults.Sum(x => x.Oct) + groupResults.Sum(x => x.Nov) + groupResults.Sum(x => x.Dec),
-                                   Q4Amount = groupResults.Key.PriceCatalogue * (groupResults.Sum(x => x.Oct) + groupResults.Sum(x => x.Nov) + groupResults.Sum(x => x.Dec)),
+                                   Q4Amount = groupResults.Average(x => x.PriceCatalogue) * (groupResults.Sum(x => x.Oct) + groupResults.Sum(x => x.Nov) + groupResults.Sum(x => x.Dec)),
                                    TotalQty = groupResults.Sum(x => x.Jan) + groupResults.Sum(x => x.Feb) + groupResults.Sum(x => x.Mar) + groupResults.Sum(x => x.Apr) + groupResults.Sum(x => x.May) + groupResults.Sum(x => x.Jun) + groupResults.Sum(x => x.Jul) + groupResults.Sum(x => x.Aug) + groupResults.Sum(x => x.Sep) + groupResults.Sum(x => x.Oct) + groupResults.Sum(x => x.Nov) + groupResults.Sum(x => x.Dec),
-                                   TotalAmount = groupResults.Key.PriceCatalogue * (groupResults.Sum(x => x.Jan) + groupResults.Sum(x => x.Feb) + groupResults.Sum(x => x.Mar) + groupResults.Sum(x => x.Apr) + groupResults.Sum(x => x.May) + groupResults.Sum(x => x.Jun) + groupResults.Sum(x => x.Jul) + groupResults.Sum(x => x.Aug) + groupResults.Sum(x => x.Sep) + groupResults.Sum(x => x.Oct) + groupResults.Sum(x => x.Nov) + groupResults.Sum(x => x.Dec))
+                                   TotalAmount = groupResults.Average(x => x.PriceCatalogue) * (groupResults.Sum(x => x.Jan) + groupResults.Sum(x => x.Feb) + groupResults.Sum(x => x.Mar) + groupResults.Sum(x => x.Apr) + groupResults.Sum(x => x.May) + groupResults.Sum(x => x.Jun) + groupResults.Sum(x => x.Jul) + groupResults.Sum(x => x.Aug) + groupResults.Sum(x => x.Sep) + groupResults.Sum(x => x.Oct) + groupResults.Sum(x => x.Nov) + groupResults.Sum(x => x.Dec))
                                }).ToList();
 
             return appcseItems;
@@ -919,13 +928,31 @@ namespace PUPFMIS.BusinessAndDataLogic
                 return false;
             }
 
-            foreach(var appItem in APPCSEViewModel.APPDBMItems)
+            if(APPCSEViewModel.APPDBMItems != null)
             {
-                var ppmpItems = db.ProjectPlanItems.Where(d => d.FKPPMPReference.FiscalYear == APPCSEViewModel.FiscalYear && d.FKItemReference.ID == appItem.ItemID && d.Status == "Approved").ToList();
-                ppmpItems.ForEach(d => { d.APPReference = appHeader.ID; d.Status = "Posted to APP";  });
-                if (db.SaveChanges() == 0)
+                foreach (var appItem in APPCSEViewModel.APPDBMItems)
                 {
-                    return false;
+                    var ppmpItems = db.ProjectPlanItems.Where(d => d.FKPPMPReference.FiscalYear == APPCSEViewModel.FiscalYear && d.FKItemReference.ID == appItem.ItemID && d.Status == "Approved").ToList();
+                    ppmpItems.ForEach(d => { d.APPReference = appHeader.ID; d.Status = "Posted to APP"; });
+                    db.SaveChanges();
+                    var ppmpReferences = ppmpItems.Select(d => d.PPMPReference).GroupBy(d => d).Select(d => d.Key).ToList();
+                    var ppmps = db.PPMPHeader.Where(d => ppmpReferences.Contains(d.ID)).ToList();
+                    ppmps.ForEach(d => { d.Status = "Posted to APP"; });
+                    db.SaveChanges();
+                }
+            }
+
+            if(APPCSEViewModel.APPNonDBMItems != null)
+            {
+                foreach (var appItem in APPCSEViewModel.APPNonDBMItems)
+                {
+                    var ppmpItems = db.ProjectPlanItems.Where(d => d.FKPPMPReference.FiscalYear == APPCSEViewModel.FiscalYear && d.FKItemReference.ID == appItem.ItemID && d.Status == "Approved").ToList();
+                    ppmpItems.ForEach(d => { d.APPReference = appHeader.ID; d.Status = "Posted to APP"; });
+                    db.SaveChanges();
+                    var ppmpReferences = ppmpItems.Select(d => d.PPMPReference).GroupBy(d => d).Select(d => d.Key).ToList();
+                    var ppmps = db.PPMPHeader.Where(d => ppmpReferences.Contains(d.ID)).ToList();
+                    ppmps.ForEach(d => { d.Status = "Posted to APP"; });
+                    db.SaveChanges();
                 }
             }
 

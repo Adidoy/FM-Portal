@@ -14,7 +14,415 @@ namespace PUPFMIS.BusinessAndDataLogic
     
     public class MyProjectsBL : Controller
     {
+        MyProjectsDAL myProjectsDAL = new MyProjectsDAL();
+        FMISDbContext db = new FMISDbContext();
 
+        public MemoryStream GenerateNoticeOfAward(string PAPCode, string LogoPath, string UserEmail)
+        {
+            Reports reports = new Reports();
+            var procurementProgram = myProjectsDAL.GetProcurementProgramDetailsByPAPCode(PAPCode);
+            var procurementTimeLine = db.ProcurementTimeline.Where(d => d.PAPCode == PAPCode).FirstOrDefault();
+            var APPReference = db.APPHeader.Where(d => d.ReferenceNo == procurementProgram.APPReference).FirstOrDefault();
+            var supplier = db.Suppliers.Find(procurementProgram.Supplier);
+            reports.ReportFilename = "NOA-" + PAPCode;
+            reports.CreateDocument(8.50, 13.00, Orientation.Portrait, 0.50, 1.00);
+            reports.AddDoubleColumnHeader(LogoPath);
+            reports.AddColumnHeader(
+                new HeaderLine { Content = "Republic of the Philippines", Bold = false, Italic = false, FontSize = 10, ParagraphAlignment = ParagraphAlignment.Left },
+                new HeaderLine { Content = "", Bold = true, Italic = false, FontSize = 10, ParagraphAlignment = ParagraphAlignment.Left }
+            );
+            reports.AddColumnHeader(
+                new HeaderLine { Content = "POLYTECHNIC UNIVERSITY OF THE PHILIPPINES", Bold = false, Italic = false, FontSize = 12, ParagraphAlignment = ParagraphAlignment.Left },
+                new HeaderLine { Content = "", Bold = false, Italic = true, FontSize = 8, ParagraphAlignment = ParagraphAlignment.Left }
+            );
+            reports.AddColumnHeader(
+                new HeaderLine { Content = "OFFICE OF THE PRESIDENT", Bold = true, Italic = false, FontSize = 16, ParagraphAlignment = ParagraphAlignment.Left },
+                new HeaderLine { Content = "", Bold = false, Italic = false, FontSize = 8, ParagraphAlignment = ParagraphAlignment.Left }
+            );
+
+            var columns = new List<ContentColumn>();
+            columns.Add(new ContentColumn(6.50));
+            reports.AddTable(columns, false);
+
+            var rows = new List<ContentCell>();
+            rows.Add(new ContentCell("", 0, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 0, true));
+            reports.AddRowContent(rows, 0);
+
+            reports.AddNewLine();
+            reports.AddNewLine();
+
+            columns = new List<ContentColumn>();
+            columns.Add(new ContentColumn(6.50));
+            reports.AddTable(columns, false);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("NOTICE OF AWARD", 0, 14, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
+            reports.AddRowContent(rows, 0);
+
+            reports.AddNewLine();
+            reports.AddNewLine();
+
+            columns = new List<ContentColumn>();
+            columns.Add(new ContentColumn(6.50));
+            reports.AddTable(columns, false);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell(procurementTimeLine.ActualNOAIssuance.Value.ToString("dd MMMM yyyy"), 0, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Center));
+            reports.AddRowContent(rows, 0);
+
+            reports.AddNewLine();
+            reports.AddNewLine();
+
+            columns = new List<ContentColumn>();
+            columns.Add(new ContentColumn(6.50));
+            reports.AddTable(columns, false);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell(supplier.ContactPerson.ToUpper(), 0, 10, true, false, ParagraphAlignment.Justify, VerticalAlignment.Center));
+            reports.AddRowContent(rows, 0);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("Authorized and Designated Representative", 0, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Center));
+            reports.AddRowContent(rows, 0);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell(supplier.SupplierName, 0, 10, true, false, ParagraphAlignment.Justify, VerticalAlignment.Center));
+            reports.AddRowContent(rows, 0);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell(supplier.Address, 0, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Center));
+            reports.AddRowContent(rows, 0);
+
+            reports.AddNewLine();
+            reports.AddNewLine();
+
+            columns = new List<ContentColumn>();
+            columns.Add(new ContentColumn(6.50));
+            reports.AddTable(columns, false);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("Dear " + supplier.ContactPerson.ToUpper() + ":", 0, 10, false, true, ParagraphAlignment.Justify, VerticalAlignment.Center));
+            reports.AddRowContent(rows, 0);
+
+            reports.AddNewLine();
+
+            columns = new List<ContentColumn>();
+            columns.Add(new ContentColumn(6.50));
+            reports.AddTable(columns, false);
+
+            var projectCostWords = Reports.AmountToWords(procurementProgram.ProjectCost);
+
+            reports.AddFormattedRowContent(new ContentCell(new TextWithFormat[]
+            {
+                new TextWithFormat("This serves as notice that the PUP Bids and Awards Committee (PUP BAC), has recommended the award of the procurement of ", false, false, 10),
+                new TextWithFormat("“"+ procurementProgram.ProcurementProgram +"”", true, true, 10),
+                new TextWithFormat(" through Emergency Procurement in the amount of ", false, false, 10),
+                new TextWithFormat(projectCostWords + " (" + procurementProgram.ProjectCost.ToString("C", new System.Globalization.CultureInfo("en-ph")) + ")", true, true, 10),
+                new TextWithFormat(" to " + supplier.SupplierName + ".", false, false, 10),
+            }, MigraDoc.DocumentObjectModel.ParagraphAlignment.Justify), 0);
+
+            reports.AddNewLine();
+
+            columns = new List<ContentColumn>();
+            columns.Add(new ContentColumn(6.50));
+            reports.AddTable(columns, false);
+
+            reports.AddFormattedRowContent(new ContentCell(new TextWithFormat[]
+            {
+                new TextWithFormat("You are therefore advised within ten (10) calendar days from the receipt of this Notice of Award to formally enter into contract with us. Failure to enter into the said contract shall constitute a ground for cancellation of this award.", false, false, 10),
+            }, MigraDoc.DocumentObjectModel.ParagraphAlignment.Justify), 0);
+
+            reports.AddNewLine();
+
+            columns = new List<ContentColumn>();
+            columns.Add(new ContentColumn(6.50));
+            reports.AddTable(columns, false);
+
+            reports.AddFormattedRowContent(new ContentCell(new TextWithFormat[]
+            {
+                new TextWithFormat("Kindly signify your conformity by signing on the space herein provided.", false, false, 10),
+            }, MigraDoc.DocumentObjectModel.ParagraphAlignment.Justify), 0);
+
+            reports.AddNewLine();
+
+            columns = new List<ContentColumn>();
+            columns.Add(new ContentColumn(6.50));
+            reports.AddTable(columns, false);
+
+            reports.AddFormattedRowContent(new ContentCell(new TextWithFormat[]
+            {
+                new TextWithFormat("Thank you.", false, false, 10),
+            }, MigraDoc.DocumentObjectModel.ParagraphAlignment.Justify), 0);
+
+            reports.AddNewLine();
+
+            columns = new List<ContentColumn>();
+            columns.Add(new ContentColumn(6.50));
+            reports.AddTable(columns, false);
+
+            reports.AddFormattedRowContent(new ContentCell(new TextWithFormat[]
+            {
+                new TextWithFormat("Very truly yours,", false, false, 10),
+            }, MigraDoc.DocumentObjectModel.ParagraphAlignment.Justify), 0);
+
+            reports.AddNewLine();
+            reports.AddNewLine();
+            reports.AddNewLine();
+
+            columns = new List<ContentColumn>();
+            columns.Add(new ContentColumn(6.50));
+            reports.AddTable(columns, false);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell(APPReference.ApprovedBy.ToUpper(), 0, 10, true, false, ParagraphAlignment.Justify, VerticalAlignment.Center));
+            reports.AddRowContent(rows, 0);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell(APPReference.ApprovedByDesignation, 0, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Center));
+            reports.AddRowContent(rows, 0);
+
+            reports.AddNewLine();
+            reports.AddNewLine();
+            reports.AddNewLine();
+
+            columns = new List<ContentColumn>();
+            columns.Add(new ContentColumn(6.50));
+            reports.AddTable(columns, false);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("Conforme:", 0, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Center));
+            reports.AddRowContent(rows, 0);
+
+            reports.AddNewLine();
+            reports.AddNewLine();
+
+            columns = new List<ContentColumn>();
+            columns.Add(new ContentColumn(6.50));
+            reports.AddTable(columns, false);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell(supplier.ContactPerson.ToUpper(), 0, 10, true, false, ParagraphAlignment.Justify, VerticalAlignment.Bottom));
+            reports.AddRowContent(rows, 0);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("Authorized and Designated Representative", 0, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Bottom));
+            reports.AddRowContent(rows, 0);
+
+            columns = new List<ContentColumn>();
+            columns.Add(new ContentColumn(0.50));
+            columns.Add(new ContentColumn(1.50));
+            columns.Add(new ContentColumn(3.50));
+            reports.AddTable(columns, false);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("Date:", 0, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Bottom));
+            rows.Add(new ContentCell("", 1, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Bottom, 0, 0, true));
+            rows.Add(new ContentCell("", 1, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Bottom));
+            reports.AddRowContent(rows, 0);
+
+            return reports.GenerateReport();
+        }
+        public MemoryStream GeneratePurchaseOrder(string PAPCode, string LogoPath, string UserEmail)
+        {
+            Reports reports = new Reports();
+            var procurementProgram = myProjectsDAL.GetProcurementProgramDetailsByPAPCode(PAPCode);
+            var purchaseOrderHeader = db.PurchaseOrderHeader.Where(d => d.PurchaseOrderNumber == procurementProgram.PONumber).FirstOrDefault();
+            var purchaseOrderDetails = db.PurchaseOrderDetails.Where(d => d.FKPurchaseOrderHeaderReference.PurchaseOrderNumber == procurementProgram.PONumber).ToList();
+            var modeOfProcurement = db.ProcurementModes.Find(procurementProgram.ModeOfProcurement);
+            var supplier = db.Suppliers.Find(procurementProgram.Supplier);
+            reports.ReportFilename = "PO-" + purchaseOrderHeader.PurchaseOrderNumber + "(" + PAPCode + ")";
+            reports.CreateDocument(8.50, 13.00, Orientation.Portrait, 0.25);
+            
+            var columns = new List<ContentColumn>();
+            columns.Add(new ContentColumn(8.00));
+            reports.AddTable(columns, false);
+
+            var rows = new List<ContentCell>();
+            rows.Add(new ContentCell("Apendix 61", 0, 10, false, true, ParagraphAlignment.Right, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), true, true, true));
+            reports.AddRowContent(rows, 0);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("", 0, 8, false, false, ParagraphAlignment.Center, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), true, false, true));
+            reports.AddRowContent(rows, 0);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("PURCHASE ORDER", 0, 12, true, false, ParagraphAlignment.Center, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), true, false, true));
+            reports.AddRowContent(rows, 0);
+
+            columns = new List<ContentColumn>();
+            columns.Add(new ContentColumn(1.50));
+            columns.Add(new ContentColumn(5.00));
+            columns.Add(new ContentColumn(1.50));
+            reports.AddTable(columns, false);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("", 0, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), false, false, true));
+            rows.Add(new ContentCell("POLYTECHNIC UNIVERSITY OF THE PHILIPPINES", 1, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Bottom, 0, 0, true));
+            rows.Add(new ContentCell("", 2, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), true, false, false));
+            reports.AddRowContent(rows, 0);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("", 0, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), false, false, true));
+            rows.Add(new ContentCell("(Agency)", 1, 8, false, true, ParagraphAlignment.Center, VerticalAlignment.Center, 0, 0, false));
+            rows.Add(new ContentCell("", 2, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), true, false, false));
+            reports.AddRowContent(rows, 0);
+
+            columns = new List<ContentColumn>();
+            columns.Add(new ContentColumn(1.00));
+            columns.Add(new ContentColumn(3.75));
+            columns.Add(new ContentColumn(1.50));
+            columns.Add(new ContentColumn(1.75));
+            reports.AddTable(columns, false);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("Supplier: ", 0, 10, false, false, ParagraphAlignment.Left, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), false, true, true));
+            rows.Add(new ContentCell(supplier.SupplierName.ToUpper(), 1, 10, true, false, ParagraphAlignment.Left, VerticalAlignment.Bottom, 0, 0, true, new Color(0, 0, 0), true, true, false));
+            rows.Add(new ContentCell("P.O. No.: ", 2, 10, false, false, ParagraphAlignment.Left, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), false, true, false));
+            rows.Add(new ContentCell(purchaseOrderHeader.PurchaseOrderNumber, 3, 10, true, false, ParagraphAlignment.Left, VerticalAlignment.Bottom, 0, 0, true, new Color(0, 0, 0), true, true, false));
+            reports.AddRowContent(rows, 0.20);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("Address: ", 0, 10, false, false, ParagraphAlignment.Left, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), false, true, true));
+            rows.Add(new ContentCell(supplier.Address, 1, 10, false, false, ParagraphAlignment.Left, VerticalAlignment.Bottom, 0, 0, true, new Color(0, 0, 0), true, true, false));
+            rows.Add(new ContentCell("Date: ", 2, 10, false, false, ParagraphAlignment.Left, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), false, true, false));
+            rows.Add(new ContentCell(purchaseOrderHeader.CreatedAt.ToString("dd MMMM yyyy"), 3, 10, false, false, ParagraphAlignment.Left, VerticalAlignment.Bottom, 0, 0, true, new Color(0, 0, 0), true, true, false));
+            reports.AddRowContent(rows, 0.20);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("TIN: ", 0, 10, false, false, ParagraphAlignment.Left, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), false, true, true));
+            rows.Add(new ContentCell((supplier.TaxIdNumber == null ? string.Empty : supplier.TaxIdNumber), 1, 10, false, false, ParagraphAlignment.Left, VerticalAlignment.Bottom, 0, 0, true, new Color(0, 0, 0), true, true, false));
+            rows.Add(new ContentCell("Mode of Procurement: ", 2, 10, false, false, ParagraphAlignment.Left, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), false, true, false));
+            rows.Add(new ContentCell(modeOfProcurement.ModeOfProcurementName, 3, 10, false, false, ParagraphAlignment.Left, VerticalAlignment.Bottom, 0, 0, true, new Color(0, 0, 0), true, true, false));
+            reports.AddRowContent(rows, 0.20);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("", 0, 3, false, false, ParagraphAlignment.Left, VerticalAlignment.Bottom, 0, 0, true, new Color(0, 0, 0), false, false, true));
+            rows.Add(new ContentCell("", 1, 3, false, false, ParagraphAlignment.Left, VerticalAlignment.Bottom, 0, 0, true, new Color(0, 0, 0), true, false, false));
+            rows.Add(new ContentCell("", 2, 3, false, false, ParagraphAlignment.Left, VerticalAlignment.Bottom, 0, 0, true, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("", 3, 3, false, false, ParagraphAlignment.Left, VerticalAlignment.Bottom, 0, 0, true, new Color(0, 0, 0), true, false, false));
+            reports.AddRowContent(rows, 0);
+
+            columns = new List<ContentColumn>();
+            columns.Add(new ContentColumn(8.00));
+            reports.AddTable(columns, true);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("Gentlemen:\n\n\tPlease furnish this office the following articles subject to the terms and conditions contained herein:", 0, 10, false, false, ParagraphAlignment.Left, VerticalAlignment.Bottom));
+            reports.AddRowContent(rows, 0);
+
+            columns = new List<ContentColumn>();
+            columns.Add(new ContentColumn(1.25));
+            columns.Add(new ContentColumn(4.50));
+            columns.Add(new ContentColumn(1.25));
+            columns.Add(new ContentColumn(1.00));
+            reports.AddTable(columns, false);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("Place of Delivery: ", 0, 10, false, false, ParagraphAlignment.Left, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), false, true, true));
+            rows.Add(new ContentCell(purchaseOrderHeader.PlaceOfDelivery, 1, 10, false, false, ParagraphAlignment.Left, VerticalAlignment.Bottom, 0, 0, true, new Color(0, 0, 0), true, true, false));
+            rows.Add(new ContentCell("Delivery Term: ", 2, 10, false, false, ParagraphAlignment.Left, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), false, true, false));
+            rows.Add(new ContentCell("", 3, 10, true, false, ParagraphAlignment.Left, VerticalAlignment.Bottom, 0, 0, true, new Color(0, 0, 0), true, true, false));
+            reports.AddRowContent(rows, 0.20);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("Date of Delivery: ", 0, 10, false, false, ParagraphAlignment.Left, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), false, true, true));
+            rows.Add(new ContentCell(Reports.DigitsToWords((int)purchaseOrderHeader.DateOfDelivery) + " (" + purchaseOrderHeader.DateOfDelivery.ToString() + ") calendar days upon receipt of N.T.P.", 1, 10, false, false, ParagraphAlignment.Left, VerticalAlignment.Bottom, 0, 0, true, new Color(0, 0, 0), true, true, false));
+            rows.Add(new ContentCell("Payment Terms: ", 2, 10, false, false, ParagraphAlignment.Left, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), false, true, false));
+            rows.Add(new ContentCell("", 3, 10, false, false, ParagraphAlignment.Left, VerticalAlignment.Bottom, 0, 0, true, new Color(0, 0, 0), true, true, false));
+            reports.AddRowContent(rows, 0.20);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("", 0, 3, false, false, ParagraphAlignment.Left, VerticalAlignment.Bottom, 0, 0, true, new Color(0, 0, 0), false, false, true));
+            rows.Add(new ContentCell("", 1, 3, false, false, ParagraphAlignment.Left, VerticalAlignment.Bottom, 0, 0, true, new Color(0, 0, 0), true, false, false));
+            rows.Add(new ContentCell("", 2, 3, false, false, ParagraphAlignment.Left, VerticalAlignment.Bottom, 0, 0, true, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("", 3, 3, false, false, ParagraphAlignment.Left, VerticalAlignment.Bottom, 0, 0, true, new Color(0, 0, 0), true, false, false));
+            reports.AddRowContent(rows, 0);
+
+            columns = new List<ContentColumn>();
+            columns.Add(new ContentColumn(0.75));
+            columns.Add(new ContentColumn(0.75));
+            columns.Add(new ContentColumn(0.75));
+            columns.Add(new ContentColumn(3.75));
+            columns.Add(new ContentColumn(1.00));
+            columns.Add(new ContentColumn(1.00));
+            reports.AddTable(columns, true);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("Item No.", 0, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Center));
+            rows.Add(new ContentCell("Unit", 1, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Center));
+            rows.Add(new ContentCell("Quantity", 2, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Center));
+            rows.Add(new ContentCell("Description", 3, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Center));
+            rows.Add(new ContentCell("Unit Cost", 4, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Center));
+            rows.Add(new ContentCell("Total Cost", 5, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Center));
+            reports.AddRowContent(rows, 0.25);
+
+            columns = new List<ContentColumn>();
+            columns.Add(new ContentColumn(0.75));
+            columns.Add(new ContentColumn(0.75));
+            columns.Add(new ContentColumn(0.75));
+            columns.Add(new ContentColumn(3.75));
+            columns.Add(new ContentColumn(1.00));
+            columns.Add(new ContentColumn(1.00));
+            reports.AddTable(columns, true);
+
+            int count = 1;
+            foreach(var item in purchaseOrderDetails)
+            {
+                rows = new List<ContentCell>();
+                rows.Add(new ContentCell(count.ToString(), 0, 9, false, false, ParagraphAlignment.Center, VerticalAlignment.Center, 0, 1));
+                rows.Add(new ContentCell(item.FKItemReference.FKIndividualUnitReference.UnitName, 1, 9, false, false, ParagraphAlignment.Center, VerticalAlignment.Center, 0, 1));
+                rows.Add(new ContentCell(item.Quantity.ToString(), 2, 9, false, false, ParagraphAlignment.Center, VerticalAlignment.Center, 0, 1));
+                rows.Add(new ContentCell(item.FKItemReference.ItemFullName.ToString(), 3, 9, true, false, ParagraphAlignment.Left, VerticalAlignment.Center));
+                rows.Add(new ContentCell(String.Format("{0:0,000.00}", item.UnitCost), 4, 9, false, false, ParagraphAlignment.Right, VerticalAlignment.Center, 0, 1));
+                rows.Add(new ContentCell(String.Format("{0:0,000.00}",(item.UnitCost * item.Quantity)), 5, 9, false, false, ParagraphAlignment.Right, VerticalAlignment.Center, 0, 1));
+                reports.AddRowContent(rows, 0.25);
+
+                rows = new List<ContentCell>();
+                rows.Add(new ContentCell(item.FKItemReference.ItemSpecifications, 3, 9, false, false, ParagraphAlignment.Justify, VerticalAlignment.Center));
+                reports.AddRowContent(rows, 0.25);
+
+                count++;
+            }
+
+            if(count <= 20)
+            {
+                for (int i = count; i < 25; i++)
+                {
+                    rows = new List<ContentCell>();
+                    rows.Add(new ContentCell("", 0, 9, false, false, ParagraphAlignment.Center, VerticalAlignment.Center));
+                    rows.Add(new ContentCell("", 1, 9, false, false, ParagraphAlignment.Center, VerticalAlignment.Center));
+                    rows.Add(new ContentCell("", 2, 9, false, false, ParagraphAlignment.Center, VerticalAlignment.Center));
+                    rows.Add(new ContentCell("", 3, 9, true, false, ParagraphAlignment.Left, VerticalAlignment.Center));
+                    rows.Add(new ContentCell("", 4, 9, false, false, ParagraphAlignment.Right, VerticalAlignment.Center));
+                    rows.Add(new ContentCell("", 5, 9, false, false, ParagraphAlignment.Right, VerticalAlignment.Center));
+                    reports.AddRowContent(rows, 0.25);
+                }
+            }
+
+            columns = new List<ContentColumn>();
+            columns.Add(new ContentColumn(1.875));
+            columns.Add(new ContentColumn(5.125));
+            columns.Add(new ContentColumn(1.00));
+            reports.AddTable(columns, false);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("(Total Amount in Words) ", 0, 9, false, false, ParagraphAlignment.Left, VerticalAlignment.Center, 0, 0, true, new Color(0, 0, 0), false, true, true));
+            rows.Add(new ContentCell(Reports.AmountToWords(procurementProgram.ProjectCost), 1, 9, false, false, ParagraphAlignment.Left, VerticalAlignment.Center, 0, 0, true, new Color(0, 0, 0), false, true, false));
+            rows.Add(new ContentCell(procurementProgram.ProjectCost.ToString("C", new System.Globalization.CultureInfo("en-ph")), 2, 9, false, false, ParagraphAlignment.Right, VerticalAlignment.Center, 0, 0, true, new Color(0, 0, 0), true, true, true));
+            reports.AddRowContent(rows, 0.25);
+
+            return reports.GenerateReport();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                myProjectsDAL.Dispose();
+                db.Dispose();
+            }
+            base.Dispose(disposing);
+        }
     }
 
     public class MyProjectsDAL : Controller
@@ -24,492 +432,368 @@ namespace PUPFMIS.BusinessAndDataLogic
         private ABISDataAccess abis = new ABISDataAccess();
         private SystemBDL system = new SystemBDL();
 
+        public List<ModeOfProcurement> GetModesOfPrpcurement(string ProcurementModes)
+        {
+            var modesOfProcurement = new List<ModeOfProcurement>();
+            var modes = ProcurementModes.Split("\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            foreach (var item in modes)
+            {
+                var mode = db.ProcurementModes.Where(d => d.ModeOfProcurementName == item).FirstOrDefault();
+                modesOfProcurement.Add(mode);
+            }
+            return modesOfProcurement;
+        }
         public int GetTotalProjectsAssigned(string Email)
         {
             var empCode = db.UserAccounts.Where(d => d.Email == Email).FirstOrDefault().EmpCode;
-            var institutionalProjects = db.APPInstitutionalItems.Where(d => d.ProjectCoordinator == empCode || d.ProjectSupport == empCode).Count();
-            var endUserProjects = db.APPProjectItems.Where(d => d.ProjectCoordinator == empCode || d.ProjectSupport == empCode).Count();
-            return institutionalProjects + endUserProjects;
+            return db.ProcurementPrograms.Where(d => d.ProjectCoordinator == empCode || d.ProjectSupport == empCode).Count();
         }
         public int GetTotalProjectsCoordinated(string Email)
         {
             var empCode = db.UserAccounts.Where(d => d.Email == Email).FirstOrDefault().EmpCode;
-            var institutionalProjects = db.APPInstitutionalItems.Where(d => d.ProjectCoordinator == empCode).Count();
-            var endUserProjects = db.APPProjectItems.Where(d => d.ProjectCoordinator == empCode).Count();
-            return institutionalProjects + endUserProjects;
+            return db.ProcurementPrograms.Where(d => d.ProjectCoordinator == empCode).Count();
         }
         public int GetTotalProjectsupported(string Email)
         {
             var empCode = db.UserAccounts.Where(d => d.Email == Email).FirstOrDefault().EmpCode;
-            var institutionalProjects = db.APPInstitutionalItems.Where(d => d.ProjectSupport == empCode).Count();
-            var endUserProjects = db.APPProjectItems.Where(d => d.ProjectSupport == empCode).Count();
-            return institutionalProjects + endUserProjects;
+            return db.ProcurementPrograms.Where(d => d.ProjectSupport == empCode).Count();
         }
-
-        public List<string> GetProjectsWithSetTimeLine(string Email)
+        public List<Supplier> GetSuppliers()
         {
-            var empCode = db.UserAccounts.Where(d => d.Email == Email).FirstOrDefault().EmpCode;
-            var institutionalProjects = db.APPInstitutionalItems.Where(d => (d.ProjectCoordinator == empCode || d.ProjectSupport == empCode) && d.ProjectStatus == "Project Assigned").Select(d => d.PAPCode).ToList();
-            var endUserProjects = db.APPProjectItems.Where(d => (d.ProjectCoordinator == empCode || d.ProjectSupport == empCode) && d.ProjectStatus == "Project Assigned").Select(d => d.PAPCode).ToList();
-            var papCodeList = new List<string>();
-
-            papCodeList.AddRange(institutionalProjects);
-            papCodeList.AddRange(endUserProjects);
-
-            var projectsWithTimeline = db.ProcurementTimeline.Select(d => d.PAPCode).ToList();
-
-            return projectsWithTimeline;
+            return db.Suppliers.Where(d => d.PurgeFlag == false).ToList();
         }
-        public List<string> GetProjectsWithoutSetTimeLine(string Email)
+        public bool OpenPRSubmission(string PAPCode, int ModeOfProcurement)
         {
-            var empCode = db.UserAccounts.Where(d => d.Email == Email).FirstOrDefault().EmpCode;
-            var institutionalProjects = db.APPInstitutionalItems.Where(d => (d.ProjectCoordinator == empCode || d.ProjectSupport == empCode) && d.ProjectStatus == "Project Assigned").Select(d => d.PAPCode).ToList();
-            var endUserProjects = db.APPProjectItems.Where(d => (d.ProjectCoordinator == empCode || d.ProjectSupport == empCode) && d.ProjectStatus == "Project Assigned").Select(d => d.PAPCode).ToList();
-            var papCodeList = new List<string>();
-
-            papCodeList.AddRange(institutionalProjects);
-            papCodeList.AddRange(endUserProjects);
-
-            var projectsWithTimeline = db.ProcurementTimeline.Select(d => d.PAPCode).ToList();
-            papCodeList = papCodeList.Where(d => !projectsWithTimeline.Contains(d)).ToList();
-
-            return papCodeList;
-        }
-        public ProcurementProjectsVM GetProcurementProgramDetailsByPAPCode(string PAPCode)
-        {
-            var procurementProject = new ProcurementProjectsVM();
-            var institutionalProject = db.APPInstitutionalItems.Where(d => d.PAPCode == PAPCode).FirstOrDefault();
-            var project = db.APPProjectItems.Where(d => d.PAPCode == PAPCode).FirstOrDefault();
-
-            if (institutionalProject != null)
+            var procurementTimeline = db.ProcurementTimeline.Where(d => d.PAPCode == PAPCode).FirstOrDefault();
+            var procurementProgram = db.ProcurementPrograms.Where(d => d.PAPCode == PAPCode).FirstOrDefault();
+            if(procurementTimeline == null)
             {
-                var projectItems = new List<ProcurementProjectItemsVM>();
-                var PPMPList = institutionalProject.PPMPReferences.Split("_".ToCharArray(), System.StringSplitOptions.RemoveEmptyEntries).ToArray();
-                foreach (var ppmpReference in PPMPList)
+                procurementTimeline = new ProcurementTimeline
                 {
-                    var items = db.ProjectPlanItems
-                             .Where(d => d.FKAPPReference.ID == institutionalProject.FKAPPHeaderReference.ID
-                                    && d.FKPPMPReference.ReferenceNo == ppmpReference
-                                    && d.FKItemReference.FKItemTypeReference.AccountClass == institutionalProject.ObjectClassification
-                                    && d.FundSource == institutionalProject.FundSourceReference
-                                    && (institutionalProject.MOOEAmount != 0.00m ? d.UnitCost < 15000.00m : d.UnitCost >= 15000.00m))
-                             .ToList();
-
-                    var services = db.ProjectPlanServices
-                                 .Where(d => d.FKAPPHeaderReference.ID == institutionalProject.FKAPPHeaderReference.ID
-                                        && d.FKPPMPReference.ReferenceNo == ppmpReference
-                                        && d.FKItemReference.FKItemTypeReference.AccountClass == institutionalProject.ObjectClassification
-                                        && d.FundSource == institutionalProject.FundSourceReference
-                                        && (institutionalProject.MOOEAmount != 0.00m ? d.UnitCost < 15000.00m : d.UnitCost >= 15000.00m))
-                                 .ToList();
-
-                    foreach (var item in items)
-                    {
-                        projectItems.Add(new ProcurementProjectItemsVM
-                        {
-                            ProjectCode = item.FKProjectReference.ProjectCode,
-                            ProjectName = item.FKProjectReference.ProjectName,
-                            DeliveryMonth = system.GetMonthName(item.FKProjectReference.ProjectMonthStart),
-                            EndUser = hris.GetDepartmentDetails(item.FKProjectReference.Department).Department,
-                            ItemCode = item.FKItemReference.ItemCode,
-                            ItemName = item.FKItemReference.ItemFullName,
-                            ItemSpecifications = item.FKItemReference.ItemShortSpecifications,
-                            ProcurementSource = item.FKItemReference.ProcurementSource == ProcurementSources.PS_DBM ? "Procurement System - Department of Budget and Management" : "Private Suppliers",
-                            InventoryType = item.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryTypeName,
-                            ItemCategory = item.FKItemReference.FKCategoryReference.ItemCategoryName,
-                            PackagingUOMReference = item.FKItemReference.FKPackagingUnitReference.Abbreviation,
-                            IndividualUOMReference = item.FKItemReference.FKIndividualUnitReference.Abbreviation,
-                            TotalQty = item.PPMPTotalQty,
-                            EstimatedBudget = item.PPMPEstimatedBudget,
-                            UnitCost = item.UnitCost
-                        });
-                    }
-
-                    foreach (var item in services)
-                    {
-                        projectItems.Add(new ProcurementProjectItemsVM
-                        {
-                            ProjectCode = item.FKProjectReference.ProjectCode,
-                            ProjectName = item.FKProjectReference.ProjectName,
-                            DeliveryMonth = system.GetMonthName(item.FKProjectReference.ProjectMonthStart),
-                            EndUser = hris.GetDepartmentDetails(item.FKProjectReference.Department).Department,
-                            ItemCode = item.FKItemReference.ItemCode,
-                            ItemName = item.FKItemReference.ItemFullName,
-                            ItemSpecifications = item.FKItemReference.ItemShortSpecifications,
-                            ProcurementSource = item.FKItemReference.ProcurementSource == ProcurementSources.PS_DBM ? "Procurement System - Department of Budget and Management" : "Private Suppliers",
-                            InventoryType = item.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryTypeName,
-                            ItemCategory = item.FKItemReference.FKCategoryReference.ItemCategoryName,
-                            EstimatedBudget = item.PPMPEstimatedBudget,
-                            UnitCost = item.UnitCost,
-                            TotalQty = item.PPMPQuantity
-                        });
-                    }
-                }
-                var procurementModes = institutionalProject.ModeOfProcurementReference.Split("_".ToCharArray(), System.StringSplitOptions.RemoveEmptyEntries).ToArray();
-                string procurementModeList = string.Empty;
-                for (int i = 0; i < procurementModes.Count(); i++)
-                {
-                    if (i == procurementModes.Count() - 1)
-                    {
-                        procurementModeList += db.ProcurementModes.Find(int.Parse(procurementModes[i])).ModeOfProcurementName;
-                    }
-                    else
-                    {
-                        procurementModeList += db.ProcurementModes.Find(int.Parse(procurementModes[i])).ModeOfProcurementName + "\n";
-                    }
-                }
-
-                var procurementTimeline = db.ProcurementTimeline
-                    .Where(d => d.PAPCode == institutionalProject.PAPCode)
-                    .FirstOrDefault();
-
-                var schedule = new ProcurementProjectScheduleVM
-                {
-                    PurchaseRequestSubmission = procurementTimeline == null ? null : procurementTimeline.PurchaseRequestSubmission.Value.ToString("MMMM dd, yyyy"),
-                    PreProcurementConference = procurementTimeline == null ? null : procurementTimeline.PreProcurementConference.Value.ToString("MMMM dd, yyyy"),
-                    PostingOfIB = procurementTimeline == null ? null : procurementTimeline.PostingOfIB.Value.ToString("MMMM dd, yyyy"),
-                    PreBidConference = procurementTimeline == null ? null : procurementTimeline.PreBidConference.Value.ToString("MMMM dd, yyyy"),
-                    SubmissionOfBids = procurementTimeline == null ? null : procurementTimeline.SubmissionOfBids.Value.ToString("MMMM dd, yyyy"),
-                    BidEvaluation = procurementTimeline == null ? null : procurementTimeline.BidEvaluation.Value.ToString("MMMM dd, yyyy"),
-                    PostQualification = procurementTimeline == null ? null : procurementTimeline.PostQualification.Value.ToString("MMMM dd, yyyy"),
-                    NOAIssuance = procurementTimeline == null ? null : procurementTimeline.NOAIssuance.Value.ToString("MMMM dd, yyyy"),
-                    ContractSigning = procurementTimeline == null ? null : procurementTimeline.ContractSigning.Value.ToString("MMMM dd, yyyy"),
-                    Approval = procurementTimeline == null ? null : procurementTimeline.Approval.Value.ToString("MMMM dd, yyyy"),
-                    NTPIssuance = procurementTimeline == null ? null : procurementTimeline.NTPIssuance.Value.ToString("MMMM dd, yyyy"),
-                    POReceived = procurementTimeline == null ? null : procurementTimeline.POReceived.Value.ToString("MMMM dd, yyyy")
+                    PAPCode = PAPCode,
+                    PurchaseRequestSubmission = DateTime.Now,
                 };
-
-                procurementProject = new ProcurementProjectsVM()
-                {
-                    APPReference = institutionalProject.FKAPPHeaderReference.ReferenceNo,
-                    Month = institutionalProject.Month,
-                    PAPCode = institutionalProject.PAPCode,
-                    UACS = institutionalProject.ObjectClassification,
-                    ProcurementProgram = institutionalProject.ProcurementProgram,
-                    ApprovedBudget = institutionalProject.Total,
-                    ObjectClassification = abis.GetChartOfAccounts(institutionalProject.ObjectClassification).AcctName,
-                    FundCluster = institutionalProject.FundSourceReference,
-                    FundSource = abis.GetFundSources(institutionalProject.FundSourceReference).FUND_DESC,
-                    EndUser = hris.GetDepartmentDetails(institutionalProject.EndUser).Department,
-                    StartMonth = institutionalProject.StartMonth,
-                    EndMonth = institutionalProject.EndMonth,
-                    ModeOfProcurement = procurementModeList,
-                    MOOETotal = institutionalProject.MOOEAmount,
-                    CapitalOutlayTotal = institutionalProject.COAmount,
-                    TotalEstimatedBudget = institutionalProject.Total,
-                    Remarks = institutionalProject.Remarks,
-                    ProjectCoordinator = institutionalProject.ProjectCoordinator == null ? null : hris.GetEmployeeDetailByCode(institutionalProject.ProjectCoordinator).EmployeeName,
-                    ProjectSupport = institutionalProject.ProjectSupport == null ? null : hris.GetEmployeeDetailByCode(institutionalProject.ProjectSupport).EmployeeName,
-                    ProjectStatus = institutionalProject.ProjectStatus,
-                    Actual = new ProcurementProjectActualAccomplishmentVM(),
-                    Items = projectItems,
-                    Schedule = schedule,
-                    ProcurmentProjectType = "Institutional"
-                };
-            }
-
-            if (project != null)
-            {
-                var projectItems = new List<ProcurementProjectItemsVM>();
-                var items = db.ProjectPlanItems
-                             .Where(d => d.FKAPPReference.ReferenceNo == project.FKAPPHeaderReference.ReferenceNo
-                                    && d.FKProjectReference.ProjectCode == project.PAPCode
-                                    && d.FKItemReference.FKItemTypeReference.AccountClass == project.ObjectClassification
-                                    && d.FundSource == project.FundSourceReference
-                                    && (project.MOOEAmount != 0.00m ? d.UnitCost < 15000.00m : d.UnitCost >= 15000.00m))
-                             .ToList();
-
-                var services = db.ProjectPlanServices
-                             .Where(d => d.FKAPPHeaderReference.ReferenceNo == project.FKAPPHeaderReference.ReferenceNo
-                                    && d.FKProjectReference.ProjectCode == project.PAPCode
-                                    && d.FKItemReference.FKItemTypeReference.AccountClass == project.ObjectClassification
-                                    && d.FundSource == project.FundSourceReference
-                                    && (project.MOOEAmount != 0.00m ? d.UnitCost < 15000.00m : d.UnitCost >= 15000.00m))
-                             .ToList();
-
-                foreach (var item in items)
-                {
-                    projectItems.Add(new ProcurementProjectItemsVM
-                    {
-                        ProjectCode = item.FKProjectReference.ProjectCode,
-                        ProjectName = item.FKProjectReference.ProjectName,
-                        DeliveryMonth = system.GetMonthName(item.FKProjectReference.ProjectMonthStart),
-                        EndUser = hris.GetDepartmentDetails(item.FKProjectReference.Department).Department,
-                        ItemCode = item.FKItemReference.ItemCode,
-                        ItemName = item.FKItemReference.ItemFullName,
-                        ItemSpecifications = item.FKItemReference.ItemShortSpecifications,
-                        ProcurementSource = item.FKItemReference.ProcurementSource == ProcurementSources.PS_DBM ? "Procurement System - Department of Budget and Management" : "Private Suppliers",
-                        InventoryType = item.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryTypeName,
-                        ItemCategory = item.FKItemReference.FKCategoryReference.ItemCategoryName,
-                        PackagingUOMReference = item.FKItemReference.FKPackagingUnitReference.Abbreviation,
-                        IndividualUOMReference = item.FKItemReference.FKIndividualUnitReference.Abbreviation,
-                        TotalQty = item.PPMPTotalQty,
-                        EstimatedBudget = item.PPMPEstimatedBudget,
-                        UnitCost = item.UnitCost
-                    });
-                }
-
-                foreach (var item in services)
-                {
-                    projectItems.Add(new ProcurementProjectItemsVM
-                    {
-                        ProjectCode = item.FKProjectReference.ProjectCode,
-                        ProjectName = item.FKProjectReference.ProjectName,
-                        DeliveryMonth = system.GetMonthName(item.FKProjectReference.ProjectMonthStart),
-                        EndUser = hris.GetDepartmentDetails(item.FKProjectReference.Department).Department,
-                        ItemCode = item.FKItemReference.ItemCode,
-                        ItemName = item.FKItemReference.ItemFullName,
-                        ItemSpecifications = item.FKItemReference.ItemShortSpecifications,
-                        ProcurementSource = item.FKItemReference.ProcurementSource == ProcurementSources.PS_DBM ? "Procurement System - Department of Budget and Management" : "Private Suppliers",
-                        InventoryType = item.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryTypeName,
-                        ItemCategory = item.FKItemReference.FKCategoryReference.ItemCategoryName,
-                        EstimatedBudget = item.PPMPEstimatedBudget,
-                        UnitCost = item.UnitCost,
-                        TotalQty = item.PPMPQuantity
-                    });
-                }
-
-                var procurementModes = project.ModeOfProcurementReference.Split("_".ToCharArray(), System.StringSplitOptions.RemoveEmptyEntries).ToArray();
-                string procurementModeList = string.Empty;
-                for (int i = 0; i < procurementModes.Count(); i++)
-                {
-                    if (i == procurementModes.Count() - 1)
-                    {
-                        procurementModeList += db.ProcurementModes.Find(int.Parse(procurementModes[i])).ModeOfProcurementName;
-                    }
-                    else
-                    {
-                        procurementModeList += db.ProcurementModes.Find(int.Parse(procurementModes[i])).ModeOfProcurementName + "\n";
-                    }
-                }
-
-                var procurementTimeline = db.ProcurementTimeline
-                    .Where(d => d.PAPCode == project.PAPCode)
-                    .FirstOrDefault();
-
-                var schedule = new ProcurementProjectScheduleVM
-                {
-                    PurchaseRequestSubmission = procurementTimeline == null ? null : procurementTimeline.PurchaseRequestSubmission.Value.ToString("MMMM dd, yyyy"),
-                    PreProcurementConference = procurementTimeline == null ? null : procurementTimeline.PreProcurementConference.Value.ToString("MMMM dd, yyyy"),
-                    PostingOfIB = procurementTimeline == null ? null : procurementTimeline.PostingOfIB.Value.ToString("MMMM dd, yyyy"),
-                    PreBidConference = procurementTimeline == null ? null : procurementTimeline.PreBidConference.Value.ToString("MMMM dd, yyyy"),
-                    SubmissionOfBids = procurementTimeline == null ? null : procurementTimeline.SubmissionOfBids.Value.ToString("MMMM dd, yyyy"),
-                    BidEvaluation = procurementTimeline == null ? null : procurementTimeline.BidEvaluation.Value.ToString("MMMM dd, yyyy"),
-                    PostQualification = procurementTimeline == null ? null : procurementTimeline.PostQualification.Value.ToString("MMMM dd, yyyy"),
-                    NOAIssuance = procurementTimeline == null ? null : procurementTimeline.NOAIssuance.Value.ToString("MMMM dd, yyyy"),
-                    ContractSigning = procurementTimeline == null ? null : procurementTimeline.ContractSigning.Value.ToString("MMMM dd, yyyy"),
-                    Approval = procurementTimeline == null ? null : procurementTimeline.Approval.Value.ToString("MMMM dd, yyyy"),
-                    NTPIssuance = procurementTimeline == null ? null : procurementTimeline.NTPIssuance.Value.ToString("MMMM dd, yyyy"),
-                    POReceived = procurementTimeline == null ? null : procurementTimeline.POReceived.Value.ToString("MMMM dd, yyyy")
-                };
-
-                procurementProject = new ProcurementProjectsVM()
-                {
-                    APPReference = project.FKAPPHeaderReference.ReferenceNo,
-                    Month = project.Month,
-                    PAPCode = project.PAPCode,
-                    UACS = project.ObjectClassification,
-                    ProcurementProgram = project.ProcurementProgram,
-                    ApprovedBudget = project.Total,
-                    ObjectClassification = abis.GetChartOfAccounts(project.ObjectClassification).AcctName,
-                    FundCluster = project.FundSourceReference,
-                    FundSource = abis.GetFundSources(project.FundSourceReference).FUND_DESC,
-                    EndUser = hris.GetDepartmentDetails(project.EndUser).Department,
-                    StartMonth = project.StartMonth,
-                    EndMonth = project.EndMonth,
-                    ModeOfProcurement = procurementModeList,
-                    MOOETotal = project.MOOEAmount,
-                    CapitalOutlayTotal = project.COAmount,
-                    TotalEstimatedBudget = project.Total,
-                    Remarks = project.Remarks,
-                    ProjectCoordinator = project.ProjectCoordinator == null ? null : hris.GetEmployeeDetailByCode(project.ProjectCoordinator).EmployeeName,
-                    ProjectSupport = project.ProjectSupport == null ? null : hris.GetEmployeeDetailByCode(project.ProjectSupport).EmployeeName,
-                    ProjectStatus = project.ProjectStatus,
-                    Actual = new ProcurementProjectActualAccomplishmentVM(),
-                    Items = projectItems,
-                    Schedule = schedule,
-                    ProcurmentProjectType = "Project"
-                };
-            }
-
-            return procurementProject;
-        }
-
-        public List<ProcurementProjectsVM> GetProcurementProgramDetails(string UserEmail)
-        {
-            var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
-            var procurementProjectList = new List<ProcurementProjectsVM>();
-            var institutionalProjectList = db.APPInstitutionalItems.Where(d => d.PPMPReferences != null && !d.PPMPReferences.Contains("CUOS") && (d.ProjectCoordinator == user.EmpCode || d.ProjectSupport == user.EmpCode)).ToList();
-            var projectList = db.APPProjectItems.Where(d => (d.ProjectCoordinator == user.EmpCode || d.ProjectSupport == user.EmpCode)).ToList();
-
-            foreach (var institutionalItem in institutionalProjectList)
-            {
-                var projectItems = new List<ProcurementProjectItemsVM>();
-                var PPMPList = institutionalItem.PPMPReferences.Split("_".ToCharArray(), System.StringSplitOptions.RemoveEmptyEntries).ToArray();
-                foreach (var ppmpReference in PPMPList)
-                {
-                    var items = db.ProjectPlanItems
-                             .Where(d => d.FKAPPReference.ID == institutionalItem.FKAPPHeaderReference.ID
-                                    && d.FKPPMPReference.ReferenceNo == ppmpReference
-                                    && d.FKItemReference.FKItemTypeReference.AccountClass == institutionalItem.ObjectClassification)
-                             .ToList();
-                    foreach (var item in items)
-                    {
-                        projectItems.Add(new ProcurementProjectItemsVM
-                        {
-                            ProjectCode = item.FKProjectReference.ProjectCode,
-                            ItemCode = item.FKItemReference.ItemCode,
-                            ItemName = item.FKItemReference.ItemFullName,
-                            ItemSpecifications = item.FKItemReference.ItemShortSpecifications,
-                            ProcurementSource = item.FKItemReference.ProcurementSource == ProcurementSources.PS_DBM ? "Procurement System - Department of Budget and Management" : "Private Suppliers",
-                            InventoryType = item.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryTypeName,
-                            ItemCategory = item.FKItemReference.FKCategoryReference.ItemCategoryName,
-                            PackagingUOMReference = item.FKItemReference.FKPackagingUnitReference.Abbreviation,
-                            IndividualUOMReference = item.FKItemReference.FKIndividualUnitReference.Abbreviation,
-                            TotalQty = item.PPMPTotalQty,
-                            EstimatedBudget = item.PPMPEstimatedBudget,
-                            UnitCost = item.UnitCost
-                        });
-                    }
-                }
-                var procurementModes = institutionalItem.ModeOfProcurementReference.Split("_".ToCharArray(), System.StringSplitOptions.RemoveEmptyEntries).ToArray();
-                string procurementModeList = string.Empty;
-                for (int i = 0; i < procurementModes.Count(); i++)
-                {
-                    if (i == procurementModes.Count() - 1)
-                    {
-                        procurementModeList += procurementModes[i];
-                    }
-                    else
-                    {
-                        procurementModeList += procurementModes[i] + "\n";
-                    }
-                }
-                procurementProjectList.Add(new ProcurementProjectsVM
-                {
-                    Month = institutionalItem.Month,
-                    PAPCode = institutionalItem.PAPCode,
-                    UACS = institutionalItem.ObjectClassification,
-                    ProcurementProgram = institutionalItem.ProcurementProgram,
-                    ApprovedBudget = institutionalItem.Total,
-                    ObjectClassification = abis.GetChartOfAccounts(institutionalItem.ObjectClassification).AcctName,
-                    FundCluster = institutionalItem.FundSourceReference,
-                    FundSource = abis.GetFundSources(institutionalItem.FundSourceReference).FUND_DESC,
-                    StartMonth = institutionalItem.StartMonth,
-                    EndMonth = institutionalItem.EndMonth,
-                    ModeOfProcurement = procurementModeList,
-                    ProjectStatus = institutionalItem.ProjectStatus,
-                    ProjectSupport = hris.GetEmployeeByCode(institutionalItem.ProjectSupport).EmployeeName,
-                    Items = projectItems
-                });
-            }
-
-
-
-            foreach (var endUserProjectItem in projectList)
-            {
-                var projectItems = new List<ProcurementProjectItemsVM>();
-                var PPMPList = db.ProjectPlanItems.Where(d => d.FKProjectReference.ProjectCode == endUserProjectItem.PAPCode).ToList();
-                foreach (var ppmpReference in PPMPList)
-                {
-                    var items = db.ProjectPlanItems
-                             .Where(d => d.FKAPPReference.ID == endUserProjectItem.FKAPPHeaderReference.ID
-                                    && d.FKPPMPReference.ReferenceNo == ppmpReference.FKPPMPReference.ReferenceNo
-                                    && d.FKItemReference.FKItemTypeReference.AccountClass == endUserProjectItem.ObjectClassification)
-                             .ToList();
-                    foreach (var item in items)
-                    {
-                        projectItems.Add(new ProcurementProjectItemsVM
-                        {
-                            ProjectCode = item.FKProjectReference.ProjectCode,
-                            ItemCode = item.FKItemReference.ItemCode,
-                            ItemName = item.FKItemReference.ItemFullName,
-                            ItemSpecifications = item.FKItemReference.ItemShortSpecifications,
-                            ProcurementSource = item.FKItemReference.ProcurementSource == ProcurementSources.PS_DBM ? "Procurement System - Department of Budget and Management" : "Private Suppliers",
-                            InventoryType = item.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryTypeName,
-                            ItemCategory = item.FKItemReference.FKCategoryReference.ItemCategoryName,
-                            PackagingUOMReference = item.FKItemReference.FKPackagingUnitReference.Abbreviation,
-                            IndividualUOMReference = item.FKItemReference.FKIndividualUnitReference.Abbreviation,
-                            TotalQty = item.PPMPTotalQty,
-                            EstimatedBudget = item.PPMPEstimatedBudget,
-                            UnitCost = item.UnitCost
-                        });
-                    }
-                }
-                var procurementModes = endUserProjectItem.ModeOfProcurementReference.Split("_".ToCharArray(), System.StringSplitOptions.RemoveEmptyEntries).ToArray();
-                string procurementModeList = string.Empty;
-                for (int i = 0; i < procurementModes.Count(); i++)
-                {
-                    if (i == procurementModes.Count() - 1)
-                    {
-                        procurementModeList += procurementModes[i];
-                    }
-                    else
-                    {
-                        procurementModeList += procurementModes[i] + "\n";
-                    }
-                }
-                procurementProjectList.Add(new ProcurementProjectsVM
-                {
-                    Month = endUserProjectItem.Month,
-                    PAPCode = endUserProjectItem.PAPCode,
-                    UACS = endUserProjectItem.ObjectClassification,
-                    ProcurementProgram = endUserProjectItem.ProcurementProgram,
-                    ApprovedBudget = endUserProjectItem.Total,
-                    ObjectClassification = abis.GetChartOfAccounts(endUserProjectItem.ObjectClassification).AcctName,
-                    FundCluster = endUserProjectItem.FundSourceReference,
-                    FundSource = abis.GetFundSources(endUserProjectItem.FundSourceReference).FUND_DESC,
-                    StartMonth = endUserProjectItem.StartMonth,
-                    EndMonth = endUserProjectItem.EndMonth,
-                    ModeOfProcurement = procurementModeList,
-                    ProjectStatus = endUserProjectItem.ProjectStatus,
-                    ProjectSupport = hris.GetEmployeeByCode(endUserProjectItem.ProjectSupport).EmployeeName,
-                    Items = projectItems
-                });
-            }
-
-            return procurementProjectList;
-        }
-        public bool OpenPRSubmission(string PAPCode)
-        {
-            var procurementProgram = GetProcurementProgramDetailsByPAPCode(PAPCode);
-            var items = procurementProgram.Items;
-            foreach(var item in items)
-            {
-                var procurementItem = db.ProjectPlanItems.Where(d => d.FKProjectReference.ProjectCode == item.ProjectCode && d.FKItemReference.ItemCode == item.ItemCode).FirstOrDefault();
-                var procurementService = db.ProjectPlanServices.Where(d => d.FKProjectReference.ProjectCode == item.ProjectCode && d.FKItemReference.ItemCode == item.ItemCode).FirstOrDefault();
-                if(procurementItem != null)
-                {
-                    procurementItem.Status = "PR Submission Open";
-                    if (db.SaveChanges() == 0)
-                    {
-                        return false;
-                    }
-                }
-                if(procurementService != null)
-                {
-                    procurementService.Status = "PR Submission Open";
-                    if (db.SaveChanges() == 0)
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            if(procurementProgram.ProcurmentProjectType == "Institutional")
-            {
-                var program = db.APPInstitutionalItems.Where(d => d.PAPCode == procurementProgram.PAPCode).FirstOrDefault();
-                program.ProjectStatus = "PR Submission Open";
+                db.ProcurementTimeline.Add(procurementTimeline);
+                procurementProgram.ModeOfProcurementReference = ModeOfProcurement;
                 if (db.SaveChanges() == 0)
                 {
                     return false;
                 }
             }
 
-            if (procurementProgram.ProcurmentProjectType == "Project")
+            var items = db.ProjectPlanItems.Where(d => d.APPLineReference == PAPCode).ToList();
+            if(items.Count > 0)
             {
-                var program = db.APPProjectItems.Where(d => d.PAPCode == procurementProgram.PAPCode).FirstOrDefault();
-                program.ProjectStatus = "PR Submission Open";
+                items.ForEach(d => { d.Status = "P/R Submission Open"; });
+                if (db.SaveChanges() == 0)
+                {
+                    return false;
+                }
+            }
+
+            var services = db.ProjectPlanServices.Where(d => d.APPLineReference == PAPCode).ToList();
+            if(services.Count > 0)
+            {
+                services.ForEach(d => { d.Status = "P/R Submission Open"; });
+                if(db.SaveChanges() == 0)
+                {
+                    return false;
+                }
+            }
+
+            procurementProgram.ProjectStatus = "P/R Submission Open";
+            if(db.SaveChanges() == 0)
+            {
+                return false;
+            }
+
+            return true;
+        }
+        public bool ClosePRSubmission(string PAPCode)
+        {
+            var procurementProgram = db.ProcurementPrograms.Where(d => d.PAPCode == PAPCode).FirstOrDefault();
+            var procurementTimeline = db.ProcurementTimeline.Where(d => d.PAPCode == PAPCode).FirstOrDefault();
+            procurementProgram.ProjectStatus = "PR Submission Closed";
+            procurementTimeline.PurchaseRequestClosing = DateTime.Now;
+            if (db.SaveChanges() == 0)
+            {
+                return false;
+            }
+            return true;
+        }
+        public List<ProcurementProjectsVM> GetProcurementProgramDetails(string UserEmail)
+        {
+            var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
+            var procurementProjectList = new List<ProcurementProjectsVM>();
+            var procurementPrograms = db.ProcurementPrograms.Where(d => d.PPMPReferences != null && (d.ProjectCoordinator == user.EmpCode || d.ProjectSupport == user.EmpCode)).ToList();
+
+            foreach (var item in procurementPrograms)
+            {
+                var procurementModes = item.APPModeOfProcurementReference.Split("_".ToCharArray(), System.StringSplitOptions.RemoveEmptyEntries).ToArray();
+                string procurementModeList = string.Empty;
+                for (int i = 0; i < procurementModes.Count(); i++)
+                {
+                    if (i == procurementModes.Count() - 1)
+                    {
+                        procurementModeList += procurementModes[i];
+                    }
+                    else
+                    {
+                        procurementModeList += procurementModes[i] + "\n";
+                    }
+                }
+                procurementProjectList.Add(new ProcurementProjectsVM
+                {
+                    Month = item.Month,
+                    PAPCode = item.PAPCode,
+                    UACS = item.ObjectClassification,
+                    ProcurementProgram = item.ProcurementProgram,
+                    ApprovedBudget = item.Total,
+                    ObjectClassification = abis.GetChartOfAccounts(item.ObjectClassification).AcctName,
+                    FundCluster = item.FundSourceReference,
+                    FundSource = abis.GetFundSources(item.FundSourceReference).FUND_DESC,
+                    StartMonth = item.StartMonth,
+                    EndMonth = item.EndMonth,
+                    APPModeOfProcurement = procurementModeList,
+                    ProjectStatus = item.ProjectStatus,
+                    ProjectCoordinator = hris.GetEmployeeByCode(item.ProjectCoordinator).EmployeeName,
+                    ProjectSupport = hris.GetEmployeeByCode(item.ProjectSupport).EmployeeName
+                });
+            }
+
+            return procurementProjectList;
+        }
+        public bool UpdatePreProcurement(ProcurementProjectsVM ProcurementPrograms, string UserEmail)
+        {
+            var timeline = db.ProcurementTimeline.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
+            if(timeline.PreProcurementConference == null && ProcurementPrograms.PreProcurementConference != null)
+            {
+                timeline.PreProcurementConference = ProcurementPrograms.PreProcurementConference;
+                if(db.SaveChanges() == 0)
+                {
+                    return false;
+                }
+            }
+            if(timeline.ActualPreProcurementConference == null && ProcurementPrograms.ActualPreProcurementConference != null)
+            {
+                var procurementProgram = db.ProcurementPrograms.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
+                procurementProgram.ProjectStatus = "Pre-Procurement Conference Conducted";
+                timeline.ActualPreProcurementConference = ProcurementPrograms.ActualPreProcurementConference;
+                timeline.PreProcurementConferenceRemarks = ProcurementPrograms.PreProcurementConferenceRemarks;
+                if (db.SaveChanges() == 0)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        public bool UpdatePostingOfIB(ProcurementProjectsVM ProcurementPrograms, string UserEmail)
+        {
+            var timeline = db.ProcurementTimeline.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
+            if (timeline.PostingOfIB == null && ProcurementPrograms.PostingOfIB != null)
+            {
+                timeline.PostingOfIB = ProcurementPrograms.PostingOfIB;
+                if (db.SaveChanges() == 0)
+                {
+                    return false;
+                }
+            }
+            if (timeline.ActualPostingOfIB == null && ProcurementPrograms.ActualPostingOfIB != null)
+            {
+                var procurementProgram = db.ProcurementPrograms.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
+                procurementProgram.ProjectStatus = "PhilGEPS Posting Done";
+                timeline.ActualPostingOfIB = ProcurementPrograms.ActualPostingOfIB;
+                timeline.PostingOfIBRemarks = ProcurementPrograms.PostingOfIBRemarks;
+                if (db.SaveChanges() == 0)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        public bool UpdatePreBid(ProcurementProjectsVM ProcurementPrograms, string UserEmail)
+        {
+            var timeline = db.ProcurementTimeline.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
+            if (timeline.PreBidConference == null && ProcurementPrograms.PreBidConference != null)
+            {
+                timeline.PreBidConference = ProcurementPrograms.PreBidConference;
+                if (db.SaveChanges() == 0)
+                {
+                    return false;
+                }
+            }
+            if (timeline.ActualPreBidConference == null && ProcurementPrograms.ActualPreBidConference != null)
+            {
+                var procurementProgram = db.ProcurementPrograms.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
+                procurementProgram.ProjectStatus = "Pre-Bid Conference Conducted";
+                timeline.ActualPreBidConference = ProcurementPrograms.ActualPreBidConference;
+                timeline.PreBidConferenceRemarks = ProcurementPrograms.PreBidConferenceRemarks;
+                if (db.SaveChanges() == 0)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        public bool UpdateBidsEvaluation(ProcurementProjectsVM ProcurementPrograms, string UserEmail)
+        {
+            var timeline = db.ProcurementTimeline.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
+            if (timeline.OpeningOfBids == null && ProcurementPrograms.OpeningOfBids != null)
+            {
+                timeline.OpeningOfBids = ProcurementPrograms.OpeningOfBids;
+                if (db.SaveChanges() == 0)
+                {
+                    return false;
+                }
+            }
+            if ((timeline.PrelimenryExamination == null && ProcurementPrograms.PrelimenryExamination != null) && (timeline.DetailedExamination == null && ProcurementPrograms.DetailedExamination != null && (timeline.EvaluationReporting == null && ProcurementPrograms.EvaluationReporting != null)))
+            {
+                var procurementProgram = db.ProcurementPrograms.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
+                procurementProgram.ProjectStatus = "Bids Evaluated";
+                timeline.PrelimenryExamination = ProcurementPrograms.PrelimenryExamination;
+                timeline.DetailedExamination = ProcurementPrograms.DetailedExamination;
+                timeline.EvaluationReporting = ProcurementPrograms.EvaluationReporting;
+                timeline.BidsExaminationRemarks = ProcurementPrograms.BidsExaminationRemarks;
+                if (db.SaveChanges() == 0)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        public bool UpdatePostQualification(ProcurementProjectsVM ProcurementPrograms, string UserEmail)
+        {
+            var timeline = db.ProcurementTimeline.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
+            if (timeline.PostQualification == null && ProcurementPrograms.PostQualification != null)
+            {
+                timeline.PostQualification = ProcurementPrograms.PostQualification;
+                if (db.SaveChanges() == 0)
+                {
+                    return false;
+                }
+            }
+            if ((timeline.ActualPostQualification == null && ProcurementPrograms.ActualPostQualification != null) && (timeline.PostQualificationReportedToBAC == null && ProcurementPrograms.PostQualificationReportedToBAC != null))
+            {
+                var procurementProgram = db.ProcurementPrograms.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
+                procurementProgram.ProjectStatus = "Post Qualification";
+                timeline.ActualPostQualification = ProcurementPrograms.ActualPostQualification;
+                timeline.PostQualificationReportedToBAC = ProcurementPrograms.PostQualificationReportedToBAC;
+                timeline.PostQualificationRemarks = ProcurementPrograms.PostQualificationRemarks;
+                if (db.SaveChanges() == 0)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        public bool UpdateBACResoNoticeOfAward(ProcurementProjectsVM ProcurementPrograms, string UserEmail)
+        {
+            var timeline = db.ProcurementTimeline.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
+            var procurementPrograms = db.ProcurementPrograms.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
+            if (timeline.PMOReceived == null && ProcurementPrograms.PMOReceived != null)
+            {
+                timeline.BACResolutionCreated = ProcurementPrograms.BACResolutionCreated;
+                timeline.BACMemberForwarded = ProcurementPrograms.BACMemberForwarded;
+                timeline.HOPEForwarded = ProcurementPrograms.HOPEForwarded;
+                timeline.PMOReceived = ProcurementPrograms.PMOReceived;
+                if (db.SaveChanges() == 0)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        public bool UpdateNoticeOfAwardIssuance(ProcurementProjectsVM ProcurementPrograms, string UserEmail)
+        {
+            var timeline = db.ProcurementTimeline.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
+            var procurementPrograms = db.ProcurementPrograms.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
+
+            if (timeline.ActualNOAIssuance == null && ProcurementPrograms.ActualNOAIssuance != null)
+            {
+                procurementPrograms.ProjectStatus = "Notice of Award Created";
+                timeline.ActualNOAIssuance = ProcurementPrograms.ActualNOAIssuance;
+                procurementPrograms.ProjectCost = ProcurementPrograms.ProjectCost;
+                procurementPrograms.SupplierReference = ProcurementPrograms.Supplier;
+                db.SaveChanges();
+            }
+            if (timeline.NOASignedByHOPE == null && ProcurementPrograms.NOASignedByHOPE != null)
+            {
+                procurementPrograms.ProjectStatus = "Notice of Award signed by HOPE";
+                timeline.NOASignedByHOPE = ProcurementPrograms.NOASignedByHOPE;
+                timeline.NOAIssuanceRemarks = ProcurementPrograms.NOAIssuanceRemarks;
+                db.SaveChanges();
+            }
+            if (timeline.NOAReceivedBySupplier == null && ProcurementPrograms.NOAReceivedBySupplier != null)
+            {
+                procurementPrograms.ProjectStatus = "Notice of Award Received by Supplier";
+                timeline.NOAReceivedBySupplier = ProcurementPrograms.NOAReceivedBySupplier;
+                timeline.NOAIssuanceRemarks = ProcurementPrograms.NOAIssuanceRemarks;
+                db.SaveChanges();
+            }
+            return true;
+        }
+        public bool UpdateContractDetails(ProcurementProjectsVM ProcurementPrograms, string UserEmail)
+        {
+            var agencyDetails = db.AgencyDetails.FirstOrDefault();
+            var chiefAccountant = hris.GetFullDepartmentDetails(agencyDetails.AccountingOfficeReference);
+            var authorizedSignature = hris.GetFullDepartmentDetails(agencyDetails.HOPEReference);
+            var procurementProgram = db.ProcurementPrograms.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
+
+            var projectCost = 0.00m;
+            foreach(var item in ProcurementPrograms.Items)
+            {
+                projectCost += item.UnitCost * item.TotalQty;
+            }
+
+            if(ProcurementPrograms.IsTangible)
+            {
+                var projectItems = db.ProjectPlanItems.Where(d => d.APPLineReference == ProcurementPrograms.PAPCode).ToList();
+
+                var purchaseOrderHeader = new PurchaseOrderHeader
+                {
+                    PurchaseOrderNumber = GeneratePurchaseOrderNumber(),
+                    SupplierReference  = (int)ProcurementPrograms.Supplier,
+                    PlaceOfDelivery = ProcurementPrograms.PlaceOfDelivery,
+                    DateOfDelivery = ProcurementPrograms.DateOfDelivery,
+                    ModeOfProcurementReference = (int)procurementProgram.ModeOfProcurementReference,
+                    CreatedAt = (DateTime)ProcurementPrograms.POCreatedAt,
+                    TotalAmount = projectCost, 
+                    ChiefAccountant = chiefAccountant.DepartmentHead,
+                    ChiefAccountantOffice = chiefAccountant.DepartmentCode,
+                    ChiefAccountantDesignation = chiefAccountant.DepartmentHeadDesignation,
+                    AuthorizedSignature = authorizedSignature.DepartmentHead,
+                    AuthorizedSignatureOffice = authorizedSignature.DepartmentCode,
+                    AuthorizedSignatureDesignation = authorizedSignature.DepartmentHeadDesignation
+                };
+                db.PurchaseOrderHeader.Add(purchaseOrderHeader);
+                if(db.SaveChanges() == 0)
+                {
+                    return false;
+                }
+
+                var purchaseOrderDetails = new List<PurchaseOrderDetails>();
+                foreach(var item in ProcurementPrograms.Items)
+                {
+                    var itemReference = db.Items.Where(d => d.ItemCode == item.ItemCode).FirstOrDefault();
+                    purchaseOrderDetails.Add(new PurchaseOrderDetails
+                    {
+                        PurchaseOrderReference = purchaseOrderHeader.ID,
+                        ItemReference = itemReference.ID,
+                        Quantity = item.TotalQty,
+                        UnitCost = item.UnitCost
+                    });
+                }
+
+                db.PurchaseOrderDetails.AddRange(purchaseOrderDetails);
+                if (db.SaveChanges() == 0)
+                {
+                    return false;
+                }
+
+                procurementProgram.PurchaseOrderReference = purchaseOrderHeader.ID;
+                procurementProgram.ProjectCost = projectCost;
+                procurementProgram.SupplierReference = ProcurementPrograms.Supplier;
+                projectItems.ForEach(d => { d.POReference = purchaseOrderHeader.ID; });
                 if (db.SaveChanges() == 0)
                 {
                     return false;
@@ -517,6 +801,170 @@ namespace PUPFMIS.BusinessAndDataLogic
             }
 
             return true;
+        }
+        private string GeneratePurchaseOrderNumber()
+        {
+            var purchaseOrderNumber = string.Empty;
+            var series = (db.PurchaseOrderHeader.Count() + 1).ToString();
+            series = series.Length == 1 ? "000" + series : series.Length == 2 ? "00" + series : series.Length == 3 ? "0" + series : series;
+            purchaseOrderNumber = DateTime.Now.Year.ToString().Substring(2, 2) + "-" + DateTime.Now.ToString("MM") + "-" + series;
+            return purchaseOrderNumber;
+        }
+        public List<ProcurementProjectItemsVM> GetProjectItems(string PAPCode)
+        {
+            var procurementItems = new List<ProcurementProjectItemsVM>();
+            var procurementProgram = db.ProcurementPrograms.Where(d => d.PAPCode == PAPCode).FirstOrDefault();
+            var items = db.ProjectPlanItems.Where(d => d.APPLineReference == PAPCode).ToList();
+            var services = db.ProjectPlanServices.Where(d => d.APPLineReference == PAPCode).ToList();
+
+            foreach (var item in items)
+            {
+                var purchaseRequestHeader = db.PurchaseRequestHeader.Find(item.PRReference);
+                procurementItems.Add(new ProcurementProjectItemsVM
+                {
+                    EndUser = hris.GetDepartmentDetails(item.FKProjectReference.Department).Department + (item.FKProjectReference.Department == item.FKProjectReference.Unit ? string.Empty : " - " + hris.GetDepartmentDetails(item.FKProjectReference.Unit).Department),
+                    ProjectCode = item.FKProjectReference.ProjectCode,
+                    ProjectName = item.FKProjectReference.ProjectName,
+                    ItemCode = item.FKItemReference.ItemCode,
+                    ItemName = item.FKItemReference.ItemFullName,
+                    ItemSpecifications = item.FKItemReference.ItemShortSpecifications,
+                    ProcurementSource = item.FKItemReference.ProcurementSource == ProcurementSources.PS_DBM ? "Procurement System - Department of Budget and Management" : "Private Suppliers",
+                    InventoryType = item.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryTypeName,
+                    ItemCategory = item.FKItemReference.FKCategoryReference.ItemCategoryName,
+                    PackagingUOMReference = item.FKItemReference.FKPackagingUnitReference.Abbreviation,
+                    IndividualUOMReference = item.FKItemReference.FKIndividualUnitReference.Abbreviation,
+                    TotalQty = item.PPMPTotalQty,
+                    EstimatedBudget = item.PPMPEstimatedBudget,
+                    UnitCost = item.UnitCost,
+                    DeliveryMonth = system.GetMonthName(item.FKProjectReference.ProjectMonthStart) + ", " + item.FKProjectReference.FiscalYear.ToString(),
+                    PRNumber = item.PRReference == null ? null : purchaseRequestHeader.PRNumber,
+                    DatePRReceived = item.PRReference == null ? null : purchaseRequestHeader.ReceivedAt,
+                    Status = item.Status
+                });
+            }
+
+            foreach (var item in services)
+            {
+                procurementItems.Add(new ProcurementProjectItemsVM
+                {
+                    EndUser = hris.GetDepartmentDetails(item.FKProjectReference.Department).Department + (item.FKProjectReference.Department == item.FKProjectReference.Unit ? string.Empty : " - " + hris.GetDepartmentDetails(item.FKProjectReference.Unit).Department),
+                    ProjectCode = item.FKProjectReference.ProjectCode,
+                    ProjectName = item.FKProjectReference.ProjectName,
+                    ItemCode = item.FKItemReference.ItemCode,
+                    ItemName = item.FKItemReference.ItemFullName,
+                    ItemSpecifications = item.ItemSpecifications,
+                    ProcurementSource = item.FKItemReference.ProcurementSource == ProcurementSources.PS_DBM ? "Procurement System - Department of Budget and Management" : "Private Suppliers",
+                    InventoryType = item.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryTypeName,
+                    ItemCategory = item.FKItemReference.FKCategoryReference.ItemCategoryName,
+                    PackagingUOMReference = item.FKItemReference.PackagingUOMReference == null ? string.Empty : item.FKItemReference.FKPackagingUnitReference.Abbreviation,
+                    IndividualUOMReference = item.FKItemReference.IndividualUOMReference == null ? string.Empty : item.FKItemReference.FKIndividualUnitReference.Abbreviation,
+                    TotalQty = item.PPMPQuantity,
+                    EstimatedBudget = item.PPMPEstimatedBudget,
+                    UnitCost = item.UnitCost,
+                    DeliveryMonth = system.GetMonthName(item.FKProjectReference.ProjectMonthStart) + ", " + item.FKProjectReference.FiscalYear.ToString(),
+                    PRNumber = item.PRReference == null ? null : db.PurchaseRequestHeader.Find(item.PRReference).PRNumber,
+                    Status = item.Status
+                });
+            }
+
+            return procurementItems;
+        }
+        public List<ProcurementProjectItemsVM> GetPurchaseOrderItems(int PurchaseOrderID)
+        {
+            var procurementItems = new List<ProcurementProjectItemsVM>();
+            var purchaseOrderDetails = db.PurchaseOrderDetails.Where(d => d.PurchaseOrderReference == PurchaseOrderID).ToList();
+            foreach (var item in purchaseOrderDetails)
+            {
+                procurementItems.Add(new ProcurementProjectItemsVM
+                {
+                    ItemCode = item.FKItemReference.ItemCode,
+                    ItemName = item.FKItemReference.ItemFullName,
+                    TotalQty = item.Quantity,
+                    UnitCost = item.UnitCost
+                });
+            }
+            return procurementItems;
+        }
+
+
+        public ProcurementProjectsVM GetProcurementProgramDetailsByPAPCode(string PAPCode)
+        {
+            var procurementProgram = db.ProcurementPrograms.Where(d => d.PAPCode == PAPCode).FirstOrDefault();
+            var procurementTimeline = db.ProcurementTimeline.Where(d => d.PAPCode == PAPCode).FirstOrDefault();
+            var procurementItems = procurementProgram.PurchaseOrderReference == null ? GetProjectItems(PAPCode) : GetPurchaseOrderItems((int)procurementProgram.PurchaseOrderReference);
+            var purchaseOrderHeader = procurementProgram.PurchaseOrderReference == null ? null : db.PurchaseOrderHeader.Find(procurementProgram.PurchaseOrderReference);
+
+            var procurementModes = procurementProgram.APPModeOfProcurementReference.Split("_".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).ToList();
+            var modesOfProcurement = string.Empty;
+            for (int i = 0; i < procurementModes.Count; i++)
+            {
+                if (i == procurementModes.Count - 1)
+                {
+                    modesOfProcurement += db.ProcurementModes.Find(int.Parse(procurementModes[i])).ModeOfProcurementName;
+                }
+                else
+                {
+                    modesOfProcurement += db.ProcurementModes.Find(int.Parse(procurementModes[i])).ModeOfProcurementName + "\n";
+                }
+            }
+
+            var procurementProject = new ProcurementProjectsVM()
+            {
+                IsTangible = procurementProgram.IsTangible,
+                ModeOfProcurement = procurementProgram.ModeOfProcurementReference,
+                APPReference = procurementProgram.FKAPPHeaderReference.ReferenceNo,
+                Month = procurementProgram.Month,
+                PAPCode = procurementProgram.PAPCode,
+                UACS = procurementProgram.ObjectClassification,
+                ProcurementProgram = procurementProgram.ProcurementProgram,
+                ApprovedBudget = procurementProgram.Total,
+                ObjectClassification = abis.GetChartOfAccounts(procurementProgram.ObjectClassification).AcctName,
+                FundCluster = procurementProgram.FundSourceReference,
+                FundSource = abis.GetFundSources(procurementProgram.FundSourceReference).FUND_DESC,
+                EndUser = hris.GetDepartmentDetails(procurementProgram.EndUser).Department,
+                StartMonth = procurementProgram.StartMonth,
+                EndMonth = procurementProgram.EndMonth,
+                APPModeOfProcurement = modesOfProcurement,
+                MOOETotal = procurementProgram.MOOEAmount,
+                CapitalOutlayTotal = procurementProgram.COAmount,
+                TotalEstimatedBudget = procurementProgram.Total,
+                Remarks = procurementProgram.Remarks,
+                ProjectCoordinator = procurementProgram.ProjectCoordinator == null ? null : hris.GetEmployeeDetailByCode(procurementProgram.ProjectCoordinator).EmployeeName,
+                ProjectSupport = procurementProgram.ProjectSupport == null ? null : hris.GetEmployeeDetailByCode(procurementProgram.ProjectSupport).EmployeeName,
+                ProjectStatus = procurementProgram.ProjectStatus,
+                PurchaseRequestSubmission = procurementTimeline == null ? null : procurementTimeline.PurchaseRequestSubmission == null ? null : procurementTimeline.PurchaseRequestSubmission,
+                PurchaseRequestClosing = procurementTimeline == null ? null : procurementTimeline.PurchaseRequestClosing == null ? null : procurementTimeline.PurchaseRequestClosing,
+                ActualPreProcurementConference = procurementTimeline == null ? null : procurementTimeline.ActualPreProcurementConference,
+                PreProcurementConferenceRemarks = procurementTimeline == null ? null : procurementTimeline.PreProcurementConferenceRemarks,
+                ActualPostingOfIB = procurementTimeline == null ? null : procurementTimeline.ActualPostingOfIB,
+                PostingOfIBRemarks = procurementTimeline == null ? null : procurementTimeline.PostingOfIBRemarks,
+                ActualPreBidConference = procurementTimeline == null ? null : procurementTimeline.ActualPreBidConference,
+                PreBidConferenceRemarks = procurementTimeline == null ? null : procurementTimeline.PreBidConferenceRemarks,
+                PrelimenryExamination = procurementTimeline == null ? null : procurementTimeline.PrelimenryExamination,
+                DetailedExamination = procurementTimeline == null ? null : procurementTimeline.DetailedExamination,
+                EvaluationReporting = procurementTimeline == null ? null : procurementTimeline.EvaluationReporting,
+                BidsExaminationRemarks = procurementTimeline == null ? null : procurementTimeline.BidsExaminationRemarks,
+                ActualPostQualification = procurementTimeline == null ? null : procurementTimeline.ActualPostQualification,
+                PostQualificationReportedToBAC = procurementTimeline == null ? null : procurementTimeline.PostQualificationReportedToBAC,
+                PostQualificationRemarks = procurementTimeline == null ? null : procurementTimeline.PostQualificationRemarks,
+                BACResolutionCreated = procurementTimeline == null ? null : procurementTimeline.BACResolutionCreated,
+                BACMemberForwarded = procurementTimeline == null ? null : procurementTimeline.BACMemberForwarded,
+                HOPEForwarded = procurementTimeline == null ? null : procurementTimeline.HOPEForwarded,
+                PMOReceived = procurementTimeline == null ? null : procurementTimeline.PMOReceived,
+                ActualNOAIssuance = procurementTimeline == null ? null : procurementTimeline.ActualNOAIssuance,
+                NOASignedByHOPE = procurementTimeline == null ? null : procurementTimeline.NOASignedByHOPE,
+                NOAReceivedBySupplier = procurementTimeline == null ? null : procurementTimeline.NOAReceivedBySupplier,
+                NOAIssuanceRemarks = procurementTimeline == null ? null : procurementTimeline.NOAIssuanceRemarks,
+                ProjectCost = procurementProgram.ProjectCost,
+                Supplier = procurementProgram.SupplierReference == null ? null : procurementProgram.SupplierReference,
+                PONumber = purchaseOrderHeader == null ? null : purchaseOrderHeader.PurchaseOrderNumber,
+                POCreatedAt = purchaseOrderHeader == null ? null : (DateTime?)purchaseOrderHeader.CreatedAt,
+                DateOfDelivery = purchaseOrderHeader == null ? null : purchaseOrderHeader.DateOfDelivery,
+                PlaceOfDelivery = purchaseOrderHeader == null ? null : purchaseOrderHeader.PlaceOfDelivery,
+                Items = procurementItems
+            };
+
+            return procurementProject;
         }
 
         protected override void Dispose(bool disposing)

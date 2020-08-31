@@ -157,7 +157,7 @@ namespace PUPFMIS.BusinessAndDataLogic
                                        ProjectTitle = ppmpItems.FKProjectReference.ProjectName,
                                        ProposalType = projectItems.ProposalType,
                                        ItemCode = ppmpItems.FKItemReference.ItemCode,
-                                       ItemName = ppmpItems.FKItemReference.FKItemTypeReference.ItemTypeName.ToUpper() + " (" + ppmpItems.FKItemReference.ItemCode + ")",
+                                       ItemName = ppmpItems.FKItemReference.ItemFullName.ToUpper() + " (" + ppmpItems.FKItemReference.ItemCode + ")",
                                        ItemSpecifications = ppmpItems.FKItemReference.ItemSpecifications,
                                        UnitOfMeasure = ppmpItems.FKItemReference.FKIndividualUnitReference.UnitName.ToUpper(),
                                        UnitCost = ppmpItems.UnitCost,
@@ -260,7 +260,7 @@ namespace PUPFMIS.BusinessAndDataLogic
         }
         private ProjectPlanItems AdjustQuantity(ProjectPlanItems Item, int ReducedQuantity)
         {
-            if(Item.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode == "CUOS")
+            if(Item.FKProjectReference.ProjectCode.StartsWith("CSPR"))
             {
                 int[] quantities = new int[12];
                 quantities[0] = Item.PPMPJan != null ? int.Parse(Item.PPMPJan) : 0;
@@ -311,37 +311,37 @@ namespace PUPFMIS.BusinessAndDataLogic
                 Item.PPMPNov = quantities[10] == 0 ? null : quantities[10].ToString();
                 Item.PPMPDec = quantities[11] == 0 ? null : quantities[11].ToString();
             }
-            else
-            {
-                var startMonth = Item.FKProjectReference.ProjectMonthStart;
-                switch(startMonth)
-                {
-                    case 1: Item.PPMPJan = ReducedQuantity.ToString();
-                        break;
-                    case 2: Item.PPMPFeb = ReducedQuantity.ToString();
-                        break;
-                    case 3: Item.PPMPMar = ReducedQuantity.ToString();
-                        break;
-                    case 4: Item.PPMPApr = ReducedQuantity.ToString();
-                        break;
-                    case 5: Item.PPMPMay = ReducedQuantity.ToString();
-                        break;
-                    case 6: Item.PPMPJun = ReducedQuantity.ToString();
-                        break;
-                    case 7: Item.PPMPJul = ReducedQuantity.ToString();
-                        break;
-                    case 8: Item.PPMPAug = ReducedQuantity.ToString();
-                        break;
-                    case 9: Item.PPMPSep = ReducedQuantity.ToString();
-                        break;
-                    case 10: Item.PPMPOct = ReducedQuantity.ToString();
-                        break;
-                    case 11: Item.PPMPNov = ReducedQuantity.ToString();
-                        break;
-                    case 12: Item.PPMPDec = ReducedQuantity.ToString();
-                        break;
-                }
-            }
+            //else
+            //{
+            //    var startMonth = Item.FKProjectReference.ProjectMonthStart;
+            //    switch(startMonth)
+            //    {
+            //        case 1: Item.PPMPJan = ReducedQuantity.ToString();
+            //            break;
+            //        case 2: Item.PPMPFeb = ReducedQuantity.ToString();
+            //            break;
+            //        case 3: Item.PPMPMar = ReducedQuantity.ToString();
+            //            break;
+            //        case 4: Item.PPMPApr = ReducedQuantity.ToString();
+            //            break;
+            //        case 5: Item.PPMPMay = ReducedQuantity.ToString();
+            //            break;
+            //        case 6: Item.PPMPJun = ReducedQuantity.ToString();
+            //            break;
+            //        case 7: Item.PPMPJul = ReducedQuantity.ToString();
+            //            break;
+            //        case 8: Item.PPMPAug = ReducedQuantity.ToString();
+            //            break;
+            //        case 9: Item.PPMPSep = ReducedQuantity.ToString();
+            //            break;
+            //        case 10: Item.PPMPOct = ReducedQuantity.ToString();
+            //            break;
+            //        case 11: Item.PPMPNov = ReducedQuantity.ToString();
+            //            break;
+            //        case 12: Item.PPMPDec = ReducedQuantity.ToString();
+            //            break;
+            //    }
+            //}
             return Item;
         }
         public bool SaveApproval(PPMPEvaluationVM ppmpEvaluation, string UserEmail)

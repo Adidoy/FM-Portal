@@ -56,12 +56,12 @@
     function CreateResult(data) {
         if (data.result == true) {
             swal.fire({
-                title: "Record Saved!",
-                text: "Record is successfully saved.",
+                title: "Project Plan Saved!",
+                text: "Project Plan is successfully saved.",
                 type: "success"
             }).then((result) => {
                 if (result.value) {
-                    window.location.href = "@Url.Action("list", "Items", new { Area = "admin" })";
+                    window.location.href = "@Url.Action("dashboard", "dashboard", new { Area = "admin" })";
                 }
             })
         }

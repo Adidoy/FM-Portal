@@ -90,75 +90,8 @@ namespace PUPFMIS.Models
         [Display(Name = "Created By")]
         public string CreatedBy { get; set; }
     }
-    [Table("PP_APP_PROJECT_ITEMS")]
-    public class APPProjectItems
-    {
-        [Key]
-        public int ID { get; set; }
-
-        [Display(Name = "PAP Code")]
-        [Column(TypeName = "VARCHAR")]
-        [MaxLength(30, ErrorMessage = "{0} field must be up to {1} characters only.")]
-        [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
-        public string PAPCode { get; set; }
-
-        public int APPHeaderReference { get; set; }
-
-        [Column(TypeName = "VARCHAR")]
-        [Display(Name = "Procurement Project/Program")]
-        [MaxLength(175, ErrorMessage = "{0} field must be up to {1} characters only.")]
-        [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
-        public string ProcurementProgram { get; set; }
-
-        public string ModeOfProcurementReference { get; set; }
-
-        [Column(TypeName = "VARCHAR")]
-        [Display(Name = "Object Classification")]
-        public string ObjectClassification { get; set; }
-
-        [Column(TypeName = "VARCHAR")]
-        public string EndUser { get; set; }
-
-        public int Month { get; set; }
-
-        [Column(TypeName = "VARCHAR")]
-        public string StartMonth { get; set; }
-
-        [Column(TypeName = "VARCHAR")]
-        public string EndMonth { get; set; }
-
-        [Column(TypeName = "VARCHAR")]
-        [Display(Name = "Source of Funds")]
-        public string FundSourceReference { get; set; }
-
-        [Display(Name = "MOOE")]
-        public decimal MOOEAmount { get; set; }
-
-        [Display(Name = "CO")]
-        public decimal COAmount { get; set; }
-
-        [Display(Name = "Total")]
-        public decimal Total { get; set; }
-
-        public string Remarks { get; set; }
-
-        [Display(Name = "Project Cost")]
-        public decimal ProjectCost { get; set; }
-
-        [Display(Name = "Project Coordinator")]
-        public string ProjectCoordinator { get; set; }
-
-        [Display(Name = "Project Support")]
-        public string ProjectSupport { get; set; }
-
-        [Display(Name = "Status")]
-        public string ProjectStatus { get; set; }
-
-        [ForeignKey("APPHeaderReference")]
-        public virtual APPHeader FKAPPHeaderReference { get; set; }
-    }
-    [Table("PP_APP_INSTITUTIONAL_ITEMS")]
-    public class APPInstitutionalItems
+    [Table("PP_APP_PROCUREMENT_PROGRAMS")]
+    public class ProcurementPrograms
     {
         [Key]
         public int ID { get; set; }
@@ -175,7 +108,12 @@ namespace PUPFMIS.Models
         [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
         public string ProcurementProgram { get; set; }
 
-        public string ModeOfProcurementReference { get; set; }
+        [Required]
+        [Display(Name = "Mode of Procurement")]
+        public string APPModeOfProcurementReference { get; set; }
+
+        [Display(Name = "Mode of Procurement")]
+        public int? ModeOfProcurementReference { get; set; }
 
         [Column(TypeName = "VARCHAR")]
         public string ObjectClassification { get; set; }
@@ -213,6 +151,9 @@ namespace PUPFMIS.Models
         [Display(Name = "Project Cost")]
         public decimal ProjectCost { get; set; }
 
+        [Display(Name = "Supplier")]
+        public int? SupplierReference { get; set; }
+
         [Display(Name = "Project Coordinator")]
         public string ProjectCoordinator { get; set; }
 
@@ -222,8 +163,26 @@ namespace PUPFMIS.Models
         [Display(Name = "Status")]
         public string ProjectStatus { get; set; }
 
+        public bool IsInstitutional { get; set; }
+
+        public bool IsTangible { get; set; }
+
+        public bool IsAccepted { get; set; }
+
+        [Display(Name = "Purchase Order Number")]
+        public int? PurchaseOrderReference { get; set; }
+
+        [ForeignKey("PurchaseOrderReference")]
+        public virtual PurchaseOrderHeader FKPurchaseOrderHeaderReference { get; set; }
+
         [ForeignKey("APPHeaderReference")]
         public virtual APPHeader FKAPPHeaderReference { get; set; }
+
+        [ForeignKey("SupplierReference")]
+        public virtual Supplier FKSupplierReference { get; set; }
+
+        [ForeignKey("ModeOfProcurementReference")]
+        public virtual ModeOfProcurement FKModeOfProcurementReference { get; set; }
     }
     [Table("PP_APP_CSE_ITEMS")]
     public class APPCSEDetails
@@ -471,7 +430,7 @@ namespace PUPFMIS.Models
         public string EndUser { get; set; }
 
         [Display(Name = "Mode of Procurement")]
-        public List<string> ModeOfProcurement { get; set; }
+        public string ModeOfProcurement { get; set; }
 
         public int Month { get; set; }
 
@@ -618,5 +577,68 @@ namespace PUPFMIS.Models
 
         [Display(Name = "Date Approved")]
         public string ApprovedAt { get; set; }
+    }
+
+    public class ApprovedItems
+    {
+        public bool IsTangible { get; set; }
+        public bool IsInstitutional { get; set; }
+
+        [Display(Name = "PAP Code")]
+        public string PAPCode { get; set; }
+
+        [Display(Name = "Item Code")]
+        public string ItemCode { get; set; }
+
+        [Display(Name = "Item Name")]
+        public string ItemName { get; set; }
+
+        [Display(Name = "Item Specification")]
+        public string ItemSpecification { get; set; }
+
+        [Display(Name = "UACS")]
+        public string UACS { get; set; }
+
+        [Display(Name = "Object Classification")]
+        public string ObjectClassification { get; set; }
+
+        [Display(Name = "Unit Cost")]
+        public decimal UnitCost { get; set; }
+
+        [Display(Name = "Total Qty.")]
+        public int TotalQty { get; set; }
+
+        [Display(Name = "Unit")]
+        public string UnitOfMeasure { get; set; }
+
+        [Display(Name = "Estimated Budget")]
+        public decimal EstimatedBudget { get; set; }
+
+        [Display(Name = "Fund Source")]
+        public string FundSource { get; set; }
+
+        [Display(Name = "Fund Description")]
+        public string FundDescription { get; set; }
+
+        [Display(Name = "Mode of Procurement")]
+        public string[] ModeOfProcurement { get; set; }
+
+        [Display(Name = "End-User")]
+        public string EndUser { get; set; }
+
+        [Display(Name = "MOOE")]
+        public decimal MOOE { get; set; }
+
+        [Display(Name = "CO")]
+        public decimal CapitalOutlay { get; set; }
+
+        [Display(Name = "Inventory Code")]
+        public string InventoryCode { get; set; }
+
+        [Display(Name = "Month")]
+        public int Month { get; set; }
+
+        [Display(Name = "Remarks")]
+        public string Remarks { get; set; }
     }
 }

@@ -238,7 +238,7 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="@Url.Action("index","PurchaseRequests", new { Area = "end-users" })" class="nav-link" style="font-size:10.5pt;">
+                                    <a href="@Url.Action("dashboard","PurchaseRequests", new { Area = "end-users" })" class="nav-link" style="font-size:10.5pt;">
                                         <i class="fa fa-file"></i>&nbsp;
                                         <p>
                                             Purchase Requests
@@ -298,7 +298,7 @@
                                         <li class="nav-item">
                                             <a href="@Url.Action("index","ProcurementPipelines", new { area = "procurement" })" class="nav-link pt-1 pb-1" style="text-indent:3px; font-size:10pt;">
                                                 <i class="fa fa-circle" style="font-size:5pt;"></i> &nbsp;
-                                                Set Procurement Timeline
+                                                Project Assignment
                                             </a>
                                         </li>
                                     </ul>
@@ -353,11 +353,6 @@
                         }
                         @if (User.IsInRole(PUPFMIS.Models.SystemRoles.ProjectCoordinator))
                         {
-                            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                                <li class="nav-header" style="font-size:9pt;">
-                                    NAVIGATION
-                                </li>
-                            </ul>
                             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                                 <li class="nav-header" style="font-size:9pt;">
                                     NAVIGATION

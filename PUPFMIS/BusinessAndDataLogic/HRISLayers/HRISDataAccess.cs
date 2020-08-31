@@ -318,6 +318,23 @@ namespace PUPFMIS.BusinessAndDataLogic
                     EmployeeName = d.FName + " " + d.MInitial + " " + d.LName
                 }).ToList();
         }
+        public List<HRISEmployeeDetailsVM> GetDepartmentOfficials(string DepartmentCode)
+        {
+            var designationTbl = db.HRISEmployeeDesignation.Where(d => (d.IncStart <= DateTime.Now && d.IncEnd >= DateTime.Now)).ToList();
+            var officials = (from designations in designationTbl
+                             join employees in db.HRISEmployeeDetails.ToList() on designations.EmpCode equals employees.EmpCode
+                             join departments in db.HRISDepartments.ToList() on designations.DepartmentID equals departments.DepartmentID
+                             where departments.DepartmentCode == DepartmentCode
+                             select new HRISEmployeeDetailsVM
+                             {
+                                 EmployeeCode = employees.EmpCode,
+                                 EmployeeName = employees.FName + " " + employees.MInitial + " " + employees.LName,
+                                 Department = departments.Department,
+                                 DepartmentCode = departments.DepartmentCode,
+                                 Designation = designations.Designation
+                             }).ToList();
+            return officials;
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

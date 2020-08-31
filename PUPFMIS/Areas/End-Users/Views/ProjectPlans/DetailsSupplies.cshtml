@@ -19,6 +19,7 @@
         <h1 class="card-title"><i class="fa fa-bookmark"></i> Project Plan: Common Use Office Supplies</h1>
     </div>
 }
+
 <div class="row">
     <div class="col-sm-12">
         <h4>Project Details</h4>
@@ -95,26 +96,31 @@
                                             <div class="card-body table-responsive p-sm-0">
                                                 <table class="table table-striped table-hover" id="items">
                                                     <thead>
-                                                        <tr>
-                                                            @if (Model.ProjectStatus == "New Project")
-                                                            {
-                                                                <th rowspan="2" width="45%" style="text-align:center; vertical-align:middle">Item and Specifications</th>
-                                                            }
-                                                            else
-                                                            {
-                                                                <th rowspan="2" width="60%" style="text-align:center; vertical-align:middle">Item and Specifications</th>
-                                                            }
-                                                            <th colspan="3" style="text-align:center; vertical-align:middle">Quantity Requirement</th>
-                                                            <th rowspan="2" width="14%" style="text-align:center; vertical-align:middle">Estimated Budget</th>
-                                                            @if (Model.ProjectStatus == "New Project")
-                                                            {
+                                                        @if (Model.ProjectStatus == "New Project")
+                                                        {
+                                                            <tr>
+                                                                <th rowspan="2" width="50%" style="text-align:center; vertical-align:middle">Item and Specifications</th>
+                                                                <th colspan="2" style="text-align:center; vertical-align:middle">Quantity Requirement</th>
+                                                                <th rowspan="2" width="14%" style="text-align:center; vertical-align:middle">Estimated Budget</th>
                                                                 <th rowspan="2" width="15%" style="text-align:center; vertical-align:middle">Action</th>
-                                                            }
-                                                        </tr>
-                                                        <tr>
-                                                            <th width="14%" colspan="2" style="text-align:center; vertical-align:middle">Distribution</th>
-                                                            <th width="7%" style="text-align:center; vertical-align:middle">Total</th>
-                                                        </tr>
+                                                            </tr>
+                                                            <tr>
+                                                                <th style="text-align:center; vertical-align:middle">Distribution</th>
+                                                                <th style="text-align:center; vertical-align:middle">Total</th>
+                                                            </tr>
+                                                        }
+                                                        else
+                                                        {
+                                                            <tr>
+                                                                <th width="50%" rowspan="2" style="text-align:center; vertical-align:middle">Item and Specifications</th>
+                                                                <th colspan="2" style="text-align:center; vertical-align:middle">Quantity Requirement</th>
+                                                                <th width="20%" rowspan="2" style="text-align:center; vertical-align:middle">Estimated Budget</th>
+                                                            </tr>
+                                                            <tr>
+                                                                <th width="15%" style="text-align:center; vertical-align:middle">Distribution</th>
+                                                                <th width="15%" style="text-align:center; vertical-align:middle">Total</th>
+                                                            </tr>
+                                                        }
                                                     </thead>
                                                     <tbody>
                                                         @foreach (var item in Model.ProjectPlanItems)
@@ -123,136 +129,148 @@
                                                                 <td style="text-align:justify; vertical-align: middle;">
                                                                     <span style="font-size:12pt"><b>@Html.DisplayFor(modelItem => item.ItemName) (<small><b>@Html.DisplayFor(modelItem => item.ItemCode)</b></small>)</b></span>
                                                                     <br /><br />
-                                                                    <span style="font-size:8pt;">
-                                                                        <b>@Html.DisplayNameFor(modelItem => item.ItemSpecifications)</b>
-                                                                        <br />
-                                                                        @Html.DisplayFor(modelItem => item.ItemSpecifications)
-                                                                        <br /><br />
-                                                                        <b>Unit of Measure : </b>@Html.DisplayFor(model => item.IndividualUOMReference)
-                                                                        <br />
-                                                                        <b>@Html.DisplayNameFor(modelItem => item.Supplier1UnitCost) : </b>@( String.Format("{0:C}", item.Supplier1UnitCost) )
-                                                                    </span>
+                                                                    <b>@Html.DisplayNameFor(modelItem => item.ItemSpecifications)</b>
+                                                                    <br />
+                                                                    @Html.DisplayFor(modelItem => item.ItemSpecifications)
+                                                                    <br /><br />
+                                                                    <b>@Html.DisplayNameFor(modelItem => item.InventoryType) : </b>@Html.DisplayFor(model => item.InventoryType)
+                                                                    <br />
+                                                                    <b>Unit of Measure : </b>@Html.DisplayFor(model => item.IndividualUOMReference)
+                                                                    <br />
+                                                                    <b>@Html.DisplayNameFor(modelItem => item.Supplier1UnitCost) : </b>@( String.Format("{0:C}", item.Supplier1UnitCost) )
                                                                 </td>
-                                                                <td style="text-align:left; vertical-align:top;" width="7%">
-                                                                    @if (item.JanQty != 0)
+                                                                <td style="text-align:left; vertical-align:top;">
+                                                                    @if (item.JanQty != null)
                                                                     {
-                                                                        @Html.DisplayNameFor(modelItem => item.JanQty)<span>:</span>
-                                                                        <br />
+                                                                        <div class="row">
+                                                                            <div class="col-sm-6">
+                                                                                @Html.DisplayNameFor(modelItem => item.JanQty):
+                                                                            </div>
+                                                                            <div class="col-sm-6">
+                                                                                @Html.DisplayFor(modelItem => item.JanQty)
+                                                                            </div>
+                                                                        </div>
                                                                     }
-                                                                    @if (item.FebQty != 0)
+                                                                    @if (item.FebQty != null)
                                                                     {
-                                                                        @Html.DisplayNameFor(modelItem => item.FebQty)<span>:</span>
-                                                                        <br />
+                                                                        <div class="row">
+                                                                            <div class="col-sm-6">
+                                                                                @Html.DisplayNameFor(modelItem => item.FebQty):
+                                                                            </div>
+                                                                            <div class="col-sm-6">
+                                                                                @Html.DisplayFor(modelItem => item.FebQty)
+                                                                            </div>
+                                                                        </div>
                                                                     }
-                                                                    @if (item.MarQty != 0)
+                                                                    @if (item.MarQty != null)
                                                                     {
-                                                                        @Html.DisplayNameFor(modelItem => item.MarQty)<span>:</span>
-                                                                        <br />
+                                                                        <div class="row">
+                                                                            <div class="col-sm-6">
+                                                                                @Html.DisplayNameFor(modelItem => item.MarQty):
+                                                                            </div>
+                                                                            <div class="col-sm-6">
+                                                                                @Html.DisplayFor(modelItem => item.MarQty)
+                                                                            </div>
+                                                                        </div>
                                                                     }
-                                                                    @if (item.AprQty != 0)
+                                                                    @if (item.AprQty != null)
                                                                     {
-                                                                        @Html.DisplayNameFor(modelItem => item.AprQty)<span>:</span>
-                                                                        <br />
+                                                                        <div class="row">
+                                                                            <div class="col-sm-6">
+                                                                                @Html.DisplayNameFor(modelItem => item.AprQty):
+                                                                            </div>
+                                                                            <div class="col-sm-6">
+                                                                                @Html.DisplayFor(modelItem => item.AprQty)
+                                                                            </div>
+                                                                        </div>
                                                                     }
-                                                                    @if (item.MayQty != 0)
+                                                                    @if (item.MayQty != null)
                                                                     {
-                                                                        @Html.DisplayNameFor(modelItem => item.MayQty)<span>:</span>
-                                                                        <br />
+                                                                        <div class="row">
+                                                                            <div class="col-sm-6">
+                                                                                @Html.DisplayNameFor(modelItem => item.MayQty):
+                                                                            </div>
+                                                                            <div class="col-sm-6">
+                                                                                @Html.DisplayFor(modelItem => item.MayQty)
+                                                                            </div>
+                                                                        </div>
                                                                     }
-                                                                    @if (item.JunQty != 0)
+                                                                    @if (item.JunQty != null)
                                                                     {
-                                                                        @Html.DisplayNameFor(modelItem => item.JunQty)<span>:</span>
-                                                                        <br />
+                                                                        <div class="row">
+                                                                            <div class="col-sm-6">
+                                                                                @Html.DisplayNameFor(modelItem => item.JunQty):
+                                                                            </div>
+                                                                            <div class="col-sm-6">
+                                                                                @Html.DisplayFor(modelItem => item.JunQty)
+                                                                            </div>
+                                                                        </div>
                                                                     }
-                                                                    @if (item.JulQty != 0)
+                                                                    @if (item.JulQty != null)
                                                                     {
-                                                                        @Html.DisplayNameFor(modelItem => item.JulQty)<span>:</span>
-                                                                        <br />
+                                                                        <div class="row">
+                                                                            <div class="col-sm-6">
+                                                                                @Html.DisplayNameFor(modelItem => item.JulQty):
+                                                                            </div>
+                                                                            <div class="col-sm-6">
+                                                                                @Html.DisplayFor(modelItem => item.JulQty)
+                                                                            </div>
+                                                                        </div>
                                                                     }
-                                                                    @if (item.AugQty != 0)
+                                                                    @if (item.AugQty != null)
                                                                     {
-                                                                        @Html.DisplayNameFor(modelItem => item.AugQty)<span>:</span>
-                                                                        <br />
+                                                                        <div class="row">
+                                                                            <div class="col-sm-6">
+                                                                                @Html.DisplayNameFor(modelItem => item.AugQty):
+                                                                            </div>
+                                                                            <div class="col-sm-6">
+                                                                                @Html.DisplayFor(modelItem => item.AugQty)
+                                                                            </div>
+                                                                        </div>
                                                                     }
-                                                                    @if (item.SepQty != 0)
+                                                                    @if (item.SepQty != null)
                                                                     {
-                                                                        @Html.DisplayNameFor(modelItem => item.SepQty)<span>:</span>
-                                                                        <br />
+                                                                        <div class="row">
+                                                                            <div class="col-sm-6">
+                                                                                @Html.DisplayNameFor(modelItem => item.SepQty):
+                                                                            </div>
+                                                                            <div class="col-sm-6">
+                                                                                @Html.DisplayFor(modelItem => item.SepQty)
+                                                                            </div>
+                                                                        </div>
                                                                     }
-                                                                    @if (item.OctQty != 0)
+                                                                    @if (item.OctQty != null)
                                                                     {
-                                                                        @Html.DisplayNameFor(modelItem => item.OctQty)<span>:</span>
-                                                                        <br />
+                                                                        <div class="row">
+                                                                            <div class="col-sm-6">
+                                                                                @Html.DisplayNameFor(modelItem => item.OctQty):
+                                                                            </div>
+                                                                            <div class="col-sm-6">
+                                                                                @Html.DisplayFor(modelItem => item.OctQty)
+                                                                            </div>
+                                                                        </div>
                                                                     }
-                                                                    @if (item.NovQty != 0)
+                                                                    @if (item.NovQty != null)
                                                                     {
-                                                                        @Html.DisplayNameFor(modelItem => item.NovQty)<span>:</span>
-                                                                        <br />
+                                                                        <div class="row">
+                                                                            <div class="col-sm-6">
+                                                                                @Html.DisplayNameFor(modelItem => item.NovQty):
+                                                                            </div>
+                                                                            <div class="col-sm-6">
+                                                                                @Html.DisplayFor(modelItem => item.NovQty)
+                                                                            </div>
+                                                                        </div>
                                                                     }
-                                                                    @if (item.DecQty != 0)
+                                                                    @if (item.DecQty != null)
                                                                     {
-                                                                        @Html.DisplayNameFor(modelItem => item.DecQty)<span>:</span>
-                                                                    }
-                                                                </td>
-                                                                <td style="text-align:right; vertical-align:top;" width="7%">
-                                                                    @if (item.JanQty != 0)
-                                                                    {
-                                                                        @Html.DisplayFor(modelItem => item.JanQty)
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.FebQty != 0)
-                                                                    {
-                                                                        @Html.DisplayFor(modelItem => item.FebQty)
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.MarQty != 0)
-                                                                    {
-                                                                        @Html.DisplayFor(modelItem => item.MarQty)
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.AprQty != 0)
-                                                                    {
-                                                                        @Html.DisplayFor(modelItem => item.AprQty)
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.MayQty != 0)
-                                                                    {
-                                                                        @Html.DisplayFor(modelItem => item.MayQty)
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.JunQty != 0)
-                                                                    {
-                                                                        @Html.DisplayFor(modelItem => item.JunQty)
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.JulQty != 0)
-                                                                    {
-                                                                        @Html.DisplayFor(modelItem => item.JulQty)
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.AugQty != 0)
-                                                                    {
-                                                                        @Html.DisplayFor(modelItem => item.AugQty)
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.SepQty != 0)
-                                                                    {
-                                                                        @Html.DisplayFor(modelItem => item.SepQty)
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.OctQty != 0)
-                                                                    {
-                                                                        @Html.DisplayFor(modelItem => item.OctQty)
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.NovQty != 0)
-                                                                    {
-                                                                        @Html.DisplayFor(modelItem => item.NovQty)
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.DecQty != 0)
-                                                                    {
-                                                                        @Html.DisplayFor(modelItem => item.DecQty)
+                                                                        <div class="row">
+                                                                            <div class="col-sm-6">
+                                                                                @Html.DisplayNameFor(modelItem => item.DecQty):
+                                                                            </div>
+                                                                            <div class="col-sm-6">
+                                                                                @Html.DisplayFor(modelItem => item.DecQty)
+                                                                            </div>
+                                                                        </div>
                                                                     }
                                                                 </td>
                                                                 <td style="text-align:center; vertical-align:top;">
@@ -264,7 +282,7 @@
                                                                 @if (Model.ProjectStatus == "New Project")
                                                                 {
                                                                     <td style="text-align: center; vertical-align: top;">
-                                                                        <button type="button" style="width: 35px;" class="btn btn-sm btn-warning" onclick="window.location = '@Url.Action("update-item", "ProjectPlans", new { Area = "end-users", ItemCode = item.ItemCode, InventoryType = item.InventoryType, ProjectCode = item.ProjectCode })'"><i class="fa fa-edit"></i></button>
+                                                                        <button type="button" style="width: 35px;" class="btn btn-sm btn-warning" onclick="window.location = '@Url.Action("update-item", "ProjectPlans", new { Area = "end-users", ProjectCode = item.ProjectCode, InventoryType = item.InventoryType, ItemCode = item.ItemCode })'"><i class="fa fa-edit"></i></button>
                                                                         <button type="button" style="width: 35px;" class="btn btn-sm btn-danger" id="remove-btn" onclick="window.location.href = '@Url.Action("remove-common-supply-item", "ProjectPlans", new { Area = "end-users", ItemCode = item.ItemCode, ProjectCode = item.ProjectCode })'"><i class="fa fa-times"></i></button>
                                                                     </td>
                                                                 }
@@ -272,11 +290,21 @@
                                                         }
                                                     </tbody>
                                                     <tfoot>
-                                                        <tr>
-                                                            <td colspan="4" align="right"><h5>Total Estimated Budget (Tier 1):</h5></td>
-                                                            <td align="right"><h5>@( string.Format("{0:C}", Model.ProjectPlanItems.Sum(d => d.EstimatedBudget)) )</h5></td>
-                                                            <td></td>
-                                                        </tr>
+                                                        @if (Model.ProjectStatus == "New Project")
+                                                        {
+                                                            <tr>
+                                                                <td colspan="4" align="right"><h5>Total Estimated Budget (Tier 1):</h5></td>
+                                                                <td align="right"><h5>@( string.Format("{0:C}", Model.ProjectPlanItems.Sum(d => d.EstimatedBudget)) )</h5></td>
+                                                                <td></td>
+                                                            </tr>
+                                                        }
+                                                        else
+                                                        {
+                                                            <tr>
+                                                                <td colspan="3" align="right"><h5>Total Estimated Budget (Tier 1):</h5></td>
+                                                                <td align="right"><h5>@( string.Format("{0:C}", Model.ProjectPlanItems.Sum(d => d.EstimatedBudget)) )</h5></td>
+                                                            </tr>
+                                                        }
                                                     </tfoot>
                                                 </table>
                                             </div>
@@ -309,194 +337,219 @@
                                     }
                                     <div class="row">
                                         <div class="col-sm-12">
-                                            <div class="card-body table-responsive p-sm-0">
-                                                <table class="table table-striped table-hover" id="newItems">
-                                                    <thead>
+                                            <table class="table table-striped table-hover" id="newItems">
+                                                <thead>
+                                                    @if (Model.ProjectStatus == "New Project")
+                                                    {
                                                         <tr>
-                                                            @if (Model.ProjectStatus == "New Project")
-                                                            {
-                                                                <th rowspan="2" width="45%" style="text-align:center; vertical-align:middle">Item and Specifications</th>
-                                                            }
-                                                            else
-                                                            {
-                                                                <th rowspan="2" width="60%" style="text-align:center; vertical-align:middle">Item and Specifications</th>
-                                                            }
-                                                            <th colspan="3" style="text-align:center; vertical-align:middle">Quantity Requirement</th>
+                                                            <th rowspan="2" width="50%" style="text-align:center; vertical-align:middle">Item and Specifications</th>
+                                                            <th colspan="2" style="text-align:center; vertical-align:middle">Quantity Requirement</th>
                                                             <th rowspan="2" width="14%" style="text-align:center; vertical-align:middle">Estimated Budget</th>
-                                                            @if (Model.ProjectStatus == "New Project")
-                                                            {
-                                                                <th rowspan="2" width="15%" style="text-align:center; vertical-align:middle">Action</th>
-                                                            }
+                                                            <th rowspan="2" width="15%" style="text-align:center; vertical-align:middle">Action</th>
+                                                        </tr>
+                                                            <tr>
+                                                                <th style="text-align:center; vertical-align:middle">Distribution</th>
+                                                                <th style="text-align:center; vertical-align:middle">Total</th>
+                                                            </tr>
+                                                    }
+                                                    else
+                                                    {
+                                                        <tr>
+                                                            <th width="50%" rowspan="2" style="text-align:center; vertical-align:middle">Item and Specifications</th>
+                                                            <th colspan="2" style="text-align:center; vertical-align:middle">Quantity Requirement</th>
+                                                            <th width="20%" rowspan="2" style="text-align:center; vertical-align:middle">Estimated Budget</th>
                                                         </tr>
                                                         <tr>
-                                                            <th width="14%" colspan="2" style="text-align:center; vertical-align:middle">Distribution</th>
-                                                            <th width="7%" style="text-align:center; vertical-align:middle">Total</th>
+                                                            <th width="15%" style="text-align:center; vertical-align:middle">Distribution</th>
+                                                            <th width="15%" style="text-align:center; vertical-align:middle">Total</th>
                                                         </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach (var item in Model.NewItemProposals)
-                                                        {
-                                                            <tr>
-                                                                <td style="text-align:justify; vertical-align: middle;">
-                                                                    <span style="font-size:12pt"><b>@Html.DisplayFor(modelItem => item.ItemName) (<small><b>@Html.DisplayFor(modelItem => item.ItemCode)</b></small>)</b></span>
-                                                                    <br /><br />
-                                                                    <b>@Html.DisplayNameFor(modelItem => item.ItemSpecifications)</b>
-                                                                    <br />
-                                                                    @Html.DisplayFor(modelItem => item.ItemSpecifications)
-                                                                    <br /><br />
-                                                                    <b>@Html.DisplayNameFor(modelItem => item.InventoryType) : </b>@Html.DisplayFor(model => item.InventoryType)
-                                                                    <br />
-                                                                    <b>Unit of Measure : </b>@Html.DisplayFor(model => item.IndividualUOMReference)
-                                                                    <br />
-                                                                    <b>@Html.DisplayNameFor(modelItem => item.Supplier1UnitCost) : </b>@( String.Format("{0:C}", item.Supplier1UnitCost) )
-                                                                </td>
-                                                                <td style="text-align:left; vertical-align:top;" width="7%">
-                                                                    @if (item.JanQty != null)
-                                                                    {
-                                                                        @Html.DisplayNameFor(modelItem => item.JanQty)<span>:</span>
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.FebQty != null)
-                                                                    {
-                                                                        @Html.DisplayNameFor(modelItem => item.FebQty)<span>:</span>
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.MarQty != null)
-                                                                    {
-                                                                        @Html.DisplayNameFor(modelItem => item.MarQty)<span>:</span>
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.AprQty != null)
-                                                                    {
-                                                                        @Html.DisplayNameFor(modelItem => item.AprQty)<span>:</span>
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.MayQty != null)
-                                                                    {
-                                                                        @Html.DisplayNameFor(modelItem => item.MayQty)<span>:</span>
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.JunQty != null)
-                                                                    {
-                                                                        @Html.DisplayNameFor(modelItem => item.JunQty)<span>:</span>
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.JulQty != null)
-                                                                    {
-                                                                        @Html.DisplayNameFor(modelItem => item.JulQty)<span>:</span>
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.AugQty != null)
-                                                                    {
-                                                                        @Html.DisplayNameFor(modelItem => item.AugQty)<span>:</span>
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.SepQty != null)
-                                                                    {
-                                                                        @Html.DisplayNameFor(modelItem => item.SepQty)<span>:</span>
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.OctQty != null)
-                                                                    {
-                                                                        @Html.DisplayNameFor(modelItem => item.OctQty)<span>:</span>
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.NovQty != null)
-                                                                    {
-                                                                        @Html.DisplayNameFor(modelItem => item.NovQty)<span>:</span>
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.DecQty != null)
-                                                                    {
-                                                                        @Html.DisplayNameFor(modelItem => item.DecQty)<span>:</span>
-                                                                    }
-                                                                </td>
-                                                                <td style="text-align:right; vertical-align:top;" width="7%">
-                                                                    @if (item.JanQty != null)
-                                                                    {
-                                                                        @Html.DisplayFor(modelItem => item.JanQty)
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.FebQty != null)
-                                                                    {
-                                                                        @Html.DisplayFor(modelItem => item.FebQty)
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.MarQty != null)
-                                                                    {
-                                                                        @Html.DisplayFor(modelItem => item.MarQty)
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.AprQty != null)
-                                                                    {
-                                                                        @Html.DisplayFor(modelItem => item.AprQty)
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.MayQty != null)
-                                                                    {
-                                                                        @Html.DisplayFor(modelItem => item.MayQty)
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.JunQty != null)
-                                                                    {
-                                                                        @Html.DisplayFor(modelItem => item.JunQty)
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.JulQty != null)
-                                                                    {
-                                                                        @Html.DisplayFor(modelItem => item.JulQty)
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.AugQty != null)
-                                                                    {
-                                                                        @Html.DisplayFor(modelItem => item.AugQty)
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.SepQty != null)
-                                                                    {
-                                                                        @Html.DisplayFor(modelItem => item.SepQty)
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.OctQty != null)
-                                                                    {
-                                                                        @Html.DisplayFor(modelItem => item.OctQty)
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.NovQty != null)
-                                                                    {
-                                                                        @Html.DisplayFor(modelItem => item.NovQty)
-                                                                        <br />
-                                                                    }
-                                                                    @if (item.DecQty != null)
-                                                                    {
-                                                                        @Html.DisplayFor(modelItem => item.DecQty)
-                                                                    }
-                                                                </td>
-                                                                <td style="text-align:center; vertical-align:top;">
-                                                                    @Html.DisplayFor(modelItem => item.TotalQty)
-                                                                </td>
-                                                                <td style="text-align:right; vertical-align:top;">
-                                                                    @( String.Format("{0:C}", item.EstimatedBudget) )
-                                                                </td>
-                                                                @if (Model.ProjectStatus == "New Project")
+                                                    }
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.NewItemProposals)
+                                                    {
+                                                        <tr>
+                                                            <td style="text-align:justify; vertical-align: middle;">
+                                                                <span style="font-size:12pt"><b>@Html.DisplayFor(modelItem => item.ItemName) (<small><b>@Html.DisplayFor(modelItem => item.ItemCode)</b></small>)</b></span>
+                                                                <br /><br />
+                                                                <b>@Html.DisplayNameFor(modelItem => item.ItemSpecifications)</b>
+                                                                <br />
+                                                                @Html.DisplayFor(modelItem => item.ItemSpecifications)
+                                                                <br /><br />
+                                                                <b>@Html.DisplayNameFor(modelItem => item.InventoryType) : </b>@Html.DisplayFor(model => item.InventoryType)
+                                                                <br />
+                                                                <b>Unit of Measure : </b>@Html.DisplayFor(model => item.IndividualUOMReference)
+                                                                <br />
+                                                                <b>@Html.DisplayNameFor(modelItem => item.Supplier1UnitCost) : </b>@( String.Format("{0:C}", item.Supplier1UnitCost) )
+                                                            </td>
+                                                            <td style="text-align:left; vertical-align:top;">
+                                                                @if (item.JanQty != null)
                                                                 {
-                                                                    <td style="text-align: center; vertical-align: top;">
-                                                                        <button type="button" style="width: 35px;" class="btn btn-sm btn-warning" onclick="window.location = '@Url.Action("update-item", "ProjectPlans", new { Area = "end-users", ProjectCode = item.ProjectCode, InventoryType = item.InventoryType,  ItemCode = item.ItemCode })'"><i class="fa fa-edit"></i></button>
-                                                                        <button type="button" style="width: 35px;" class="btn btn-sm btn-danger" id="remove-btn" onclick="window.location.href = '@Url.Action("remove-common-supply-item", "ProjectPlans", new { Area = "end-users", ItemCode = item.ItemCode, ProjectCode = item.ProjectCode })'"><i class="fa fa-times"></i></button>
-                                                                    </td>
+                                                                    <div class="row">
+                                                                        <div class="col-sm-6">
+                                                                            @Html.DisplayNameFor(modelItem => item.JanQty):
+                                                                        </div>
+                                                                        <div class="col-sm-6">
+                                                                            @Html.DisplayFor(modelItem => item.JanQty)
+                                                                        </div>
+                                                                    </div>
                                                                 }
-                                                            </tr>
-                                                        }
-                                                    </tbody>
-                                                    <tfoot>
+                                                                @if (item.FebQty != null)
+                                                                {
+                                                                    <div class="row">
+                                                                        <div class="col-sm-6">
+                                                                            @Html.DisplayNameFor(modelItem => item.FebQty):
+                                                                        </div>
+                                                                        <div class="col-sm-6">
+                                                                            @Html.DisplayFor(modelItem => item.FebQty)
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                @if (item.MarQty != null)
+                                                                {
+                                                                    <div class="row">
+                                                                        <div class="col-sm-6">
+                                                                            @Html.DisplayNameFor(modelItem => item.MarQty):
+                                                                        </div>
+                                                                        <div class="col-sm-6">
+                                                                            @Html.DisplayFor(modelItem => item.MarQty)
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                @if (item.AprQty != null)
+                                                                {
+                                                                    <div class="row">
+                                                                        <div class="col-sm-6">
+                                                                            @Html.DisplayNameFor(modelItem => item.AprQty):
+                                                                        </div>
+                                                                        <div class="col-sm-6">
+                                                                            @Html.DisplayFor(modelItem => item.AprQty)
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                @if (item.MayQty != null)
+                                                                {
+                                                                    <div class="row">
+                                                                        <div class="col-sm-6">
+                                                                            @Html.DisplayNameFor(modelItem => item.MayQty):
+                                                                        </div>
+                                                                        <div class="col-sm-6">
+                                                                            @Html.DisplayFor(modelItem => item.MayQty)
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                @if (item.JunQty != null)
+                                                                {
+                                                                    <div class="row">
+                                                                        <div class="col-sm-6">
+                                                                            @Html.DisplayNameFor(modelItem => item.JunQty):
+                                                                        </div>
+                                                                        <div class="col-sm-6">
+                                                                            @Html.DisplayFor(modelItem => item.JunQty)
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                @if (item.JulQty != null)
+                                                                {
+                                                                    <div class="row">
+                                                                        <div class="col-sm-6">
+                                                                            @Html.DisplayNameFor(modelItem => item.JulQty):
+                                                                        </div>
+                                                                        <div class="col-sm-6">
+                                                                            @Html.DisplayFor(modelItem => item.JulQty)
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                @if (item.AugQty != null)
+                                                                {
+                                                                    <div class="row">
+                                                                        <div class="col-sm-6">
+                                                                            @Html.DisplayNameFor(modelItem => item.AugQty):
+                                                                        </div>
+                                                                        <div class="col-sm-6">
+                                                                            @Html.DisplayFor(modelItem => item.AugQty)
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                @if (item.SepQty != null)
+                                                                {
+                                                                    <div class="row">
+                                                                        <div class="col-sm-6">
+                                                                            @Html.DisplayNameFor(modelItem => item.SepQty):
+                                                                        </div>
+                                                                        <div class="col-sm-6">
+                                                                            @Html.DisplayFor(modelItem => item.SepQty)
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                @if (item.OctQty != null)
+                                                                {
+                                                                    <div class="row">
+                                                                        <div class="col-sm-6">
+                                                                            @Html.DisplayNameFor(modelItem => item.OctQty):
+                                                                        </div>
+                                                                        <div class="col-sm-6">
+                                                                            @Html.DisplayFor(modelItem => item.OctQty)
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                @if (item.NovQty != null)
+                                                                {
+                                                                    <div class="row">
+                                                                        <div class="col-sm-6">
+                                                                            @Html.DisplayNameFor(modelItem => item.NovQty):
+                                                                        </div>
+                                                                        <div class="col-sm-6">
+                                                                            @Html.DisplayFor(modelItem => item.NovQty)
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                @if (item.DecQty != null)
+                                                                {
+                                                                    <div class="row">
+                                                                        <div class="col-sm-6">
+                                                                            @Html.DisplayNameFor(modelItem => item.DecQty):
+                                                                        </div>
+                                                                        <div class="col-sm-6">
+                                                                            @Html.DisplayFor(modelItem => item.DecQty)
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                            </td>
+                                                            <td style="text-align:center; vertical-align:top;">
+                                                                @Html.DisplayFor(modelItem => item.TotalQty)
+                                                            </td>
+                                                            <td style="text-align:right; vertical-align:top;">
+                                                                @( String.Format("{0:C}", item.EstimatedBudget) )
+                                                            </td>
+                                                            @if (Model.ProjectStatus == "New Project")
+                                                            {
+                                                                <td style="text-align: center; vertical-align: top;">
+                                                                    <button type="button" style="width: 35px;" class="btn btn-sm btn-warning" onclick="window.location = '@Url.Action("update-item", "ProjectPlans", new { Area = "end-users", ProjectCode = item.ProjectCode, InventoryType = item.InventoryType, ItemCode = item.ItemCode })'"><i class="fa fa-edit"></i></button>
+                                                                    <button type="button" style="width: 35px;" class="btn btn-sm btn-danger" id="remove-btn" onclick="window.location.href = '@Url.Action("remove-common-supply-item", "ProjectPlans", new { Area = "end-users", ItemCode = item.ItemCode, ProjectCode = item.ProjectCode })'"><i class="fa fa-times"></i></button>
+                                                                </td>
+                                                            }
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                                <tfoot>
+                                                    @if (Model.ProjectStatus == "New Project")
+                                                    {
                                                         <tr>
                                                             <td colspan="4" align="right"><h5>Total Estimated Budget (Tier 2):</h5></td>
                                                             <td align="right"><h5>@( string.Format("{0:C}", Model.NewItemProposals.Sum(d => d.EstimatedBudget)) )</h5></td>
                                                             <td></td>
                                                         </tr>
-                                                    </tfoot>
-                                                </table>
-                                            </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <tr>
+                                                            <td colspan="3" align="right"><h5>Total Estimated Budget (Tier 2):</h5></td>
+                                                            <td align="right"><h5>@( string.Format("{0:C}", Model.NewItemProposals.Sum(d => d.EstimatedBudget)) )</h5></td>
+                                                        </tr>
+                                                    }
+                                                </tfoot>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>
@@ -533,33 +586,38 @@
                             </div>
                         </div>
                     </div>
-                                        <hr />
+                    <hr />
                 }
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="card-body table-responsive p-sm-0">
-                            <table class="table table-striped table-hover" id="newItems">
+                            <table class="table table-striped table-hover" id="endUserItems">
                                 <thead>
-                                    <tr>
-                                        @if (Model.ProjectStatus == "New Project")
-                                        {
-                                            <th rowspan="2" width="45%" style="text-align:center; vertical-align:middle">Item and Specifications</th>
-                                        }
-                                        else
-                                        {
-                                            <th rowspan="2" width="60%" style="text-align:center; vertical-align:middle">Item and Specifications</th>
-                                        }
-                                        <th colspan="3" style="text-align:center; vertical-align:middle">Quantity Requirement</th>
-                                        <th rowspan="2" width="14%" style="text-align:center; vertical-align:middle">Estimated Budget</th>
-                                        @if (Model.ProjectStatus == "New Project")
-                                        {
+                                    @if (Model.ProjectStatus == "New Project")
+                                    {
+                                        <tr>
+                                            <th rowspan="2" width="40%" style="text-align:center; vertical-align:middle">Item and Specifications</th>
+                                            <th colspan="2" style="text-align:center; vertical-align:middle">Quantity Requirement</th>
+                                            <th rowspan="2" width="15%" style="text-align:center; vertical-align:middle">Estimated Budget</th>
                                             <th rowspan="2" width="15%" style="text-align:center; vertical-align:middle">Action</th>
-                                        }
-                                    </tr>
-                                    <tr>
-                                        <th width="14%" colspan="2" style="text-align:center; vertical-align:middle">Distribution</th>
-                                        <th width="7%" style="text-align:center; vertical-align:middle">Total</th>
-                                    </tr>
+                                        </tr>
+                                        <tr>
+                                            <th width="15%" style="text-align:center; vertical-align:middle">Distribution</th>
+                                            <th width="15%" style="text-align:center; vertical-align:middle">Total</th>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <th width="50%" rowspan="2" style="text-align:center; vertical-align:middle">Item and Specifications</th>
+                                            <th colspan="2" style="text-align:center; vertical-align:middle">Quantity Requirement</th>
+                                            <th width="20%" rowspan="2" style="text-align:center; vertical-align:middle">Estimated Budget</th>
+                                        </tr>
+                                        <tr>
+                                            <th width="15%" style="text-align:center; vertical-align:middle">Distribution</th>
+                                            <th width="15%" style="text-align:center; vertical-align:middle">Total</th>
+                                        </tr>
+                                    }
                                 </thead>
                                 <tbody>
                                     @foreach (var item in Model.NewItemProposals)
@@ -574,130 +632,142 @@
                                                 <br /><br />
                                                 <b>@Html.DisplayNameFor(modelItem => item.InventoryType) : </b>@Html.DisplayFor(model => item.InventoryType)
                                                 <br />
-                                                <b>@Html.DisplayNameFor(modelItem => item.IndividualUOMReference) : </b>@Html.DisplayFor(model => item.IndividualUOMReference)
+                                                <b>Unit of Measure : </b>@Html.DisplayFor(model => item.IndividualUOMReference)
                                                 <br />
                                                 <b>@Html.DisplayNameFor(modelItem => item.Supplier1UnitCost) : </b>@( String.Format("{0:C}", item.Supplier1UnitCost) )
                                             </td>
-                                            <td style="text-align:left; vertical-align:top;" width="7%">
+                                            <td style="text-align:left; vertical-align:top;">
                                                 @if (item.JanQty != null)
                                                 {
-                                                    @Html.DisplayNameFor(modelItem => item.JanQty)<span>:</span>
-                                                                        <br />
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            @Html.DisplayNameFor(modelItem => item.JanQty):
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            @Html.DisplayFor(modelItem => item.JanQty)
+                                                        </div>
+                                                    </div>
                                                 }
                                                 @if (item.FebQty != null)
                                                 {
-                                                    @Html.DisplayNameFor(modelItem => item.FebQty)<span>:</span>
-                                                                        <br />
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            @Html.DisplayNameFor(modelItem => item.FebQty):
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            @Html.DisplayFor(modelItem => item.FebQty)
+                                                        </div>
+                                                    </div>
                                                 }
                                                 @if (item.MarQty != null)
                                                 {
-                                                    @Html.DisplayNameFor(modelItem => item.MarQty)<span>:</span>
-                                                                        <br />
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            @Html.DisplayNameFor(modelItem => item.MarQty):
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            @Html.DisplayFor(modelItem => item.MarQty)
+                                                        </div>
+                                                    </div>
                                                 }
                                                 @if (item.AprQty != null)
                                                 {
-                                                    @Html.DisplayNameFor(modelItem => item.AprQty)<span>:</span>
-                                                                        <br />
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            @Html.DisplayNameFor(modelItem => item.AprQty):
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            @Html.DisplayFor(modelItem => item.AprQty)
+                                                        </div>
+                                                    </div>
                                                 }
                                                 @if (item.MayQty != null)
                                                 {
-                                                    @Html.DisplayNameFor(modelItem => item.MayQty)<span>:</span>
-                                                                        <br />
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            @Html.DisplayNameFor(modelItem => item.MayQty):
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            @Html.DisplayFor(modelItem => item.MayQty)
+                                                        </div>
+                                                    </div>
                                                 }
                                                 @if (item.JunQty != null)
                                                 {
-                                                    @Html.DisplayNameFor(modelItem => item.JunQty)<span>:</span>
-                                                                        <br />
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            @Html.DisplayNameFor(modelItem => item.JunQty):
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            @Html.DisplayFor(modelItem => item.JunQty)
+                                                        </div>
+                                                    </div>
                                                 }
                                                 @if (item.JulQty != null)
                                                 {
-                                                    @Html.DisplayNameFor(modelItem => item.JulQty)<span>:</span>
-                                                                        <br />
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            @Html.DisplayNameFor(modelItem => item.JulQty):
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            @Html.DisplayFor(modelItem => item.JulQty)
+                                                        </div>
+                                                    </div>
                                                 }
                                                 @if (item.AugQty != null)
                                                 {
-                                                    @Html.DisplayNameFor(modelItem => item.AugQty)<span>:</span>
-                                                                        <br />
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            @Html.DisplayNameFor(modelItem => item.AugQty):
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            @Html.DisplayFor(modelItem => item.AugQty)
+                                                        </div>
+                                                    </div>
                                                 }
                                                 @if (item.SepQty != null)
                                                 {
-                                                    @Html.DisplayNameFor(modelItem => item.SepQty)<span>:</span>
-                                                                        <br />
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            @Html.DisplayNameFor(modelItem => item.SepQty):
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            @Html.DisplayFor(modelItem => item.SepQty)
+                                                        </div>
+                                                    </div>
                                                 }
                                                 @if (item.OctQty != null)
                                                 {
-                                                    @Html.DisplayNameFor(modelItem => item.OctQty)<span>:</span>
-                                                                        <br />
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            @Html.DisplayNameFor(modelItem => item.OctQty):
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            @Html.DisplayFor(modelItem => item.OctQty)
+                                                        </div>
+                                                    </div>
                                                 }
                                                 @if (item.NovQty != null)
                                                 {
-                                                    @Html.DisplayNameFor(modelItem => item.NovQty)<span>:</span>
-                                                                        <br />
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            @Html.DisplayNameFor(modelItem => item.NovQty):
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            @Html.DisplayFor(modelItem => item.NovQty)
+                                                        </div>
+                                                    </div>
                                                 }
                                                 @if (item.DecQty != null)
                                                 {
-                                                    @Html.DisplayNameFor(modelItem => item.DecQty)<span>:</span>
-                                                }
-                                            </td>
-                                            <td style="text-align:right; vertical-align:top;" width="7%">
-                                                @if (item.JanQty != null)
-                                                {
-                                                    @Html.DisplayFor(modelItem => item.JanQty)
-                                                    <br />
-                                                }
-                                                @if (item.FebQty != null)
-                                                {
-                                                    @Html.DisplayFor(modelItem => item.FebQty)
-                                                    <br />
-                                                }
-                                                @if (item.MarQty != null)
-                                                {
-                                                    @Html.DisplayFor(modelItem => item.MarQty)
-                                                    <br />
-                                                }
-                                                @if (item.AprQty != null)
-                                                {
-                                                    @Html.DisplayFor(modelItem => item.AprQty)
-                                                    <br />
-                                                }
-                                                @if (item.MayQty != null)
-                                                {
-                                                    @Html.DisplayFor(modelItem => item.MayQty)
-                                                    <br />
-                                                }
-                                                @if (item.JunQty != null)
-                                                {
-                                                    @Html.DisplayFor(modelItem => item.JunQty)
-                                                    <br />
-                                                }
-                                                @if (item.JulQty != null)
-                                                {
-                                                    @Html.DisplayFor(modelItem => item.JulQty)
-                                                    <br />
-                                                }
-                                                @if (item.AugQty != null)
-                                                {
-                                                    @Html.DisplayFor(modelItem => item.AugQty)
-                                                    <br />
-                                                }
-                                                @if (item.SepQty != null)
-                                                {
-                                                    @Html.DisplayFor(modelItem => item.SepQty)
-                                                    <br />
-                                                }
-                                                @if (item.OctQty != null)
-                                                {
-                                                    @Html.DisplayFor(modelItem => item.OctQty)
-                                                    <br />
-                                                }
-                                                @if (item.NovQty != null)
-                                                {
-                                                    @Html.DisplayFor(modelItem => item.NovQty)
-                                                    <br />
-                                                }
-                                                @if (item.DecQty != null)
-                                                {
-                                                    @Html.DisplayFor(modelItem => item.DecQty)
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            @Html.DisplayNameFor(modelItem => item.DecQty):
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            @Html.DisplayFor(modelItem => item.DecQty)
+                                                        </div>
+                                                    </div>
                                                 }
                                             </td>
                                             <td style="text-align:center; vertical-align:top;">
@@ -709,7 +779,7 @@
                                             @if (Model.ProjectStatus == "New Project")
                                             {
                                                 <td style="text-align: center; vertical-align: top;">
-                                                    <button type="button" style="width: 35px;" class="btn btn-sm btn-warning" onclick="window.location = '@Url.Action("update-item", "ProjectPlans", new { Area = "end-users", ProjectCode = item.ProjectCode, InventoryType = item.InventoryType,  ItemCode = item.ItemCode })'"><i class="fa fa-edit"></i></button>
+                                                    <button type="button" style="width: 35px;" class="btn btn-sm btn-warning" onclick="window.location = '@Url.Action("update-item", "ProjectPlans", new { Area = "end-users", ProjectCode = item.ProjectCode, InventoryType = item.InventoryType, ItemCode = item.ItemCode })'"><i class="fa fa-edit"></i></button>
                                                     <button type="button" style="width: 35px;" class="btn btn-sm btn-danger" id="remove-btn" onclick="window.location.href = '@Url.Action("remove-common-supply-item", "ProjectPlans", new { Area = "end-users", ItemCode = item.ItemCode, ProjectCode = item.ProjectCode })'"><i class="fa fa-times"></i></button>
                                                 </td>
                                             }
@@ -717,12 +787,23 @@
                                     }
                                 </tbody>
                                 <tfoot>
-                                    <tr>
-                                        <td colspan="4" align="right"><h5>Total Estimated Budget (Tier 2):</h5></td>
-                                        <td align="right"><h5>@( string.Format("{0:C}", Model.NewItemProposals.Sum(d => d.EstimatedBudget)) )</h5></td>
-                                        <td></td>
-                                    </tr>
+                                    @if (Model.ProjectStatus == "New Project")
+                                    {
+                                        <tr>
+                                            <td colspan="3" align="right"><h5>Total Estimated Budget (Tier 2):</h5></td>
+                                            <td align="right"><h5>@( string.Format("{0:C}", Model.NewItemProposals.Sum(d => d.EstimatedBudget)) )</h5></td>
+                                            <td></td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="3" align="right"><h5>Total Estimated Budget (Tier 2):</h5></td>
+                                            <td align="right"><h5>@( string.Format("{0:C}", Model.NewItemProposals.Sum(d => d.EstimatedBudget)) )</h5></td>
+                                        </tr>
+                                    }
                                 </tfoot>
+
                             </table>
                         </div>
                     </div>
@@ -732,21 +813,25 @@
     </div>
 }
 
-<div class="card-footer">
-    <div class="row">
-        <div class="col-sm-12">
-            <div style="text-align: right;">
-                @if (Model.ProjectStatus == "New Project")
+@using (Ajax.BeginForm("add-supplies-to-ppmp", "ProjectPlans", new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "addItem", Area = "end-users" }))
+{
+    <div class="card-footer">
+        <div class="row">
+            <div class="col-sm-12">
+                <div style="text-align: right;">
+                    @if (Model.ProjectStatus == "New Project" && (Model.NewItemProposals.Count != 0 || Model.ProjectPlanItems.Count != 0))
                 {
-                    <button type="button" class="btn btn-md btn-primary" onclick='window.location = "@Url.Action("add-supplies-to-ppmp", "ProjectPlans", new { Area = "end-users", ProjectCode = Model.ProjectCode })"'><i class="fa fa-plus-circle"></i> Finalize and Post to PPMP</button>
-                }
-                <button type="button" class="btn btn-md btn-danger" onclick='window.location = "@Url.Action("list", "ProjectPlans", new { Area = "end-users", FiscalYear = Model.FiscalYear })"'><i class="fa fa-arrow-circle-left"></i> Back to Projects List</button>
+                        <button type="button" class="btn btn-md btn-primary" onclick="PostPPMP()"><i class="fa fa-plus-circle"></i> Finalize and Post to PPMP</button>
+                    }
+                    <button type="button" class="btn btn-md btn-danger" onclick='window.location = "@Url.Action("list", "ProjectPlans", new { Area = "end-users", FiscalYear = Model.FiscalYear })"'><i class="fa fa-arrow-circle-left"></i> Back to Projects List</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+}
 
-<script src="~/Scripts/adminlte/components/jquery/dist/jquery.min.js"></script>
+
+
 <script type="text/javascript">
     $(function () {
         $('#items').DataTable({
@@ -770,4 +855,56 @@
             "autoWidth": false,
         });
     });
+    $(function () {
+        $('#endUserItems').DataTable({
+            "paging": true,
+            "pageLength": 10,
+            "lengthChange": false,
+            "searching": true,
+            "ordering": false,
+            "info": true,
+            "autoWidth": false,
+        });
+    });
+</script>
+<script type="text/javascript">
+    function PostPPMP() {
+        swal.fire({
+            title: "Finalize Project Plan?",
+            html: "<p>You are about to finalize this Project Plan and post it to PPMP, continue?</p><p style = 'font-size: 10pt;'><b>REMINDER:</b> This means that no changes can be made after this action.</p>",
+            type: "warning",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#addItem").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    type: "error"
+                })
+            };
+        })
+    }
+    function CreateResult(data) {
+        if (data == true) {
+            swal.fire({
+                title: "Record Saved!",
+                text: "Project Plan is successfully posted to PPMP.",
+                type: "success"
+            }).then((result) => {
+                if (result.value) {
+                    window.location.href = "@Url.Action("list", "ProjectPlans", new { Area = "end-users", FiscalYear = Model.FiscalYear })";
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                type: "error"
+            });
+        }
+    }
 </script>

@@ -4540,6 +4540,14 @@
     <Content Include="Areas\Procurement\Views\AgemcyProcurementRequest\Create.cshtml" />
     <Content Include="Areas\Procurement\Views\ProcurementPurchaseRequests\Index.cshtml" />
     <Content Include="Areas\Procurement\Views\ProcurementPurchaseRequests\Details.cshtml" />
+    <Content Include="Areas\End-Users\Views\PurchaseRequests\Dashboard.cshtml" />
+    <Content Include="Areas\End-Users\Views\PurchaseRequests\Create.cshtml" />
+    <Content Include="Areas\End-Users\Views\ProjectPlans\_CreateSupplies.cshtml" />
+    <Content Include="Areas\End-Users\Views\ProjectPlans\_CreateProjectPlan.cshtml" />
+    <Content Include="Areas\Budget\Views\PPMPApproval\_Form.cshtml" />
+    <Content Include="Areas\Procurement\Views\APPs\_Create.cshtml" />
+    <Content Include="Areas\Procurement\Views\APPs\CreateSelectYear.cshtml" />
+    <Content Include="Areas\Property-And-Supplies\Views\AnnualProcurementPlans\CreateSelectYear.cshtml" />
     <None Include="Scripts\jquery-3.5.1.intellisense.js" />
     <Content Include="Scripts\DataTables\autoFill.bootstrap.js" />
     <Content Include="Scripts\DataTables\autoFill.bootstrap.min.js" />
@@ -4994,11 +5002,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FluentValidation, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7de548da2fbae0f0, processorArchitecture=MSIL">

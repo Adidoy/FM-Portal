@@ -67,7 +67,7 @@
                 <div class="small-box bg-success">
                     <div class="inner">
                         <h3>@Model.TotalItemsWithPurchaseRequest</h3>
-                        <p>Total Items with Purchase Request</p>
+                        <p>Total Items with P/R</p>
                     </div>
                     <div class="icon">
                         <i class="fa fa-thumbs-up"></i>
@@ -79,11 +79,11 @@
 </div>
 <hr />
 <div class="row">
-    <div class="col-sm-6">
+    <div class="col-sm-12">
         <div class="row">
             <div class="col-sm-12">
                 <div class="bg-info">
-                    <h5 class="p-2">ITEM STATUS</h5>
+                    <h5 class="p-2">PROCUREMENT ITEMS STATUS</h5>
                 </div>
             </div>
         </div>
@@ -92,39 +92,24 @@
                 <table class="table table-hover table-striped" id="items">
                     <thead>
                         <tr>
-                            <th style="text-align:center; vertical-align:middle" width="70%">Item Reference</th>
-                            <th style="text-align:center; vertical-align:middle" width="30%">Procurement Status</th>
+                            <th style="text-align:center; vertical-align:middle" width="15%">Item Code</th>
+                            <th style="text-align:center; vertical-align:middle" width="45%">Item Name</th>
+                            <th style="text-align:center; vertical-align:middle" width="20%">Quantity</th>
+                            <th style="text-align:center; vertical-align:middle" width="20%">Procurement Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var item in Model.ItemStatus.GroupBy(d => new { d.ItemCode, d.ItemName, d.TotalQty, d.IndividualUOMReference, d.Status }).OrderBy(d => d.Key.ItemCode).ToList())
                         {
                             <tr>
+                                <td style="text-align:center; vertical-align:middle">
+                                    @Html.DisplayFor(d => item.Key.ItemCode)
+                                </td>
                                 <td style="text-align:left; vertical-align:middle">
-                                    <div class="row">
-                                        <div class="col-sm-4">
-                                            <b>@Html.DisplayNameFor(d => item.Key.ItemCode)</b>
-                                        </div>
-                                        <div class="col-sm-8">
-                                            : @Html.DisplayFor(d => item.Key.ItemCode)
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-4">
-                                            <b>@Html.DisplayNameFor(d => item.Key.ItemName)</b>
-                                        </div>
-                                        <div class="col-sm-8">
-                                            : @Html.DisplayFor(d => item.Key.ItemName)
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-4">
-                                            <b>Quantity</b>
-                                        </div>
-                                        <div class="col-sm-8">
-                                            : @(item.Sum(x => x.TotalQty)) @Html.DisplayFor(d => item.Key.IndividualUOMReference)
-                                        </div>
-                                    </div>
+                                    @Html.DisplayFor(d => item.Key.ItemName)
+                                </td>
+                                <td style="text-align:center; vertical-align:middle">
+                                    @(item.Sum(x => x.TotalQty)) @Html.DisplayFor(d => item.Key.IndividualUOMReference)
                                 </td>
                                 <td style="text-align:center; vertical-align:middle">
                                     <b>@Html.DisplayFor(d => item.Key.Status).ToString().ToUpper()</b>
@@ -133,11 +118,10 @@
                         }
                     </tbody>
                 </table>
-
             </div>
         </div>
     </div>
-    <div class="col-sm-6">
+    @*<div class="col-sm-6">
         <div class="row">
             <div class="col-sm-12">
                 <div class="bg-info">
@@ -201,7 +185,7 @@
                 </table>
             </div>
         </div>
-    </div>
+    </div>*@
 </div>
 
 <script type="text/javascript">

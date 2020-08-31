@@ -30,10 +30,10 @@ namespace PUPFMIS.Areas.Procurement.Controllers
             appDashboard.APPCSEFiscalYears = appDAL.GetAPPCSEFiscalYears();
             appDashboard.APPFiscalYears = appDAL.GetAPPFiscalYears();
             appDashboard.PPMPsToBeReviewed = db.APPHeader.Count();
-            appDashboard.PPMPsEvaluated = db.APPInstitutionalItems.Where(d => d.ProjectCoordinator != null).Count() + db.APPProjectItems.Where(d => d.ProjectCoordinator != null).Count();
+            appDashboard.PPMPsEvaluated = db.ProcurementPrograms.Where(d => d.ProjectCoordinator != null).Count();
             return View("Dashboard", appDashboard);
         }
-        
+
         [ActionName("list")]
         [Route("{FiscalYear}")]
         [Route("{FiscalYear}/list")]
@@ -42,26 +42,58 @@ namespace PUPFMIS.Areas.Procurement.Controllers
             return View("Index", appDAL.GetAnnualProcurementPlans(FiscalYear));
         }
 
-        [Route("create")]
-        [ActionName("create-app")]
-        public ActionResult Create()
+        [Route("select-year")]
+        [ActionName("select-year")]
+        public ActionResult SelectYear()
         {
-            var AnnualProcurementPlan = appDAL.GetAnnualProcurementPlan(appDAL.GetPPMPFiscalYears()[0]);
             ViewBag.FiscalYear = new SelectList(appDAL.GetPPMPFiscalYears());
+            return View("CreateSelectYear");
+        }
+
+        [HttpPost]
+        [Route("select-year")]
+        [ActionName("select-year")]
+        public ActionResult SelectYear(int FiscalYear)
+        {
+            ViewBag.FiscalYear = new SelectList(appDAL.GetPPMPFiscalYears());
+            return RedirectToAction("create-app", new { FiscalYear = FiscalYear });
+        }
+
+        [Route("{FiscalYear}/create")]
+        [ActionName("create-app")]
+        public ActionResult Create(int FiscalYear)
+        {
+            var AnnualProcurementPlan = appDAL.GetApprovedItems(FiscalYear);
+            ViewBag.FiscalYear = FiscalYear;
+            ViewBag.ModesOfProcurement = appDAL.GetModesOfProcurement();
             return View("create", AnnualProcurementPlan);
         }
 
         [HttpPost]
-        [Route("create")]
+        [Route("{FiscalYear}/create")]
         [ActionName("create-app")]
-        public ActionResult Create(AnnualProcurementPlanVM APPViewModel)
+        public ActionResult Create(List<ApprovedItems> ApprovedItems)
         {
-            if(appDAL.PostAPP(APPViewModel, User.Identity.Name))
+            if(ModelState.IsValid)
             {
-                return RedirectToAction("dashboard", "APPs", new { Area = "procurement" });
+                for(int i = 0; i < ApprovedItems.Count; i++)
+                {
+                    if (ApprovedItems[i].ModeOfProcurement == null)
+                    {
+                        ModelState.AddModelError("["+ i.ToString() +"].ModeOfProcurement", "Please specify Mode of Procurement");
+                    }
+                }
+                if (!ModelState.IsValid)
+                {
+                    ViewBag.FiscalYear = new SelectList(appDAL.GetPPMPFiscalYears());
+                    ViewBag.ModesOfProcurement = appDAL.GetModesOfProcurement();
+                    return PartialView("_Create", ApprovedItems);
+                }
+                return Json(new { result = appDAL.PostAPP(ApprovedItems, 2021, User.Identity.Name) });
             }
             ViewBag.FiscalYear = new SelectList(appDAL.GetPPMPFiscalYears());
-            return View("create", appDAL.GetAnnualProcurementPlan(appDAL.GetPPMPFiscalYears()[0]));
+            ViewBag.ModesOfProcurement = appDAL.GetModesOfProcurement();
+            return PartialView("_Create", ApprovedItems);
         }
 
         [ActionName("print-app")]

@@ -56,6 +56,14 @@ namespace PUPFMIS.BusinessAndDataLogic
                 new HeaderLine { Content = "Date Printed: " + DateTime.Now.ToString("dd MMMM yyyy hh:mm tt"), Bold = false, Italic = false, FontSize = 8, ParagraphAlignment = ParagraphAlignment.Left }
             );
 
+            if(ppmpVM.Header.Status == "PPMP Evaluated")
+            {
+                reports.AddColumnHeader(
+                    new HeaderLine { Content = "", Bold = false, Italic = false, FontSize = 8, ParagraphAlignment = ParagraphAlignment.Left },
+                    new HeaderLine { Content = "Date Evaluated: " + ((DateTime)ppmpVM.Header.EvaluatedAt).ToString("dd MMMM yyyy hh:mm tt"), Bold = true, Italic = false, FontSize = 8, ParagraphAlignment = ParagraphAlignment.Left }
+                );
+            }
+
             reports.AddNewLine();
             reports.AddNewLine();
 
@@ -1336,16 +1344,16 @@ namespace PUPFMIS.BusinessAndDataLogic
 
                         rows = new List<ContentCell>();
                         rows.Add(new ContentCell("2", 3, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
-                        rows.Add(new ContentCell("Name: " + item.Supplier2 == null ? "N/A" : item.Supplier2Name + "\nAddress: " + item.Supplier2 == null ? "N/A" : item.Supplier2Address + "\nContact No.: " + item.Supplier2 == null ? "N/A" : item.Supplier2ContactNo + "\nEmail Address: " + item.Supplier2 == null ? "N/A" : item.Supplier2EmailAddress, 4, 8, true, false, ParagraphAlignment.Left, VerticalAlignment.Center));
-                        rows.Add(new ContentCell(item.Supplier2 == null ? (0.00m).ToString("C", new System.Globalization.CultureInfo("en-ph")) : ((decimal)(item.Supplier2UnitCost)).ToString("C", new System.Globalization.CultureInfo("en-ph")), 5, 8, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
-                        rows.Add(new ContentCell(item.Supplier2 == null ? (0.00m).ToString("C", new System.Globalization.CultureInfo("en-ph")) : ((decimal)item.Supplier2UnitCost * int.Parse(item.TotalQty)).ToString("C", new System.Globalization.CultureInfo("en-ph")), 6, 8, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
+                        rows.Add(new ContentCell("Name: " + (item.Supplier2Name == null ? "N/A" : item.Supplier2Name) + "\nAddress: " + (item.Supplier2Name == null ? "N/A" : item.Supplier2Address) + "\nContact No.: " + (item.Supplier2Name == null ? "N/A" : item.Supplier2ContactNo) + "\nEmail Address: " + (item.Supplier2Name == null ? "N/A" : item.Supplier2EmailAddress), 4, 8, true, false, ParagraphAlignment.Left, VerticalAlignment.Center));
+                        rows.Add(new ContentCell((item.Supplier2Name == null ? (0.00m).ToString("C", new System.Globalization.CultureInfo("en-ph")) : ((decimal)(item.Supplier2UnitCost)).ToString("C", new System.Globalization.CultureInfo("en-ph"))), 5, 8, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
+                        rows.Add(new ContentCell((item.Supplier2Name == null ? (0.00m).ToString("C", new System.Globalization.CultureInfo("en-ph")) : ((decimal)item.Supplier2UnitCost * int.Parse(item.TotalQty)).ToString("C", new System.Globalization.CultureInfo("en-ph"))), 6, 8, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
                         reports.AddRowContent(rows, 0.25);
 
                         rows = new List<ContentCell>();
                         rows.Add(new ContentCell("3", 3, 8, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
-                        rows.Add(new ContentCell("Name: " + item.Supplier3 == null ? "N/A" : item.Supplier3Name + "\nAddress: " + item.Supplier3 == null ? "N/A" : item.Supplier3Address + "\nContact No.: " + item.Supplier3 == null ? "N/A" : item.Supplier3ContactNo + "\nEmail Address: " + item.Supplier3 == null ? "N/A" : item.Supplier3EmailAddress, 4, 8, true, false, ParagraphAlignment.Left, VerticalAlignment.Center));
-                        rows.Add(new ContentCell(item.Supplier3 == null ? (0.00m).ToString("C", new System.Globalization.CultureInfo("en-ph")) : ((decimal)(item.Supplier3UnitCost)).ToString("C", new System.Globalization.CultureInfo("en-ph")), 5, 8, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
-                        rows.Add(new ContentCell(item.Supplier3 == null ? (0.00m).ToString("C", new System.Globalization.CultureInfo("en-ph")) : ((decimal)item.Supplier3UnitCost * int.Parse(item.TotalQty)).ToString("C", new System.Globalization.CultureInfo("en-ph")), 6, 8, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
+                        rows.Add(new ContentCell("Name: " + (item.Supplier3Name == null ? "N/A" : item.Supplier3Name) + "\nAddress: " + (item.Supplier3Name == null ? "N/A" : item.Supplier3Address) + "\nContact No.: " + (item.Supplier3Name == null ? "N/A" : item.Supplier3ContactNo) + "\nEmail Address: " + (item.Supplier3Name == null ? "N/A" : item.Supplier3EmailAddress), 4, 8, true, false, ParagraphAlignment.Left, VerticalAlignment.Center));
+                        rows.Add(new ContentCell((item.Supplier3Name == null ? (0.00m).ToString("C", new System.Globalization.CultureInfo("en-ph")) : ((decimal)(item.Supplier3UnitCost)).ToString("C", new System.Globalization.CultureInfo("en-ph"))), 5, 8, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
+                        rows.Add(new ContentCell((item.Supplier3Name == null ? (0.00m).ToString("C", new System.Globalization.CultureInfo("en-ph")) : ((decimal)item.Supplier3UnitCost * int.Parse(item.TotalQty)).ToString("C", new System.Globalization.CultureInfo("en-ph"))), 6, 8, true, false, ParagraphAlignment.Right, VerticalAlignment.Center));
                         reports.AddRowContent(rows, 0.25);
 
                         itemNo++;
@@ -2399,6 +2407,7 @@ namespace PUPFMIS.BusinessAndDataLogic
                 EstimatedBudget = (db.InventoryTypes.Where(x => x.ID == ppmpHeader.PPMPType).FirstOrDefault().IsTangible) ? (decimal)db.ProjectPlanItems.Where(x => x.PPMPReference == ppmpHeader.ID).Sum(x => x.ProjectEstimatedBudget) : (decimal)db.ProjectPlanServices.Where(x => x.PPMPReference == ppmpHeader.ID).Sum(x => x.ProjectEstimatedBudget),
                 Status = ppmpHeader.Status,
                 CreatedAt = (DateTime)ppmpHeader.CreatedAt,
+                EvaluatedAt = ppmpHeader.ApprovedAt,
                 SubmittedAt = ppmpHeader.SubmittedAt,
                 PreparedBy = employee.EmployeeName + ", " + employee.Designation,
                 SubmittedBy = ppmpHeader.SubmittedBy
@@ -2433,18 +2442,18 @@ namespace PUPFMIS.BusinessAndDataLogic
                     ItemImage = d.FKItemReference.ItemImage,
                     Category = d.FKItemReference.FKCategoryReference.ItemCategoryName,
                     IndividualUOMReference = d.FKItemReference.FKIndividualUnitReference.Abbreviation,
-                    JanMilestone = d.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode == "CUOS" && d.PPMPJan == null ? "0" : d.PPMPJan,
-                    FebMilestone = d.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode == "CUOS" && d.PPMPFeb == null ? "0" : d.PPMPFeb,
-                    MarMilestone = d.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode == "CUOS" && d.PPMPMar == null ? "0" : d.PPMPMar,
-                    AprMilestone = d.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode == "CUOS" && d.PPMPApr == null ? "0" : d.PPMPApr,
-                    MayMilestone = d.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode == "CUOS" && d.PPMPMay == null ? "0" : d.PPMPMay,
-                    JunMilestone = d.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode == "CUOS" && d.PPMPJun == null ? "0" : d.PPMPJun,
-                    JulMilestone = d.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode == "CUOS" && d.PPMPJul == null ? "0" : d.PPMPJul,
-                    AugMilestone = d.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode == "CUOS" && d.PPMPAug == null ? "0" : d.PPMPAug,
-                    SepMilestone = d.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode == "CUOS" && d.PPMPSep == null ? "0" : d.PPMPSep,
-                    OctMilestone = d.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode == "CUOS" && d.PPMPOct == null ? "0" : d.PPMPOct,
-                    NovMilestone = d.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode == "CUOS" && d.PPMPNov == null ? "0" : d.PPMPNov,
-                    DecMilestone = d.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode == "CUOS" && d.PPMPDec == null ? "0" : d.PPMPDec,
+                    JanMilestone = d.FKProjectReference.ProjectCode.StartsWith("CSPR") ? d.ProjectJanQty == null ? "0" : d.ProjectJanQty.ToString() : d.FKProjectReference.ProjectCode.StartsWith("EUPR") ? d.PPMPJan : d.ProjectJanQty == null ? "0" : d.ProjectJanQty.ToString(),
+                    FebMilestone = d.FKProjectReference.ProjectCode.StartsWith("CSPR") ? d.ProjectFebQty == null ? "0" : d.ProjectFebQty.ToString() : d.FKProjectReference.ProjectCode.StartsWith("EUPR") ? d.PPMPFeb : d.ProjectFebQty == null ? "0" : d.ProjectFebQty.ToString(),
+                    MarMilestone = d.FKProjectReference.ProjectCode.StartsWith("CSPR") ? d.ProjectMarQty == null ? "0" : d.ProjectMarQty.ToString() : d.FKProjectReference.ProjectCode.StartsWith("EUPR") ? d.PPMPMar : d.ProjectMarQty == null ? "0" : d.ProjectMarQty.ToString(),
+                    AprMilestone = d.FKProjectReference.ProjectCode.StartsWith("CSPR") ? d.ProjectAprQty == null ? "0" : d.ProjectAprQty.ToString() : d.FKProjectReference.ProjectCode.StartsWith("EUPR") ? d.PPMPApr : d.ProjectAprQty == null ? "0" : d.ProjectAprQty.ToString(),
+                    MayMilestone = d.FKProjectReference.ProjectCode.StartsWith("CSPR") ? d.ProjectMayQty == null ? "0" : d.ProjectMayQty.ToString() : d.FKProjectReference.ProjectCode.StartsWith("EUPR") ? d.PPMPMay : d.ProjectMayQty == null ? "0" : d.ProjectMayQty.ToString(),
+                    JunMilestone = d.FKProjectReference.ProjectCode.StartsWith("CSPR") ? d.ProjectJunQty == null ? "0" : d.ProjectJunQty.ToString() : d.FKProjectReference.ProjectCode.StartsWith("EUPR") ? d.PPMPJun : d.ProjectJunQty == null ? "0" : d.ProjectJunQty.ToString(),
+                    JulMilestone = d.FKProjectReference.ProjectCode.StartsWith("CSPR") ? d.ProjectJulQty == null ? "0" : d.ProjectJulQty.ToString() : d.FKProjectReference.ProjectCode.StartsWith("EUPR") ? d.PPMPJul : d.ProjectJulQty == null ? "0" : d.ProjectJulQty.ToString(),
+                    AugMilestone = d.FKProjectReference.ProjectCode.StartsWith("CSPR") ? d.ProjectAugQty == null ? "0" : d.ProjectAugQty.ToString() : d.FKProjectReference.ProjectCode.StartsWith("EUPR") ? d.PPMPAug : d.ProjectAugQty == null ? "0" : d.ProjectAugQty.ToString(),
+                    SepMilestone = d.FKProjectReference.ProjectCode.StartsWith("CSPR") ? d.ProjectSepQty == null ? "0" : d.ProjectSepQty.ToString() : d.FKProjectReference.ProjectCode.StartsWith("EUPR") ? d.PPMPSep : d.ProjectSepQty == null ? "0" : d.ProjectSepQty.ToString(),
+                    OctMilestone = d.FKProjectReference.ProjectCode.StartsWith("CSPR") ? d.ProjectOctQty == null ? "0" : d.ProjectOctQty.ToString() : d.FKProjectReference.ProjectCode.StartsWith("EUPR") ? d.PPMPOct : d.ProjectOctQty == null ? "0" : d.ProjectOctQty.ToString(),
+                    NovMilestone = d.FKProjectReference.ProjectCode.StartsWith("CSPR") ? d.ProjectNovQty == null ? "0" : d.ProjectNovQty.ToString() : d.FKProjectReference.ProjectCode.StartsWith("EUPR") ? d.PPMPNov : d.ProjectNovQty == null ? "0" : d.ProjectNovQty.ToString(),
+                    DecMilestone = d.FKProjectReference.ProjectCode.StartsWith("CSPR") ? d.ProjectDecQty == null ? "0" : d.ProjectDecQty.ToString() : d.FKProjectReference.ProjectCode.StartsWith("EUPR") ? d.PPMPDec : d.ProjectDecQty == null ? "0" : d.ProjectDecQty.ToString(),
                     TotalQty = String.Format("{0:#,##0}", d.ProjectTotalQty),
                     UnitCost = String.Format("{0:#,##0.00}", d.UnitCost),
                     EstimatedBudget = d.ProjectEstimatedBudget,
@@ -2464,18 +2473,18 @@ namespace PUPFMIS.BusinessAndDataLogic
                     ItemImage = d.FKItemReference.ItemImage,
                     Category = d.FKItemReference.FKCategoryReference.ItemCategoryName,
                     IndividualUOMReference = d.FKItemReference.FKIndividualUnitReference.Abbreviation,
-                    JanMilestone = d.PPMPJan,
-                    FebMilestone = d.PPMPFeb,
-                    MarMilestone = d.PPMPMar,
-                    AprMilestone = d.PPMPApr,
-                    MayMilestone = d.PPMPMay,
-                    JunMilestone = d.PPMPJun,
-                    JulMilestone = d.PPMPJul,
-                    AugMilestone = d.PPMPAug,
-                    SepMilestone = d.PPMPSep,
-                    OctMilestone = d.PPMPOct,
-                    NovMilestone = d.PPMPNov,
-                    DecMilestone = d.PPMPDec,
+                    JanMilestone = d.FKProjectReference.ProjectCode.StartsWith("EUPR") ? d.PPMPJan : d.ProjectJanQty == null ? "0" : d.ProjectJanQty.ToString(),
+                    FebMilestone = d.FKProjectReference.ProjectCode.StartsWith("EUPR") ? d.PPMPFeb : d.ProjectFebQty == null ? "0" : d.ProjectFebQty.ToString(),
+                    MarMilestone = d.FKProjectReference.ProjectCode.StartsWith("EUPR") ? d.PPMPMar : d.ProjectMarQty == null ? "0" : d.ProjectMarQty.ToString(),
+                    AprMilestone = d.FKProjectReference.ProjectCode.StartsWith("EUPR") ? d.PPMPApr : d.ProjectAprQty == null ? "0" : d.ProjectAprQty.ToString(),
+                    MayMilestone = d.FKProjectReference.ProjectCode.StartsWith("EUPR") ? d.PPMPMay : d.ProjectMayQty == null ? "0" : d.ProjectMayQty.ToString(),
+                    JunMilestone = d.FKProjectReference.ProjectCode.StartsWith("EUPR") ? d.PPMPJun : d.ProjectJunQty == null ? "0" : d.ProjectJunQty.ToString(),
+                    JulMilestone = d.FKProjectReference.ProjectCode.StartsWith("EUPR") ? d.PPMPJul : d.ProjectJulQty == null ? "0" : d.ProjectJulQty.ToString(),
+                    AugMilestone = d.FKProjectReference.ProjectCode.StartsWith("EUPR") ? d.PPMPAug : d.ProjectAugQty == null ? "0" : d.ProjectAugQty.ToString(),
+                    SepMilestone = d.FKProjectReference.ProjectCode.StartsWith("EUPR") ? d.PPMPSep : d.ProjectSepQty == null ? "0" : d.ProjectSepQty.ToString(),
+                    OctMilestone = d.FKProjectReference.ProjectCode.StartsWith("EUPR") ? d.PPMPOct : d.ProjectOctQty == null ? "0" : d.ProjectOctQty.ToString(),
+                    NovMilestone = d.FKProjectReference.ProjectCode.StartsWith("EUPR") ? d.PPMPNov : d.ProjectNovQty == null ? "0" : d.ProjectNovQty.ToString(),
+                    DecMilestone = d.FKProjectReference.ProjectCode.StartsWith("EUPR") ? d.PPMPDec : d.ProjectDecQty == null ? "0" : d.ProjectDecQty.ToString(),
                     Supplier1Name = d.FKSupplier1Reference.SupplierName,
                     Supplier1Address = d.FKSupplier1Reference.Address,
                     Supplier1ContactNo = d.FKSupplier1Reference.ContactNumber,
@@ -2577,8 +2586,6 @@ namespace PUPFMIS.BusinessAndDataLogic
                     ResponsibilityCenter = d.FKItemReference.ResponsibilityCenter == null ? null : hrisDataAccess.GetDepartmentDetails(d.FKItemReference.ResponsibilityCenter).Department
                 }).ToList();
             }
-
-            
 
             ppmpVM.DBMItems = ppmpVM.DBMItems;
             ppmpVM.NonDBMItems = ppmpVM.NonDBMItems;
@@ -2802,6 +2809,10 @@ namespace PUPFMIS.BusinessAndDataLogic
             BudgetPropsalVM budgetProposal = new BudgetPropsalVM();
             var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
             var office = hrisDataAccess.GetFullDepartmentDetails(user.DepartmentCode);
+            if(db.PPMPHeader.Where(d => d.Department == office.DepartmentCode).Count() == 0)
+            {
+                return null;
+            }
             var submittedAt = db.PPMPHeader.Where(d => d.FiscalYear == FiscalYear && d.Department == office.DepartmentCode).Any() ? null : db.PPMPHeader.Where(d => d.FiscalYear == FiscalYear && d.Department == office.DepartmentCode).GroupBy(d => d.SubmittedAt).Max(d => d.Key).Value.ToString("dd MMMM yyyy") == null ? null : db.PPMPHeader.Where(d => d.FiscalYear == FiscalYear && d.Department == office.DepartmentCode).GroupBy(d => d.SubmittedAt).Max(d => d.Key).Value.ToString("dd MMMM yyyy");
             budgetProposal.FiscalYear = FiscalYear;
             budgetProposal.OfficeCode = office.DepartmentCode;
@@ -3364,7 +3375,7 @@ namespace PUPFMIS.BusinessAndDataLogic
                         foreach (var item in projectItems)
                         {
                             var projectItem = db.ProjectPlanItems.Where(d => d.ItemReference == item.ItemReference && d.FKProjectReference.ProjectCode == item.FKProjectReference.ProjectCode).FirstOrDefault();
-                            if(inventoryType.InventoryCode == "CUOS" && item.FKItemReference.ProcurementSource == ProcurementSources.PS_DBM)
+                            if(projectItem.FKProjectReference.ProjectCode.StartsWith("CSPR"))
                             {
                                 projectItem.PPMPJan = item.ProjectJanQty == null ? null : item.ProjectJanQty.ToString();
                                 projectItem.PPMPFeb = item.ProjectFebQty == null ? null : item.ProjectFebQty.ToString();

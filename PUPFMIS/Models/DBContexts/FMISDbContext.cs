@@ -39,8 +39,7 @@ namespace PUPFMIS.Models
         public DbSet<PPMPDeadlines> PPMPDeadlines { get; set; }
         public DbSet<PPMPApprovalWorkflow> PPMPApprovalWorkflow { get; set; }
         public DbSet<APPHeader> APPHeader { get; set; }
-        public DbSet<APPProjectItems> APPProjectItems { get; set; }
-        public DbSet<APPInstitutionalItems> APPInstitutionalItems { get; set; }
+        public DbSet<ProcurementPrograms> ProcurementPrograms { get; set; }
         public DbSet<APPCSEDetails> APPCSEDetails { get; set; }
         public DbSet<ProcurementTimeline> ProcurementTimeline { get; set; }
         public DbSet<PurchaseRequestHeader> PurchaseRequestHeader { get; set; }
@@ -56,31 +55,8 @@ namespace PUPFMIS.Models
 
         public DbSet<SwitchBoard> SwitchBoard { get; set; }
         public DbSet<SwitchBoardBody> SwitchBoardBody { get; set; }
-
-        //===============================================================//
-        //=================== PROCUREMENT TABLES ========================//
-        //===============================================================//
-        //public DbSet<PlantsMaster> Plants { get; set; }
-        //public DbSet<LocationsMaster> Locations { get; set; }
-        //public DbSet<ItemsCatalogue> ItemsCatalogue { get; set; }
-        //public DbSet<PPMP> PPMPHeader { get; set; }
-        //public DbSet<PPMPDetails> PPMPDetails { get; set; }
-        //public DbSet<PPMPApproval> PPMPApproval { get; set; }
-        //public DbSet<APPHeader> APPHeader { get; set; }
-        //public DbSet<PurchaseRequest> PurchaseRequest { get; set; }
-        //public DbSet<PurchaseRequestApproval> PRApproval { get; set; }
-        //public DbSet<PurchaseOrderHeader> POHeader { get; set; }
-        //public DbSet<PurchaseOrderLineItems> PODetails { get; set; }
-        //public DbSet<AgencyProcurementRequest> AgencyProcurementRequest { get; set; }
-        //public DbSet<AgencyProcurementRequestDetails> AgencyProcurementRequestDetails { get; set; }
-        //public DbSet<ProcurementPipelineHeader> ProcurementPipelineHeader { get; set; }
-        //public DbSet<ProcurementPipeline> ProcurementPipeline { get; set; }
-        //public DbSet<ProcurementPipelineStatusUpdate> ProcurementPipelineStatusUpdate { get; set; }
-        //public DbSet<EvaluationCriteriaCategory> EvaluationCriteriaCategory { get; set; }
-        //public DbSet<EvaluationScale> EvaluationScale { get; set; }
-        //public DbSet<EvaluationCriteria> EvaluationCriteria { get; set; }
-        //public DbSet<SupplierEvaluation> SupplierEvaluation { get; set; }
-        //public DbSet<EvaluationResponses> EvaluationResponses { get; set; }
+        public DbSet<PurchaseOrderHeader> PurchaseOrderHeader { get; set; }
+        public DbSet<PurchaseOrderDetails> PurchaseOrderDetails { get; set; }
 
         ////property
         //public DbSet<DeliveryHeader> DeliveryHeader { get; set; }

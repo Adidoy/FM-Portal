@@ -16,6 +16,7 @@ namespace PUPFMIS.Areas.Procurement.Controllers
     public class ProcurementPurchaseRequestsController : Controller
     {
         ProcurementPurchaseRequestDAL prDAL = new ProcurementPurchaseRequestDAL();
+        ProcurementPurchaseRequestBL prBL = new ProcurementPurchaseRequestBL();
 
         [Route("pending-submissions")]
         [ActionName("pending-submissions")]
@@ -38,6 +39,23 @@ namespace PUPFMIS.Areas.Procurement.Controllers
         public ActionResult Details(PurchaseRequestVM PurchaseRequest)
         {
             return Json(new { result = prDAL.PostPRReceive(PurchaseRequest.PRNumber, User.Identity.Name) });
+        }
+
+        [ActionName("print")]
+        [Route("{PRNumber}/print")]
+        public ActionResult PrintPurchaseRequest(string PRNumber)
+        {
+            var stream = prBL.GeneratePurchaseRequest(PRNumber, Server.MapPath("~/Content/imgs/PUPLogo.png"), User.Identity.Name);
+            Response.Clear();
+            Response.ClearContent();
+            Response.ClearHeaders();
+            Response.AddHeader("content-length", stream.Length.ToString());
+            Response.ContentType = "application/pdf";
+            Response.BinaryWrite(stream.ToArray());
+            stream.Close();
+            Response.End();
+
+            return RedirectToAction("list", new { Area = "end-users" });
         }
     }
 }

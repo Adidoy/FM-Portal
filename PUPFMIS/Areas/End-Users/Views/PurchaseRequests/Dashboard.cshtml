@@ -1,0 +1,139 @@
+﻿@model PUPFMIS.Models.PurchaseRequestDashboard
+
+@{
+    ViewBag.Title = "Purchase Requests";
+    ViewBag.Description = "Dashboard";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Purchase Requests", "dashboard")</li>
+        <li class="breadcrumb-item">Dashboard</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-home"></i> Purchase Request Dashboard</h3>
+}
+
+<div class="row">
+    <div class="col-sm-4">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="bg-info">
+                    <h5 class="p-2">PURCHASE REQUEST ACTIONS</h5>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-warning"><i class="fa fa-plus"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text" style="font-size:12pt; font-weight:bold;"> @Html.ActionLink("Create Purchase Request", "create", "PurchaseRequests", new { area = "end-users" }, null)</span>
+                        <span class="info-box-number" style="font-size:8pt;">
+                            Create P/R for procurement items.
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="bg-info">
+                    <h5 class="p-2">STATISTICS</h5>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="small-box bg-primary">
+                    <div class="inner">
+                        <h3>0</h3>
+                        <p>P/R Created</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-file"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>0</h3>
+                        <p>P/R Submitted</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-file-export"></i>
+                    </div>
+                </div>
+            </div>
+            @*<div class="col-lg-3 col-md-3 col-sm-12">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>@Model.NumberOfApprovedPPMPs</h3>
+                        <p>Evaluated PPMPs</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-thumbs-up"></i>
+                    </div>
+                </div>
+            </div>*@
+        </div>
+    </div>
+    <div class="col-sm-8">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="bg-info">
+                    <h5 class="p-2">VIEW PURCHASE REQUESTS</h5>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="table table-striped table-hover" id="purchaseRequests">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center; vertical-align:middle" width="50%">
+                                Fiscal Years
+                            </th>
+                            <th style="text-align:center; vertical-align:middle" width="50%">
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.FiscalYears)
+                        {
+                            <tr>
+                                <td style="text-align:center; vertical-align:middle">
+                                    @Html.DisplayFor(d => item)
+                                </td>
+                                <td style="text-align:center; vertical-align:middle">
+                                    <button class="btn btn-primary btn-sm" onclick="window.location = '@Url.Action("index", "PurchaseRequests", new { Area = "end-users", FiscalYear = item })'"><i class="fa fa-eye"></i> View Purchase Requests</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $('#purchaseRequests').DataTable({
+            "paging": true,
+            "pageLength": 5,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": false,
+            "info": true,
+            "autoWidth": false,
+        });
+    });
+</script>

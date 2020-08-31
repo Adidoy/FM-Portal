@@ -203,7 +203,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             dashboard.TotalItemsPostedInAPP = dashboard.APPItems.Count();
             dashboard.TotalItemsWithPurchaseRequest = dashboard.PurchaseRequestItems.Count();
             dashboard.ProcurementPrograms = new List<ProcurementProjectsVM>();
-            dashboard.ProcurementPrograms.AddRange(prDAL.GetOpenForPRSubmission(user.Email).Where(d => d.Items != null).ToList());
+            //dashboard.ProcurementPrograms.AddRange(prDAL.GetOpenForPRSubmission(user.Email).Where(d => d. != null).ToList());
 
             return dashboard;
         }

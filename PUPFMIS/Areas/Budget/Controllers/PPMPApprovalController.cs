@@ -67,6 +67,18 @@ namespace PUPFMIS.Areas.Budget.Controllers
                 {
                     if (item.ApprovalAction == "Approved")
                     {
+                        if(item.ReducedQuantity <= 0)
+                        {
+                            ModelState.AddModelError("", "Quantity should be at least 1.");
+                            ViewBag.FundSource = new SelectList(ppmpApprovalDAL.GetFundSource(), "FUND_CLUSTER", "FUND_DESC");
+                            return PartialView("DetailsAccountLineItems", PPMPEvaluationVM);
+                        }
+                        if (item.ReducedQuantity > item.Quantity)
+                        {
+                            ModelState.AddModelError("", "Reduced quantity should not be greater than the original quantity");
+                            ViewBag.FundSource = new SelectList(ppmpApprovalDAL.GetFundSource(), "FUND_CLUSTER", "FUND_DESC");
+                            return PartialView("_Form", PPMPEvaluationVM);
+                        }
                         item.EstimatedCost = item.UnitCost * item.ReducedQuantity;
                     }
                     if (item.ApprovalAction == "Disapproved")
@@ -76,12 +88,11 @@ namespace PUPFMIS.Areas.Budget.Controllers
                 }
                 PPMPEvaluationVM.ApprovedBudget = PPMPEvaluationVM.NewSpendingItems.Sum(d => d.EstimatedCost);
                 ViewBag.FundSource = new SelectList(ppmpApprovalDAL.GetFundSource(), "FUND_CLUSTER", "FUND_DESC");
-                return View("DetailsAccountLineItems", PPMPEvaluationVM);
+                return PartialView("_Form", PPMPEvaluationVM);
             }
             else
             {
-                ppmpApprovalDAL.SaveApproval(PPMPEvaluationVM, User.Identity.Name);
-                return RedirectToAction("office-ppmp-list", "PPMPApproval", new { Area = "budget", OfficeCode = PPMPEvaluationVM.OfficeCode, FiscalYear = FiscalYear });
+                return Json(ppmpApprovalDAL.SaveApproval(PPMPEvaluationVM, User.Identity.Name));
             }
         }
 

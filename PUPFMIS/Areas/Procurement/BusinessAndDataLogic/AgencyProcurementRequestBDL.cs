@@ -466,7 +466,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             var prDetailsVM = new List<PurchaseRequestDetailsVM>();
             var aprItems = db.APRDetail.GroupBy(d => d.PRReference).Select(d => d.Key).ToList();
             var prDetails = db.PurchaseRequestDetails
-                .Where(d => d.FKPRHeaderReference.ProcurementSource == ProcurementSources.PS_DBM && !aprItems.Contains(d.FKPRHeaderReference.ID) && d.FKPRHeaderReference.ReceivedAt != null)
+                .Where(d => !aprItems.Contains(d.FKPRHeaderReference.ID) && d.FKPRHeaderReference.ReceivedAt != null)
                 .ToList();
 
             foreach(var detail in prDetails)

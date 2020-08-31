@@ -325,7 +325,7 @@ namespace PUPFMIS.BusinessAndDataLogic
         {
             var appReference = db.APPHeader.Where(d => d.FiscalYear == PurchaseRequestCSE.FiscalYear && d.APPType == "CSE").FirstOrDefault();
             var fiscalYear = appReference.FiscalYear;
-            var fundSource = db.APPInstitutionalItems.Where(d => d.FKAPPHeaderReference.FiscalYear == PurchaseRequestCSE.FiscalYear && d.PAPCode.Contains("CUOS") && (d.PPMPReferences != null && d.ProjectReferences != null)).FirstOrDefault().FundSourceReference;
+            var fundSource = db.ProcurementPrograms.Where(d => d.FKAPPHeaderReference.FiscalYear == PurchaseRequestCSE.FiscalYear && d.PAPCode.Contains("CUOS") && (d.PPMPReferences != null && d.ProjectReferences != null)).FirstOrDefault().FundSourceReference;
             var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
             var department = hris.GetFullDepartmentDetails(user.DepartmentCode);
             var items = PurchaseRequestCSE.CSEItems;

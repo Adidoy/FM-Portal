@@ -28,6 +28,23 @@ namespace PUPFMIS.Areas.Property.Controllers
             return View("CreateCSE", appcse);
         }
 
+        [Route("select-year")]
+        [ActionName("select-year")]
+        public ActionResult SelectYear()
+        {
+            ViewBag.FiscalYear = new SelectList(appcseDAL.GetPPMPFiscalYears());
+            return View("CreateSelectYear");
+        }
+
+        [HttpPost]
+        [Route("select-year")]
+        [ActionName("select-year")]
+        public ActionResult SelectYear(int FiscalYear)
+        {
+            ViewBag.FiscalYear = new SelectList(appcseDAL.GetPPMPFiscalYears());
+            return RedirectToAction("create-cse", new { FiscalYear = FiscalYear });
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("post-app-cse")]

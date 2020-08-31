@@ -75,15 +75,7 @@ namespace PUPFMIS.Areas.Procurement.Controllers
         public ActionResult Details(ProcurementProjectsVM ProcurementProject)
         {
             ProcurementTimelineValidation validator = new ProcurementTimelineValidation();
-            ValidationResult validationResult = validator.Validate(ProcurementProject.Schedule);
-            if (!validationResult.IsValid)
-            {
-                foreach (ValidationFailure error in validationResult.Errors)
-                {
-                    ModelState.AddModelError("", error.ErrorMessage);
-                }
-                return PartialView("_Form", ProcurementProject);
-            }
+            
             var accountsDAL = new AccountsManagementBL();
             var userRole = accountsDAL.GetUserAccountsList().Where(d => d.Email == User.Identity.Name).FirstOrDefault().UserRole;
             return Json(new { result = procurementPipeline.SetSchedule(ProcurementProject), role = userRole });

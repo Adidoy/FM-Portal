@@ -296,7 +296,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             ReportSection.PageSetup.BottomMargin = new Unit(TopAndBottomMargins, UnitType.Inch);
             ReportSection.PageSetup.LeftMargin = new Unit(LeftAndRightMargins, UnitType.Inch);
             ReportSection.PageSetup.RightMargin = new Unit(LeftAndRightMargins, UnitType.Inch);
-            ReportSection.PageSetup.Orientation = Orientation.Landscape;
+            ReportSection.PageSetup.Orientation = PageOrientation;
 
             ReportDocument.Info.Title = ReportFilename;
         }
@@ -447,6 +447,11 @@ namespace PUPFMIS.BusinessAndDataLogic
             var table = new ContentTable();
             ReportTable = table.AddTableRow(ReportTable, Cells, RowHeight);
         }
+        public void AddFormattedRowContent(ContentCell Cells, double RowHeight)
+        {
+            var table = new ContentTable();
+            ReportTable = table.AddTableRowFormatted(ReportTable, Cells, RowHeight);
+        }
         /// <summary>
         /// Generates the PDF Report
         /// </summary>
@@ -468,9 +473,13 @@ namespace PUPFMIS.BusinessAndDataLogic
         {
             var amt = Amount.ToString().Split(".".ToCharArray(), System.StringSplitOptions.RemoveEmptyEntries).ToArray();
             int number = int.Parse(amt[0]);
-            var cents = amt[1];
+            var cents = int.Parse(amt[1]);
             var amtWord = NumberToWords(number);
-            return amtWord + " Pesos and " + cents + "/100 only."; 
+            return amtWord + (cents == 0 ? "Pesos only" : " Pesos and " + NumberToWords(int.Parse(amt[1])) + " Centavos") ; 
+        }
+        public static string DigitsToWords(int Value)
+        {
+            return NumberToWords(Value);
         }
         private static string NumberToWords(int number)
         {
@@ -531,13 +540,29 @@ namespace PUPFMIS.BusinessAndDataLogic
         public bool Italic { get; set; }
         public ParagraphAlignment HorizontalAlign { get; set; }
         public VerticalAlignment VerticalAlign { get; set; }
-        public bool BottomRule { get; set; }
-        public bool LeftRule { get; set; }
-        public bool TopRule { get; set; }
-        public bool RightRule { get; set; }
+        public bool? BottomRule { get; set; }
+        public bool? LeftRule { get; set; }
+        public bool? TopRule { get; set; }
+        public bool? RightRule { get; set; }
         public int MergeRight { get; set; }
         public int MergeDown { get; set; }
         public Color FontColor { get; set; }
+        public Paragraph Paragraph { get; set; }
+        public ContentCell(TextWithFormat[] FormattedHeaderLine, ParagraphAlignment ParagraphAlignment)
+        {
+            Paragraph paragraph = new Paragraph();
+            foreach (var ft in FormattedHeaderLine)
+            {
+                FormattedText formattedText = new FormattedText();
+                formattedText.AddText(ft.Content);
+                formattedText.Bold = ft.TextFont.Bold;
+                formattedText.Italic = ft.TextFont.Italic;
+                formattedText.Size = ft.TextFont.Size;
+                paragraph.Add(formattedText);
+            }
+            paragraph.AddFormattedText();
+            this.Paragraph = paragraph;
+        }
         public ContentCell(string Content, int CellIndex)
         {
             this.Content = Content;
@@ -594,6 +619,18 @@ namespace PUPFMIS.BusinessAndDataLogic
             this.VerticalAlign = VerticalAlign;
             this.MergeRight = MergeRight;
         }
+        public ContentCell(string Content, int CellIndex, double FontSize, bool Bold, bool Italic, ParagraphAlignment HorizontalAlign, VerticalAlignment VerticalAlign, int MergeRight, bool? TopRule)
+        {
+            this.Content = Content;
+            this.CellIndex = CellIndex;
+            this.FontSize = FontSize;
+            this.Bold = Bold;
+            this.Italic = Italic;
+            this.HorizontalAlign = HorizontalAlign;
+            this.VerticalAlign = VerticalAlign;
+            this.MergeRight = MergeRight;
+            this.TopRule = TopRule;
+        }
         public ContentCell(string Content, int CellIndex, double FontSize, bool Bold, bool Italic, ParagraphAlignment HorizontalAlign, VerticalAlignment VerticalAlign, int MergeRight, int MergeDown)
         {
             this.Content = Content;
@@ -606,7 +643,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             this.MergeRight = MergeRight;
             this.MergeDown = MergeDown;
         }
-        public ContentCell(string Content, int CellIndex, double FontSize, bool Bold, bool Italic, ParagraphAlignment HorizontalAlign, VerticalAlignment VerticalAlign, int MergeRight, int MergeDown, bool BottomRule)
+        public ContentCell(string Content, int CellIndex, double FontSize, bool Bold, bool Italic, ParagraphAlignment HorizontalAlign, VerticalAlignment VerticalAlign, int MergeRight, int MergeDown, bool? BottomRule)
         {
             this.Content = Content;
             this.CellIndex = CellIndex;
@@ -619,7 +656,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             this.MergeDown = MergeDown;
             this.BottomRule = BottomRule;
         }
-        public ContentCell(string Content, int CellIndex, double FontSize, bool Bold, bool Italic, ParagraphAlignment HorizontalAlign, VerticalAlignment VerticalAlign, int MergeRight, int MergeDown, bool BottomRule, Color FontColor)
+        public ContentCell(string Content, int CellIndex, double FontSize, bool Bold, bool Italic, ParagraphAlignment HorizontalAlign, VerticalAlignment VerticalAlign, int MergeRight, int MergeDown, bool? BottomRule, Color FontColor)
         {
             this.Content = Content;
             this.CellIndex = CellIndex;
@@ -633,7 +670,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             this.BottomRule = BottomRule;
             this.FontColor = FontColor;
         }
-        public ContentCell(string Content, int CellIndex, double FontSize, bool Bold, bool Italic, ParagraphAlignment HorizontalAlign, VerticalAlignment VerticalAlign, int MergeRight, int MergeDown, bool BottomRule, Color FontColor, bool RightRule)
+        public ContentCell(string Content, int CellIndex, double FontSize, bool Bold, bool Italic, ParagraphAlignment HorizontalAlign, VerticalAlignment VerticalAlign, int MergeRight, int MergeDown, bool? BottomRule, Color FontColor, bool? RightRule)
         {
             this.Content = Content;
             this.CellIndex = CellIndex;
@@ -648,7 +685,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             this.RightRule = RightRule;
             this.FontColor = FontColor;
         }
-        public ContentCell(string Content, int CellIndex, double FontSize, bool Bold, bool Italic, ParagraphAlignment HorizontalAlign, VerticalAlignment VerticalAlign, int MergeRight, int MergeDown, bool BottomRule, Color FontColor, bool RightRule, bool TopRule)
+        public ContentCell(string Content, int CellIndex, double FontSize, bool Bold, bool Italic, ParagraphAlignment HorizontalAlign, VerticalAlignment VerticalAlign, int MergeRight, int MergeDown, bool? BottomRule, Color FontColor, bool? RightRule, bool? TopRule)
         {
             this.Content = Content;
             this.CellIndex = CellIndex;
@@ -664,7 +701,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             this.TopRule = TopRule;
             this.FontColor = FontColor;
         }
-        public ContentCell(string Content, int CellIndex, double FontSize, bool Bold, bool Italic, ParagraphAlignment HorizontalAlign, VerticalAlignment VerticalAlign, int MergeRight, int MergeDown, bool BottomRule, Color FontColor, bool RightRule, bool TopRule, bool LeftRule)
+        public ContentCell(string Content, int CellIndex, double FontSize, bool Bold, bool Italic, ParagraphAlignment HorizontalAlign, VerticalAlignment VerticalAlign, int MergeRight, int MergeDown, bool? BottomRule, Color FontColor, bool? RightRule, bool? TopRule, bool? LeftRule)
         {
             this.Content = Content;
             this.CellIndex = CellIndex;
@@ -752,7 +789,7 @@ namespace PUPFMIS.BusinessAndDataLogic
                 _tableRow.Cells[row.CellIndex].Format.Font.Italic = row.Italic;
                 _tableRow.Cells[row.CellIndex].Format.Alignment = row.HorizontalAlign;
                 _tableRow.Cells[row.CellIndex].VerticalAlignment = row.VerticalAlign;
-                _tableRow.Cells[row.CellIndex].AddParagraph(AdjustIfTooWideToFitIn(_tableRow.Cells[row.CellIndex], row.Content == null? "\n" : row.Content));
+                _tableRow.Cells[row.CellIndex].AddParagraph(AdjustIfTooWideToFitIn(_tableRow.Cells[row.CellIndex], row.Content == null ? "\n" : row.Content));
                 _tableRow.Cells[row.CellIndex].Format.Font.Color = row.FontColor == null ? new Color(255, 255, 255) : row.FontColor;
                 if (!String.IsNullOrEmpty(row.MergeRight.ToString()))
                 {
@@ -762,27 +799,38 @@ namespace PUPFMIS.BusinessAndDataLogic
                 {
                     _tableRow.Cells[row.CellIndex].MergeDown = row.MergeDown;
                 }
-                if (row.BottomRule == true)
+
+                if(row.BottomRule != null)
                 {
-                    _tableRow.Cells[row.CellIndex].Borders.Bottom.Visible = true;
+                    _tableRow.Cells[row.CellIndex].Borders.Bottom.Visible = (bool)row.BottomRule;
+                    _tableRow.Cells[row.CellIndex].Borders.Bottom.Color = (bool)row.BottomRule == true ? new Color(0, 0, 0) : new Color(255, 255, 255);
+                }
+                if (row.TopRule != null)
+                {
+                    _tableRow.Cells[row.CellIndex].Borders.Top.Visible = (bool)row.TopRule;
+                    _tableRow.Cells[row.CellIndex].Borders.Top.Color = (bool)row.TopRule == true ? new Color(0, 0, 0) : new Color(255, 255, 255);
+                }
+                if (row.LeftRule != null)
+                {
+                    _tableRow.Cells[row.CellIndex].Borders.Left.Visible = (bool)row.LeftRule;
                     _tableRow.Cells[row.CellIndex].Borders.Color = new Color(0, 0, 0, 0);
                 }
-                if (row.TopRule == true)
+                if (row.RightRule != null)
                 {
-                    _tableRow.Cells[row.CellIndex].Borders.Top.Visible = true;
-                    _tableRow.Cells[row.CellIndex].Borders.Color = new Color(0, 0, 0, 0);
-                }
-                if (row.LeftRule == true)
-                {
-                    _tableRow.Cells[row.CellIndex].Borders.Left.Visible = true;
-                    _tableRow.Cells[row.CellIndex].Borders.Color = new Color(0, 0, 0, 0);
-                }
-                if (row.RightRule == true)
-                {
-                    _tableRow.Cells[row.CellIndex].Borders.Right.Visible = true;
+                    _tableRow.Cells[row.CellIndex].Borders.Right.Visible = (bool)row.RightRule;
                     _tableRow.Cells[row.CellIndex].Borders.Color = new Color(0, 0, 0, 0);
                 }
             }
+            return ReportTable;
+        }
+        public Table AddTableRowFormatted(Table ReportTable, ContentCell Cells, double RowHeight)
+        {
+            var _tableRow = new Row();
+            _tableRow = ReportTable.AddRow();
+            _tableRow.Cells[0].Add(Cells.Paragraph);
+            _tableRow.Cells[0].Format.Alignment = ParagraphAlignment.Justify;
+            _tableRow.Cells[0].Format.LineSpacingRule = LineSpacingRule.Exactly;
+            _tableRow.Cells[0].Format.LineSpacing = new Unit(0.55, UnitType.Centimeter);
             return ReportTable;
         }
         private static string AdjustIfTooWideToFitIn(Cell cell, string text)

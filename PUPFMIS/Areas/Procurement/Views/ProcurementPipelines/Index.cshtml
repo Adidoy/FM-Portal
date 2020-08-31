@@ -25,6 +25,8 @@
                     <tr>
                         <th style="text-align:center; vertical-align:middle;">@Html.DisplayNameFor(d => d.FiscalYear)</th>
                         <th style="text-align:center; vertical-align:middle;">@Html.DisplayNameFor(d => d.ReferenceNo)</th>
+                        <th style="text-align:center; vertical-align:middle;">APP Type</th>
+                        <th style="text-align:center; vertical-align:middle;">Date Signed by HOPE</th>
                         <th style="text-align:center; vertical-align:middle;">Action</th>
                     </tr>
                 </thead>
@@ -34,15 +36,10 @@
                         <tr>
                             <td style="text-align:center; vertical-align:middle;">@Html.DisplayFor(d => item.FiscalYear)</td>
                             <td style="text-align:center; vertical-align:middle;">@Html.DisplayFor(d => item.ReferenceNo)</td>
+                            <td style="text-align:center; vertical-align:middle;">@Html.DisplayFor(d => item.APPType)</td>
+                            <td style="text-align:center; vertical-align:middle;">@( item.ApprovedAt == null ? "Pending" : ((DateTime)item.ApprovedAt).ToString("dd MMMM yyyy") )</td>
                             <td style="text-align:center; vertical-align:middle;">
-                                @if (User.IsInRole(PUPFMIS.Models.SystemRoles.ProcurementAdministrator) || User.IsInRole(PUPFMIS.Models.SystemRoles.ProcurementPlanningChief))
-                                {
-                                    <button class="btn btn-sm btn-primary" onclick="window.location = '@Url.Action("project-index", "ProcurementPipelines", new { Area = "procurement", ReferenceNo = item.ReferenceNo })'"><i class="fa fa-eye"></i> View Procurement Projects</button>
-                                }
-                                else if (User.IsInRole(PUPFMIS.Models.SystemRoles.ProcurementStaff))
-                                {
-                                    <button class="btn btn-sm btn-primary" onclick="window.location = '@Url.Action("my-projects", "ProcurementPipelines", new { Area = "procurement", ReferenceNo = item.ReferenceNo })'"><i class="fa fa-eye"></i> View My Procurement Projects</button>
-                                }
+                                <button class="btn btn-sm btn-success mb-1" style="width: 140px;" onclick="window.location ='@Url.Action("assignment-index", "ProcurementPipelines", new { Area = "procurement", ReferenceNo = item.ReferenceNo })'"><i class="fa fa-users"></i> Assign Projects</button>
                             </td>
                         </tr>
                     }

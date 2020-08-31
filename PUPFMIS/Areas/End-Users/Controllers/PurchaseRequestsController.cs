@@ -18,11 +18,29 @@ namespace PUPFMIS.Areas.End_Users.Controllers
         private PurchaseRequestDAL prDAL = new PurchaseRequestDAL();
         private PurchaseRequestBL prBL = new PurchaseRequestBL();
 
-        [Route("list")]
-        [ActionName("index")]
-        public ActionResult Index()
+        [Route("dashboard")]
+        [ActionName("dashboard")]
+        public ActionResult Dashboard()
         {
-            var procurementPrograms = prDAL.GetPurchaseRequests(User.Identity.Name);
+            PurchaseRequestDashboard PRDashboard = new PurchaseRequestDashboard();
+            PRDashboard.FiscalYears = prDAL.GetFiscalYears(User.Identity.Name);
+            //PRDashboard.PRItemsOpen = prDAL.GetOpenForPRSubmission(User.Identity.Name);
+            return View(PRDashboard);
+        }
+
+        [Route("{FiscalYear}/list")]
+        [ActionName("index")]
+        public ActionResult Index(int FiscalYear)
+        {
+            var procurementPrograms = prDAL.GetPurchaseRequests(FiscalYear, User.Identity.Name);
+            return View(procurementPrograms);
+        }
+
+        [Route("create")]
+        [ActionName("create")]
+        public ActionResult Create()
+        {
+            var procurementPrograms = prDAL.GetOpenForPRSubmission(User.Identity.Name);
             return View(procurementPrograms);
         }
 

@@ -18,7 +18,7 @@
     <h3 class="card-title"><i class="fa fa-home"></i> My Projects Home</h3>
 }
 
-<div class="row">
+@*<div class="row">
     <div class="col-lg-4 col-md-4 col-sm-12">
         <div class="small-box bg-warning">
             <div class="inner">
@@ -106,20 +106,19 @@
             </div>
         </div>
     </div>
-</div>
+</div>*@
 <div class="row">
     <div class="col-sm-12">
         <div class="bg-info">
-            <h5 class="p-2">Projects Status</h5>
+            <h5 class="p-2">Projects Assigned</h5>
         </div>
         <div class="col-sm-12">
             <table class="table table-hover table-striped" id="projectsWithTimeline">
                 <thead>
                     <tr>
-                        <th style="text-align:center;" width="40%">APP Project Item</th>
+                        <th style="text-align:center;" width="55%">APP Project Item</th>
                         <th style="text-align:center;" width="10%">Fund Source</th>
                         <th style="text-align:center;" width="20%">Project Status</th>
-                        <th style="text-align:center;" width="15%">Project Support</th>
                         <th style="text-align:center;" width="15%">Action</th>
                     </tr>
                 </thead>
@@ -141,7 +140,7 @@
                                         <b>Procurement Program</b>
                                     </div>
                                     <div class="col-sm-8">
-                                       : @Html.DisplayFor(modelItem => item.ProcurementProgram)
+                                       : <b>@Html.DisplayFor(modelItem => item.ProcurementProgram)</b>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -152,6 +151,22 @@
                                        : @Html.DisplayFor(modelItem => item.StartMonth) - @Html.DisplayFor(d => item.EndMonth)
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <b>Project Coordinator</b>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        : @Html.DisplayFor(modelItem => item.ProjectCoordinator)
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <b>Project Support</b>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        : @Html.DisplayFor(modelItem => item.ProjectSupport)
+                                    </div>
+                                </div>
                             </td>
                             <td style="text-align:center; vertical-align:middle">
                                 @Html.DisplayFor(d => item.FundSource)
@@ -159,10 +174,7 @@
                             <td style="text-align:center; vertical-align:middle">
                                 @Html.DisplayFor(d => item.ProjectStatus)
                             </td>
-                            <td style="text-align:center; vertical-align:middle">
-                                @Html.DisplayFor(d => item.ProjectSupport)
-                            </td>
-                            <td style="text-align:center;"><button class="btn btn-sm btn-primary" onclick="window.location = '@Url.Action("details", "MyProjects", new { Area = "procurement", PAPCode = item.PAPCode })'"><i class="fa fa-eye"></i> View Details</button></td>
+                            <td style="text-align:center; vertical-align:middle;"><button class="btn btn-sm btn-primary" onclick="window.location = '@Url.Action("details", "MyProjects", new { Area = "procurement", PAPCode = item.PAPCode })'"><i class="fa fa-eye"></i> View Details</button></td>
                         </tr>
                     }
                 </tbody>

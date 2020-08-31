@@ -1,4 +1,4 @@
-﻿@model PUPFMIS.Models.AnnualProcurementPlanVM
+﻿@model List<PUPFMIS.Models.ApprovedItems>
 
 @{
     ViewBag.Title = "Annual Procurement Plan";
@@ -18,345 +18,31 @@
     <h3 class="card-title"><i class="fa fa-bookmark"></i> Create New Annual Procurement Plan</h3>
 }
 
-@using (Html.BeginForm("create-app", "APPs", FormMethod.Post, new { Area = "procurement" }))
+@using (Ajax.BeginForm("create-app", "APPs", new { Area = "procurement" }, new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult", UpdateTargetId = "form-container" }, htmlAttributes: new { id = "addItem" }))
 {
-    <div class="row">
-        <div class="col-sm-12 pl-0 pr-0 ml-0 mr-0">
-            <div class="card card-primary card-outline">
-                <div class="card-header d-flex p-0">
-                    <ul class="nav nav-pills p-2">
-                        <li class="nav-item" style="font-size:12pt;"><a class="nav-link active" href="#appHeader" data-toggle="tab"><i class="fa fa-list"></i>&nbsp; APP HEADER</a></li>
-                        <li class="nav-item" style="font-size:12pt;"><a class="nav-link" href="#appLineItems" data-toggle="tab"><i class="fa fa-list"></i>&nbsp; APP LINE ITEMS</a></li>
-                    </ul>
-                </div>
-                <div class="tab-content">
-                    <div class="tab-pane active" id="appHeader">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <div class="row">
-                                                <div class="col-sm-12">
-                                                    <div class="bg-info">
-                                                        <h6 class="p-2">ANNUAL PROCUREMENT PLAN DETAILS</h6>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-12">
-                                                    <div class="row">
-                                                        <div class="col-lg-6 col-md-6 col-sm-12">
-                                                            <div class="form-group">
-                                                                @Html.LabelFor(model => model.FiscalYear, htmlAttributes: new { @class = "control-label" })
-                                                                <div class="input-group mb-3">
-                                                                    <div class="input-group-prepend">
-                                                                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                                                                    </div>
-                                                                    @Html.DropDownList("FiscalYear", null, htmlAttributes: new { @class = "form-control form-control-sm" })
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-6 col-md-6 col-sm-12">
-                                                            <div class="form-group">
-                                                                @Html.LabelFor(model => model.AccountCode, htmlAttributes: new { @class = "control-label" })
-                                                                @Html.HiddenFor(model => model.AccountCode)
-                                                                <div class="input-group mb-3">
-                                                                    <div class="input-group-prepend">
-                                                                        <span class="input-group-text"><i class="fa fa-id-card"></i></span>
-                                                                    </div>
-                                                                    @Html.EditorFor(model => model.AccountCode, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-lg-6 col-md-6 col-sm-12">
-                                                            <div class="form-group">
-                                                                @Html.LabelFor(model => model.AgencyName, htmlAttributes: new { @class = "control-label" })
-                                                                @Html.HiddenFor(model => model.AgencyName)
-                                                                <div class="input-group mb-3">
-                                                                    <div class="input-group-prepend">
-                                                                        <span class="input-group-text"><i class="fa fa-building"></i></span>
-                                                                    </div>
-                                                                    @Html.EditorFor(model => model.AgencyName, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-6 col-md-6 col-sm-12">
-                                                            <div class="form-group">
-                                                                @Html.LabelFor(model => model.Address, htmlAttributes: new { @class = "control-label" })
-                                                                @Html.HiddenFor(model => model.Address)
-                                                                <div class="input-group mb-3">
-                                                                    <div class="input-group-prepend">
-                                                                        <span class="input-group-text"><i class="fa fa-building"></i></span>
-                                                                    </div>
-                                                                    @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-lg-6 col-md-6 col-sm-12">
-                                                            <div class="form-group">
-                                                                @Html.Label("Head of Procuring Entity (HOPE)", htmlAttributes: new { @class = "control-label" })
-                                                                @Html.HiddenFor(model => model.ApprovedBy)
-                                                                <div class="input-group mb-3">
-                                                                    <div class="input-group-prepend">
-                                                                        <span class="input-group-text"><i class="fa fa-user-alt"></i></span>
-                                                                    </div>
-                                                                    @Html.EditorFor(model => model.ApprovedBy, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-6 col-md-6 col-sm-12">
-                                                            <div class="form-group">
-                                                                @Html.LabelFor(model => model.OrganizationType, htmlAttributes: new { @class = "control-label" })
-                                                                @Html.HiddenFor(model => model.OrganizationType)
-                                                                <div class="input-group mb-3">
-                                                                    <div class="input-group-prepend">
-                                                                        <span class="input-group-text"><i class="fa fa-users"></i></span>
-                                                                    </div>
-                                                                    @Html.EditorFor(model => model.OrganizationType, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-lg-6 col-md-6 col-sm-12">
-                                                            <div class="form-group">
-                                                                @Html.Label("Accountant / Local Budget Officer", htmlAttributes: new { @class = "control-label" })
-                                                                @Html.HiddenFor(model => model.CertifiedBy)
-                                                                <div class="input-group mb-3">
-                                                                    <div class="input-group-prepend">
-                                                                        <span class="input-group-text"><i class="fa fa-user"></i></span>
-                                                                    </div>
-                                                                    @Html.EditorFor(model => model.CertifiedBy, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-6 col-md-6 col-sm-12">
-                                                            <div class="form-group">
-                                                                @Html.Label("Supply Officer", htmlAttributes: new { @class = "control-label" })
-                                                                @Html.HiddenFor(model => model.PreparedBy)
-                                                                <div class="input-group mb-3">
-                                                                    <div class="input-group-prepend">
-                                                                        <span class="input-group-text"><i class="fa fa-user"></i></span>
-                                                                    </div>
-                                                                    @Html.EditorFor(model => model.PreparedBy, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-lg-6 col-md-6 col-sm-12">
-                                                            <div class="form-group">
-                                                                @Html.Label("Procurement Officer", htmlAttributes: new { @class = "control-label" })
-                                                                @Html.HiddenFor(model => model.ProcurementOfficer)
-                                                                <div class="input-group mb-3">
-                                                                    <div class="input-group-prepend">
-                                                                        <span class="input-group-text"><i class="fa fa-user"></i></span>
-                                                                    </div>
-                                                                    @Html.EditorFor(model => model.ProcurementOfficer, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-6 col-md-6 col-sm-12">
-                                                            <div class="form-group">
-                                                                @Html.Label("Bids and Awards Committee", htmlAttributes: new { @class = "control-label" })
-                                                                @Html.HiddenFor(model => model.BACSecretariat)
-                                                                <div class="input-group mb-3">
-                                                                    <div class="input-group-prepend">
-                                                                        <span class="input-group-text"><i class="fa fa-user"></i></span>
-                                                                    </div>
-                                                                    @Html.EditorFor(model => model.BACSecretariat, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tab-pane" id="appLineItems">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <div class="row">
-                                                <div class="col-sm-12">
-                                                    <div class="bg-info">
-                                                        <h6 class="p-2">ANNUAL PROCUREMENT PLAN LINE ITEMS</h6>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-12">
-                                                    <div class="row">
-                                                        <div class="col-sm-12">
-                                                            <div class="card-body table-responsive p-sm-0">
-                                                                <table class="table table-striped table-hover" id="items">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th style="text-align:center; vertical-align:middle;" width="30%">Procurement Program/Project</th>
-                                                                            <th style="text-align:center; vertical-align:middle;" width="40%">Mode of Procurement/<br />Remarks</th>
-                                                                            <th style="text-align:center; vertical-align:middle;" width="30%">Fund Source/<br />Estimated Budget</th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        @{ var account = Model.APPLineItems.Any() ? Model.APPLineItems.OrderBy(d => d.PAPCode).ThenBy(d => d.UACS).First().ObjectClassification : "NO ITEMS FOUND."; }
-                                                                        <tr>
-                                                                            <td class="p-1" colspan="6" style="background-color:#F9AC67;"><b style="font-size:12pt;">@(account.ToString().ToUpper())</b></td>
-                                                                        </tr>
-                                                                        @for (var i = 0; i < Model.APPLineItems.Count; i++)
-                                                                        {
-                                                                            @Html.HiddenFor(d => Model.APPLineItems[i].StartMonth)
-                                                                            @Html.HiddenFor(d => Model.APPLineItems[i].EndMonth)
-                                                                            @Html.HiddenFor(d => Model.APPLineItems[i].ObjectClassification)
-                                                                            @Html.HiddenFor(d => Model.APPLineItems[i].UACS)
-                                                                            @Html.HiddenFor(d => Model.APPLineItems[i].PPMPReferences)
-                                                                            @Html.HiddenFor(d => Model.APPLineItems[i].ProjectReferences)
-                                                                            if (account != Model.APPLineItems[i].ObjectClassification)
-                                                                            {
-                                                                                <tr style="background-color:#FBCF7A;">
-                                                                                    <td class="p-1" colspan="2" style="text-align:right; vertical-align: middle"><b style="font-size:12pt;">SUB TOTAL:</b></td>
-                                                                                    <td class="p-1" style="text-align:right; vertical-align: middle"><b style="font-size:12pt;">@( String.Format("{0:C}", Model.APPLineItems.Where(d => d.ObjectClassification == account).Sum(d => d.EstimatedBudget)) )</b></td>
-                                                                                </tr>
-                                                                                account = Model.APPLineItems[i].ObjectClassification;
-                                                                                <tr>
-                                                                                    <td class="p-1" colspan="3" style="background-color:#F9AC67; text-align:left; vertical-align:middle;"><b style="font-size:12pt;">@account.ToString().ToUpper()</b></td>
-                                                                                </tr>
-                                                                            }
-                                                                            <tr>
-                                                                                <td>
-                                                                                    @Html.HiddenFor(d => Model.APPLineItems[i].Month)
-                                                                                    @Html.HiddenFor(d => Model.APPLineItems[i].PAPCode)
-                                                                                    <b>@Html.DisplayNameFor(d => Model.APPLineItems[i].PAPCode)</b> : @Html.DisplayFor(d => Model.APPLineItems[i].PAPCode)
-                                                                                    <br />
-                                                                                    @Html.HiddenFor(d => Model.APPLineItems[i].ProcurementProject)
-                                                                                    <b>@Html.DisplayNameFor(d => Model.APPLineItems[i].ProcurementProject)</b> : <br />@Html.DisplayFor(d => Model.APPLineItems[i].ProcurementProject)
-                                                                                    <br />
-                                                                                    @Html.HiddenFor(d => Model.APPLineItems[i].EndUser)
-                                                                                    <b>@Html.Label("End-User")</b> : @Html.DisplayFor(d => Model.APPLineItems[i].EndUser)
-                                                                                </td>
-                                                                                <td>
-                                                                                    <b>@Html.DisplayNameFor(d => Model.APPLineItems[i].ModeOfProcurement):</b>
-                                                                                    <br />
-                                                                                    @Html.HiddenFor(d => Model.APPLineItems[i].APPItemType)
-                                                                                    <div class="form-group">
-                                                                                        <div class="input-group mb-3">
-                                                                                            @{
-                                                                                                PUPFMIS.BusinessAndDataLogic.AnnualProcurementPlanDAL appDAL = new PUPFMIS.BusinessAndDataLogic.AnnualProcurementPlanDAL();
-                                                                                                var ProcurementModes = new SelectList(appDAL.GetModesOfProcurement(), "ID", "ModeOfProcurementName").ToList();
-                                                                                                foreach(var mode in Model.APPLineItems[i].ModeOfProcurement)
-                                                                                                {
-                                                                                                    ProcurementModes.Where(d => d.Value == mode).FirstOrDefault().Selected = true;
-                                                                                                }
-                                                                                            }
-                                                                                            @Html.DropDownListFor(d => Model.APPLineItems[i].ModeOfProcurement, ProcurementModes, htmlAttributes: new { @class = "form-control form-control-sm select2", multiple = "multiple" })
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <br /><br />
-                                                                                    <b>@Html.DisplayNameFor(d => Model.APPLineItems[i].Remarks):</b>
-                                                                                    <br />
-                                                                                    @Html.TextAreaFor(d => Model.APPLineItems[i].Remarks, htmlAttributes: new { @class = "form-control form-control-sm", style = "font-size: 90%; resize:none; overflow:auto; text-align: justify;", rows = "5", placeholer = "Remarks" })
-                                                                                </td>
-                                                                                <td>
-                                                                                    <div class="row">
-                                                                                        <div class="col-sm-6">
-                                                                                            <b>@Html.DisplayNameFor(d => Model.APPLineItems[i].FundCluster)</b> : 
-                                                                                        </div>
-                                                                                        <div class="col-sm-6">
-                                                                                            @Html.HiddenFor(d => Model.APPLineItems[i].FundCluster)
-                                                                                            @Html.DisplayFor(d => Model.APPLineItems[i].FundDescription)
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div class="row">
-                                                                                        <div class="col-sm-6">
-                                                                                            <b>@Html.DisplayNameFor(d => Model.APPLineItems[i].MOOE)</b> :
-                                                                                        </div>
-                                                                                        <div class="col-sm-6">
-                                                                                            @Html.HiddenFor(d => Model.APPLineItems[i].MOOE)
-                                                                                            <div class="float-right">
-                                                                                                @( String.Format("{0:C}", Model.APPLineItems[i].MOOE) )
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div class="row">
-                                                                                        <div class="col-sm-6">
-                                                                                            <b>@Html.DisplayNameFor(d => Model.APPLineItems[i].CapitalOutlay)</b> :
-                                                                                        </div>
-                                                                                        <div class="col-sm-6">
-                                                                                            @Html.HiddenFor(d => Model.APPLineItems[i].CapitalOutlay)
-                                                                                            <div class="float-right">
-                                                                                                @( String.Format("{0:C}", Model.APPLineItems[i].CapitalOutlay) )
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div class="row">
-                                                                                        <div class="col-sm-6">
-                                                                                            <b>@Html.DisplayNameFor(d => Model.APPLineItems[i].EstimatedBudget)</b> :
-                                                                                        </div>
-                                                                                        <div class="col-sm-6">
-                                                                                            @Html.HiddenFor(d => Model.APPLineItems[i].EstimatedBudget)
-                                                                                            <div class="float-right">
-                                                                                                @( String.Format("{0:C}", Model.APPLineItems[i].EstimatedBudget) )
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </td>
-                                                                            </tr>
-                                                                        }
-                                                                        <tr style="background-color:#FBCF7A;">
-                                                                            <td class="p-2" colspan="2" style="text-align:right; vertical-align: middle"><b style="font-size:12pt;">SUB TOTAL:</b></td>
-                                                                            <td class="p-2" style="text-align:right; vertical-align: middle"><b style="font-size:12pt;">@( String.Format("{0:C}", Model.APPLineItems.Where(d => d.ObjectClassification == account).Sum(d => d.EstimatedBudget)) )</b></td>
-                                                                        </tr>
-                                                                    </tbody>
-                                                                    <tfoot>
-                                                                        <tr>
-                                                                            <td colspan="2" style="text-align:right; vertical-align:middle">
-                                                                                <h5>GRAND TOTAL:</h5>
-                                                                            </td>
-                                                                            <td style="text-align:right; vertical-align:middle">
-                                                                                <h5>@( String.Format("{0:C}", Model.APPLineItems.Sum(d => d.EstimatedBudget)) )</h5>
-                                                                            </td>
-                                                                        </tr>
-                                                                    </tfoot>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <hr />
-    <div class="row">
-        <div class="col-sm-12 text-right">
-            <div class="form-group">
-                @if (Model.APPLineItems.Count > 0)
-                {
-                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp; Save Annual Procurement Plan</button>
-                }
-                <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("dashboard", "APPs", new { area = "procurement" })'"><i class="fa fa-times-circle"></i>&nbsp; Cancel</button>
-            </div>
-        </div>
+    <div id="form-container">
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.Partial("_Create")
     </div>
 }
+<hr />
+<div class="row">
+    <div class="col-sm-12 text-right">
+        <div class="form-group">
+            @if (Model.Count > 0)
+            {
+                <button type="button" class="btn btn-primary" onclick="SaveItem()"><i class="fa fa-save"></i>&nbsp; Save Annual Procurement Plan</button>
+            }
+            <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("dashboard", "APPs", new { area = "procurement" })'"><i class="fa fa-arrow-alt-circle-left"></i>&nbsp; Back to Dashboard</button>
+        </div>
+    </div>
+</div>
 
 <script type="text/javascript">
     function SaveItem() {
         swal.fire({
-            title: "Save record?",
+            title: "Save Annual Procurement Plan?",
             text: "You are about to save this record, continue?",
             type: "warning",
             showCancelButton: true,
@@ -381,7 +67,7 @@
                 type: "success"
             }).then((result) => {
                 if (result.value) {
-                    window.location.href = "@Url.Action("list", "ItemTypes", new { Area = "admin" })";
+                    window.location.href = "@Url.Action("dashboard", "APPs", new { Area = "procurement" })";
                 }
             })
         }

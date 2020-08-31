@@ -37,14 +37,14 @@ namespace PUPFMIS.BusinessAndDataLogic
         }
         public decimal GetProposedCapitalOutlayBudget()
         {
-            var CapitalOutlayItems = db.ProjectPlanItems.Where(d => d.UnitCost >= 15000.00m).Count() != 0 ? db.ProjectPlanItems.Where(d => d.UnitCost >= 15000.00m).Sum(d => d.ProjectEstimatedBudget) : 0.00m;
-            var CapitalOutlayServices = db.ProjectPlanServices.Where(d => d.UnitCost >= 15000.00m).Count() != 0 ? db.ProjectPlanServices.Where(d => d.UnitCost >= 15000.00m).Sum(d => d.ProjectEstimatedBudget) : 0.00m;
+            var CapitalOutlayItems = db.ProjectPlanItems.Where(d => d.UnitCost >= 15000.00m && (d.Status == "Posted" || d.Status == "Approved" || d.Status == "Disapproved")).Count() != 0 ? db.ProjectPlanItems.Where(d => d.UnitCost >= 15000.00m && (d.Status == "Posted" || d.Status == "Approved" || d.Status == "Disapproved")).Sum(d => d.ProjectEstimatedBudget) : 0.00m;
+            var CapitalOutlayServices = db.ProjectPlanServices.Where(d => d.UnitCost >= 15000.00m && (d.Status == "Posted" || d.Status == "Approved" || d.Status == "Disapproved")).Count() != 0 ? db.ProjectPlanServices.Where(d => d.UnitCost >= 15000.00m && (d.Status == "Posted" || d.Status == "Approved" || d.Status == "Disapproved")).Sum(d => d.ProjectEstimatedBudget) : 0.00m;
             return (CapitalOutlayItems + CapitalOutlayServices);
         }
         public decimal GetProposeMOOEBudget()
         {
-            var MOOEItems = db.ProjectPlanItems.Where(d => d.UnitCost < 15000.00m).Count() != 0 ? db.ProjectPlanItems.Where(d => d.UnitCost < 15000.00m).Sum(d => d.ProjectEstimatedBudget) : 0.00m;
-            var MMOOEServices = db.ProjectPlanServices.Where(d => d.UnitCost < 15000.00m).Count() != 0 ? db.ProjectPlanServices.Where(d => d.UnitCost < 15000.00m).Sum(d => d.ProjectEstimatedBudget) : 0.00m;
+            var MOOEItems = db.ProjectPlanItems.Where(d => d.UnitCost < 15000.00m && (d.Status == "Posted" || d.Status == "Approved" || d.Status == "Disapproved")).Count() != 0 ? db.ProjectPlanItems.Where(d => d.UnitCost < 15000.00m && (d.Status == "Posted" || d.Status == "Approved" || d.Status == "Disapproved")).Sum(d => d.ProjectEstimatedBudget) : 0.00m;
+            var MMOOEServices = db.ProjectPlanServices.Where(d => d.UnitCost < 15000.00m && (d.Status == "Posted" || d.Status == "Approved" || d.Status == "Disapproved")).Count() != 0 ? db.ProjectPlanServices.Where(d => d.UnitCost < 15000.00m && (d.Status == "Posted" || d.Status == "Approved" || d.Status == "Disapproved")).Sum(d => d.ProjectEstimatedBudget) : 0.00m;
             return (MOOEItems + MMOOEServices);
         }
         public decimal GetApprovedCapitalOutlayBudget()

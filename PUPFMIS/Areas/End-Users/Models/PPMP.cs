@@ -132,6 +132,9 @@ namespace PUPFMIS.Models
         [Display(Name = "Date Created")]
         public DateTime CreatedAt { get; set; }
 
+        [Display(Name = "Date Evaluated")]
+        public DateTime? EvaluatedAt { get; set; }
+
         [Display(Name = "Date Submitted")]
         public DateTime? SubmittedAt { get; set; }
 

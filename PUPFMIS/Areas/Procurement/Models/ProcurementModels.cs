@@ -7,7 +7,7 @@ using System.Web.Mvc;
 
 namespace PUPFMIS.Models
 {
-    [Table("PP_PROCUREMENT_TIMELINE")]
+    [Table("PP_PROCUREMENT_TIMELINE_BIDDING")]
     public class ProcurementTimeline
     {
         [Key]
@@ -18,71 +18,94 @@ namespace PUPFMIS.Models
         [Display(Name = "Purchase Request Submission")]
         public DateTime? PurchaseRequestSubmission { get; set; }
 
-        [Display(Name = "Pre-Procurement Conference")]
-        public DateTime? ActualPreProcurementConference { get; set; }
+        [Display(Name = "Purchase Request Submission Closing")]
+        public DateTime? PurchaseRequestClosing { get; set; }
 
-        [Display(Name = "Pre-Procurement Conference")]
+        [Display(Name = "Target Date")]
         public DateTime? PreProcurementConference { get; set; }
 
-        [Display(Name = "Advertisement")]
+        [Display(Name = "Actual Date")]
+        public DateTime? ActualPreProcurementConference { get; set; }
+
+        [Display(Name = "Remarks")]
+        [DataType(DataType.MultilineText)]
+        public string PreProcurementConferenceRemarks { get; set; }
+
+        [Display(Name = "Target Date")]
         public DateTime? PostingOfIB { get; set; }
 
-        [Display(Name = "Pre-Bid Conference")]
-        public DateTime? PreBidConference { get; set; }
-
-        [Display(Name = "Submission of Bids")]
-        public DateTime? SubmissionOfBids { get; set; }
-
-        [Display(Name = "Evaluation of Bids")]
-        public DateTime? BidEvaluation { get; set; }
-
-        [Display(Name = "Post-Qualification of Bids")]
-        public DateTime? PostQualification { get; set; }
-
-        [Display(Name = "Issuance of Notice of Award")]
-        public DateTime? NOAIssuance { get; set; }
-
-        [Display(Name = "Contract Preparation and Signing")]
-        public DateTime? ContractSigning { get; set; }
-
-        [Display(Name = "Approval by Higher Authority")]
-        public DateTime? Approval { get; set; }
-
-        [Display(Name = "Issuance of Notice to Proceed")]
-        public DateTime? NTPIssuance { get; set; }
-
-        [Display(Name = "Receiving of Purchase Order - Supplier")]
-        public DateTime? POReceived { get; set; }
-
-        [Display(Name = "Advertisement")]
+        [Display(Name = "Actual Date")]
         public DateTime? ActualPostingOfIB { get; set; }
 
-        [Display(Name = "Pre-Bid Conference")]
+        [Display(Name = "Remarks")]
+        [DataType(DataType.MultilineText)]
+        public string PostingOfIBRemarks { get; set; }
+
+        [Display(Name = "Target Date")]
+        public DateTime? PreBidConference { get; set; }
+
+        [Display(Name = "Actual Date")]
         public DateTime? ActualPreBidConference { get; set; }
 
-        [Display(Name = "Submission of Bids")]
-        public DateTime? ActualSubmissionOfBids { get; set; }
+        [Display(Name = "Remarks")]
+        [DataType(DataType.MultilineText)]
+        public string PreBidConferenceRemarks { get; set; }
 
-        [Display(Name = "Evaluation of Bids")]
-        public DateTime? ActualBidEvaluation { get; set; }
+        [Display(Name = "Target Date")]
+        public DateTime? OpeningOfBids { get; set; }
 
-        [Display(Name = "Post-Qualification of Bids")]
-        public DateTime? AcutalPostQualification { get; set; }
+        [Display(Name = "Preliminary Examination of Bids")]
+        public DateTime? PrelimenryExamination { get; set; }
 
-        [Display(Name = "Issuance of Notice of Award")]
+        [Display(Name = "Detailed Examination of Bids")]
+        public DateTime? DetailedExamination { get; set; }
+
+        [Display(Name = "Reporting of Bid Evaluation to BAC")]
+        public DateTime? EvaluationReporting { get; set; }
+
+        [Display(Name = "Remarks")]
+        [DataType(DataType.MultilineText)]
+        public string BidsExaminationRemarks { get; set; }
+
+        [Display(Name = "Target Date")]
+        public DateTime? PostQualification { get; set; }
+
+        [Display(Name = "Actual Date")]
+        public DateTime? ActualPostQualification { get; set; }
+
+        [Display(Name = "Date of Reporting to BAC")]
+        public DateTime? PostQualificationReportedToBAC { get; set; }
+
+        [Display(Name = "Remarks")]
+        [DataType(DataType.MultilineText)]
+        public string PostQualificationRemarks { get; set; }
+
+        [Display(Name = "Target Date")]
+        public DateTime? NOAIssuance { get; set; }
+
+        [Display(Name = "Date BAC Resolution Generated")]
+        public DateTime? BACResolutionCreated { get; set; }
+
+        [Display(Name = "Date Forwarded to BAC Member")]
+        public DateTime? BACMemberForwarded { get; set; }
+
+        [Display(Name = "Date Forwarded to HOPE")]
+        public DateTime? HOPEForwarded { get; set; }
+
+        [Display(Name = "Date Received by PMO")]
+        public DateTime? PMOReceived { get; set; }
+
+        [Display(Name = "Date Notice of Award Generated")]
         public DateTime? ActualNOAIssuance { get; set; }
 
-        [Display(Name = "Contract Preparation and Signing")]
-        public DateTime? ActualContractSigning { get; set; }
+        [Display(Name = "Date Signed by HOPE")]
+        public DateTime? NOASignedByHOPE { get; set; }
 
-        [Display(Name = "Approval by Higher Authority")]
-        public DateTime? ActualApproval { get; set; }
+        [Display(Name = "Date Received by Supplier")]
+        public DateTime? NOAReceivedBySupplier { get; set; }
 
-        [Display(Name = "Issuance of Notice to Proceed")]
-        public DateTime? ActualNTPIssuance { get; set; }
-
-        [Display(Name = "Receiving of Purchase Order - Supplier")]
-        public DateTime? ActualPOReceived { get; set; }
+        [Display(Name = "Remarks")]
+        public string NOAIssuanceRemarks { get; set; }
     }
     [Table("PP_PURCHASE_REQUEST_HEADER")]
     public class PurchaseRequestHeader
@@ -111,8 +134,6 @@ namespace PUPFMIS.Models
         [MaxLength(30, ErrorMessage = "{0} is up to {1} characters only.")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field is required.")]
         public string FundCluster { get; set; }
-
-        public ProcurementSources ProcurementSource { get; set; }
 
         [Display(Name = "Purpose")]
         [Column(TypeName = "VARCHAR")]
@@ -196,6 +217,92 @@ namespace PUPFMIS.Models
 
     }
 
+    [Table("PP_PURCHASE_ORDER_HEADER")]
+    public class PurchaseOrderHeader
+    {
+        [Key]
+        public int ID { get; set; }
+
+        [Required]
+        [Display(Name = "Purchase Order No.")]
+        public string PurchaseOrderNumber { get; set; }
+
+        [Required]
+        [Display(Name = "Supplier")]
+        public int SupplierReference { get; set; }
+
+        [Required]
+        [Display(Name = "Place of Delivery")]
+        public string PlaceOfDelivery { get; set; }
+
+        [Display(Name = "Date of Delivery")]
+        public int? DateOfDelivery { get; set; }
+
+        [Required]
+        [Display(Name = "Mode of Procurement")]
+        public int ModeOfProcurementReference { get; set; }
+
+        [Required]
+        [Display(Name = "Date Created")]
+        public DateTime CreatedAt { get; set; }
+
+        [Required]
+        [Display(Name = "Total Amount")]
+        public decimal TotalAmount { get; set; }
+
+        [Required]
+        [Display(Name = "Chief Accountant")]
+        public string ChiefAccountant { get; set; }
+
+        [Required]
+        [Display(Name = "Office")]
+        public string ChiefAccountantOffice { get; set; }
+
+        [Required]
+        [Display(Name = "Designation")]
+        public string ChiefAccountantDesignation { get; set; }
+
+        [Required]
+        [Display(Name = "Authorized Signature")]
+        public string AuthorizedSignature { get; set; }
+
+        [Required]
+        [Display(Name = "Office")]
+        public string AuthorizedSignatureOffice { get; set; }
+
+        [Required]
+        [Display(Name = "Designation")]
+        public string AuthorizedSignatureDesignation { get; set; }
+
+        [ForeignKey("SupplierReference")]
+        public virtual Supplier FKSupplierReference { get; set; }
+
+        [ForeignKey("ModeOfProcurementReference")]
+        public virtual ModeOfProcurement FKModeOfProcurementReference { get; set; }
+    }
+
+    [Table("PP_PURCHASE_ORDER_DETAILS")]
+    public class PurchaseOrderDetails
+    {
+        [Key, Column(Order = 0)]
+        public int ItemReference { get; set; }
+
+        [Key, Column(Order = 1)]
+        public int PurchaseOrderReference { get; set; }
+
+        [Display(Name = "Quantity")]
+        public int Quantity { get; set; }
+
+        [Display(Name = "Unit Cost")]
+        public decimal UnitCost { get; set; }
+
+        [ForeignKey("ItemReference")]
+        public virtual Item FKItemReference { get; set; }
+
+        [ForeignKey("PurchaseOrderReference")]
+        public virtual PurchaseOrderHeader FKPurchaseOrderHeaderReference { get; set; }
+    }
+
     public class PurchaseRequestDetailsVM
     {
         [Display(Name = "Item Code")]
@@ -260,7 +367,6 @@ namespace PUPFMIS.Models
 
         public List<PurchaseRequestDetailsVM> PRDetails { get; set; }
     }
-
     public class PurchaseRequestCSEVM
     {
         [Display(Name = "Fiscal Year")]
@@ -270,6 +376,11 @@ namespace PUPFMIS.Models
         public string Period { get; set; }
 
         public List<PurchaseRequestDetailsVM> CSEItems { get; set; }
+    }
+    public class PurchaseRequestDashboard
+    {
+        public List<int> FiscalYears { get; set; }
+        public List<ProcurementProjectsVM> PRItemsOpen { get; set; }
     }
 
 
@@ -324,6 +435,9 @@ namespace PUPFMIS.Models
         [Display(Name = "Remarks")]
         [DataType(DataType.MultilineText)]
         public DateTime? PRRemarks { get; set; }
+
+        [Display(Name = "P/R Closing")]
+        public string ActualPRClosing { get; set; }
 
         [Display(Name = "Pre-Procurement Conference")]
         public DateTime? ActualPreProcurementConference { get; set; }
@@ -410,12 +524,20 @@ namespace PUPFMIS.Models
 
         [Display(Name = "Estimated Budget")]
         public decimal EstimatedBudget { get; set; }
+
+        [Display(Name = "Purchase Request No.")]
+        public string PRNumber { get; set; }
+
+        [Display(Name = "Date Received")]
+        public DateTime? DatePRReceived { get; set; }
     }
     public class ProcurementProjectsVM
     {
         public string APPReference { get; set; }
 
         public string ProcurmentProjectType { get; set; }
+
+        public bool IsTangible { get; set; }
 
         public int Month { get; set; }
 
@@ -456,8 +578,11 @@ namespace PUPFMIS.Models
         public string ProjectCoordinator { get; set; }
 
         [DataType(DataType.MultilineText)]
+        [Display(Name = "APP Mode of Procurement")]
+        public string APPModeOfProcurement { get; set; }
+
         [Display(Name = "Mode of Procurement")]
-        public string ModeOfProcurement { get; set; }
+        public int? ModeOfProcurement { get; set; }
 
         [Display(Name = "Project Support")]
         public string ProjectSupport { get; set; }
@@ -475,8 +600,117 @@ namespace PUPFMIS.Models
         [DataType(DataType.MultilineText)]
         public string Remarks { get; set; }
 
-        public ProcurementProjectScheduleVM Schedule { get; set; }
-        public ProcurementProjectActualAccomplishmentVM Actual { get; set; }
+        [Display(Name = "Purchase Request Submission")]
+        public DateTime? PurchaseRequestSubmission { get; set; }
+
+        [Display(Name = "Purchase Request Submission Closing")]
+        public DateTime? PurchaseRequestClosing { get; set; }
+
+        [Display(Name = "Target Date")]
+        public DateTime? PreProcurementConference { get; set; }
+
+        [Display(Name = "Date Conducted")]
+        public DateTime? ActualPreProcurementConference { get; set; }
+
+        [Display(Name = "Remarks")]
+        [DataType(DataType.MultilineText)]
+        public string PreProcurementConferenceRemarks { get; set; }
+
+        [Display(Name = "Date of Posting")]
+        public DateTime? PostingOfIB { get; set; }
+
+        [Display(Name = "Date of Posting")]
+        public DateTime? ActualPostingOfIB { get; set; }
+
+        [Display(Name = "Remarks")]
+        [DataType(DataType.MultilineText)]
+        public string PostingOfIBRemarks { get; set; }
+
+        [Display(Name = "Target Date")]
+        public DateTime? PreBidConference { get; set; }
+
+        [Display(Name = "Date Conducted")]
+        public DateTime? ActualPreBidConference { get; set; }
+
+        [Display(Name = "Remarks")]
+        [DataType(DataType.MultilineText)]
+        public string PreBidConferenceRemarks { get; set; }
+
+        [Display(Name = "Target Date")]
+        public DateTime? OpeningOfBids { get; set; }
+
+        [Display(Name = "Preliminary Examination of Bids")]
+        public DateTime? PrelimenryExamination { get; set; }
+
+        [Display(Name = "Detailed Examination of Bids")]
+        public DateTime? DetailedExamination { get; set; }
+
+        [Display(Name = "Reporting of Evaluation to BAC")]
+        public DateTime? EvaluationReporting { get; set; }
+
+        [Display(Name = "Remarks")]
+        [DataType(DataType.MultilineText)]
+        public string BidsExaminationRemarks { get; set; }
+
+        [Display(Name = "Target Date")]
+        public DateTime? PostQualification { get; set; }
+
+        [Display(Name = "Date Conducted")]
+        public DateTime? ActualPostQualification { get; set; }
+
+        [Display(Name = "Date of Reporting to BAC")]
+        public DateTime? PostQualificationReportedToBAC { get; set; }
+
+        [Display(Name = "Remarks")]
+        [DataType(DataType.MultilineText)]
+        public string PostQualificationRemarks { get; set; }
+
+        [Display(Name = "Target Date")]
+        public DateTime? NOAIssuance { get; set; }
+
+        [Display(Name = "Date BAC Resolution Generated")]
+        public DateTime? BACResolutionCreated { get; set; }
+
+        [Display(Name = "Date Forwarded to BAC Member")]
+        public DateTime? BACMemberForwarded { get; set; }
+
+        [Display(Name = "Date Forwarded to HOPE")]
+        public DateTime? HOPEForwarded { get; set; }
+
+        [Display(Name = "Date Received by PMO")]
+        public DateTime? PMOReceived { get; set; }
+
+        [Display(Name = "Date Notice of Award Generated")]
+        public DateTime? ActualNOAIssuance { get; set; }
+
+        [Display(Name = "Date Signed by HOPE")]
+        public DateTime? NOASignedByHOPE { get; set; }
+
+        [Display(Name = "Date Received by Supplier")]
+        public DateTime? NOAReceivedBySupplier { get; set; }
+
+        [Display(Name = "Remarks")]
+        [DataType(DataType.MultilineText)]
+        public string NOAIssuanceRemarks { get; set; }
+
+        [Display(Name = "Supplier")]
+        public int? Supplier { get; set; }
+
+        [Display(Name = "Project Cost")]
+        public decimal ProjectCost { get; set; }
+
+        [Display(Name = "Purchase Order No.")]
+        public string PONumber { get; set; }
+
+        [Display(Name = "Date Created")]
+        public DateTime? POCreatedAt { get; set; }
+
+        [Display(Name = "Place of Delivery")]
+        public string PlaceOfDelivery { get; set; }
+
+        [Display(Name = "Date of Delivery")]
+        public int? DateOfDelivery { get; set; }
+
         public List<ProcurementProjectItemsVM> Items { get; set; }
     }
     public class ProcurementProgramsVM

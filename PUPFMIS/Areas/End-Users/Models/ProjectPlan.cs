@@ -80,7 +80,6 @@ namespace PUPFMIS.Models
         [Display(Name = "Date Deleted")]
         public DateTime? DeletedAt { get; set; }
     }
-
     [Table("PP_PLANNING_PROJECTPLAN_ITEMS")]
     public class ProjectPlanItems
     {
@@ -215,6 +214,9 @@ namespace PUPFMIS.Models
         [Display(Name = "APP Reference")]
         public int? APPReference { get; set; }
 
+        [Display(Name = "APP Line Reference")]
+        public string APPLineReference { get; set; }
+
         [Display(Name = "Purchase Request Reference")]
         public int? PRReference { get; set; }
 
@@ -279,7 +281,6 @@ namespace PUPFMIS.Models
         [ForeignKey("APRReference")]
         public virtual APRHeader FKAPRHeaderReference { get; set; }
     }
-
     [Table("PP_PLANNING_PROJECTPLAN_SERVICES")]
     public class ProjectPlanServices
     {
@@ -364,6 +365,9 @@ namespace PUPFMIS.Models
 
         [Display(Name = "APP Reference")]
         public int? APPReference { get; set; }
+
+        [Display(Name = "APP Line Reference")]
+        public string APPLineReference { get; set; }
 
         [Display(Name = "Purchase Request Reference")]
         public int? PRReference { get; set; }
@@ -565,7 +569,6 @@ namespace PUPFMIS.Models
         [Display(Name = "Supplier 3 Unit Cost")]
         public decimal? Supplier3UnitCost { get; set; }
     }
-
     public class ProjectPlanListVM
     {
         [Display(Name = "Project Code")]
@@ -583,7 +586,6 @@ namespace PUPFMIS.Models
         [Display(Name = "Estimated Budget")]
         public decimal EstimatedBudget { get; set; }
     }
-
     public class ProjectPlanVM
     {
         [Display(Name = "Project Code")]
@@ -637,7 +639,6 @@ namespace PUPFMIS.Models
         public List<ProjectPlanItemsVM> ProjectPlanItems { get; set; }
         public List<ProjectPlanItemsVM> NewItemProposals { get; set; }
     }
-
     public enum BudgetProposalType
     {
         [Display(Name = "Actual Obligation/Existing Project")]

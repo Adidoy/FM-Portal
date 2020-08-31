@@ -16,7 +16,7 @@
 
 @section Header {
     <div class="col-md-12 text-right">
-        <h1 class="card-title"><i class="fa fa-bookmark"></i> New Annual Procurement Plan (Common-use Supplies and Equipment)</h1>
+        <h1 class="card-title"><i class="fa fa-bookmark"></i> New Annual Procurement Plan (Common-use Office Supplies)</h1>
     </div>
 }
 
@@ -314,13 +314,26 @@
                                 @for (var item = 0; item < Model.APPNonDBMItems.Count; item++)
                                 {
                                     <tr>
+                                        @Html.HiddenFor(modelItem => Model.APPNonDBMItems[item].ItemID)
+                                        @Html.HiddenFor(modelItem => Model.APPNonDBMItems[item].ItemSpecifications)
+                                        @Html.HiddenFor(modelItem => Model.APPNonDBMItems[item].UnitOfMeasure)
+                                        @Html.HiddenFor(modelItem => Model.APPNonDBMItems[item].JanQty)
+                                        @Html.HiddenFor(modelItem => Model.APPNonDBMItems[item].FebQty)
+                                        @Html.HiddenFor(modelItem => Model.APPNonDBMItems[item].MarQty)
+                                        @Html.HiddenFor(modelItem => Model.APPNonDBMItems[item].AprQty)
+                                        @Html.HiddenFor(modelItem => Model.APPNonDBMItems[item].MayQty)
+                                        @Html.HiddenFor(modelItem => Model.APPNonDBMItems[item].JunQty)
+                                        @Html.HiddenFor(modelItem => Model.APPNonDBMItems[item].JulQty)
+                                        @Html.HiddenFor(modelItem => Model.APPNonDBMItems[item].AugQty)
+                                        @Html.HiddenFor(modelItem => Model.APPNonDBMItems[item].SepQty)
+                                        @Html.HiddenFor(modelItem => Model.APPNonDBMItems[item].OctQty)
+                                        @Html.HiddenFor(modelItem => Model.APPNonDBMItems[item].NovQty)
+                                        @Html.HiddenFor(modelItem => Model.APPNonDBMItems[item].DecQty)
+                                        @Html.HiddenFor(modelItem => Model.APPNonDBMItems[item].PriceCatalogue)
                                         <td align="justify">
-                                            @Html.HiddenFor(modelItem => Model.APPNonDBMItems[item].ItemID)
-                                            @Html.HiddenFor(modelItem => Model.APPNonDBMItems[item].ItemSpecifications)
                                             <b>@Html.DisplayFor(modelItem => Model.APPNonDBMItems[item].ItemSpecifications)</b>
                                         </td>
                                         <td align="center">
-                                            @Html.HiddenFor(modelItem => Model.APPNonDBMItems[item].UnitOfMeasure)
                                             @Html.DisplayFor(modelItem => Model.APPNonDBMItems[item].UnitOfMeasure)
                                         </td>
                                         <td align="center">
@@ -363,15 +376,16 @@
             }
             else if (User.IsInRole(PUPFMIS.Models.SystemRoles.ProcurementAdministrator) || User.IsInRole(PUPFMIS.Models.SystemRoles.ProcurementPlanningChief))
             {
-                <button type="button" class="btn btn-md btn-danger" onclick="window.location = '@Url.Action("dashboard", "AnnualProcurementPlans", new { Area = "procurement" })'"><i class="fa fa-arrow-circle-left"></i> Back to Dashboard</button>
+                <button type="button" class="btn btn-md btn-danger" onclick="window.location = '@Url.Action("dashboard", "APPs", new { Area = "procurement" })'"><i class="fa fa-arrow-circle-left"></i> Back to Dashboard</button>
             }
             else
             {
-                <button type="button" class="btn btn-md btn-danger" onclick="window.location = '@Url.Action("dashboard", "AnnualProcurementPlans", new { Area = "procurement" })'"><i class="fa fa-arrow-circle-left"></i> Back to Dashboard</button>
+                <button type="button" class="btn btn-md btn-danger" onclick="window.location = '@Url.Action("dashboard", "APPs", new { Area = "procurement" })'"><i class="fa fa-arrow-circle-left"></i> Back to Dashboard</button>
             }
         </div>
     </div>
 }
+
 
 <script src="~/Scripts/adminlte/components/jquery/dist/jquery.min.js"></script>
 <script type="text/javascript">

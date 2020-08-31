@@ -20,6 +20,10 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
         public ActionResult Index(int FiscalYear)
         {
             BudgetPropsalVM budgetProposal = ppmpDAL.GetBudgetProposalDetails(User.Identity.Name, FiscalYear);
+            if(budgetProposal == null)
+            {
+                return HttpNotFound();
+            }
             return View("index", budgetProposal);
         }
 
@@ -85,10 +89,13 @@ namespace PUPFMIS.Areas.EndUsers.Controllers
             {
                 if(item.IsSelected == true)
                 {
-                    ppmpDAL.SubmitPPMP(item.ReferenceNo, User.Identity.Name);
+                    if(!ppmpDAL.SubmitPPMP(item.ReferenceNo, User.Identity.Name))
+                    {
+                        return Json(false);
+                    }
                 }
             }
-            return RedirectToAction("list", "ProjectProcurementManagementPlans", new { Area = "end-users", FiscalYear = BudgetProposal.FiscalYear });
+            return Json(true);
         }
         
         protected override void Dispose(bool disposing)
