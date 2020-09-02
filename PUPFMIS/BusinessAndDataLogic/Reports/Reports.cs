@@ -847,7 +847,7 @@ namespace PUPFMIS.BusinessAndDataLogic
                 var replacementWord = MakeFit(word, availableWidth, fontSize);
                 adjusted.Replace(word, replacementWord);
             }
-
+            
             return adjusted.ToString();
         }
         private static bool TooWide(string word, Unit width, Unit FontSize)

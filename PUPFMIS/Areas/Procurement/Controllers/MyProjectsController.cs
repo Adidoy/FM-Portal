@@ -217,7 +217,7 @@ namespace PUPFMIS.Areas.Procurement.Controllers
         }
 
         [ActionName("print-noa")]
-        [Route("notice-of-award/print")]
+        [Route("{PAPCode}/notice-of-award/print")]
         public ActionResult GenerateNOA(string PAPCode)
         {
             var stream = myProjectsBL.GenerateNoticeOfAward(PAPCode, Server.MapPath("~/Content/imgs/PUPLogo.png"), User.Identity.Name);
@@ -233,7 +233,7 @@ namespace PUPFMIS.Areas.Procurement.Controllers
         }
 
         [ActionName("print-purchase-order")]
-        [Route("purchase-order/print")]
+        [Route("{PAPCode}/purchase-order/print")]
         public ActionResult GeneratePurchaseOrder(string PAPCode)
         {
             var stream = myProjectsBL.GeneratePurchaseOrder(PAPCode, Server.MapPath("~/Content/imgs/PUPLogo.png"), User.Identity.Name);

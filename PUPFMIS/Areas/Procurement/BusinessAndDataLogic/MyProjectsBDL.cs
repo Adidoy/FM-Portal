@@ -370,11 +370,11 @@ namespace PUPFMIS.BusinessAndDataLogic
             {
                 rows = new List<ContentCell>();
                 rows.Add(new ContentCell(count.ToString(), 0, 9, false, false, ParagraphAlignment.Center, VerticalAlignment.Center, 0, 1));
-                rows.Add(new ContentCell(item.FKItemReference.FKIndividualUnitReference.UnitName, 1, 9, false, false, ParagraphAlignment.Center, VerticalAlignment.Center, 0, 1));
+                rows.Add(new ContentCell(item.FKItemReference.FKIndividualUnitReference.UnitName, 1, 8, false, false, ParagraphAlignment.Center, VerticalAlignment.Center, 0, 1));
                 rows.Add(new ContentCell(item.Quantity.ToString(), 2, 9, false, false, ParagraphAlignment.Center, VerticalAlignment.Center, 0, 1));
                 rows.Add(new ContentCell(item.FKItemReference.ItemFullName.ToString(), 3, 9, true, false, ParagraphAlignment.Left, VerticalAlignment.Center));
-                rows.Add(new ContentCell(String.Format("{0:0,000.00}", item.UnitCost), 4, 9, false, false, ParagraphAlignment.Right, VerticalAlignment.Center, 0, 1));
-                rows.Add(new ContentCell(String.Format("{0:0,000.00}",(item.UnitCost * item.Quantity)), 5, 9, false, false, ParagraphAlignment.Right, VerticalAlignment.Center, 0, 1));
+                rows.Add(new ContentCell(String.Format("{0:0,000.00}", item.UnitCost), 4, 8.5, false, false, ParagraphAlignment.Right, VerticalAlignment.Center, 0, 1));
+                rows.Add(new ContentCell(String.Format("{0:0,000.00}",(item.UnitCost * item.Quantity)), 5, 8.5, false, false, ParagraphAlignment.Right, VerticalAlignment.Center, 0, 1));
                 reports.AddRowContent(rows, 0.25);
 
                 rows = new List<ContentCell>();
@@ -386,7 +386,7 @@ namespace PUPFMIS.BusinessAndDataLogic
 
             if(count <= 20)
             {
-                for (int i = count; i < 25; i++)
+                for (int i = count; i < 15; i++)
                 {
                     rows = new List<ContentCell>();
                     rows.Add(new ContentCell("", 0, 9, false, false, ParagraphAlignment.Center, VerticalAlignment.Center));
@@ -400,16 +400,166 @@ namespace PUPFMIS.BusinessAndDataLogic
             }
 
             columns = new List<ContentColumn>();
-            columns.Add(new ContentColumn(1.875));
-            columns.Add(new ContentColumn(5.125));
-            columns.Add(new ContentColumn(1.00));
+            columns.Add(new ContentColumn(1.50));
+            columns.Add(new ContentColumn(4.50));
+            columns.Add(new ContentColumn(2.00));
             reports.AddTable(columns, false);
 
             rows = new List<ContentCell>();
             rows.Add(new ContentCell("(Total Amount in Words) ", 0, 9, false, false, ParagraphAlignment.Left, VerticalAlignment.Center, 0, 0, true, new Color(0, 0, 0), false, true, true));
-            rows.Add(new ContentCell(Reports.AmountToWords(procurementProgram.ProjectCost), 1, 9, false, false, ParagraphAlignment.Left, VerticalAlignment.Center, 0, 0, true, new Color(0, 0, 0), false, true, false));
-            rows.Add(new ContentCell(procurementProgram.ProjectCost.ToString("C", new System.Globalization.CultureInfo("en-ph")), 2, 9, false, false, ParagraphAlignment.Right, VerticalAlignment.Center, 0, 0, true, new Color(0, 0, 0), true, true, true));
-            reports.AddRowContent(rows, 0.25);
+            rows.Add(new ContentCell(Reports.AmountToWords(procurementProgram.ProjectCost).ToUpper() + "ONLY", 1, 10, true, false, ParagraphAlignment.Left, VerticalAlignment.Center, 0, 0, true, new Color(0, 0, 0), false, true, false));
+            rows.Add(new ContentCell(procurementProgram.ProjectCost.ToString("C", new System.Globalization.CultureInfo("en-ph")), 2, 10, false, false, ParagraphAlignment.Right, VerticalAlignment.Center, 0, 0, true, new Color(0, 0, 0), true, true, true));
+            reports.AddRowContent(rows, 0.50);
+
+            columns = new List<ContentColumn>();
+            columns.Add(new ContentColumn(8.00));
+            reports.AddTable(columns, false);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("\n\tIn case of failure to make the full delivery within the time specified above, a penalty of one-tenth (1/10) of one percent for every day of delay shall be imposed on the undelivered item/s.", 0, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), true, true, true));
+            reports.AddRowContent(rows, 0);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("\n\n", 0, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), true, true, true));
+            reports.AddRowContent(rows, 0);
+
+            columns = new List<ContentColumn>();
+            columns.Add(new ContentColumn(0.50));
+            columns.Add(new ContentColumn(3.00));
+            columns.Add(new ContentColumn(1.00));
+            columns.Add(new ContentColumn(3.00));
+            columns.Add(new ContentColumn(0.50));
+            reports.AddTable(columns, false);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("", 0, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), false, false, true));
+            rows.Add(new ContentCell("Conforme:", 1, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("", 2, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("Very truly yours,", 3, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("", 4, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), true, false, false));
+            reports.AddRowContent(rows, 0);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("\n\n\n", 0, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), false, false, true));
+            rows.Add(new ContentCell("\n\n\n", 1, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("\n\n\n", 2, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("\n\n\n", 3, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("\n\n\n", 4, 10, true, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), true, false, false));
+            reports.AddRowContent(rows, 0);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("", 0, 10, true, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), false, false, true));
+            rows.Add(new ContentCell("", 1, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 0, true, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("", 2, 10, true, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell(purchaseOrderHeader.AuthorizedSignature.ToUpper(), 3, 10, true, false, ParagraphAlignment.Center, VerticalAlignment.Center, 0, 0, true, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("", 4, 10, true, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), true, false, false));
+            reports.AddRowContent(rows, 0);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("", 0, 10, true, false, ParagraphAlignment.Center, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), false, false, true));
+            rows.Add(new ContentCell("Signature over Printed Name of Supplier", 1, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Top, 0, 0, false, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("", 2, 10, true, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("Signature over Printed Name of Authorized Official", 3, 9, false, false, ParagraphAlignment.Center, VerticalAlignment.Top, 0, 0, false, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("", 4, 10, true, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), true, false, false));
+            reports.AddRowContent(rows, 0);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("\n", 0, 10, true, false, ParagraphAlignment.Center, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), false, false, true));
+            rows.Add(new ContentCell("\n", 1, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Top, 0, 0, true, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("\n", 2, 10, true, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("\n" + purchaseOrderHeader.AuthorizedSignatureDesignation, 3, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Top, 0, 0, true, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("\n", 4, 10, true, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), true, false, false));
+            reports.AddRowContent(rows, 0);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("", 0, 10, true, false, ParagraphAlignment.Center, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), false, false, true));
+            rows.Add(new ContentCell("Date", 1, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Top, 0, 0, false, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("", 2, 10, true, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("Designation", 3, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Top, 0, 0, false, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("", 4, 10, true, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), true, false, false));
+            reports.AddRowContent(rows, 0);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("\n\n", 0, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 0, true, new Color(0, 0, 0), false, false, true));
+            rows.Add(new ContentCell("\n\n", 1, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 0, true, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("\n\n", 2, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 0, true, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("\n\n", 3, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 0, true, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("\n\n", 4, 10, true, false, ParagraphAlignment.Justify, VerticalAlignment.Center, 0, 0, true, new Color(0, 0, 0), true, false, false));
+            reports.AddRowContent(rows, 0);
+
+            columns = new List<ContentColumn>();
+            columns.Add(new ContentColumn(4.00));
+            columns.Add(new ContentColumn(1.00));
+            columns.Add(new ContentColumn(2.00));
+            columns.Add(new ContentColumn(1.00));
+            reports.AddTable(columns, false);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("\n", 0, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), true, false, true));
+            rows.Add(new ContentCell("\n", 1, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("\n", 2, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("\n", 3, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), true, false, false));
+            reports.AddRowContent(rows, 0);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("Funds Available:", 0, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), true, false, true));
+            rows.Add(new ContentCell("Amount:", 1, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell(procurementProgram.ProjectCost.ToString("C", new System.Globalization.CultureInfo("en-ph")), 2, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Bottom, 0, 0, true, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("", 3, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), true, false, false));
+            reports.AddRowContent(rows, 0);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("\n", 0, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), true, false, true));
+            rows.Add(new ContentCell("\n", 1, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("\n", 2, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("\n", 3, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), true, false, false));
+            reports.AddRowContent(rows, 0);
+
+            columns = new List<ContentColumn>();
+            columns.Add(new ContentColumn(0.50));
+            columns.Add(new ContentColumn(3.00));
+            columns.Add(new ContentColumn(0.50));
+            columns.Add(new ContentColumn(1.00));
+            columns.Add(new ContentColumn(2.00));
+            columns.Add(new ContentColumn(1.00));
+            reports.AddTable(columns, false);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("", 0, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), false, false, true));
+            rows.Add(new ContentCell(purchaseOrderHeader.ChiefAccountant.ToUpper(), 1, 10, true, false, ParagraphAlignment.Center, VerticalAlignment.Bottom, 0, 0, true, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("", 2, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), true, false, false));
+            rows.Add(new ContentCell("ALOBS NO.", 3, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), false, false, true));
+            rows.Add(new ContentCell("", 4, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Bottom, 0, 0, true, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("", 5, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), true, false, false));
+            reports.AddRowContent(rows, 0);
+
+            HRISDataAccess hris = new HRISDataAccess();
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("", 0, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), false, false, true));
+            rows.Add(new ContentCell(purchaseOrderHeader.ChiefAccountantDesignation + ", " + hris.GetDepartmentDetails(purchaseOrderHeader.ChiefAccountantOffice).Department, 1, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("", 2, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), true, false, false));
+            rows.Add(new ContentCell("", 3, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), false, true, true));
+            rows.Add(new ContentCell("", 4, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), false, true, false));
+            rows.Add(new ContentCell("", 5, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), true, true, false));
+            reports.AddRowContent(rows, 0);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("", 0, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), false, false, true));
+            rows.Add(new ContentCell("Chief Accountant", 1, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("", 2, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), true, false, false));
+            rows.Add(new ContentCell("", 3, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), false, true, true));
+            rows.Add(new ContentCell("", 4, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), false, true, false));
+            rows.Add(new ContentCell("", 5, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Bottom, 0, 0, false, new Color(0, 0, 0), true, true, false));
+            reports.AddRowContent(rows, 0);
+
+            rows = new List<ContentCell>();
+            rows.Add(new ContentCell("", 0, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Bottom, 0, 0, true, new Color(0, 0, 0), false, false, true));
+            rows.Add(new ContentCell("", 1, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Bottom, 0, 0, true, new Color(0, 0, 0), false, false, false));
+            rows.Add(new ContentCell("", 2, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Bottom, 0, 0, true, new Color(0, 0, 0), true, false, false));
+            rows.Add(new ContentCell("", 3, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Bottom, 0, 0, true, new Color(0, 0, 0), false, true, true));
+            rows.Add(new ContentCell("", 4, 10, false, false, ParagraphAlignment.Justify, VerticalAlignment.Bottom, 0, 0, true, new Color(0, 0, 0), false, true, false));
+            rows.Add(new ContentCell("", 5, 10, false, false, ParagraphAlignment.Center, VerticalAlignment.Bottom, 0, 0, true, new Color(0, 0, 0), true, true, false));
+            reports.AddRowContent(rows, 0);
 
             return reports.GenerateReport();
         }
@@ -712,8 +862,6 @@ namespace PUPFMIS.BusinessAndDataLogic
             {
                 procurementPrograms.ProjectStatus = "Notice of Award Created";
                 timeline.ActualNOAIssuance = ProcurementPrograms.ActualNOAIssuance;
-                procurementPrograms.ProjectCost = ProcurementPrograms.ProjectCost;
-                procurementPrograms.SupplierReference = ProcurementPrograms.Supplier;
                 db.SaveChanges();
             }
             if (timeline.NOASignedByHOPE == null && ProcurementPrograms.NOASignedByHOPE != null)

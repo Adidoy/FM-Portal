@@ -332,8 +332,7 @@
     }
 </div>
 <br />
-
-@if (Model.PurchaseRequestClosing != null && Model.ActualPreProcurementConference == null)
+@if (Model.PurchaseRequestClosing != null)
 {
     <div class="card card-info">
         <div class="card-header">
@@ -398,7 +397,7 @@
     <br />
 }
 
-@if(Model.ActualPreProcurementConference != null && Model.ActualPostingOfIB == null)
+@if(Model.ActualPreProcurementConference != null)
 {
     <div class="card card-info">
         <div class="card-header">
@@ -463,7 +462,7 @@
     <br />
 }
 
-@if (Model.ActualPostingOfIB != null && Model.ActualPreBidConference == null)
+@if (Model.ActualPostingOfIB != null)
 {
     <div class="card card-info">
         <div class="card-header">
@@ -528,7 +527,7 @@
     <br />
 }
 
-@if (Model.ActualPreBidConference != null && (Model.PrelimenryExamination == null && Model.DetailedExamination == null))
+@if (Model.ActualPreBidConference != null)
 {
     <div class="card card-info">
         <div class="card-header">
@@ -633,7 +632,7 @@
     <br />
 }
 
-@if ((Model.PrelimenryExamination != null && Model.DetailedExamination != null) && Model.ActualPostQualification == null)
+@if ((Model.PrelimenryExamination != null && Model.DetailedExamination != null))
 {
     <div class="card card-info">
         <div class="card-header">
@@ -927,10 +926,10 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-4 col-md-4 col-sm-12">
+                                        @Html.LabelFor(d => d.DateOfDelivery, htmlAttributes: new { @class = "control-label" })
                                         <div class="row">
                                             <div class="col-sm-4">
                                                 <div class="form-group">
-                                                    @Html.LabelFor(d => d.DateOfDelivery, htmlAttributes: new { @class = "control-label" })
                                                     <div class="input-group mb-3">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text"><i class="fa fa-calendar"></i></span>
@@ -956,7 +955,6 @@
                                                 </div>
                                             </div>
                                             <div class="col-sm-8">
-                                                <br />
                                                 <p class="mt-2"> days calendar days upon receipt of NTP</p>
                                             </div>
                                         </div>
@@ -1069,148 +1067,137 @@
                             <span style="font-size:14pt;"><b>NOTICE OF AWARD ISSUANCE</b></span>
                         </div>
                         <div class="card-body">
-                            <div class="row">
-                                <div class="col-lg-3 col-md-3 col-sm-12">
-                                    <div class="form-group">
-                                        @Html.LabelFor(d => d.ActualNOAIssuance, htmlAttributes: new { @class = "control-label" })
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                                            </div>
-                                            @if (Model.PMOReceived == null)
-                                            {
-                                                @Html.EditorFor(model => model.ActualNOAIssuance, new { htmlAttributes = new { @class = "form-control form-control-sm", Value = "Not Set", disabled = "disabled" } })
-                                            }
-                                            else
-                                            {
-                                                if (Model.ActualNOAIssuance == null)
+                            @using (Ajax.BeginForm("update-noa-issuance", "MyProjects", new { Area = "procurement" }, new AjaxOptions() { HttpMethod = "POST", OnSuccess = "NOAIssuanceResult" }, htmlAttributes: new { id = "noaissuance" }))
+                            {
+                                @Html.HiddenFor(d => d.PAPCode)
+                                <div class="row">
+                                    <div class="col-lg-4 col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            @Html.LabelFor(d => d.ActualNOAIssuance, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                                </div>
+                                                @if (Model.PMOReceived == null)
                                                 {
-                                                    @Html.EditorFor(model => model.ActualNOAIssuance, new { htmlAttributes = new { @class = "form-control form-control-sm", autocomplete = "off" } })
+                                                    @Html.EditorFor(model => model.ActualNOAIssuance, new { htmlAttributes = new { @class = "form-control form-control-sm", Value = "Not Set", disabled = "disabled" } })
                                                 }
                                                 else
                                                 {
-                                                    @Html.HiddenFor(d => d.ActualNOAIssuance)
-                                                    @Html.EditorFor(model => model.ActualNOAIssuance, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", Value = ((DateTime)Model.ActualNOAIssuance).ToString("dd MMMM yyyy") } })
+                                                    if (Model.ActualNOAIssuance == null)
+                                                    {
+                                                        @Html.EditorFor(model => model.ActualNOAIssuance, new { htmlAttributes = new { @class = "form-control form-control-sm", autocomplete = "off" } })
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.HiddenFor(d => d.ActualNOAIssuance)
+                                                        @Html.EditorFor(model => model.ActualNOAIssuance, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", Value = ((DateTime)Model.ActualNOAIssuance).ToString("dd MMMM yyyy") } })
+                                                    }
                                                 }
-                                            }
-                                        </div>
-                                        @Html.ValidationMessageFor(model => model.ActualNOAIssuance, "", new { @class = "text-danger", id = "valitade-PreProcurement" })
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-md-3 col-sm-12">
-                                    <div class="form-group">
-                                        @Html.LabelFor(d => d.ActualNOAIssuance, htmlAttributes: new { @class = "control-label" })
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                             </div>
-                                            @if (Model.PMOReceived == null)
-                                            {
-                                                @Html.EditorFor(model => model.ActualNOAIssuance, new { htmlAttributes = new { @class = "form-control form-control-sm", Value = "Not Set", disabled = "disabled" } })
-                                            }
-                                            else
-                                            {
-                                                if (Model.ActualNOAIssuance == null)
+                                            @Html.ValidationMessageFor(model => model.ActualNOAIssuance, "", new { @class = "text-danger", id = "valitade-PreProcurement" })
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            @Html.LabelFor(d => d.NOASignedByHOPE, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                                </div>
+                                                @if (Model.ActualNOAIssuance == null)
                                                 {
-                                                    @Html.EditorFor(model => model.ActualNOAIssuance, new { htmlAttributes = new { @class = "form-control form-control-sm", autocomplete = "off" } })
+                                                    @Html.EditorFor(model => model.NOASignedByHOPE, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", Value = "Not Set" } })
                                                 }
                                                 else
                                                 {
-                                                    @Html.HiddenFor(d => d.ActualNOAIssuance)
-                                                    @Html.EditorFor(model => model.ActualNOAIssuance, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", Value = ((DateTime)Model.ActualNOAIssuance).ToString("dd MMMM yyyy") } })
+                                                    if (Model.NOASignedByHOPE == null)
+                                                    {
+                                                        @Html.HiddenFor(d => d.PAPCode)
+                                                        @Html.EditorFor(model => model.NOASignedByHOPE, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.HiddenFor(d => d.NOASignedByHOPE)
+                                                        @Html.EditorFor(model => model.NOASignedByHOPE, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", Value = ((DateTime)Model.ActualNOAIssuance).ToString("dd MMMM yyyy") } })
+                                                    }
                                                 }
-                                            }
-                                        </div>
-                                        @Html.ValidationMessageFor(model => model.ActualNOAIssuance, "", new { @class = "text-danger", id = "valitade-PreProcurement" })
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-md-3 col-sm-12">
-                                    <div class="form-group">
-                                        @Html.LabelFor(d => d.ActualNOAIssuance, htmlAttributes: new { @class = "control-label" })
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                             </div>
-                                            @if (Model.ActualNOAIssuance == null)
-                                            {
-                                                @Html.EditorFor(model => model.NOASignedByHOPE, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", Value = "Not Set" } })
-                                            }
-                                            else
-                                            {
-                                                if (Model.NOASignedByHOPE == null)
+                                            @Html.ValidationMessageFor(model => model.NOASignedByHOPE, "", new { @class = "text-danger", id = "valitade-PreProcurement" })
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            @Html.LabelFor(d => d.NOAReceivedBySupplier, htmlAttributes: new { @class = "control-label" })
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                                </div>
+                                                @if (Model.ActualNOAIssuance == null)
                                                 {
-                                                    @Html.HiddenFor(d => d.PAPCode)
-                                                    @Html.EditorFor(model => model.NOASignedByHOPE, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
+                                                    @Html.EditorFor(model => model.NOAReceivedBySupplier, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", Value = "Not Set" } })
                                                 }
                                                 else
                                                 {
-                                                    @Html.HiddenFor(d => d.NOASignedByHOPE)
-                                                    @Html.EditorFor(model => model.NOASignedByHOPE, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", Value = ((DateTime)Model.ActualNOAIssuance).ToString("dd MMMM yyyy") } })
+                                                    if (Model.NOASignedByHOPE == null)
+                                                    {
+                                                        @Html.HiddenFor(d => d.PAPCode)
+                                                        @Html.EditorFor(model => model.NOAReceivedBySupplier, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.HiddenFor(d => d.NOAReceivedBySupplier)
+                                                        @Html.EditorFor(model => model.NOAReceivedBySupplier, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", Value = ((DateTime)Model.NOAReceivedBySupplier).ToString("dd MMMM yyyy") } })
+                                                    }
                                                 }
-                                            }
-                                        </div>
-                                        @Html.ValidationMessageFor(model => model.NOASignedByHOPE, "", new { @class = "text-danger", id = "valitade-PreProcurement" })
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-md-3 col-sm-12">
-                                    <div class="form-group">
-                                        @Html.LabelFor(d => d.NOAReceivedBySupplier, htmlAttributes: new { @class = "control-label" })
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                             </div>
-                                            @if (Model.ActualNOAIssuance == null)
-                                            {
-                                                @Html.EditorFor(model => model.NOAReceivedBySupplier, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", Value = "Not Set" } })
-                                            }
-                                            else
-                                            {
-                                                if (Model.NOASignedByHOPE == null)
-                                                {
-                                                    @Html.HiddenFor(d => d.PAPCode)
-                                                    @Html.EditorFor(model => model.NOAReceivedBySupplier, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
-                                                }
-                                                else
-                                                {
-                                                    @Html.HiddenFor(d => d.NOAReceivedBySupplier)
-                                                    @Html.EditorFor(model => model.NOAReceivedBySupplier, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", Value = ((DateTime)Model.NOAReceivedBySupplier).ToString("dd MMMM yyyy") } })
-                                                }
-                                            }
+                                            @Html.ValidationMessageFor(model => model.NOASignedByHOPE, "", new { @class = "text-danger", id = "valitade-PreProcurement" })
                                         </div>
-                                        @Html.ValidationMessageFor(model => model.NOASignedByHOPE, "", new { @class = "text-danger", id = "valitade-PreProcurement" })
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    @Html.LabelFor(d => d.NOAIssuanceRemarks, htmlAttributes: new { @class = "control-label" })
-                                    @if (Model.ActualNOAIssuance == null)
-                                    {
-                                        @Html.EditorFor(model => model.NOAIssuanceRemarks, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
-                                    }
-                                    else
-                                    {
-                                        if (Model.NOAIssuanceRemarks == null)
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        @Html.LabelFor(d => d.NOAIssuanceRemarks, htmlAttributes: new { @class = "control-label" })
+                                        @if (Model.ActualNOAIssuance == null)
                                         {
-                                            @Html.EditorFor(model => model.NOAIssuanceRemarks, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
+                                            @Html.EditorFor(model => model.NOAIssuanceRemarks, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
                                         }
                                         else
                                         {
-                                            @Html.HiddenFor(d => d.NOAIssuanceRemarks)
-                                            @Html.EditorFor(model => model.NOAIssuanceRemarks, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", Value = Model.NOAIssuanceRemarks } })
+                                            if (Model.NOAIssuanceRemarks == null)
+                                            {
+                                                @Html.EditorFor(model => model.NOAIssuanceRemarks, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
+                                            }
+                                            else
+                                            {
+                                                @Html.HiddenFor(d => d.NOAIssuanceRemarks)
+                                                @Html.EditorFor(model => model.NOAIssuanceRemarks, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", Value = Model.NOAIssuanceRemarks } })
+                                            }
                                         }
-                                    }
-                                    @Html.ValidationMessageFor(model => model.NOAIssuanceRemarks, "", new { @class = "text-danger" })
+                                        @Html.ValidationMessageFor(model => model.NOAIssuanceRemarks, "", new { @class = "text-danger" })
+                                    </div>
                                 </div>
-                            </div>
+                            }
                         </div>
-                        @if (Model.NOAReceivedBySupplier == null && Model.PMOReceived != null)
+                        @if (Model.POCreatedAt == null && Model.PMOReceived != null)
                         {
                             <div class="card-footer">
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div style="text-align:right;">
                                             <button class="btn btn-md btn-primary" onclick='UpdateNoticeOfAward()' id="btn-update"><i class="fa fa-edit"></i> Update this Activity</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        @if (Model.NOAReceivedBySupplier == null && Model.POCreatedAt != null)
+                        {
+                            <div class="card-footer">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div style="text-align:right;">
+                                            <button class="btn btn-md btn-primary" onclick='UpdateNOAIssuance()' id="btn-update"><i class="fa fa-edit"></i> Update this Activity</button>
                                         </div>
                                     </div>
                                 </div>

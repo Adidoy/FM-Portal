@@ -387,6 +387,48 @@
             $('span[data-valmsg-for="' + data.property + '"]').text(data.result)
         }
     }
+
+    function UpdateNOAIssuance() {
+        swal.fire({
+            title: "Update this Activity?",
+            text: "You are about to update Notice of Award activity, continue?",
+            type: "warning",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#noaissuance").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    type: "error"
+                })
+            }
+        })
+    }
+    function NOAIssuanceResult(data) {
+        if (data.noError == true && data.result == true) {
+            swal.fire({
+                title: "Activity Updated!",
+                text: "Notice of Award Activity is successfully updated.",
+                type: "success"
+            }).then((result) => {
+                if (result.value) {
+                    window.location = '@Url.Action("details", "MyProjects", new { Area = "procurement", PAPCode = Model.PAPCode })'
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                type: "error"
+            })
+            $('span[data-valmsg-for="' + data.property + '"]').text(data.result)
+        }
+    }
+
 </script>
 <script type="text/javascript">
     $(function () {
@@ -534,7 +576,7 @@
             changeYear: true,
             changeMonth: true,
             format: "MM dd, yyyy",
-            startDate: new Date('@( Model.PMOReceived == null ? DateTime.Now.ToString("MM/dd/yyyy") : ((DateTime)Model.PMOReceived).ToString("MM/dd/yyyy"))'),
+            startDate: new Date('@( Model.POCreatedAt == null ? DateTime.Now.ToString("MM/dd/yyyy") : ((DateTime)Model.POCreatedAt).ToString("MM/dd/yyyy"))'),
             autoclose: true
         });
     })
