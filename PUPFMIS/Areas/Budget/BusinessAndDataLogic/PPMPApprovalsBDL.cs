@@ -380,29 +380,65 @@ namespace PUPFMIS.BusinessAndDataLogic
                 }
             }
 
-            foreach (var item in ppmpEvaluation.NewSpendingItems.GroupBy(d => d.ReferenceNo))
+            foreach (var item in ppmpEvaluation.NewSpendingItems.GroupBy(d => new { d.ReferenceNo, d.IsTangible }))
             {
-                var ppmpHeader = db.PPMPHeader.Where(d => d.ReferenceNo == item.Key).FirstOrDefault();
-                ppmpHeader.ABC = item.Where(d => d.ApprovalAction == "Approved").Sum(d => d.EstimatedCost);
-                ppmpHeader.Status = "PPMP Evaluated";
-                ppmpHeader.ApprovedAt = DateTime.Now;
-                if(db.SaveChanges() == 0)
+                if(item.Key.IsTangible)
                 {
-                    return false;
+                    var ppmpUnevaluatedCount = db.ProjectPlanItems.Where(d => d.Status == "Posted" && d.FKPPMPReference.ReferenceNo == item.Key.ReferenceNo).Count();
+                    if(ppmpUnevaluatedCount == 0)
+                    {
+                        var ppmpHeader = db.PPMPHeader.Where(d => d.ReferenceNo == item.Key.ReferenceNo).FirstOrDefault();
+                        ppmpHeader.ABC = item.Where(d => d.ApprovalAction == "Approved").Sum(d => d.EstimatedCost);
+                        ppmpHeader.Status = "PPMP Evaluated";
+                        ppmpHeader.ApprovedAt = DateTime.Now;
+                        if (db.SaveChanges() == 0)
+                        {
+                            return false;
+                        }
+                        var switchBoard = db.SwitchBoard.Where(d => d.Reference == ppmpHeader.ReferenceNo).FirstOrDefault();
+                        var switchBoardBody = new SwitchBoardBody
+                        {
+                            SwitchBoardReference = switchBoard.ID,
+                            UpdatedAt = DateTime.Now,
+                            DepartmentCode = employee.DepartmentCode,
+                            ActionBy = employee.EmployeeCode,
+                            Remarks = ppmpHeader.ReferenceNo + " has been evaluated by " + employee.EmployeeName + ", " + employee.Designation + " and is now subject to Annual Procurement Plan Posting. (" + DateTime.Now.ToString("dd MMMM yyyy hh:mm tt") + ")"
+                        };
+                        db.SwitchBoardBody.Add(switchBoardBody);
+                        if (db.SaveChanges() == 0)
+                        {
+                            return false;
+                        }
+                    }
                 }
-                var switchBoard = db.SwitchBoard.Where(d => d.Reference == ppmpHeader.ReferenceNo).FirstOrDefault();
-                var switchBoardBody = new SwitchBoardBody
+                if (!item.Key.IsTangible)
                 {
-                    SwitchBoardReference = switchBoard.ID,
-                    UpdatedAt = DateTime.Now,
-                    DepartmentCode = employee.DepartmentCode,
-                    ActionBy = employee.EmployeeCode,
-                    Remarks = ppmpHeader.ReferenceNo + " has been evaluated by " + employee.EmployeeName + ", " + employee.Designation + " and is now subject to Annual Procurement Plan Posting. (" + DateTime.Now.ToString("dd MMMM yyyy hh:mm tt") + ")"
-                };
-                db.SwitchBoardBody.Add(switchBoardBody);
-                if (db.SaveChanges() == 0)
-                {
-                    return false;
+                    var ppmpUnevaluatedCount = db.ProjectPlanServices.Where(d => d.Status == null && d.FKPPMPReference.ReferenceNo == item.Key.ReferenceNo).Count();
+                    if (ppmpUnevaluatedCount == 0)
+                    {
+                        var ppmpHeader = db.PPMPHeader.Where(d => d.ReferenceNo == item.Key.ReferenceNo).FirstOrDefault();
+                        ppmpHeader.ABC = item.Where(d => d.ApprovalAction == "Approved").Sum(d => d.EstimatedCost);
+                        ppmpHeader.Status = "PPMP Evaluated";
+                        ppmpHeader.ApprovedAt = DateTime.Now;
+                        if (db.SaveChanges() == 0)
+                        {
+                            return false;
+                        }
+                        var switchBoard = db.SwitchBoard.Where(d => d.Reference == ppmpHeader.ReferenceNo).FirstOrDefault();
+                        var switchBoardBody = new SwitchBoardBody
+                        {
+                            SwitchBoardReference = switchBoard.ID,
+                            UpdatedAt = DateTime.Now,
+                            DepartmentCode = employee.DepartmentCode,
+                            ActionBy = employee.EmployeeCode,
+                            Remarks = ppmpHeader.ReferenceNo + " has been evaluated by " + employee.EmployeeName + ", " + employee.Designation + " and is now subject to Annual Procurement Plan Posting. (" + DateTime.Now.ToString("dd MMMM yyyy hh:mm tt") + ")"
+                        };
+                        db.SwitchBoardBody.Add(switchBoardBody);
+                        if (db.SaveChanges() == 0)
+                        {
+                            return false;
+                        }
+                    }
                 }
             }
             foreach(var item in ppmpEvaluation.NewSpendingItems.Where(d => d.ApprovalAction == "Approved").GroupBy(d => d.ProjectCode).Select(d => d.Key).ToList())
