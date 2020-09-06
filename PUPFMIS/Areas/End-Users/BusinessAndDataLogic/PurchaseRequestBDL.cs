@@ -387,6 +387,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
             var fiscalYear = db.ProcurementPrograms.Where(d => d.PAPCode == ProcurementProgram.PAPCode).FirstOrDefault().FKAPPHeaderReference.FiscalYear;
             var office = hris.GetFullDepartmentDetails(user.DepartmentCode);
+            var officeRoot = hris.GetAllDepartments().Where(d => d.DepartmentCode == office.DepartmentCode).FirstOrDefault().RootID;
             var items = db.ProjectPlanItems.Where(d => d.APPLineReference == ProcurementProgram.PAPCode && d.Status == "P/R Submission Open" && d.FKPPMPReference.Department == user.DepartmentCode).ToList();
             var services = db.ProjectPlanServices.Where(d => d.APPLineReference == ProcurementProgram.PAPCode && d.Status == "P/R Submission Open" && d.FKPPMPReference.Department == user.DepartmentCode).ToList();
 
@@ -416,6 +417,33 @@ namespace PUPFMIS.BusinessAndDataLogic
                 }
             }
 
+            var requestedBy = string.Empty;
+            var requestedByDesignation = string.Empty;
+            var requestedByOffice = string.Empty;
+            var approvedBy = string.Empty;
+            var approvedByDesignation = string.Empty;
+            var approvedByOffice = string.Empty;
+
+            if(officeRoot == 0)
+            {
+                var deptOfficials = hris.GetDepartmentOfficials(office.DepartmentCode).Where(d => d.Designation.Contains("Assistant to the")).FirstOrDefault();
+                requestedBy = deptOfficials.EmployeeName;
+                requestedByDesignation = deptOfficials.Designation;
+                requestedByOffice = office.DepartmentCode;
+                approvedBy = office.DepartmentHead;
+                approvedByDesignation = office.DepartmentHeadDesignation;
+                approvedByOffice = office.DepartmentCode;
+            }
+            else
+            {
+                requestedBy = office.DepartmentHead;
+                requestedByDesignation = office.DepartmentHeadDesignation;
+                requestedByOffice = office.DepartmentCode;
+                approvedBy = office.SectorHead;
+                approvedByDesignation = office.SectorHeadDesignation;
+                approvedByOffice = office.SectorCode;
+            }
+
             var purchaseRequestHeader = new PurchaseRequestHeader
             {
                 FiscalYear = fiscalYear,
@@ -424,12 +452,12 @@ namespace PUPFMIS.BusinessAndDataLogic
                 Department = office.DepartmentCode,
                 FundCluster = ProcurementProgram.FundCluster,
                 Purpose = Purpose,
-                RequestedBy = office.DepartmentHead,
-                RequestedByDesignation = office.DepartmentHeadDesignation,
-                RequestedByDepartment = office.DepartmentCode,
-                ApprovedBy = office.SectorHead,
-                ApprovedByDesignation = office.SectorHeadDesignation,
-                ApprovedByDepartment = office.SectorCode,
+                RequestedBy =  requestedBy,
+                RequestedByDesignation = requestedByDesignation,
+                RequestedByDepartment = requestedByOffice,
+                ApprovedBy = approvedBy,
+                ApprovedByDesignation = approvedByDesignation,
+                ApprovedByDepartment = approvedByOffice,
                 CreatedBy = user.EmpCode,
                 CreatedAt = DateTime.Now
             };
