@@ -670,7 +670,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             List<ApprovedItems> approvedItems = new List<ApprovedItems>();
             approvedItems.AddRange(dbmSupplies);
             approvedItems.AddRange(nonDBMSupplies);
-            approvedItems.AddRange(emergencySupplies);
+            //approvedItems.AddRange(emergencySupplies);
             approvedItems.AddRange(projectItems.OrderBy(d => d.ItemName).ToList());
             approvedItems.AddRange(projectServices.OrderBy(d => d.ItemName).ToList());
 
@@ -847,7 +847,8 @@ namespace PUPFMIS.BusinessAndDataLogic
                     PPMPReferences = ppmpReference == string.Empty ? null : ppmpReference,
                     ProjectStatus = "For Assingment",
                     IsInstitutional = item.IsInstitutional,
-                    IsTangible = item.IsTangible
+                    IsTangible = item.IsTangible,
+                    IsAccepted = false
                 });
 
                 itemNo++;
@@ -897,7 +898,8 @@ namespace PUPFMIS.BusinessAndDataLogic
                         PPMPReferences = plan.ReferenceNo,
                         ProjectStatus = "For Assingment",
                         IsInstitutional = item.IsInstitutional,
-                        IsTangible = item.IsTangible
+                        IsTangible = item.IsTangible,
+                        IsAccepted = false
                     });
                 }
             }
