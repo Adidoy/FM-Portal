@@ -114,7 +114,7 @@ namespace PUPFMIS.BusinessAndDataLogic
 
             var itemAccountsList = (from ppmpLineItems in ppmpItems
                                     join accountsList in accounts
-                                    on  ppmpLineItems.FKItemReference.FKItemTypeReference.AccountClass equals accountsList.UACS_Code
+                                    on  ppmpLineItems.FKItemReference.FKItemTypeReference.UACSObjectClass equals accountsList.UACS_Code
                                     select new
                                     {
                                         UACS = accountsList.UACS_Code,
@@ -124,7 +124,7 @@ namespace PUPFMIS.BusinessAndDataLogic
 
             var serviceAccountsList = (from ppmpServiceList in ppmpService
                                     join accountsList in accounts
-                                    on ppmpServiceList.FKItemReference.FKItemTypeReference.AccountClass equals accountsList.UACS_Code
+                                    on ppmpServiceList.FKItemReference.FKItemTypeReference.UACSObjectClass equals accountsList.UACS_Code
                                     select new
                                     {
                                         UACS = accountsList.UACS_Code,
@@ -148,7 +148,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             var ppmpItemDetails = (from ppmpItems in db.ProjectPlanItems
                                    join projectItems in db.ProjectPlanItems
                                    on new { ProjectReference = ppmpItems.ProjectReference,  ItemReference = ppmpItems.ItemReference } equals new { ProjectReference = projectItems.ProjectReference, ItemReference = projectItems.ItemReference }
-                                   where ppmpItems.FKPPMPReference.FiscalYear == FiscalYear && ppmpItems.FKPPMPReference.Department == DepartmentCode && ppmpItems.FKItemReference.FKItemTypeReference.AccountClass == UACS && projectItems.ProposalType == BudgetProposalType.NewProposal && ppmpItems.Status == "Posted"
+                                   where ppmpItems.FKPPMPReference.FiscalYear == FiscalYear && ppmpItems.FKPPMPReference.Department == DepartmentCode && ppmpItems.FKItemReference.FKItemTypeReference.UACSObjectClass == UACS && projectItems.ProposalType == BudgetProposalType.NewProposal && ppmpItems.Status == "Posted"
                                    select new AccountLineItem
                                    {
                                        ApprovalAction = "Approved",
@@ -171,7 +171,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             var ppmpServiceDetails = (from ppmpService in db.ProjectPlanServices
                                       join projectService in db.ProjectPlanServices
                                       on new { ProjectReference = ppmpService.ProjectReference, ServiceReference = ppmpService.ItemReference } equals new { ProjectReference = projectService.ProjectReference, ServiceReference = projectService.ItemReference }
-                                      where ppmpService.FKPPMPReference.FiscalYear == FiscalYear && ppmpService.FKPPMPReference.Department == DepartmentCode && ppmpService.FKItemReference.FKItemTypeReference.AccountClass == UACS && projectService.ProposalType == BudgetProposalType.NewProposal && ppmpService.Status == "Posted"
+                                      where ppmpService.FKPPMPReference.FiscalYear == FiscalYear && ppmpService.FKPPMPReference.Department == DepartmentCode && ppmpService.FKItemReference.FKItemTypeReference.UACSObjectClass == UACS && projectService.ProposalType == BudgetProposalType.NewProposal && ppmpService.Status == "Posted"
                                       select new AccountLineItem
                                       {
                                           ApprovalAction = "Approved",
@@ -196,8 +196,8 @@ namespace PUPFMIS.BusinessAndDataLogic
         }
         public decimal GetNewSpendingProposalAmount(string UACS, string DepartmentCode, int FiscalYear)
         {
-            var projectItems = db.ProjectPlanItems.Where(d => d.FKItemReference.FKItemTypeReference.AccountClass == UACS && d.FKPPMPReference.Department == DepartmentCode && d.FKPPMPReference.FiscalYear == FiscalYear && d.ProposalType == BudgetProposalType.NewProposal && d.Status == "Posted").ToList();
-            var projectServices = db.ProjectPlanServices.Where(d => d.FKItemReference.FKItemTypeReference.AccountClass == UACS && d.FKPPMPReference.Department == DepartmentCode && d.FKPPMPReference.FiscalYear == FiscalYear && d.ProposalType == BudgetProposalType.NewProposal && d.Status == "Posted").ToList();
+            var projectItems = db.ProjectPlanItems.Where(d => d.FKItemReference.FKItemTypeReference.UACSObjectClass == UACS && d.FKPPMPReference.Department == DepartmentCode && d.FKPPMPReference.FiscalYear == FiscalYear && d.ProposalType == BudgetProposalType.NewProposal && d.Status == "Posted").ToList();
+            var projectServices = db.ProjectPlanServices.Where(d => d.FKItemReference.FKItemTypeReference.UACSObjectClass == UACS && d.FKPPMPReference.Department == DepartmentCode && d.FKPPMPReference.FiscalYear == FiscalYear && d.ProposalType == BudgetProposalType.NewProposal && d.Status == "Posted").ToList();
             var newSpendingItemsAmount = projectItems.Count == 0 ? 0.00m : projectItems.Sum(d => d.ProjectEstimatedBudget);
             var newSpendingServiceAmount = projectServices.Count == 0 ? 0.00m : projectServices.Sum(d => d.ProjectEstimatedBudget);
             var newSpendingProposalAmount = newSpendingItemsAmount + newSpendingServiceAmount;
@@ -209,7 +209,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             List<PPMPReferences> ppmps = new List<PPMPReferences>();
             var ppmpItemList = (from ppmp in db.PPMPHeader
                                 join ppmpItems in db.ProjectPlanItems on ppmp.ID equals ppmpItems.PPMPReference
-                                where ppmp.Department == office.DepartmentCode && ppmpItems.Status == "Posted" && ppmp.Status == "PPMP Submitted" && ppmpItems.FKItemReference.FKItemTypeReference.AccountClass == UACS
+                                where ppmp.Department == office.DepartmentCode && ppmpItems.Status == "Posted" && ppmp.Status == "PPMP Submitted" && ppmpItems.FKItemReference.FKItemTypeReference.UACSObjectClass == UACS
                                 select new
                                 {
                                     ReferenceNo = ppmp.ReferenceNo,
@@ -225,7 +225,7 @@ namespace PUPFMIS.BusinessAndDataLogic
 
             var ppmpServiceList = (from ppmp in db.PPMPHeader
                                    join ppmpServices in db.ProjectPlanServices on ppmp.ID equals ppmpServices.PPMPReference
-                                   where ppmp.Department == office.DepartmentCode && ppmpServices.Status == "Posted" && ppmp.Status == "PPMP Submitted" && ppmpServices.FKItemReference.FKItemTypeReference.AccountClass == UACS
+                                   where ppmp.Department == office.DepartmentCode && ppmpServices.Status == "Posted" && ppmp.Status == "PPMP Submitted" && ppmpServices.FKItemReference.FKItemTypeReference.UACSObjectClass == UACS
                                    select new
                                    {
                                        ReferenceNo = ppmp.ReferenceNo,

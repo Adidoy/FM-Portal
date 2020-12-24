@@ -91,7 +91,7 @@
                 {
                     <tr>
                         <td style="text-align:center;">@Html.DisplayFor(modelItem => item)</td>
-                        <td style="text-align:center;"><button class="btn btn-primary btn-sm" onclick="window.location = '@Url.Action("create-cse", "AnnualProcurementPlans", new { Area = "property-and-supplies", FiscalYear = item })'"><i class="fa fa-plus"></i> Generate APP-CSE</button></td>
+                        <td style="text-align:center;"><button class="btn btn-primary btn-sm" onclick="window.location = '@Url.Action("create-cse", "APP_CSE", new { Area = "property-and-supplies", FiscalYear = item })'"><i class="fa fa-plus"></i> Generate APP-CSE</button></td>
                     </tr>
                 }
             </tbody>
@@ -112,7 +112,7 @@
                 {
                     <tr>
                         <td style="text-align:center;">@Html.DisplayFor(modelItem => item)</td>
-                        <td><a href="@Url.Action("print-app-cse", "AnnualProcurementPlans", new { Area = "property-and-supplies", ReferenceNo = item })" target="_blank" class="btn btn-sm btn-primary"><i class="fa fa-download"></i>&nbsp; Download</a></td>
+                        <td><a href="@Url.Action("print-app-cse", "APP_CSE", new { Area = "property-and-supplies", ReferenceNo = item })" target="_blank" class="btn btn-sm btn-primary"><i class="fa fa-download"></i>&nbsp; Download</a></td>
                     </tr>
                 }
             </tbody>

@@ -596,17 +596,17 @@ namespace PUPFMIS.BusinessAndDataLogic
         public int GetTotalProjectsAssigned(string Email)
         {
             var empCode = db.UserAccounts.Where(d => d.Email == Email).FirstOrDefault().EmpCode;
-            return db.ProcurementPrograms.Where(d => d.ProjectCoordinator == empCode || d.ProjectSupport == empCode).Count();
+            return db.APPDetails.Where(d => d.ProjectCoordinator == empCode || d.ProjectSupport == empCode).Count();
         }
         public int GetTotalProjectsCoordinated(string Email)
         {
             var empCode = db.UserAccounts.Where(d => d.Email == Email).FirstOrDefault().EmpCode;
-            return db.ProcurementPrograms.Where(d => d.ProjectCoordinator == empCode).Count();
+            return db.APPDetails.Where(d => d.ProjectCoordinator == empCode).Count();
         }
         public int GetTotalProjectsupported(string Email)
         {
             var empCode = db.UserAccounts.Where(d => d.Email == Email).FirstOrDefault().EmpCode;
-            return db.ProcurementPrograms.Where(d => d.ProjectSupport == empCode).Count();
+            return db.APPDetails.Where(d => d.ProjectSupport == empCode).Count();
         }
         public List<Supplier> GetSuppliers()
         {
@@ -614,8 +614,9 @@ namespace PUPFMIS.BusinessAndDataLogic
         }
         public bool OpenPRSubmission(string PAPCode, int ModeOfProcurement)
         {
+            var appDetails = db.APPDetails.Where(d => d.PAPCode == PAPCode).First();
             var procurementTimeline = db.ProcurementTimeline.Where(d => d.PAPCode == PAPCode).FirstOrDefault();
-            var procurementProgram = db.ProcurementPrograms.Where(d => d.PAPCode == PAPCode).FirstOrDefault();
+            var procurementProgram = db.APPDetails.Where(d => d.PAPCode == PAPCode).FirstOrDefault();
             if(procurementTimeline == null)
             {
                 procurementTimeline = new ProcurementTimeline
@@ -624,14 +625,14 @@ namespace PUPFMIS.BusinessAndDataLogic
                     PurchaseRequestSubmission = DateTime.Now,
                 };
                 db.ProcurementTimeline.Add(procurementTimeline);
-                procurementProgram.ModeOfProcurementReference = ModeOfProcurement;
+                //procurementProgram.ModeOfProcurementReference = ModeOfProcurement;
                 if (db.SaveChanges() == 0)
                 {
                     return false;
                 }
             }
 
-            var items = db.ProjectPlanItems.Where(d => d.APPLineReference == PAPCode).ToList();
+            var items = db.ProjectPlanItems.Where(d => d.APPLineReference == appDetails.ID).ToList();
             if(items.Count > 0)
             {
                 items.ForEach(d => { d.Status = "P/R Submission Open"; });
@@ -641,7 +642,7 @@ namespace PUPFMIS.BusinessAndDataLogic
                 }
             }
 
-            var services = db.ProjectPlanServices.Where(d => d.APPLineReference == PAPCode).ToList();
+            var services = db.ProjectPlanServices.Where(d => d.APPLineReference == appDetails.ID).ToList();
             if(services.Count > 0)
             {
                 services.ForEach(d => { d.Status = "P/R Submission Open"; });
@@ -661,7 +662,7 @@ namespace PUPFMIS.BusinessAndDataLogic
         }
         public bool ClosePRSubmission(string PAPCode)
         {
-            var procurementProgram = db.ProcurementPrograms.Where(d => d.PAPCode == PAPCode).FirstOrDefault();
+            var procurementProgram = db.APPDetails.Where(d => d.PAPCode == PAPCode).FirstOrDefault();
             var procurementTimeline = db.ProcurementTimeline.Where(d => d.PAPCode == PAPCode).FirstOrDefault();
             procurementProgram.ProjectStatus = "PR Submission Closed";
             procurementTimeline.PurchaseRequestClosing = DateTime.Now;
@@ -675,7 +676,7 @@ namespace PUPFMIS.BusinessAndDataLogic
         {
             var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
             var procurementProjectList = new List<ProcurementProjectsVM>();
-            var procurementPrograms = db.ProcurementPrograms.Where(d => d.PPMPReferences != null && (d.ProjectCoordinator == user.EmpCode || d.ProjectSupport == user.EmpCode)).ToList();
+            var procurementPrograms = db.APPDetails.Where(d => (d.ProjectCoordinator == user.EmpCode || d.ProjectSupport == user.EmpCode)).ToList();
 
             foreach (var item in procurementPrograms)
             {
@@ -726,7 +727,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             }
             if(timeline.ActualPreProcurementConference == null && ProcurementPrograms.ActualPreProcurementConference != null)
             {
-                var procurementProgram = db.ProcurementPrograms.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
+                var procurementProgram = db.APPDetails.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
                 procurementProgram.ProjectStatus = "Pre-Procurement Conference Conducted";
                 timeline.ActualPreProcurementConference = ProcurementPrograms.ActualPreProcurementConference;
                 timeline.PreProcurementConferenceRemarks = ProcurementPrograms.PreProcurementConferenceRemarks;
@@ -750,7 +751,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             }
             if (timeline.ActualPostingOfIB == null && ProcurementPrograms.ActualPostingOfIB != null)
             {
-                var procurementProgram = db.ProcurementPrograms.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
+                var procurementProgram = db.APPDetails.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
                 procurementProgram.ProjectStatus = "PhilGEPS Posting Done";
                 timeline.ActualPostingOfIB = ProcurementPrograms.ActualPostingOfIB;
                 timeline.PostingOfIBRemarks = ProcurementPrograms.PostingOfIBRemarks;
@@ -774,7 +775,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             }
             if (timeline.ActualPreBidConference == null && ProcurementPrograms.ActualPreBidConference != null)
             {
-                var procurementProgram = db.ProcurementPrograms.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
+                var procurementProgram = db.APPDetails.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
                 procurementProgram.ProjectStatus = "Pre-Bid Conference Conducted";
                 timeline.ActualPreBidConference = ProcurementPrograms.ActualPreBidConference;
                 timeline.PreBidConferenceRemarks = ProcurementPrograms.PreBidConferenceRemarks;
@@ -798,7 +799,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             }
             if ((timeline.PrelimenryExamination == null && ProcurementPrograms.PrelimenryExamination != null) && (timeline.DetailedExamination == null && ProcurementPrograms.DetailedExamination != null && (timeline.EvaluationReporting == null && ProcurementPrograms.EvaluationReporting != null)))
             {
-                var procurementProgram = db.ProcurementPrograms.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
+                var procurementProgram = db.APPDetails.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
                 procurementProgram.ProjectStatus = "Bids Evaluated";
                 timeline.PrelimenryExamination = ProcurementPrograms.PrelimenryExamination;
                 timeline.DetailedExamination = ProcurementPrograms.DetailedExamination;
@@ -824,7 +825,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             }
             if ((timeline.ActualPostQualification == null && ProcurementPrograms.ActualPostQualification != null) && (timeline.PostQualificationReportedToBAC == null && ProcurementPrograms.PostQualificationReportedToBAC != null))
             {
-                var procurementProgram = db.ProcurementPrograms.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
+                var procurementProgram = db.APPDetails.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
                 procurementProgram.ProjectStatus = "Post Qualification";
                 timeline.ActualPostQualification = ProcurementPrograms.ActualPostQualification;
                 timeline.PostQualificationReportedToBAC = ProcurementPrograms.PostQualificationReportedToBAC;
@@ -839,7 +840,7 @@ namespace PUPFMIS.BusinessAndDataLogic
         public bool UpdateBACResoNoticeOfAward(ProcurementProjectsVM ProcurementPrograms, string UserEmail)
         {
             var timeline = db.ProcurementTimeline.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
-            var procurementPrograms = db.ProcurementPrograms.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
+            var procurementPrograms = db.APPDetails.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
             if (timeline.PMOReceived == null && ProcurementPrograms.PMOReceived != null)
             {
                 timeline.BACResolutionCreated = ProcurementPrograms.BACResolutionCreated;
@@ -856,7 +857,7 @@ namespace PUPFMIS.BusinessAndDataLogic
         public bool UpdateNoticeOfAwardIssuance(ProcurementProjectsVM ProcurementPrograms, string UserEmail)
         {
             var timeline = db.ProcurementTimeline.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
-            var procurementPrograms = db.ProcurementPrograms.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
+            var procurementPrograms = db.APPDetails.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
 
             if (timeline.ActualNOAIssuance == null && ProcurementPrograms.ActualNOAIssuance != null)
             {
@@ -882,10 +883,11 @@ namespace PUPFMIS.BusinessAndDataLogic
         }
         public bool UpdateContractDetails(ProcurementProjectsVM ProcurementPrograms, string UserEmail)
         {
+            var appDetails = db.APPDetails.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).First();
             var agencyDetails = db.AgencyDetails.FirstOrDefault();
             var chiefAccountant = hris.GetFullDepartmentDetails(agencyDetails.AccountingOfficeReference);
             var authorizedSignature = hris.GetFullDepartmentDetails(agencyDetails.HOPEReference);
-            var procurementProgram = db.ProcurementPrograms.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
+            var procurementProgram = db.APPDetails.Where(d => d.PAPCode == ProcurementPrograms.PAPCode).FirstOrDefault();
 
             var projectCost = 0.00m;
             foreach(var item in ProcurementPrograms.Items)
@@ -895,7 +897,7 @@ namespace PUPFMIS.BusinessAndDataLogic
 
             if(ProcurementPrograms.IsTangible)
             {
-                var projectItems = db.ProjectPlanItems.Where(d => d.APPLineReference == ProcurementPrograms.PAPCode).ToList();
+                var projectItems = db.ProjectPlanItems.Where(d => d.APPLineReference == appDetails.ID).ToList();
 
                 var purchaseOrderHeader = new PurchaseOrderHeader
                 {
@@ -903,7 +905,6 @@ namespace PUPFMIS.BusinessAndDataLogic
                     SupplierReference  = (int)ProcurementPrograms.Supplier,
                     PlaceOfDelivery = ProcurementPrograms.PlaceOfDelivery,
                     DateOfDelivery = ProcurementPrograms.DateOfDelivery,
-                    ModeOfProcurementReference = (int)procurementProgram.ModeOfProcurementReference,
                     CreatedAt = (DateTime)ProcurementPrograms.POCreatedAt,
                     TotalAmount = projectCost, 
                     ChiefAccountant = chiefAccountant.DepartmentHead,
@@ -938,9 +939,7 @@ namespace PUPFMIS.BusinessAndDataLogic
                     return false;
                 }
 
-                procurementProgram.PurchaseOrderReference = purchaseOrderHeader.ID;
                 procurementProgram.ProjectCost = projectCost;
-                procurementProgram.SupplierReference = ProcurementPrograms.Supplier;
                 projectItems.ForEach(d => { d.POReference = purchaseOrderHeader.ID; });
                 if (db.SaveChanges() == 0)
                 {
@@ -960,10 +959,11 @@ namespace PUPFMIS.BusinessAndDataLogic
         }
         public List<ProcurementProjectItemsVM> GetProjectItems(string PAPCode)
         {
+            var appDetails = db.APPDetails.Where(d => d.PAPCode == PAPCode).First();
             var procurementItems = new List<ProcurementProjectItemsVM>();
-            var procurementProgram = db.ProcurementPrograms.Where(d => d.PAPCode == PAPCode).FirstOrDefault();
-            var items = db.ProjectPlanItems.Where(d => d.APPLineReference == PAPCode).ToList();
-            var services = db.ProjectPlanServices.Where(d => d.APPLineReference == PAPCode).ToList();
+            var procurementProgram = db.APPDetails.Where(d => d.PAPCode == PAPCode).FirstOrDefault();
+            var items = db.ProjectPlanItems.Where(d => d.APPLineReference == appDetails.ID).ToList();
+            var services = db.ProjectPlanServices.Where(d => d.APPLineReference == appDetails.ID).ToList();
 
             foreach (var item in items)
             {
@@ -1037,10 +1037,8 @@ namespace PUPFMIS.BusinessAndDataLogic
 
         public ProcurementProjectsVM GetProcurementProgramDetailsByPAPCode(string PAPCode)
         {
-            var procurementProgram = db.ProcurementPrograms.Where(d => d.PAPCode == PAPCode).FirstOrDefault();
+            var procurementProgram = db.APPDetails.Where(d => d.PAPCode == PAPCode).FirstOrDefault();
             var procurementTimeline = db.ProcurementTimeline.Where(d => d.PAPCode == PAPCode).FirstOrDefault();
-            var procurementItems = procurementProgram.PurchaseOrderReference == null ? GetProjectItems(PAPCode) : GetPurchaseOrderItems((int)procurementProgram.PurchaseOrderReference);
-            var purchaseOrderHeader = procurementProgram.PurchaseOrderReference == null ? null : db.PurchaseOrderHeader.Find(procurementProgram.PurchaseOrderReference);
 
             var procurementModes = procurementProgram.APPModeOfProcurementReference.Split("_".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).ToList();
             var modesOfProcurement = string.Empty;
@@ -1059,7 +1057,6 @@ namespace PUPFMIS.BusinessAndDataLogic
             var procurementProject = new ProcurementProjectsVM()
             {
                 IsTangible = procurementProgram.IsTangible,
-                ModeOfProcurement = procurementProgram.ModeOfProcurementReference,
                 APPReference = procurementProgram.FKAPPHeaderReference.ReferenceNo,
                 Month = procurementProgram.Month,
                 PAPCode = procurementProgram.PAPCode,
@@ -1104,12 +1101,6 @@ namespace PUPFMIS.BusinessAndDataLogic
                 NOAReceivedBySupplier = procurementTimeline == null ? null : procurementTimeline.NOAReceivedBySupplier,
                 NOAIssuanceRemarks = procurementTimeline == null ? null : procurementTimeline.NOAIssuanceRemarks,
                 ProjectCost = procurementProgram.ProjectCost,
-                Supplier = procurementProgram.SupplierReference == null ? null : procurementProgram.SupplierReference,
-                PONumber = purchaseOrderHeader == null ? null : purchaseOrderHeader.PurchaseOrderNumber,
-                POCreatedAt = purchaseOrderHeader == null ? null : (DateTime?)purchaseOrderHeader.CreatedAt,
-                DateOfDelivery = purchaseOrderHeader == null ? null : purchaseOrderHeader.DateOfDelivery,
-                PlaceOfDelivery = purchaseOrderHeader == null ? null : purchaseOrderHeader.PlaceOfDelivery,
-                Items = procurementItems
             };
 
             return procurementProject;

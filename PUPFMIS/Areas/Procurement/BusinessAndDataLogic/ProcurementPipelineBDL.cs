@@ -23,14 +23,14 @@ namespace PUPFMIS.BusinessAndDataLogic
             procurementEmployeees.AddRange(pmoEmployees);
             return procurementEmployeees.OrderBy(d => d.EmployeeName).ToList();
         }
-        public List<APPHeader> GetAPPs()
+        public List<AnnualProcurementPlan> GetAPPs()
         {
             return db.APPHeader.Where(d => d.APPType != "CSE").ToList();
         }
         public ProcurementProjectsVM GetProcurementProgramDetailsByPAPCode(string PAPCode)
         {
             var procurementProject = new ProcurementProjectsVM();
-            var institutionalProject = db.ProcurementPrograms.Where(d => d.PAPCode == PAPCode).FirstOrDefault();
+            var institutionalProject = db.APPDetails.Where(d => d.PAPCode == PAPCode).FirstOrDefault();
 
             if(institutionalProject == null)
             {
@@ -38,7 +38,6 @@ namespace PUPFMIS.BusinessAndDataLogic
             }
 
             var projectItems = new List<ProcurementProjectItemsVM>();
-            var PPMPList = institutionalProject.PPMPReferences == null ? null : institutionalProject.PPMPReferences.Split("_".ToCharArray(), System.StringSplitOptions.RemoveEmptyEntries).ToArray();
             var procurementModes = institutionalProject.APPModeOfProcurementReference.Split("_".ToCharArray(), System.StringSplitOptions.RemoveEmptyEntries).ToArray();
             var modesOfProcurement = string.Empty;
             for(int i = 0; i < procurementModes.Count(); i++)
@@ -107,7 +106,7 @@ namespace PUPFMIS.BusinessAndDataLogic
         public List<ProcurementProgramsVM> GetUnassignedProcurementProgams(string ReferenceNo)
         {
             var procurementPrograms = new List<ProcurementProgramsVM>();
-            var institutionalPrograms = db.ProcurementPrograms.Where(d => d.FKAPPHeaderReference.ReferenceNo == ReferenceNo && (d.ProjectCoordinator == null && d.ProjectSupport == null)).ToList();
+            var institutionalPrograms = db.APPDetails.Where(d => d.FKAPPHeaderReference.ReferenceNo == ReferenceNo && (d.ProjectCoordinator == null && d.ProjectSupport == null)).ToList();
             foreach(var program in institutionalPrograms)
             {
                 var procurementModes = program.APPModeOfProcurementReference.Split("_".ToCharArray(), StringSplitOptions.None);
@@ -146,8 +145,7 @@ namespace PUPFMIS.BusinessAndDataLogic
         public List<ProcurementProgramsVM> GetProcurementProgams(string ReferenceNo)
         {
             var procurementPrograms = new List<ProcurementProgramsVM>();
-            var institutionalPrograms = db.ProcurementPrograms.Where(d => d.FKAPPHeaderReference.ReferenceNo == ReferenceNo
-                                    && !d.PPMPReferences.Contains("CUOS")
+            var institutionalPrograms = db.APPDetails.Where(d => d.FKAPPHeaderReference.ReferenceNo == ReferenceNo
                                     && (d.ProjectCoordinator != null && d.ProjectSupport != null))
                                     .ToList();
             foreach (var program in institutionalPrograms)
@@ -169,7 +167,6 @@ namespace PUPFMIS.BusinessAndDataLogic
                     StartMonth = program.StartMonth,
                     EndMonth = program.EndMonth,
                     ProjectCoordinator = projectCoordinator,
-                    ModeOfProcurement = db.ProcurementModes.Find(program.ModeOfProcurementReference).ModeOfProcurementName,
                     ProjectSupport = projectSupport,
                     //HasSchedule = procurementTimeline == null ? false : true
                 });
@@ -179,7 +176,7 @@ namespace PUPFMIS.BusinessAndDataLogic
         }
         public bool AssignProject(ProcurementProjectsVM ProcurementProject)
         {
-            var institutionalProject = db.ProcurementPrograms.Where(d => d.PAPCode == ProcurementProject.PAPCode).FirstOrDefault();
+            var institutionalProject = db.APPDetails.Where(d => d.PAPCode == ProcurementProject.PAPCode).FirstOrDefault();
             if(institutionalProject != null)
             {
                 institutionalProject.ProjectCoordinator = ProcurementProject.ProjectCoordinator;

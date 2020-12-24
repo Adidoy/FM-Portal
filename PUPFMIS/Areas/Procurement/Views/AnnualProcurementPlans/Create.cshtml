@@ -1,0 +1,80 @@
+﻿@{
+    ViewBag.Title = "Annual Procurement Plan";
+    ViewBag.Description = "Create";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Annual Procurement Plan Dashboard", "dashboard", "AnnualProcurementPlans", new { Area = "procurement" }, null)</li>
+        <li class="breadcrumb-item">Create APP</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-bookmark"></i> Create New Annual Procurement Plan</h3>
+}
+
+@using (Ajax.BeginForm("create-app", "AnnualProcurementPlans", new { Area = "procurement" }, new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult", UpdateTargetId = "form-container" }, htmlAttributes: new { id = "addItem" }))
+{
+    <div id="form-container">
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.Partial("_Create")
+    </div>
+}
+<hr />
+<div class="row">
+    <div class="col-sm-12 text-right">
+        <div class="form-group">
+            @if (Model.Count > 0 && ViewBag.IsCSEAvailable == true)
+            {
+                <button type="button" class="btn btn-primary" onclick="SaveItem()"><i class="fa fa-save"></i>&nbsp; Post Annual Procurement Plan</button>
+            }
+            <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("dashboard", "AnnualProcurementPlans", new { area = "procurement" })'"><i class="fa fa-arrow-alt-circle-left"></i>&nbsp; Back to Dashboard</button>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function SaveItem() {
+        swal.fire({
+            title: "Save Annual Procurement Plan?",
+            text: "You are about to save this record, continue?",
+            type: "warning",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#addItem").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    type: "error"
+                })
+            }
+        })
+    }
+    function CreateResult(data) {
+        if (data.result == true) {
+            swal.fire({
+                title: "Record Saved!",
+                text: "Record is successfully saved.",
+                type: "success"
+            }).then((result) => {
+                if (result.value) {
+                    window.location.href = "@Url.Action("dashboard", "AnnualProcurementPlans", new { Area = "procurement" })";
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                type: "error"
+            })
+        }
+    }
+</script>

@@ -1,0 +1,77 @@
+﻿@model PUPFMIS.Models.ItemVM
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="bg-info">
+            <h5 class="p-2">@Model.ItemFullName (@Model.ItemCode)</h5>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-sm-1"></div>
+    <div class="col-sm-10">
+        <h6>Other Details:</h6>
+        <table class="table">
+            <tr>
+                <td width="20%"><strong>Type</strong></td>
+                <td width="80%">: @( Model.IsTangible == "Yes" ? "Item" : "Service")</td>
+            </tr>
+            <tr>
+                <td width="20%"><strong>@Html.DisplayNameFor(model => model.ItemCode)</strong></td>
+                <td width="80%">: @Html.DisplayFor(model => model.ItemCode)</td>
+            </tr>
+            <tr>
+                <td width="20%"><strong>@Html.DisplayNameFor(model => model.ItemShortSpecifications)</strong></td>
+                <td width="80%">: @Html.DisplayFor(model => model.ItemShortSpecifications)</td>
+            </tr>
+            @if (Model.IsTangible == "Yes")
+            {
+                <tr>
+                    <td width="20%"><strong>@Html.DisplayNameFor(model => model.ItemSpecifications)</strong></td>
+                    <td width="80%">: @Html.DisplayFor(model => model.ItemSpecifications)</td>
+                </tr>
+            }
+            <tr>
+                <td width="20%"><strong>@Html.DisplayNameFor(model => model.Category)</strong></td>
+                <td width="80%">: @Html.DisplayFor(model => model.Category)</td>
+            </tr>
+            <tr>
+                <td width="20%"><strong>@Html.DisplayNameFor(model => model.InventoryType)</strong></td>
+                <td width="80%">: @Html.DisplayFor(model => model.InventoryType)</td>
+            </tr>
+            @if (Model.IsTangible == "Yes")
+            {
+                <tr>
+                    <td width="20%"><strong>@Html.DisplayNameFor(model => model.UnitPrice)</strong></td>
+                    <td width="80%">: @( Model.UnitPrice == null ? null : String.Format("{0:C}", Model.UnitPrice) )</td>
+                </tr>
+            }
+            <tr>
+                <td width="20%"><strong>@Html.DisplayNameFor(model => model.ResponsibilityCenter)</strong></td>
+                <td width="80%">: @Html.DisplayFor(model => model.ResponsibilityCenter)</td>
+            </tr>
+            <tr>
+                <td width="20%"><strong>@Html.DisplayNameFor(model => model.PurchaseRequestOffice)</strong></td>
+                <td width="80%">: @Html.DisplayFor(model => model.PurchaseRequestOffice)</td>
+            </tr>
+            <tr>
+                <td width="20%"><strong>@Html.DisplayNameFor(model => model.PurgeFlag)</strong></td>
+                <td width="80%">: @Html.DisplayFor(model => model.PurgeFlag)</td>
+            </tr>
+            <tr>
+                <td width="20%"><strong>@Html.DisplayNameFor(model => model.CreatedAt)</strong></td>
+                <td width="80%">: @Html.DisplayFor(model => model.CreatedAt)</td>
+            </tr>
+            <tr>
+                <td width="20%"><strong>@Html.DisplayNameFor(model => model.UpdatedAt)</strong></td>
+                <td width="80%">: @Html.DisplayFor(model => model.UpdatedAt)</td>
+            </tr>
+            <tr>
+                <td width="20%"><strong>@Html.DisplayNameFor(model => model.DeletedAt)</strong></td>
+                <td width="80%">: @Html.DisplayFor(model => model.DeletedAt)</td>
+            </tr>
+        </table>
+    </div>
+    <div class="col-sm-1"></div>
+</div>

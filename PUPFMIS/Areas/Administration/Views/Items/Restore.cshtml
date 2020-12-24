@@ -1,0 +1,76 @@
+﻿@model PUPFMIS.Models.ItemVM
+
+@{
+    ViewBag.Title = "Items";
+    ViewBag.Description = "Restore";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Items Master", "list", "Items", new { Area = "administration" }, null)</li>
+        <li class="breadcrumb-item">Restore Record</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-right">
+        <h1 class="card-title"><i class="fa fa-bookmark"></i> Restore Item Record</h1>
+    </div>
+}
+
+@Html.Partial("_Details")
+
+@section FormFooter {
+    @using (Ajax.BeginForm("restore-item", "Items", new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "addItem", Area = "administration", ItemCode = Model.ItemCode }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="form-group float-right">
+            <button type="button" class="btn btn-primary" id="save-btn" onclick='SaveItem()'><i class="fa fa-trash-restore"></i>&nbsp; Restore Record</button>
+            <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("list","Items", new { Area = "administration" })'"><i class="fa fa-arrow-circle-left"></i> Back to List</button>
+        </div>
+    }
+}
+
+<script type="text/javascript">
+    function SaveItem() {
+        swal.fire({
+            title: "Restore record?",
+            text: "You are about to restore this record, continue?",
+            type: "warning",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#addItem").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled record restoration.",
+                    type: "error"
+                })
+            };
+        })
+    }
+    function CreateResult(data) {
+        if (data.result == true) {
+            swal.fire({
+                title: "Record Restored!",
+                text: "Record is successfully restored.",
+                type: "success"
+            }).then((result) => {
+                if (result.value) {
+                    window.location.href = "@Url.Action("list", "Items", new { Area = "administration" })";
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                type: "error"
+            });
+        }
+    }
+</script>

@@ -5,8 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PUPFMIS.Models
 {
-    [Table("PP_APP_HEADER")]
-    public class APPHeader
+    [Table("PROC_TRXN_Annual_Procurement_Plan")]
+    public class AnnualProcurementPlan
     {
         [Key]
         public int ID { get; set; }
@@ -90,8 +90,8 @@ namespace PUPFMIS.Models
         [Display(Name = "Created By")]
         public string CreatedBy { get; set; }
     }
-    [Table("PP_APP_PROCUREMENT_PROGRAMS")]
-    public class ProcurementPrograms
+    [Table("PROC_TRXN_Annual_Procurement_Plan_Details")]
+    public class AnnualProcurementPlanDetails
     {
         [Key]
         public int ID { get; set; }
@@ -112,8 +112,8 @@ namespace PUPFMIS.Models
         [Display(Name = "Mode of Procurement")]
         public string APPModeOfProcurementReference { get; set; }
 
-        [Display(Name = "Mode of Procurement")]
-        public int? ModeOfProcurementReference { get; set; }
+        //[Display(Name = "Mode of Procurement")]
+        //public int? ModeOfProcurementReference { get; set; }
 
         [Column(TypeName = "VARCHAR")]
         public string ObjectClassification { get; set; }
@@ -143,17 +143,10 @@ namespace PUPFMIS.Models
         public decimal Total { get; set; }
 
         public string Remarks { get; set; }
-
-        public string ProjectReferences { get; set; }
-
-        public string PPMPReferences { get; set; }
-
+        
         [Display(Name = "Project Cost")]
         public decimal ProjectCost { get; set; }
-
-        [Display(Name = "Supplier")]
-        public int? SupplierReference { get; set; }
-
+        
         [Display(Name = "Project Coordinator")]
         public string ProjectCoordinator { get; set; }
 
@@ -167,24 +160,10 @@ namespace PUPFMIS.Models
 
         public bool IsTangible { get; set; }
 
-        public bool IsAccepted { get; set; }
-
-        [Display(Name = "Purchase Order Number")]
-        public int? PurchaseOrderReference { get; set; }
-
-        [ForeignKey("PurchaseOrderReference")]
-        public virtual PurchaseOrderHeader FKPurchaseOrderHeaderReference { get; set; }
-
         [ForeignKey("APPHeaderReference")]
-        public virtual APPHeader FKAPPHeaderReference { get; set; }
-
-        [ForeignKey("SupplierReference")]
-        public virtual Supplier FKSupplierReference { get; set; }
-
-        [ForeignKey("ModeOfProcurementReference")]
-        public virtual ModeOfProcurement FKModeOfProcurementReference { get; set; }
+        public virtual AnnualProcurementPlan FKAPPHeaderReference { get; set; }
     }
-    [Table("PP_APP_CSE_ITEMS")]
+    [Table("PROC_TRXN_Annual_Procurement_Plan_CSE")]
     public class APPCSEDetails
     {
         [Key, Column(Order = 0)]
@@ -233,11 +212,12 @@ namespace PUPFMIS.Models
         public int DecQty { get; set; }
 
         [ForeignKey("APPHeaderReference")]
-        public virtual APPHeader FKAPPHeaderReference { get; set; }
+        public virtual AnnualProcurementPlan FKAPPHeaderReference { get; set; }
 
         [ForeignKey("ItemReference")]
         public virtual Item FKItemReference { get; set; }
     }
+
     public class AnnualProcurementPlanCSEItemsVM
     {
         public int ItemID { get; set; }
@@ -579,10 +559,18 @@ namespace PUPFMIS.Models
         public string ApprovedAt { get; set; }
     }
 
+    public class APPLineItemVM
+    {
+        public string UACS { get; set; }
+        public string ObjectClassification { get; set; }
+        public List<ApprovedItems> ApprovedItems { get; set; }
+    }
     public class ApprovedItems
     {
         public bool IsTangible { get; set; }
         public bool IsInstitutional { get; set; }
+        public ProcurementSources ProcurementSource { get; set; }
+        public int Month { get; set; }
 
         [Display(Name = "PAP Code")]
         public string PAPCode { get; set; }
@@ -602,6 +590,12 @@ namespace PUPFMIS.Models
         [Display(Name = "Object Classification")]
         public string ObjectClassification { get; set; }
 
+        [Display(Name = "UACS SubClass")]
+        public string UACSSubClass { get; set; }
+
+        [Display(Name = "Object Classification")]
+        public string ObjectSubClassification { get; set; }
+
         [Display(Name = "Unit Cost")]
         public decimal UnitCost { get; set; }
 
@@ -611,7 +605,7 @@ namespace PUPFMIS.Models
         [Display(Name = "Unit")]
         public string UnitOfMeasure { get; set; }
 
-        [Display(Name = "Estimated Budget")]
+        [Display(Name = "Total Estimated Budget")]
         public decimal EstimatedBudget { get; set; }
 
         [Display(Name = "Fund Source")]
@@ -626,17 +620,20 @@ namespace PUPFMIS.Models
         [Display(Name = "End-User")]
         public string EndUser { get; set; }
 
+        [Display(Name = "End-User")]
+        public string EndUserName { get; set; }
+
         [Display(Name = "MOOE")]
         public decimal MOOE { get; set; }
 
-        [Display(Name = "CO")]
+        [Display(Name = "Capital Outlay")]
         public decimal CapitalOutlay { get; set; }
 
         [Display(Name = "Inventory Code")]
         public string InventoryCode { get; set; }
 
-        [Display(Name = "Month")]
-        public int Month { get; set; }
+        [Display(Name = "Schedule for Procurement Activity")]
+        public string Schedule { get; set; }
 
         [Display(Name = "Remarks")]
         public string Remarks { get; set; }

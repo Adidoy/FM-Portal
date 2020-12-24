@@ -1,0 +1,65 @@
+﻿@model IEnumerable<PUPFMIS.Models.ItemTypeVM>
+
+@{
+    ViewBag.Title = "Item Types";
+    ViewBag.Description = "Restore Purged Records";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Item Types", "list")</li>
+        <li class="breadcrumb-item">Restore Purged Records</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-list"></i> Purged Item Types List</h3>
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card-body table-responsive p-sm-0">
+            <table class="table table-striped table-hover" id="example2">
+                <thead>
+                    <tr>
+                        <th style="text-align:center; vertical-align:middle" width="40%">
+                            @Html.DisplayNameFor(model => model.ItemTypeName)
+                        </th>
+                        <th style="text-align:center; vertical-align:middle" width="35%">
+                            @Html.DisplayNameFor(model => model.DeletedAt)
+                        </th>
+                        <th style="text-align:center; vertical-align:middle" width="25%">
+                            Action
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td style="text-align:left; vertical-align:middle;">
+                                <b>@Html.DisplayFor(modelItem => item.ItemTypeName)</b> (@Html.DisplayFor(modelItem => item.ItemTypeCode))
+                            </td>
+                            <td style="text-align:center; vertical-align:middle;">
+                                @Html.DisplayFor(modelItem => item.DeletedAt)
+                            </td>
+                            <td  style="text-align:center; vertical-align:middle;">
+                                <button type="button" class="btn btn-sm btn-primary" data-toggle="tooltip" title="View Details" onclick="window.location = '@Url.Action("restore", "ItemTypes", new { Area = "administration", ItemTypeCode = item.ItemTypeCode })'"><i class="fa fa-eye"></i></button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-sm-12">
+        <div class="text-right">
+            <button style="text-align:left;" class="btn btn-danger btn-md" onclick="window.location = '@Url.Action("list","ItemTypes")'"><i class="fa fa-arrow-circle-left"></i> Back to List</button>
+        </div>
+    </div>
+</div>

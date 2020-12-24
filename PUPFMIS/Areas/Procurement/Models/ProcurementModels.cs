@@ -7,7 +7,7 @@ using System.Web.Mvc;
 
 namespace PUPFMIS.Models
 {
-    [Table("PP_PROCUREMENT_TIMELINE_BIDDING")]
+    [Table("PROC_TRXN_Procurement_Timeline_Bidding")]
     public class ProcurementTimeline
     {
         [Key]
@@ -107,7 +107,7 @@ namespace PUPFMIS.Models
         [Display(Name = "Remarks")]
         public string NOAIssuanceRemarks { get; set; }
     }
-    [Table("PP_PURCHASE_REQUEST_HEADER")]
+    [Table("PROC_TRXN_Purchase_Request")]
     public class PurchaseRequestHeader
     {
         [Key]
@@ -193,7 +193,7 @@ namespace PUPFMIS.Models
         [MaxLength(30, ErrorMessage = "{0} is up to {1} characters only.")]
         public string ReceivedBy { get; set; }
     }
-    [Table("PP_PURCHASE_REQUEST_DETAILS")]
+    [Table("PROC_TRXN_Purchase_Request_Details")]
     public class PurchaseRequestDetails
     {
         [Key]
@@ -217,7 +217,7 @@ namespace PUPFMIS.Models
 
     }
 
-    [Table("PP_PURCHASE_ORDER_HEADER")]
+    [Table("PROC_TRXN_Purchase_Order")]
     public class PurchaseOrderHeader
     {
         [Key]
@@ -280,8 +280,7 @@ namespace PUPFMIS.Models
         [ForeignKey("ModeOfProcurementReference")]
         public virtual ModeOfProcurement FKModeOfProcurementReference { get; set; }
     }
-
-    [Table("PP_PURCHASE_ORDER_DETAILS")]
+    [Table("PROC_TRXN_Purchase_Order_Details")]
     public class PurchaseOrderDetails
     {
         [Key, Column(Order = 0)]
@@ -301,6 +300,46 @@ namespace PUPFMIS.Models
 
         [ForeignKey("PurchaseOrderReference")]
         public virtual PurchaseOrderHeader FKPurchaseOrderHeaderReference { get; set; }
+    }
+
+    [Table("PP_PROCUREMENT_PIPELINE")]
+    public class ProcurementPipeline
+    {
+        [MaxLength(30)]
+        [Display(Name = "Reference No.")]
+        public string ReferenceNo { get; set; }
+
+        [MaxLength(30)]
+        [Display(Name = "Project Coordinator")]
+        public string ProjectCoordinator { get; set; }
+
+        [MaxLength(30)]
+        [Display(Name = "Project Support")]
+        public string ProjectSupport { get; set; }
+
+        [Display(Name = "Mode of Procurement")]
+        public int? ModeOfProcurementReference { get; set; }
+
+        [Display(Name = "Project Cost")]
+        public decimal? ProjectCost { get; set; }
+
+        [Display(Name = "Supplier")]
+        public int? SupplierReference { get; set; }
+
+        [Display(Name = "Agency Procurement Request Reference")]
+        public int? APRReference { get; set; }
+
+        [Display(Name = "Purchase Order Reference")]
+        public int? PurchaseOrderReference { get; set; }
+
+        [Display(Name = "Memorandum of Agreement Reference")]
+        public int? MOAReference { get; set; }
+
+        [Display(Name = "Purchase Request Submission")]
+        public DateTime? PurchaseRequestSubmission { get; set; }
+
+        [Display(Name = "Purchase Request Submission Closing")]
+        public DateTime? PurchaseRequestClosing { get; set; }
     }
 
     public class PurchaseRequestDetailsVM

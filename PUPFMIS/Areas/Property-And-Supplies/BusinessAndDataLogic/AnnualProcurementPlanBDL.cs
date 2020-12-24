@@ -847,7 +847,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             var procurement = hrisDataAccess.GetFullDepartmentDetails(agencyDetails.ProcurementOfficeReference);
             var bac = hrisDataAccess.GetFullDepartmentDetails(agencyDetails.BACOfficeReference);
 
-            APPHeader appHeader = new APPHeader()
+            AnnualProcurementPlan appHeader = new AnnualProcurementPlan()
             {
                 FiscalYear = APPCSEViewModel.FiscalYear,
                 APPType = "CSE",

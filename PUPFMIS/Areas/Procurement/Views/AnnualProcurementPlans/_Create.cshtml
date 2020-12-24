@@ -1,0 +1,172 @@
+﻿@model List<PUPFMIS.Models.APPLineItemVM>
+
+@if(!ViewBag.IsCSEAvailable)
+{
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="alert alert-danger text-center">
+                <h6 class="m-0 p-0">NOTE: APP-CSE is not yet created. Please remind concerned personnel/office to create APP-CSE.</h6>
+            </div>
+        </div>
+    </div>
+    <br />
+}
+<div id="accordion">
+    @for (int index = 0; index < Model.Count; index++)
+    {
+        @Html.HiddenFor(d => Model[index].UACS)
+        @Html.HiddenFor(d => Model[index].ObjectClassification)
+        <div class="card">
+            <div class="card-header" id="heading_@(Model[index].UACS)">
+                <h5 class="mb-0">
+                    <button type="button" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse_@(Model[index].UACS)" aria-expanded="false" aria-controls="collapse_@(Model[index].UACS)" data-toggle="tooltip" data-placement="top" title="Click to show/hide details...">
+                        <b>@( Convert.ToChar(index + 65).ToString() + ". " + Model[index].ObjectClassification.ToUpper() )</b>
+                    </button>
+                </h5>
+            </div>
+            <div id="collapse_@(Model[index].UACS)" class="collapse" aria-labelledby="heading_@(Model[index].UACS)" data-parent="#accordion">
+                <div class="card-body">
+                    <div id="accordion-details_@(index)">
+                        @for (int i = 0; i < Model[index].ApprovedItems.Count; i++)
+                        {
+                            @Html.HiddenFor(d => Model[index].ApprovedItems[i].IsTangible)
+                            @Html.HiddenFor(d => Model[index].ApprovedItems[i].IsInstitutional)
+                            @Html.HiddenFor(d => Model[index].ApprovedItems[i].InventoryCode)
+                            @Html.HiddenFor(d => Model[index].ApprovedItems[i].UACS)
+                            <div class="card card-info">
+                                <div class="card-header p-0" id="heading_@(Model[index].ApprovedItems[i].ItemCode)">
+                                    <button type="button" class="btn btn-link collapsed" style="text-align:justify;" data-toggle="collapse" data-target="#collapse_@(Model[index].ApprovedItems[i].ItemCode)" aria-expanded="false" aria-controls="collapse_@(Model[index].ApprovedItems[i].ItemCode)" data-toggle="tooltip" data-placement="top" title="Click to show/hide details...">
+                                        @Html.HiddenFor(d => Model[index].ApprovedItems[i].ItemName)
+                                        <b><span style="color:white;">@( (i + 1) + ". " + Model[index].ApprovedItems[i].ItemName.ToUpper() )</span></b>
+                                    </button>
+                                </div>
+                                <div id="collapse_@(Model[index].ApprovedItems[i].ItemCode)" class="collapse" aria-labelledby="heading_@(Model[index].ApprovedItems[i].ItemCode)" data-parent="#accordion-details_@(index)">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="row">
+                                                    <div class="col-lg-7 col-md-7 col-sm-12">
+                                                        <div class="form-group row mb-1">
+                                                            @Html.LabelFor(model => Model[index].ApprovedItems[i].EndUserName, htmlAttributes: new { @class = "col-form-label col-sm-4", style = "text-align:right" })
+                                                            <div class="col-sm-7 align-self-center">
+                                                                <div class="input-group">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text"><i class="fa fa-user"></i></span>
+                                                                    </div>
+                                                                    @Html.HiddenFor(d => Model[index].ApprovedItems[i].EndUser)
+                                                                    @Html.EditorFor(model => Model[index].ApprovedItems[i].EndUserName, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%;", disabled = "disabled" } })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row mb-1">
+                                                            @Html.LabelFor(model => Model[index].ApprovedItems[i].Schedule, htmlAttributes: new { @class = "col-form-label col-sm-4", style = "text-align:right" })
+                                                            <div class="col-sm-7 align-self-center">
+                                                                <div class="input-group">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text"><i class="fa fa-calendar-check"></i></span>
+                                                                    </div>
+                                                                    @Html.HiddenFor(d => Model[index].ApprovedItems[i].Month)
+                                                                    @Html.HiddenFor(d => Model[index].ApprovedItems[i].Schedule)
+                                                                    @Html.EditorFor(model => Model[index].ApprovedItems[i].Schedule, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%;", disabled = "disabled" } })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row mb-1">
+                                                            @Html.LabelFor(model => Model[index].ApprovedItems[i].FundSource, htmlAttributes: new { @class = "col-form-label col-sm-4", style = "text-align:right" })
+                                                            <div class="col-sm-7 align-self-center">
+                                                                <div class="input-group">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text"><i class="fa fa-book-open"></i></span>
+                                                                    </div>
+                                                                    @Html.HiddenFor(d => Model[index].ApprovedItems[i].FundSource)
+                                                                    @Html.EditorFor(model => Model[index].ApprovedItems[i].FundDescription, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%;", disabled = "disabled" } })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row mb-1">
+                                                            @Html.LabelFor(model => Model[index].ApprovedItems[i].MOOE, htmlAttributes: new { @class = "col-form-label col-sm-4", style = "text-align:right" })
+                                                            <div class="col-sm-7 align-self-center">
+                                                                <div class="input-group">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text"><i class="fa fa-coins"></i></span>
+                                                                    </div>
+                                                                    @Html.HiddenFor(d => Model[index].ApprovedItems[i].MOOE)
+                                                                    @Html.EditorFor(model => Model[index].ApprovedItems[i].MOOE, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%; text-align:right;", disabled = "disabled", Value = Model[index].ApprovedItems[i].MOOE.ToString("C", new System.Globalization.CultureInfo("en-ph")) } })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row mb-1">
+                                                            @Html.LabelFor(model => Model[index].ApprovedItems[i].CapitalOutlay, htmlAttributes: new { @class = "col-form-label col-sm-4", style = "text-align:right" })
+                                                            <div class="col-sm-7 align-self-center">
+                                                                <div class="input-group">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text"><i class="fa fa-coins"></i></span>
+                                                                    </div>
+                                                                    @Html.HiddenFor(d => Model[index].ApprovedItems[i].CapitalOutlay)
+                                                                    @Html.EditorFor(model => Model[index].ApprovedItems[i].CapitalOutlay, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%; text-align:right;", disabled = "disabled", Value = Model[index].ApprovedItems[i].CapitalOutlay.ToString("C", new System.Globalization.CultureInfo("en-ph")) } })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row mb-1">
+                                                            @Html.LabelFor(model => Model[index].ApprovedItems[i].EstimatedBudget, htmlAttributes: new { @class = "col-form-label col-sm-4", style = "text-align:right" })
+                                                            <div class="col-sm-7">
+                                                                <div class="input-group">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text"><i class="fa fa-money-bill-wave"></i></span>
+                                                                    </div>
+                                                                    @Html.HiddenFor(d => Model[index].ApprovedItems[i].EstimatedBudget)
+                                                                    @Html.EditorFor(model => Model[index].ApprovedItems[i].EstimatedBudget, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%; text-align:right;", disabled = "disabled", Value = Model[index].ApprovedItems[i].EstimatedBudget.ToString("C", new System.Globalization.CultureInfo("en-ph")) } })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-5 col-md-5 col-sm-12">
+                                                        <div class="form-group">
+                                                            @{
+                                                                var modes = new SelectList(ViewBag.ModesOfProcurement, "ID", "ModeOfProcurementName").ToList();
+                                                                if (Model[index].ApprovedItems[i].ModeOfProcurement != null)
+                                                                {
+                                                                    var selected = new SelectList(ViewBag.ModesOfProcurement, "ID", "ModeOfProcurementName").ToList();
+                                                                    foreach (var mode in Model[index].ApprovedItems[i].ModeOfProcurement)
+                                                                    {
+                                                                        selected.Where(d => d.Value == mode).FirstOrDefault().Selected = true;
+                                                                    }
+                                                                    modes = selected;
+                                                                }
+                                                            }
+                                                            @Html.LabelFor(model => Model[index].ApprovedItems[i].ModeOfProcurement, htmlAttributes: new { @class = "control-label" })
+                                                            @Html.DropDownListFor(d => Model[index].ApprovedItems[i].ModeOfProcurement, modes as List<SelectListItem>, htmlAttributes: new { @class = "form-control form-control-sm select2", style = "font-size:90%; width:100%", multiple = "multiple" })
+                                                            @Html.ValidationMessageFor(model => Model[index].ApprovedItems[i].ModeOfProcurement, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="form-group">
+                                                            @Html.LabelFor(d => Model[index].ApprovedItems[i].Remarks, htmlAttributes: new { @class = "control-label" })
+                                                            @Html.TextAreaFor(d => Model[index].ApprovedItems[i].Remarks, htmlAttributes: new { @class = "form-control form-control-sm", style = "resize:none; overflow:auto; text-align: justify;", rows = "5", placeholer = "Remarks" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        //Initialize Select2 Elements
+        $('.select2').select2({
+            theme: 'bootstrap4'
+        })
+
+        //Initialize Select2 Elements
+        $('.select2bs4').select2({
+            theme: 'bootstrap4'
+        })
+    })
+</script>

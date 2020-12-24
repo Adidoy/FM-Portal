@@ -1,0 +1,60 @@
+﻿@model PUPFMIS.Models.ItemTypeVM
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="bg-info">
+            <h6 class="p-2">Item Type Details</h6>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-lg-1 col-md-1 col-sm-12"></div>
+    <div class="col-lg-10 col-md-10 col-sm-12">
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ItemTypeName, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-id-badge"></i></span>
+                            </div>
+                            @Html.EditorFor(model => model.ItemTypeName, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%; text-transform:uppercase;", autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.ItemTypeName) } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ItemTypeName, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.InventoryTypeName, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-book"></i></span>
+                            </div>
+                            @Html.DropDownList("InventoryTypeReference", null, htmlAttributes: new { @class = "form-control form-control-sm select2", style = "font-size:100%;" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.InventoryTypeReference, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.UACSObjectClass, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-bookmark"></i></span>
+                            </div>
+                            @Html.DropDownList("UACSObjectClass", null, htmlAttributes: new { @class = "form-control form-control-sm select2", style = "font-size:100%;" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.UACSObjectClass, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="custom-control custom-checkbox">
+                                @Html.CheckBoxFor(model => model.IsSpecificationUserDefined, new { @class = "custom-control-input custom-control-input-danger custom-control-input-outline" }) &emsp; @Html.LabelFor(model => model.IsSpecificationUserDefined, htmlAttributes: new { @class = "custom-control-label" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-1 col-md-1 col-sm-12"></div>
+</div>

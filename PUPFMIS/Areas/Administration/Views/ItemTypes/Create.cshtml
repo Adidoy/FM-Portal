@@ -1,0 +1,93 @@
+﻿@{
+    ViewBag.Title = "Item Types";
+    ViewBag.Description = "Create Record";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Item Types List", "list", "ItemTypes", new { Area = "administration" }, null)</li>
+        <li class="breadcrumb-item">Add</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-right">
+        <h1 class="card-title"><i class="fa fa-bookmark"></i> New Item Type</h1>
+    </div>
+}
+
+@using (Ajax.BeginForm("create", "ItemTypes", new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "addItem", Area = "administration" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Partial("_Form")
+}
+
+@section FormFooter {
+    <div class="form-group float-right">
+        <button type="button" class="btn btn-primary" id="save-btn" onclick="SaveItem()"><i class="fa fa-save"></i>&nbsp; Save changes</button>
+        <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("list","ItemTypes", new { Area = "administration" })'"><i class="fa fa-arrow-circle-left"></i> Back to List</button>
+    </div>
+}
+
+<script src="~/Scripts/adminlte/components/select2/js/select2.min.js"></script>
+<script type="text/javascript">
+    function SaveItem() {
+        swal.fire({
+            title: "Save record?",
+            text: "You are about to save this record, continue?",
+            type: "warning",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#addItem").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    type: "error"
+                })
+            }
+        })
+    }
+    function CreateResult(data) {
+        if (data.result == true) {
+            swal.fire({
+                title: "Record Saved!",
+                text: "Record is successfully saved.",
+                type: "success"
+            }).then((result) => {
+                if (result.value) {
+                    window.location.href = "@Url.Action("list", "ItemTypes", new { Area = "administration" })";
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                type: "error"
+            })
+        }
+    }
+    $.fn.select2.defaults.set( "theme", "bootstrap" );
+    $(".select2").select2();
+    $(function () {
+        $('#attributes-tbl').DataTable({
+            "columnDefs": [
+            {
+                "targets": [ 0 ],
+                "visible": false
+            }
+            ],
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": false,
+            "info": true,
+            "autoWidth": false,
+        });
+    });
+</script>

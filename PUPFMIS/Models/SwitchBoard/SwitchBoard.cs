@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PUPFMIS.Models
 {
-    [Table("PP_SYSTEM_SWITCHBOARD")]
+    [Table("PROC_SYTM_SwitchBoard")]
     public class SwitchBoard
     {
         [Key]
@@ -39,7 +39,7 @@ namespace PUPFMIS.Models
         [Display(Name = "Read?")]
         public bool IsRead { get; set; }
     }
-    [Table("PP_SYSTEM_SWITCHBOARD_BODY")]
+    [Table("PROC_SYTM_SwitchBoard_Body")]
     public class SwitchBoardBody
     {
         [Key]

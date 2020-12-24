@@ -1,21 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
-using System.Net;
-using System.Web;
-using System.Web.Mvc;
+﻿using PUPFMIS.BusinessAndDataLogic;
 using PUPFMIS.Models;
-using PUPFMIS.BusinessAndDataLogic;
+using System.Web.Mvc;
 
 namespace PUPFMIS.Areas.Property.Controllers
 {
     [Route("{action}")]
-    [RoutePrefix("app/cse")]
     [RouteArea("property-and-supplies")]
+    [RoutePrefix("annual-procurement-plan/common-supplies")]
     [Authorize(Roles = SystemRoles.SuperUser + ", " + SystemRoles.SystemAdmin + ", " + SystemRoles.PropertyDirector + ", " + SystemRoles.SuppliesChief + ", " + SystemRoles.ProcurementAdministrator + ", " + SystemRoles.ProcurementPlanningChief)]
-    public class AnnualProcurementPlansController : Controller
+    public class APP_CSEController : Controller
     {
         private AnnualProcurementPlanCSEDAL appcseDAL = new AnnualProcurementPlanCSEDAL();
         private AnnualProcurementPlanCSEBL appcseBL = new AnnualProcurementPlanCSEBL();
@@ -55,7 +48,7 @@ namespace PUPFMIS.Areas.Property.Controllers
             {
                 if(User.IsInRole(SystemRoles.ProcurementAdministrator) || User.IsInRole(SystemRoles.ProcurementPlanningChief))
                 {
-                    return RedirectToAction("dashboard", "APPs", new { Area = "procurement" });
+                    return RedirectToAction("dashboard", "AnnualProcurementPlans", new { Area = "procurement" });
                 }
                 if (User.IsInRole(SystemRoles.PropertyDirector) || User.IsInRole(SystemRoles.SuppliesChief))
                 {
@@ -63,7 +56,7 @@ namespace PUPFMIS.Areas.Property.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("dashboard", "APPs", new { Area = "procurement" });
+                    return RedirectToAction("dashboard", "AnnualProcurementPlans", new { Area = "procurement" });
                 }
             }
             return RedirectToAction("dashboard", "APPCSEDashboard", new { Area = "property-and-supplies" });

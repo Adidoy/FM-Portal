@@ -2192,7 +2192,7 @@ namespace PUPFMIS.BusinessAndDataLogic
     public class ProjectProcurementManagementPlanDAL : Controller
     {
         private FMISDbContext db = new FMISDbContext();
-        private TEMPAccounting abdb = new TEMPAccounting();
+        private ABISDataAccess abisDataAccess = new ABISDataAccess();
         private HRISDataAccess hrisDataAccess = new HRISDataAccess();
         private AccountsManagementBL accountsManagement = new AccountsManagementBL();
 
@@ -2205,12 +2205,12 @@ namespace PUPFMIS.BusinessAndDataLogic
             List<MOOEViewModel> mooe = new List<MOOEViewModel>();
             var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
             var office = hrisDataAccess.GetFullDepartmentDetails(user.DepartmentCode);
-            var accountList = abdb.ChartOfAccounts.Where(d => d.GenAcctName == "Maintenance and Other Operating Expenses").ToList();
+            var accountList = abisDataAccess.GetChartOfAccounts().Where(d => d.ClassCode == "5").ToList();
 
             var tier1Actual = (from items in db.Items
                                join ppmp in db.ProjectPlanItems on items.ID equals ppmp.ItemReference
                                where (office.SectionCode == null ? ppmp.FKPPMPReference.Department == office.DepartmentCode : ppmp.FKPPMPReference.Unit == office.SectionCode) && ppmp.FKPPMPReference.FiscalYear < FiscalYear && ppmp.UnitCost < 15000.00m && ppmp.ProposalType == BudgetProposalType.Actual
-                               select new { UACS = items.FKItemTypeReference.AccountClass, EstimatedBudget = ppmp.ProjectEstimatedBudget }
+                               select new { UACS = items.FKItemTypeReference.UACSObjectClass, EstimatedBudget = ppmp.ProjectEstimatedBudget }
                                into results
                                group results by results.UACS into groupResult
                                select new { UACS = groupResult.Key, Amount = groupResult.Sum(d => d.EstimatedBudget) }).ToList();
@@ -2218,7 +2218,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             var tier1Ongoing = (from items in db.Items
                                 join ppmp in db.ProjectPlanItems on items.ID equals ppmp.ItemReference
                                 where (office.SectionCode == null ? ppmp.FKPPMPReference.Department == office.DepartmentCode : ppmp.FKPPMPReference.Unit == office.SectionCode) && ppmp.UnitCost < 15000.00m && ppmp.Status == "Procurement On-going"
-                                select new { UACS = items.FKItemTypeReference.AccountClass, EstimatedBudget = ppmp.ProjectEstimatedBudget }
+                                select new { UACS = items.FKItemTypeReference.UACSObjectClass, EstimatedBudget = ppmp.ProjectEstimatedBudget }
                                 into results
                                 group results by results.UACS into groupResult
                                 select new { UACS = groupResult.Key, Amount = groupResult.Sum(d => d.EstimatedBudget) }).ToList();
@@ -2228,7 +2228,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             var tier2Items = (from items in db.Items
                               join ppmp in db.ProjectPlanItems on items.ID equals ppmp.ItemReference
                               where (office.SectionCode == null ? ppmp.FKPPMPReference.Department == office.DepartmentCode : ppmp.FKPPMPReference.Unit == office.SectionCode) && ppmp.FKPPMPReference.FiscalYear == FiscalYear && ppmp.UnitCost < 15000.00m && ppmp.ProposalType == BudgetProposalType.NewProposal
-                              select new { UACS = items.FKItemTypeReference.AccountClass, EstimatedBudget = ppmp.ProjectEstimatedBudget }
+                              select new { UACS = items.FKItemTypeReference.UACSObjectClass, EstimatedBudget = ppmp.ProjectEstimatedBudget }
                               into results
                               group results by results.UACS into groupResult
                               select new { UACS = groupResult.Key, Amount = groupResult.Sum(d => d.EstimatedBudget) }).ToList();
@@ -2252,7 +2252,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             var tier1Services = (from services in db.Items
                                  join ppmp in db.ProjectPlanServices on services.ID equals ppmp.ItemReference
                                  where (office.SectionCode == null ? ppmp.FKPPMPReference.Department == office.DepartmentCode : ppmp.FKPPMPReference.Unit == office.SectionCode) && ppmp.UnitCost < 15000.00m && ppmp.Status == "Procurement On-going"
-                                 select new { UACS = services.FKItemTypeReference.AccountClass, EstimatedBudget = ppmp.ProjectEstimatedBudget }
+                                 select new { UACS = services.FKItemTypeReference.UACSObjectClass, EstimatedBudget = ppmp.ProjectEstimatedBudget }
                                  into results
                                  group results by results.UACS into groupResult
                                  select new { UACS = groupResult.Key, Amount = groupResult.Sum(d => d.EstimatedBudget) }).ToList();
@@ -2260,7 +2260,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             var tier2Services = (from services in db.Items
                                  join ppmp in db.ProjectPlanServices on services.ID equals ppmp.ItemReference
                                  where (office.SectionCode == null ? ppmp.FKPPMPReference.Department == office.DepartmentCode : ppmp.FKPPMPReference.Unit == office.SectionCode) && ppmp.FKPPMPReference.FiscalYear == FiscalYear && ppmp.UnitCost < 15000.00m && ppmp.ProposalType == BudgetProposalType.NewProposal
-                                 select new { UACS = services.FKItemTypeReference.AccountClass, EstimatedBudget = ppmp.ProjectEstimatedBudget }
+                                 select new { UACS = services.FKItemTypeReference.UACSObjectClass, EstimatedBudget = ppmp.ProjectEstimatedBudget }
                                  into results
                                  group results by results.UACS into groupResult
                                  select new { UACS = groupResult.Key, Amount = groupResult.Sum(d => d.EstimatedBudget) }).ToList();
@@ -2291,12 +2291,12 @@ namespace PUPFMIS.BusinessAndDataLogic
             List<CapitalOutlayVM> capitalOutlay = new List<CapitalOutlayVM>();
             var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
             var office = hrisDataAccess.GetFullDepartmentDetails(user.DepartmentCode);
-            var accountList = abdb.ChartOfAccounts.Where(d => d.GenAcctName == "Maintenance and Other Operating Expenses").ToList();
+            var accountList = abisDataAccess.GetChartOfAccounts();
 
             var tier1Actual = (from items in db.Items
                                join ppmp in db.ProjectPlanItems on items.ID equals ppmp.ItemReference
                                where (office.SectionCode == null ? ppmp.FKPPMPReference.Department == office.DepartmentCode : ppmp.FKPPMPReference.Unit == office.SectionCode) && ppmp.FKPPMPReference.FiscalYear == FiscalYear && ppmp.UnitCost >= 15000.00m && ppmp.ProposalType == BudgetProposalType.Actual
-                               select new { UACS = items.FKItemTypeReference.AccountClass, EstimatedBudget = ppmp.ProjectEstimatedBudget }
+                               select new { UACS = items.FKItemTypeReference.UACSObjectClass, EstimatedBudget = ppmp.ProjectEstimatedBudget }
                                into results
                                group results by results.UACS into groupResult
                                select new { UACS = groupResult.Key, Amount = groupResult.Sum(d => d.EstimatedBudget) }).ToList();
@@ -2304,7 +2304,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             var tier1Ongoing = (from items in db.Items
                                 join ppmp in db.ProjectPlanItems on items.ID equals ppmp.ItemReference
                                 where (office.SectionCode == null ? ppmp.FKPPMPReference.Department == office.DepartmentCode : ppmp.FKPPMPReference.Unit == office.SectionCode) && ppmp.UnitCost >= 15000.00m && ppmp.Status == "Procurement On-going"
-                                select new { UACS = items.FKItemTypeReference.AccountClass, EstimatedBudget = ppmp.ProjectEstimatedBudget }
+                                select new { UACS = items.FKItemTypeReference.UACSObjectClass, EstimatedBudget = ppmp.ProjectEstimatedBudget }
                                 into results
                                 group results by results.UACS into groupResult
                                 select new { UACS = groupResult.Key, Amount = groupResult.Sum(d => d.EstimatedBudget) }).ToList();
@@ -2314,7 +2314,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             var tier2Items = (from items in db.Items
                               join ppmp in db.ProjectPlanItems on items.ID equals ppmp.ItemReference
                               where (office.SectionCode == null ? ppmp.FKPPMPReference.Department == office.DepartmentCode : ppmp.FKPPMPReference.Unit == office.SectionCode) && ppmp.FKPPMPReference.FiscalYear == FiscalYear && ppmp.UnitCost >= 15000.00m && ppmp.ProposalType == BudgetProposalType.NewProposal
-                              select new { UACS = items.FKItemTypeReference.AccountClass, EstimatedBudget = ppmp.ProjectEstimatedBudget }
+                              select new { UACS = items.FKItemTypeReference.UACSObjectClass, EstimatedBudget = ppmp.ProjectEstimatedBudget }
                               into results
                               group results by results.UACS into groupResult
                               select new { UACS = groupResult.Key, Amount = groupResult.Sum(d => d.EstimatedBudget) }).ToList();
@@ -2338,7 +2338,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             var tier1Services = (from services in db.Items
                                  join ppmp in db.ProjectPlanServices on services.ID equals ppmp.ItemReference
                                  where (office.SectionCode == null ? ppmp.FKPPMPReference.Department == office.DepartmentCode : ppmp.FKPPMPReference.Unit == office.SectionCode) && ppmp.UnitCost >= 15000.00m && ppmp.Status == "Procurement On-going"
-                                 select new { UACS = services.FKItemTypeReference.AccountClass, EstimatedBudget = ppmp.ProjectEstimatedBudget }
+                                 select new { UACS = services.FKItemTypeReference.UACSObjectClass, EstimatedBudget = ppmp.ProjectEstimatedBudget }
                                  into results
                                  group results by results.UACS into groupResult
                                  select new { UACS = groupResult.Key, Amount = groupResult.Sum(d => d.EstimatedBudget) }).ToList();
@@ -2346,7 +2346,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             var tier2Services = (from services in db.Items
                                  join ppmp in db.ProjectPlanServices on services.ID equals ppmp.ItemReference
                                  where (office.SectionCode == null ? ppmp.FKPPMPReference.Department == office.DepartmentCode : ppmp.FKPPMPReference.Unit == office.SectionCode) && ppmp.FKPPMPReference.FiscalYear == FiscalYear && ppmp.UnitCost >= 15000.00m && ppmp.ProposalType == BudgetProposalType.NewProposal
-                                 select new { UACS = services.FKItemTypeReference.AccountClass, EstimatedBudget = ppmp.ProjectEstimatedBudget }
+                                 select new { UACS = services.FKItemTypeReference.UACSObjectClass, EstimatedBudget = ppmp.ProjectEstimatedBudget }
                                  into results
                                  group results by results.UACS into groupResult
                                  select new { UACS = groupResult.Key, Amount = groupResult.Sum(d => d.EstimatedBudget) }).ToList();
@@ -2490,16 +2490,16 @@ namespace PUPFMIS.BusinessAndDataLogic
                     Supplier1ContactNo = d.FKSupplier1Reference.ContactNumber,
                     Supplier1EmailAddress = d.FKSupplier1Reference.EmailAddress,
                     Supplier1UnitCost = d.Supplier1UnitCost,
-                    Supplier2Name = d.FKSupplier2Reference.SupplierName,
-                    Supplier2Address = d.FKSupplier2Reference.Address,
-                    Supplier2ContactNo = d.FKSupplier2Reference.ContactNumber,
-                    Supplier2EmailAddress = d.FKSupplier2Reference.EmailAddress,
-                    Supplier2UnitCost = d.Supplier2UnitCost,
-                    Supplier3Name = d.FKSupplier3Reference.SupplierName,
-                    Supplier3Address = d.FKSupplier3Reference.Address,
-                    Supplier3ContactNo = d.FKSupplier3Reference.ContactNumber,
-                    Supplier3EmailAddress = d.FKSupplier3Reference.EmailAddress,
-                    Supplier3UnitCost = d.Supplier3UnitCost,
+                    Supplier2Name = d.FKSupplier2Reference == null ? "N/A": d.FKSupplier2Reference.SupplierName,
+                    Supplier2Address = d.FKSupplier2Reference == null ? "N/A" : d.FKSupplier2Reference.Address,
+                    Supplier2ContactNo = d.FKSupplier2Reference == null ? "N/A" : d.FKSupplier2Reference.ContactNumber,
+                    Supplier2EmailAddress = d.FKSupplier2Reference == null ? "N/A" : d.FKSupplier2Reference.EmailAddress,
+                    Supplier2UnitCost = d.FKSupplier2Reference == null ? 0.00m : d.Supplier2UnitCost,
+                    Supplier3Name = d.FKSupplier3Reference == null ? "N/A" : d.FKSupplier3Reference.SupplierName,
+                    Supplier3Address = d.FKSupplier3Reference == null ? "N/A" : d.FKSupplier3Reference.Address,
+                    Supplier3ContactNo = d.FKSupplier3Reference == null ? "N/A" : d.FKSupplier3Reference.ContactNumber,
+                    Supplier3EmailAddress = d.FKSupplier3Reference == null ? "N/A" : d.FKSupplier3Reference.EmailAddress,
+                    Supplier3UnitCost = d.FKSupplier3Reference == null ? 0.00m : d.Supplier3UnitCost,
                     TotalQty = String.Format("{0:#,##0}", d.ProjectTotalQty),
                     UnitCost = String.Format("{0:#,##0.00}", d.UnitCost),
                     EstimatedBudget = d.ProjectEstimatedBudget,
@@ -3544,7 +3544,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             if (disposing)
             {
                 db.Dispose();
-                abdb.Dispose();
+                abisDataAccess.Dispose();
                 hrisDataAccess.Dispose();
                 accountsManagement.Dispose();
             }

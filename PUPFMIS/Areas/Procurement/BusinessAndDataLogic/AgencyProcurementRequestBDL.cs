@@ -492,7 +492,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             var procurement = hrisDataAccess.GetDepartmentDetails(agencyDetails.ProcurementOfficeReference);
             var accounting = hrisDataAccess.GetDepartmentDetails(agencyDetails.AccountingOfficeReference);
             var hope = hrisDataAccess.GetDepartmentDetails(agencyDetails.HOPEReference);
-            var aprHeader = new APRHeader
+            var aprHeader = new AgencyProcurementRequest
             {
                 AgencyControlNo = GenerateAgencyRefereceNo(),
                 CreatedAt = DateTime.Now,
@@ -514,7 +514,7 @@ namespace PUPFMIS.BusinessAndDataLogic
                 return false;
             }
 
-            var aprDetails = new List<APRDetail>();
+            var aprDetails = new List<AgencyProcurementRequestDetails>();
             var prDetailsSummary = PurchaseRequestDetails
                 .GroupBy(d => new { d.ItemCode, d.UnitCost, d.References })
                 .Select(d => new {
@@ -529,7 +529,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             {
                 var itemDetails = db.Items.Where(d => d.ItemCode == item.ItemCode).FirstOrDefault();
                 var prID = db.PurchaseRequestHeader.Where(d => d.PRNumber == item.PRNumber).FirstOrDefault().ID;
-                aprDetails.Add(new APRDetail
+                aprDetails.Add(new AgencyProcurementRequestDetails
                 {
                     APRHeaderReference = aprHeader.ID,
                     ItemReference = itemDetails.ID,

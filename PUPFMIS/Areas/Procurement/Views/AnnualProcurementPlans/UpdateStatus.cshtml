@@ -1,0 +1,290 @@
+﻿@model PUPFMIS.Models.AnnualProcurementPlanVM
+
+@{
+    ViewBag.Title = "Annual Procurement Plan";
+    ViewBag.Description = "Update Status";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">Annual Procurement Plan</li>
+        <li class="breadcrumb-item">Dashboard</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-bookmark"></i> Update Annual Procurement Plan Status</h3>
+}
+
+@using (Ajax.BeginForm("update", "ItemTypes", new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "addItem", Area = "administration" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="bg-info">
+                <h6 class="p-2">ANNUAL PROCUREMENT PLAN DETAILS</h6>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="form-group">
+                @Html.LabelFor(model => model.FiscalYear, htmlAttributes: new { @class = "control-label" })
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                    </div>
+                    @Html.EditorFor(model => model.FiscalYear, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ReferenceNo, htmlAttributes: new { @class = "control-label" })
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                    </div>
+                    @Html.EditorFor(model => model.ReferenceNo, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="form-group">
+                @Html.LabelFor(model => model.AgencyName, htmlAttributes: new { @class = "control-label" })
+                @Html.HiddenFor(model => model.AgencyName)
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-building"></i></span>
+                    </div>
+                    @Html.EditorFor(model => model.AgencyName, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="form-group">
+                @Html.Label("Head of Procuring Entity (HOPE)", htmlAttributes: new { @class = "control-label" })
+                @Html.HiddenFor(model => model.ApprovedBy)
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-user-alt"></i></span>
+                    </div>
+                    @Html.EditorFor(model => model.ApprovedBy, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="form-group">
+                @Html.Label("Bids and Awards Secretariat", htmlAttributes: new { @class = "control-label" })
+                @Html.HiddenFor(model => model.CertifiedBy)
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-user"></i></span>
+                    </div>
+                    @Html.EditorFor(model => model.CertifiedBy, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="form-group">
+                @Html.Label("Procurement Management Office", htmlAttributes: new { @class = "control-label" })
+                @Html.HiddenFor(model => model.ProcurementOfficer)
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-user"></i></span>
+                    </div>
+                    @Html.EditorFor(model => model.ProcurementOfficer, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="bg-info">
+                <h6 class="p-2">APPROVAL DETAILS</h6>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="form-group">
+                @Html.Label("Procurement Management Office Director", htmlAttributes: new { @class = "control-label" })
+                @Html.HiddenFor(model => model.PreparedBy)
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-user-alt"></i></span>
+                    </div>
+                    @Html.EditorFor(model => model.PreparedBy, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="form-group">
+                @Html.LabelFor(model => model.PreparedAt, htmlAttributes: new { @class = "control-label" })
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                    </div>
+                    @if (Model.PreparedAt != null)
+                    {
+                        @Html.HiddenFor(model => model.PreparedAt)
+                        @Html.EditorFor(model => model.PreparedAt, new { htmlAttributes = new { @class = "form-control form-control-sm pull-right", style = "font-size: 100%", disabled = "disabled", Value = ((DateTime)Model.PreparedAt).ToString("MMMM dd, yyyy") } })
+                    }
+                    else
+                    {
+                        @Html.EditorFor(model => model.PreparedAt, new { htmlAttributes = new { @class = "form-control form-control-sm pull-right", style = "font-size: 100%" } })
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="form-group">
+                @Html.Label("Bids and Awards Committee Secretariat", htmlAttributes: new { @class = "control-label" })
+                @Html.HiddenFor(model => model.CertifiedBy)
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-user-alt"></i></span>
+                    </div>
+                    @Html.EditorFor(model => model.CertifiedBy, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="form-group">
+                @Html.LabelFor(model => model.CertifiedAt, htmlAttributes: new { @class = "control-label" })
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                    </div>
+                    @if (Model.CertifiedAt != null || Model.PreparedAt == null)
+                    {
+                        @Html.HiddenFor(model => model.CertifiedAt)
+                        @Html.EditorFor(model => model.CertifiedAt, new { htmlAttributes = new { @class = "form-control form-control-sm pull-right", style = "font-size: 100%", disabled = "disabled", Value = Model.CertifiedAt == null ? "" : ((DateTime)Model.CertifiedAt).ToString("MMMM dd, yyyy") } })
+                    }
+                    else
+                    {
+                        @Html.EditorFor(model => model.CertifiedAt, new { htmlAttributes = new { @class = "form-control form-control-sm pull-right", style = "font-size: 100%" } })
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="form-group">
+                @Html.Label("Head of Procuring Entity (HOPE)", htmlAttributes: new { @class = "control-label" })
+                @Html.HiddenFor(model => model.ApprovedBy)
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-user-alt"></i></span>
+                    </div>
+                    @Html.EditorFor(model => model.ApprovedBy, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ApprovedAt, htmlAttributes: new { @class = "control-label" })
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                    </div>
+                    @if (Model.ApprovedAt != null || Model.CertifiedAt == null)
+                    {
+                        @Html.HiddenFor(model => model.ApprovedAt)
+                        @Html.EditorFor(model => model.ApprovedAt, new { htmlAttributes = new { @class = "form-control form-control-sm pull-right", style = "font-size: 100%", disabled = "disabled", Value = Model.ApprovedAt == null ? "" :((DateTime)Model.ApprovedAt).ToString("MMMM dd, yyyy") } })
+                    }
+                    else
+                    {
+                        @Html.EditorFor(model => model.ApprovedAt, new { htmlAttributes = new { @class = "form-control form-control-sm pull-right", style = "font-size: 100%" } })
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+@section FormFooter {
+    <div class="form-group float-right">
+        <button type="button" class="btn btn-primary" id="save-btn" onclick="SaveItem()"><i class="fa fa-save"></i>&nbsp; Save changes</button>
+        <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("list","AnnualProcurementPlans", new { Area = "procurement", FiscalYear = Model.FiscalYear })'"><i class="fa fa-arrow-circle-left"></i> Back to Annual Procurement Plans</button>
+    </div>
+}
+
+<script src="~/Scripts/adminlte/components/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $("#PreparedAt").datepicker({
+            changeYear: true,
+            changeMonth: true,
+            format: "MM dd, yyyy",
+            startDate: new Date('@Model.CreatedAt.ToString("MM/dd/yyyy")'),
+            autoclose: true
+        });
+        $("#CertifiedAt").datepicker({
+            changeYear: true,
+            changeMonth: true,
+            format: "MM dd, yyyy",
+            startDate: new Date('@(Model.PreparedAt == null ? null : ((DateTime)Model.PreparedAt).ToString("MM/dd/yyyy") )'),
+            autoclose: true
+        });
+        $("#ApprovedAt").datepicker({
+            changeYear: true,
+            changeMonth: true,
+            format: "MM dd, yyyy",
+            startDate: new Date('@( Model.CertifiedAt == null ? null : ((DateTime)Model.CertifiedAt).ToString("MM/dd/yyyy") )'),
+            autoclose: true
+        });
+    });
+    function SaveItem() {
+        swal.fire({
+            title: "Save record?",
+            text: "You are about to update this record, continue?",
+            type: "warning",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#addItem").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    type: "error"
+                })
+            }
+        })
+    }
+    function CreateResult(data) {
+        if (data.result == true) {
+            swal.fire({
+                title: "Record Saved!",
+                text: "Record is successfully updated.",
+                type: "success"
+            }).then((result) => {
+                if (result.value) {
+                    window.location.href = "@Url.Action("list", "AnnualProcurementPlans", new { Area = "procurement", FiscalYear = Model.FiscalYear })";
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                type: "error"
+            })
+        }
+
+    }
+</script>

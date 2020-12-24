@@ -8,7 +8,7 @@ using System.Web.Security;
 
 namespace PUPFMIS.Models
 {
-    [Table("PP_ACCOUNTS_ROLES")]
+    [Table("PROC_USRM_User_Role")]
     public class Roles
     {
         [Key]
@@ -31,5 +31,6 @@ namespace PUPFMIS.Models
         public const string ProjectCoordinator = "Project Coordinator";
         public const string PropertyDirector = "Property Director";
         public const string SuppliesChief = "Supplies Chief";
+        public const string BACSECHead = "Bids and Awards Committee Secretariat Head";
     }
 }

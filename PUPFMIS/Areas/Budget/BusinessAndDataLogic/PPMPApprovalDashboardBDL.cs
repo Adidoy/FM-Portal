@@ -63,23 +63,23 @@ namespace PUPFMIS.BusinessAndDataLogic
         {
             var MOOEItemsActual = db.ProjectPlanItems
                             .Where(d => d.FKPPMPReference.FiscalYear == FiscalYear && d.ProposalType == BudgetProposalType.Actual && ((d.PPMPReference != null && d.Status == "Approved") || (d.APPReference != null && d.Status == "Posted to APP")) && d.UnitCost < 15000.00m)
-                            .GroupBy(d => new { d.FKItemReference.FKItemTypeReference.AccountClass })
-                            .Select(d => new { UACS = d.Key.AccountClass, Tier1 = d.Sum(x => x.PPMPEstimatedBudget), Tier2 = 0.00m })
+                            .GroupBy(d => new { d.FKItemReference.FKItemTypeReference.UACSObjectClass })
+                            .Select(d => new { UACS = d.Key.UACSObjectClass, Tier1 = d.Sum(x => x.PPMPEstimatedBudget), Tier2 = 0.00m })
                             .ToList();
             var MOOEServicesActual = db.ProjectPlanServices
                             .Where(d => d.FKPPMPReference.FiscalYear == FiscalYear && d.ProposalType == BudgetProposalType.Actual && ((d.PPMPReference != null && d.Status == "Approved") || (d.APPReference != null && d.Status == "Posted to APP")) && d.UnitCost < 15000.00m)
-                            .GroupBy(d => new { d.FKItemReference.FKItemTypeReference.AccountClass })
-                            .Select(d => new { UACS = d.Key.AccountClass, Tier1 = d.Sum(x => x.PPMPEstimatedBudget), Tier2 = 0.00m })
+                            .GroupBy(d => new { d.FKItemReference.FKItemTypeReference.UACSObjectClass })
+                            .Select(d => new { UACS = d.Key.UACSObjectClass, Tier1 = d.Sum(x => x.PPMPEstimatedBudget), Tier2 = 0.00m })
                             .ToList();
             var MOOEItems = db.ProjectPlanItems
                             .Where(d => d.FKPPMPReference.FiscalYear == FiscalYear && ((d.PPMPReference != null && d.Status == "Approved") || (d.APPReference != null && d.Status == "Posted to APP")) && d.UnitCost < 15000.00m)
-                            .GroupBy(d => new { d.FKItemReference.FKItemTypeReference.AccountClass })
-                            .Select(d => new { UACS = d.Key.AccountClass, Tier1 = 0.00m, Tier2 = d.Sum(x => x.PPMPEstimatedBudget) })
+                            .GroupBy(d => new { d.FKItemReference.FKItemTypeReference.UACSObjectClass })
+                            .Select(d => new { UACS = d.Key.UACSObjectClass, Tier1 = 0.00m, Tier2 = d.Sum(x => x.PPMPEstimatedBudget) })
                             .ToList();
             var MOOEServices = db.ProjectPlanServices
                             .Where(d => d.FKPPMPReference.FiscalYear == FiscalYear && ((d.PPMPReference != null && d.Status == "Approved") || (d.APPReference != null && d.Status == "Posted to APP")) && d.UnitCost < 15000.00m)
-                            .GroupBy(d => new { d.FKItemReference.FKItemTypeReference.AccountClass })
-                            .Select(d => new { UACS = d.Key.AccountClass, Tier1 = 0.00m, Tier2 = d.Sum(x => x.PPMPEstimatedBudget) })
+                            .GroupBy(d => new { d.FKItemReference.FKItemTypeReference.UACSObjectClass })
+                            .Select(d => new { UACS = d.Key.UACSObjectClass, Tier1 = 0.00m, Tier2 = d.Sum(x => x.PPMPEstimatedBudget) })
                             .ToList();
 
             var MOOEGroup = MOOEItemsActual.Union(MOOEItems).Union(MOOEServices).Union(MOOEServicesActual).ToList();
@@ -101,23 +101,23 @@ namespace PUPFMIS.BusinessAndDataLogic
         {
             var COItemsActual = db.ProjectPlanItems
                             .Where(d => d.FKPPMPReference.FiscalYear == FiscalYear && d.ProposalType == BudgetProposalType.Actual && ((d.PPMPReference != null && d.Status == "Approved") || (d.APPReference != null && d.Status == "Posted to APP")) && d.UnitCost >= 15000.00m)
-                            .GroupBy(d => new { d.FKItemReference.FKItemTypeReference.AccountClass })
-                            .Select(d => new { UACS = d.Key.AccountClass, Tier1 = d.Sum(x => x.PPMPEstimatedBudget), Tier2 = 0.00m })
+                            .GroupBy(d => new { d.FKItemReference.FKItemTypeReference.UACSObjectClass})
+                            .Select(d => new { UACS = d.Key.UACSObjectClass, Tier1 = d.Sum(x => x.PPMPEstimatedBudget), Tier2 = 0.00m })
                             .ToList();
             var COServicesActual = db.ProjectPlanServices
                             .Where(d => d.FKPPMPReference.FiscalYear == FiscalYear && d.ProposalType == BudgetProposalType.Actual && ((d.PPMPReference != null && d.Status == "Approved") || (d.APPReference != null && d.Status == "Posted to APP")) && d.UnitCost >= 15000.00m)
-                            .GroupBy(d => new { d.FKItemReference.FKItemTypeReference.AccountClass })
-                            .Select(d => new { UACS = d.Key.AccountClass, Tier1 = d.Sum(x => x.PPMPEstimatedBudget), Tier2 = 0.00m })
+                            .GroupBy(d => new { d.FKItemReference.FKItemTypeReference.UACSObjectClass })
+                            .Select(d => new { UACS = d.Key.UACSObjectClass, Tier1 = d.Sum(x => x.PPMPEstimatedBudget), Tier2 = 0.00m })
                             .ToList();
             var COItems = db.ProjectPlanItems
                             .Where(d => d.FKPPMPReference.FiscalYear == FiscalYear && ((d.PPMPReference != null && d.Status == "Approved") || (d.APPReference != null && d.Status == "Posted to APP")) && d.UnitCost >= 15000.00m)
-                            .GroupBy(d => new { d.FKItemReference.FKItemTypeReference.AccountClass })
-                            .Select(d => new { UACS = d.Key.AccountClass, Tier1 = 0.00m, Tier2 = d.Sum(x => x.PPMPEstimatedBudget) })
+                            .GroupBy(d => new { d.FKItemReference.FKItemTypeReference.UACSObjectClass })
+                            .Select(d => new { UACS = d.Key.UACSObjectClass, Tier1 = 0.00m, Tier2 = d.Sum(x => x.PPMPEstimatedBudget) })
                             .ToList();
             var COServices = db.ProjectPlanServices
                             .Where(d => d.FKPPMPReference.FiscalYear == FiscalYear && ((d.PPMPReference != null && d.Status == "Approved") || (d.APPReference != null && d.Status == "Posted to APP")) && d.UnitCost >= 15000.00m)
-                            .GroupBy(d => new { d.FKItemReference.FKItemTypeReference.AccountClass })
-                            .Select(d => new { UACS = d.Key.AccountClass, Tier1 = 0.00m, Tier2 = d.Sum(x => x.PPMPEstimatedBudget) })
+                            .GroupBy(d => new { d.FKItemReference.FKItemTypeReference.UACSObjectClass })
+                            .Select(d => new { UACS = d.Key.UACSObjectClass, Tier1 = 0.00m, Tier2 = d.Sum(x => x.PPMPEstimatedBudget) })
                             .ToList();
 
             var COGroup = COItems.Union(COServices).Union(COItemsActual).Union(COServicesActual).ToList();

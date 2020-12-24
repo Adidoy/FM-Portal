@@ -5,7 +5,7 @@ using System.Data.Entity.Infrastructure;
 
 namespace PUPFMIS.Models
 {
-    [Table("PP_LOGS_MASTER_TABLES")]
+    [Table("PROC_LOGS_Master_Tables")]
     public class LogsMasterTables
     {
         [Key]

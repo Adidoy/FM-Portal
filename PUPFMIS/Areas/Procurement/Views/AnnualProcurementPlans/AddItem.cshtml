@@ -1,0 +1,31 @@
+﻿@model PUPFMIS.Models.AnnualProcurementPlanDetailsVM
+
+@{
+    ViewBag.Title = "Annual Procurement Plan";
+    ViewBag.Description = "Add Line Item";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Annual Procurement Plan Dashboard", "dashboard", "AnnualProcurementPlans", new { Area = "procurement" }, null)</li>
+        <li class="breadcrumb-item">Add Item</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-bookmark"></i> Add Line Items</h3>
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="bg-info">
+                    <h6 class="p-2">ANNUAL PROCUREMENT PLAN LINE ITEMS</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

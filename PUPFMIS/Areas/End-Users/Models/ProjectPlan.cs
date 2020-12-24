@@ -6,7 +6,7 @@ using System.Web.Mvc;
 
 namespace PUPFMIS.Models
 {
-    [Table("PP_PLANNING_PROJECTPLAN_HEADER")]
+    [Table("PROC_TRXN_Planning_Project_Plan")]
     public class ProjectPlans
     {
         [Key]
@@ -80,7 +80,7 @@ namespace PUPFMIS.Models
         [Display(Name = "Date Deleted")]
         public DateTime? DeletedAt { get; set; }
     }
-    [Table("PP_PLANNING_PROJECTPLAN_ITEMS")]
+    [Table("PROC_TRXN_Planning_Project_Plan_Items")]
     public class ProjectPlanItems
     {
         [Key, Column(Order = 0)]
@@ -215,7 +215,7 @@ namespace PUPFMIS.Models
         public int? APPReference { get; set; }
 
         [Display(Name = "APP Line Reference")]
-        public string APPLineReference { get; set; }
+        public int? APPLineReference { get; set; }
 
         [Display(Name = "Purchase Request Reference")]
         public int? PRReference { get; set; }
@@ -252,7 +252,7 @@ namespace PUPFMIS.Models
         public virtual PPMPHeader FKPPMPReference { get; set; }
 
         [ForeignKey("APPReference")]
-        public virtual APPHeader FKAPPReference { get; set; }
+        public virtual AnnualProcurementPlan FKAPPReference { get; set; }
 
         [ForeignKey("Supplier1")]
         public virtual Supplier FKSupplier1Reference { get; set; }
@@ -266,22 +266,13 @@ namespace PUPFMIS.Models
         [ForeignKey("PRReference")]
         public virtual PurchaseRequestHeader FKPurchaseRequestReference { get; set; }
 
-        [ForeignKey("Q1PRReference")]
-        public virtual PurchaseRequestHeader FKQ1PurchaseRequestReference { get; set; }
-
-        [ForeignKey("Q2PRReference")]
-        public virtual PurchaseRequestHeader FKQ2PurchaseRequestReference { get; set; }
-
-        [ForeignKey("Q3PRReference")]
-        public virtual PurchaseRequestHeader FKQ3PurchaseRequestReference { get; set; }
-
-        [ForeignKey("Q4PRReference")]
-        public virtual PurchaseRequestHeader FKQ4PurchaseRequestReference { get; set; }
-
         [ForeignKey("APRReference")]
-        public virtual APRHeader FKAPRHeaderReference { get; set; }
+        public virtual AgencyProcurementRequest FKAPRHeaderReference { get; set; }
+
+        [ForeignKey("APPLineReference")]
+        public virtual AnnualProcurementPlanDetails FKAPPDetailsReference { get; set; }
     }
-    [Table("PP_PLANNING_PROJECTPLAN_SERVICES")]
+    [Table("PROC_TRXN_Planning_Project_Plan_Services")]
     public class ProjectPlanServices
     {
         [Key, Column(Order = 0)]
@@ -367,7 +358,7 @@ namespace PUPFMIS.Models
         public int? APPReference { get; set; }
 
         [Display(Name = "APP Line Reference")]
-        public string APPLineReference { get; set; }
+        public int? APPLineReference { get; set; }
 
         [Display(Name = "Purchase Request Reference")]
         public int? PRReference { get; set; }
@@ -413,7 +404,151 @@ namespace PUPFMIS.Models
         public virtual Supplier FKSupplier3Reference { get; set; }
 
         [ForeignKey("APPReference")]
-        public virtual APPHeader FKAPPHeaderReference { get; set; }
+        public virtual AnnualProcurementPlan FKAPPHeaderReference { get; set; }
+
+        [ForeignKey("APPLineReference")]
+        public virtual AnnualProcurementPlanDetails FKAPPDetailsReference { get; set; }
+
+        [ForeignKey("PRReference")]
+        public virtual PurchaseRequestHeader FKPurchaseRequestReference { get; set; }
+    }
+
+    [Table("PROC_TRXN_Planning_Project_Plan_Details")]
+    public class ProjectPlanDetails
+    {
+        [Key, Column(Order = 0)]
+        [Display(Name = "Project")]
+        public int ProjectReference { get; set; }
+
+        [Key, Column(Order = 1)]
+        [Display(Name = "ItemReference")]
+        public int ItemReference { get; set; }
+
+        [Key, Column(Order = 2)]
+        public BudgetProposalType ProposalType { get; set; }
+
+        public int? PPMPReference { get; set; }
+
+        [AllowHtml]
+        [DataType(DataType.MultilineText)]
+        [Display(Name = "Full Specifications")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
+        public string ItemSpecifications { get; set; }
+
+        [Display(Name = "Quantity/Size")]
+        public int ProjectQuantity { get; set; }
+
+        [Display(Name = "Estimated Budget")]
+        public decimal ProjectEstimatedBudget { get; set; }
+
+        [Display(Name = "JAN")]
+        public string PPMPJan { get; set; }
+
+        [Display(Name = "FEB")]
+        public string PPMPFeb { get; set; }
+
+        [Display(Name = "MAR")]
+        public string PPMPMar { get; set; }
+
+        [Display(Name = "APR")]
+        public string PPMPApr { get; set; }
+
+        [Display(Name = "MAY")]
+        public string PPMPMay { get; set; }
+
+        [Display(Name = "JUN")]
+        public string PPMPJun { get; set; }
+
+        [Display(Name = "JUL")]
+        public string PPMPJul { get; set; }
+
+        [Display(Name = "AUG")]
+        public string PPMPAug { get; set; }
+
+        [Display(Name = "SEP")]
+        public string PPMPSep { get; set; }
+
+        [Display(Name = "OCT")]
+        public string PPMPOct { get; set; }
+
+        [Display(Name = "NOV")]
+        public string PPMPNov { get; set; }
+
+        [Display(Name = "DEC")]
+        public string PPMPDec { get; set; }
+
+        [Display(Name = "Quantity/Size")]
+        public int PPMPQuantity { get; set; }
+
+        [Display(Name = "Estimated Budget")]
+        public decimal PPMPEstimatedBudget { get; set; }
+
+        [Display(Name = "FundSource")]
+        public string FundSource { get; set; }
+
+        [Display(Name = "Justification")]
+        public string Justification { get; set; }
+
+        [Display(Name = "Status")]
+        public string Status { get; set; }
+
+        [Display(Name = "Unit Cost")]
+        public decimal UnitCost { get; set; }
+
+        [Display(Name = "APP Reference")]
+        public int? APPReference { get; set; }
+
+        [Display(Name = "APP Line Reference")]
+        public int? APPLineReference { get; set; }
+
+        [Display(Name = "Purchase Request Reference")]
+        public int? PRReference { get; set; }
+
+        [Display(Name = "Purchase Order Reference")]
+        public int? POReference { get; set; }
+
+        [Display(Name = "Supplier 1")]
+        public int Supplier1 { get; set; }
+
+        [Display(Name = "Unit Cost")]
+        public decimal? Supplier1UnitCost { get; set; }
+
+        [Display(Name = "Supplier 2")]
+        public int? Supplier2 { get; set; }
+
+        [Display(Name = "Unit Cost")]
+        public decimal? Supplier2UnitCost { get; set; }
+
+        [Display(Name = "Supplier 3")]
+        public int? Supplier3 { get; set; }
+
+        [Display(Name = "Unit Cost")]
+        public decimal? Supplier3UnitCost { get; set; }
+
+        [Display(Name = "Service Specifications")]
+        [ForeignKey("ItemReference")]
+        public virtual Item FKItemReference { get; set; }
+
+        [ForeignKey("ProjectReference")]
+        public virtual ProjectPlans FKProjectReference { get; set; }
+
+        [ForeignKey("PPMPReference")]
+        public virtual PPMPHeader FKPPMPReference { get; set; }
+
+        [ForeignKey("Supplier1")]
+        public virtual Supplier FKSupplier1Reference { get; set; }
+
+        [ForeignKey("Supplier2")]
+        public virtual Supplier FKSupplier2Reference { get; set; }
+
+        [ForeignKey("Supplier3")]
+        public virtual Supplier FKSupplier3Reference { get; set; }
+
+        [ForeignKey("APPReference")]
+        public virtual AnnualProcurementPlan FKAPPHeaderReference { get; set; }
+
+        [ForeignKey("APPLineReference")]
+        public virtual AnnualProcurementPlanDetails FKAPPDetailsReference { get; set; }
 
         [ForeignKey("PRReference")]
         public virtual PurchaseRequestHeader FKPurchaseRequestReference { get; set; }

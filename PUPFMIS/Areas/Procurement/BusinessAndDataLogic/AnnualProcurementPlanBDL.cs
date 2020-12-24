@@ -2,7 +2,6 @@
 using MigraDoc.DocumentObjectModel.Tables;
 using PUPFMIS.Models;
 using PUPFMIS.Models.AIS;
-using PUPFMIS.Models.HRIS;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +10,6 @@ using System.Web.Mvc;
 
 namespace PUPFMIS.BusinessAndDataLogic
 {
-    
     public class AnnualProcurementPlanBL : Controller
     {
         private AnnualProcurementPlanDAL APPDataAccess = new AnnualProcurementPlanDAL();
@@ -45,7 +43,7 @@ namespace PUPFMIS.BusinessAndDataLogic
 
             reports.AddSingleColumnHeader();
 
-            var APPType = APPViewModel.APPType == "Original" ? APPViewModel.ApprovedAt == null ? "INDICATIVE " : String.Empty : APPViewModel.APPType.ToUpper() + " ";
+            var APPType = APPViewModel.APPType == "Indicative" ? "INDICATIVE " : APPViewModel.APPType == "Original" ? String.Empty : APPViewModel.APPType.ToUpper() + " ";
 
             reports.AddColumnHeader(
                 new HeaderLine { Content = APPType + "ANNUAL PROCUREMENT PLAN", Bold = true, Italic = false, FontSize = 10, ParagraphAlignment = ParagraphAlignment.Center }
@@ -95,6 +93,7 @@ namespace PUPFMIS.BusinessAndDataLogic
 
             var accounts = APPViewModel.APPLineItems.GroupBy(d => d.ObjectClassification).Select(d => d.Key).ToList();
 
+            int count = 0;
             foreach(var acct in accounts)
             {
                 columns = new List<ContentColumn>();
@@ -102,8 +101,9 @@ namespace PUPFMIS.BusinessAndDataLogic
                 reports.AddTable(columns, true);
 
                 rows = new List<ContentCell>();
-                rows.Add(new ContentCell(acct, 0, 10, true, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+                rows.Add(new ContentCell(Convert.ToChar(count + 65).ToString() + ". " + acct, 0, 10, true, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                 reports.AddRowContent(rows, 0.25);
+                count++;
 
                 columns = new List<ContentColumn>();
                 columns.Add(new ContentColumn(0.75));
@@ -121,14 +121,14 @@ namespace PUPFMIS.BusinessAndDataLogic
                 columns.Add(new ContentColumn(1.50));
                 reports.AddTable(columns, true);
 
-                var acctItems = APPViewModel.APPLineItems.Where(d => d.ObjectClassification == acct).ToList();
+                var acctItems = APPViewModel.APPLineItems.Where(d => d.ObjectClassification.StartsWith(acct.Substring(0, acct.Length - 4))).ToList();
                 foreach (var item in acctItems)
                 {
                     rows = new List<ContentCell>();
                     rows.Add(new ContentCell(item.PAPCode, 0, 7, true, false, ParagraphAlignment.Center, VerticalAlignment.Center));
                     rows.Add(new ContentCell(item.ProcurementProject, 1, 7, true, false, ParagraphAlignment.Left, VerticalAlignment.Center));
                     rows.Add(new ContentCell(item.EndUser, 2, 7, false, false, ParagraphAlignment.Center, VerticalAlignment.Center));
-                    rows.Add(new ContentCell(item.ModeOfProcurement, 3, 7, false, false, ParagraphAlignment.Center, VerticalAlignment.Center));
+                    rows.Add(new ContentCell(item.ModeOfProcurement.Replace("\n", " / \n"), 3, 7, false, false, ParagraphAlignment.Center, VerticalAlignment.Center));
                     rows.Add(new ContentCell(item.StartMonth + " - " + item.EndMonth, 4, 7, false, false, ParagraphAlignment.Center, VerticalAlignment.Center, 3));
                     rows.Add(new ContentCell(item.FundDescription, 8, 7, false, false, ParagraphAlignment.Center, VerticalAlignment.Center));
                     rows.Add(new ContentCell(String.Format("{0:C}", item.EstimatedBudget), 9, 8, false, false, ParagraphAlignment.Right, VerticalAlignment.Center));
@@ -229,7 +229,6 @@ namespace PUPFMIS.BusinessAndDataLogic
     {
         private FMISDbContext db = new FMISDbContext();
         private HRISDataAccess hrisDataAccess = new HRISDataAccess();
-        private TEMPAccounting abdb = new TEMPAccounting();
         private ABISDataAccess abisDataAccess = new ABISDataAccess();
         private SystemBDL systemBDL = new SystemBDL();
         
@@ -255,14 +254,6 @@ namespace PUPFMIS.BusinessAndDataLogic
             var fiscalYears = db.APPHeader.Where(d => d.APPType == "CSE").Select(d => d.FiscalYear).Union(db.APPHeader.Where(d => d.APPType != "CSE").Select(d => d.FiscalYear)).GroupBy(d => d).Select(d => d.Key).ToList();
             return fiscalYears;
         }
-        public int GetNoOfPPMPsToBeReviewed()
-        {
-            return db.PPMPHeader.Where(d => d.Status == "PPMP Submitted").Any() ? db.PPMPHeader.Where(d => d.Status == "PPMP Submitted").Count() : 0;
-        }
-        public int GetNoOfPPMPsToBeEvaluated()
-        {
-            return db.PPMPHeader.Where(d => d.Status == "PPMP Evaluated").Any() ? db.PPMPHeader.Where(d => d.Status == "PPMP Evaluated").Count() : 0;
-        }
         public List<ModeOfProcurement> GetModesOfProcurement()
         {
             return db.ProcurementModes.ToList();
@@ -272,7 +263,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             AgencyDetails agencyDetails = db.AgencyDetails.First();
             var APPHeader = db.APPHeader.Where(d => d.ReferenceNo == ReferenceNo).FirstOrDefault();
             var APPDetails = new List<AnnualProcurementPlanDetailsVM>();
-            var ProcurementPrograms = db.ProcurementPrograms.Where(d => d.FKAPPHeaderReference.ReferenceNo == ReferenceNo).ToList();
+            var ProcurementPrograms = db.APPDetails.Where(d => d.FKAPPHeaderReference.ReferenceNo == ReferenceNo).ToList();
 
             foreach(var item in ProcurementPrograms)
             {
@@ -292,8 +283,8 @@ namespace PUPFMIS.BusinessAndDataLogic
 
                 APPDetails.Add(new AnnualProcurementPlanDetailsVM
                 {
-                    UACS = item.ObjectClassification,
-                    ObjectClassification = abisDataAccess.GetDetailedChartOfAccounts().Where(d => d.UACS_Code == item.ObjectClassification).FirstOrDefault().AcctName,
+                    UACS = item.ObjectClassification.Substring(0, item.ObjectClassification.Length - 5) + "00000",
+                    ObjectClassification = abisDataAccess.GetChartOfAccounts(item.ObjectClassification).SubAcctName,
                     PAPCode = item.PAPCode,
                     ProcurementProject = item.ProcurementProgram,
                     ModeOfProcurement = modesOfProcurement,
@@ -336,31 +327,6 @@ namespace PUPFMIS.BusinessAndDataLogic
                 CertifiedAt = APPHeader.RecommendedAt,
                 ApprovedAt = APPHeader.ApprovedAt,
                 APPLineItems = APPDetails
-            };
-        }
-        public AnnualProcurementPlanVM GetAPPHeader(string ReferenceNo)
-        {
-            AgencyDetails agencyDetails = db.AgencyDetails.First();
-            var APPHeader = db.APPHeader.Where(d => d.ReferenceNo == ReferenceNo).FirstOrDefault();
-
-            return new AnnualProcurementPlanVM
-            {
-                FiscalYear = APPHeader.FiscalYear,
-                APPType = APPHeader.APPType,
-                ReferenceNo = APPHeader.ReferenceNo,
-                ApprovedBy = APPHeader.ApprovedBy,
-                ApprovedAt = APPHeader.ApprovedAt,
-                ApprovedByDesignation = APPHeader.ApprovedByDesignation,
-                ApprovedByDepartment = hrisDataAccess.GetDepartmentDetails(APPHeader.ApprovedByDepartmentCode).Department,
-                CreatedAt = APPHeader.CreatedAt,
-                PreparedBy = APPHeader.PreparedBy,
-                PreparedAt = (DateTime)APPHeader.PreparedAt,
-                PreparedByDesignation = APPHeader.PreparedByDesignation,
-                PreparedByDepartment = hrisDataAccess.GetDepartmentDetails(APPHeader.PreparedByDepartmentCode).Department,
-                CertifiedBy = APPHeader.RecommendingApproval,
-                CertifiedAt = APPHeader.RecommendedAt,
-                CertifiedByDesignation = APPHeader.RecommendingApprovalDesignation,
-                CertifiedByDepartment = hrisDataAccess.GetDepartmentDetails(APPHeader.RecommendingApprovalDepartmentCode).Department,
             };
         }
         public List<AnnualProcurementPlanHeaderVM> GetAnnualProcurementPlans(int FiscalYear)
@@ -409,277 +375,543 @@ namespace PUPFMIS.BusinessAndDataLogic
         private string GenerateReferenceNo(int FiscalYear, string APPType)
         {
             string referenceNo = String.Empty;
-            var appTypeCode = APPType == "Original" ? "ORG" : APPType == "Supplemental" ? "SUP" : "AMD";
+            var appTypeCode = (APPType == "Original" || APPType == "Indicative") ? "ORG" : APPType == "Supplemental" ? "SUP" : "AMD";
             var sequenceNo = (db.APPHeader.Where(d => d.ReferenceNo.Contains("ANPP-" + appTypeCode) && d.FiscalYear == FiscalYear).Count() + 1).ToString();
             sequenceNo = (sequenceNo.Length == 1) ? "00" + sequenceNo : (sequenceNo.Length == 2) ? "0" + sequenceNo : sequenceNo;
             referenceNo = "ANPP-" + appTypeCode + "-" + sequenceNo + "-" + FiscalYear;
             return referenceNo;
         }
-        private string GeneratePAPCode(int FiscalYear, int ItemNo, string InventoryCode)
+
+        private List<ApprovedItems> CommonSuppliesProjects(int FiscalYear)
         {
-            string PAPCode = string.Empty;
-            PAPCode = InventoryCode + "-UNIV-" + (ItemNo.ToString().Length == 1 ? "00" + ItemNo.ToString() : ItemNo.ToString().Length == 2 ? "0" + ItemNo.ToString() : ItemNo.ToString()) + "-" + FiscalYear.ToString();
-            return PAPCode;
+            var commonSuppliesProjects = new List<ApprovedItems>();
+            var chartOfAccounts = abisDataAccess.GetChartOfAccounts().ToList();
+            var commonSuppliesItems = (from chart in chartOfAccounts
+                                          join items in db.ProjectPlanItems.ToList() on chart.UACS_Code equals items.FKItemReference.FKItemTypeReference.UACSObjectClass
+                                          where items.UnitCost < 15000.00m && (items.Status == "Approved" || items.Status == "Posted to APP") && (items.APPLineReference == null) && 
+                                                items.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode == "CUOS"
+                                          select new
+                                          {
+                                              IsTangible = items.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.IsTangible,
+                                              IsInstitutional = items.FKItemReference.ResponsibilityCenter == null ? false : true,
+                                              ItemCode = items.FKItemReference.ItemCode,
+                                              ItemName = items.FKItemReference.ItemFullName,
+                                              ItemSpecification = items.FKItemReference.ItemSpecifications,
+                                              UACS = items.FKItemReference.FKItemTypeReference.UACSObjectClass,
+                                              EstimatedBudget = items.PPMPEstimatedBudget,
+                                              FundSource = items.FundSource,
+                                              ResponsibilityCenter = items.FKItemReference.ResponsibilityCenter == null ? items.FKPPMPReference.Department : items.FKItemReference.ResponsibilityCenter,
+                                              InventoryCode = items.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode,
+                                              Month = items.FKProjectReference.ProjectMonthStart,
+                                              MOOE = chart.ClassCode == "5" ? items.PPMPEstimatedBudget : 0.00m,
+                                              CapitalOutlay = chart.ClassCode == "1" ? items.PPMPEstimatedBudget : 0.00m,
+                                              ProcurementSource = items.FKItemReference.ProcurementSource,
+                                              EndUser = items.FKItemReference.ResponsibilityCenter == null ? items.FKProjectReference.Department : items.FKItemReference.ResponsibilityCenter
+                                          }).ToList();
+
+            commonSuppliesProjects = commonSuppliesItems
+                                        .GroupBy(d => new {
+                                            d.IsTangible,
+                                            d.IsInstitutional,
+                                            d.UACS,
+                                            d.FundSource,
+                                            d.InventoryCode,
+                                            d.EndUser,
+                                            d.ProcurementSource
+                                        })
+                                        .Select(d => new ApprovedItems
+                                        {
+                                            IsInstitutional = d.Key.IsInstitutional,
+                                            IsTangible = d.Key.IsTangible,
+                                            ItemCode = d.Key.UACS,
+                                            UACS = d.Key.UACS,
+                                            EstimatedBudget = d.Sum(x => x.EstimatedBudget),
+                                            FundSource = d.Key.FundSource,
+                                            MOOE = d.Sum(x => x.MOOE),
+                                            CapitalOutlay = d.Sum(x => x.CapitalOutlay),
+                                            InventoryCode = d.Key.InventoryCode,
+                                            Month = 1,
+                                            EndUser = d.Key.EndUser,
+                                            ProcurementSource = d.Key.ProcurementSource
+                                        }).ToList();
+
+            foreach (var project in commonSuppliesProjects)
+            {
+                project.ItemCode = project.UACS + '-' + project.FundSource.Replace("\r\n", "") + "-" + project.ProcurementSource;
+                project.EndUserName = hrisDataAccess.GetDepartmentDetails(project.EndUser).Department;
+                project.ItemName = (abisDataAccess.GetChartOfAccounts(project.UACS).AcctName.Replace("Expenses", "") + (project.ProcurementSource == ProcurementSources.PS_DBM ? "available at DBM Procurement Service" : "not available at DBM-PS")).ToUpper();
+                project.ModeOfProcurement = project.ProcurementSource == ProcurementSources.PS_DBM ? new string[] { "10" } : new string[] { "1", "5", "14" };
+                project.ObjectClassification = abisDataAccess.GetChartOfAccounts(project.UACS).AcctName;
+                project.UACSSubClass = project.UACS.Substring(0, project.UACS.Length - 5) + "00000";
+                project.ObjectSubClassification = abisDataAccess.GetChartOfAccounts(project.UACS).SubAcctName;
+                project.FundDescription = abisDataAccess.GetFundSources(project.FundSource).FUND_DESC;
+                project.Schedule = (project.Month <= 5 ? "October " + (FiscalYear - 1) : systemBDL.GetMonthName(project.Month - 5)) + " - " + systemBDL.GetMonthName(project.Month) + " " + FiscalYear.ToString();
+                project.Remarks = project.ProcurementSource == ProcurementSources.PS_DBM ? "Common-use supplies available at DBM - Procurement Service." : "Common-use supplies not available at DBM-PS but can be procured under Annex H Sec. 52 of R.A. 9184.";
+            }
+
+            return commonSuppliesProjects;
         }
-
-        public List<ApprovedItems> GetApprovedItems(int FiscalYear)
+        private List<ApprovedItems> LessThanThresholdProjects(int FiscalYear)
         {
-            var dbmSupplies = db.ProjectPlanItems
-                .Where(d => d.FKProjectReference.FiscalYear == FiscalYear && (d.Status == "Approved" || d.Status == "Posted to APP") && d.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode == "CUOS" && d.FKItemReference.ProcurementSource == ProcurementSources.PS_DBM)
-                .Select(d => new
-                {
-                    IsTangible = d.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.IsTangible,
-                    IsInstitutional = d.FKItemReference.ResponsibilityCenter == null ? false : true,
-                    UACS = d.FKItemReference.FKItemTypeReference.AccountClass,
-                    EstimatedBudget = d.PPMPEstimatedBudget,
-                    FundSource = d.FundSource,
-                    ResponsibilityCenter = d.FKItemReference.ResponsibilityCenter == null ? d.FKPPMPReference.Department : d.FKItemReference.ResponsibilityCenter,
-                    InventoryCode = d.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode,
-                    Month = d.FKProjectReference.ProjectMonthStart,
-                    MOOE = d.UnitCost < 15000.00m ? d.PPMPEstimatedBudget : 0.00m,
-                    CapitalOutlay = d.UnitCost >= 15000.00m ? d.PPMPEstimatedBudget : 0.00m
-                })
-                .GroupBy(d => new
-                {
-                    d.FundSource,
-                    d.UACS,
-                    d.IsTangible,
-                    d.InventoryCode,
-                    d.IsInstitutional,
-                    d.ResponsibilityCenter
-                })
-                .Select(d => new ApprovedItems
-                {
-                    IsTangible = d.Key.IsTangible,
-                    IsInstitutional = d.Key.IsInstitutional,
-                    ItemCode = "CUOS-1",
-                    ItemName = "Procurement of Common-use Office Supplies available at PS-DBM",
-                    UACS = d.Key.UACS,
-                    EstimatedBudget = d.Sum(x => x.EstimatedBudget),
-                    FundSource = d.Key.FundSource,
-                    MOOE = d.Sum(x => x.MOOE),
-                    CapitalOutlay = d.Sum(x => x.CapitalOutlay),
-                    InventoryCode = d.Key.InventoryCode,
-                    Month = 1,
-                    EndUser = d.Key.ResponsibilityCenter,
-                    Remarks = "Common-use office supplies available at Procurement Services - Department of Budget and Management"
-                }).ToList();
+            var lessThanThresholdProjects = new List<ApprovedItems>();
+            var chartOfAccounts = abisDataAccess.GetChartOfAccounts().ToList();
+            var lessThanThresholdItems = (from chart in chartOfAccounts
+                                          join items in db.ProjectPlanItems.ToList() on chart.UACS_Code equals items.FKItemReference.FKItemTypeReference.UACSObjectClass
+                                          where items.UnitCost < 15000.00m && items.Status == "Approved" && items.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode != "CUOS"
+                                        select new
+                                        {
+                                            IsTangible = items.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.IsTangible,
+                                            IsInstitutional = items.FKItemReference.ResponsibilityCenter == null ? false : true,
+                                            ItemCode = items.FKItemReference.ItemCode,
+                                            ItemName = items.FKItemReference.ItemFullName,
+                                            ItemSpecification = items.FKItemReference.ItemSpecifications,
+                                            UACS = items.FKItemReference.FKItemTypeReference.UACSObjectClass,
+                                            EstimatedBudget = items.PPMPEstimatedBudget,
+                                            FundSource = items.FundSource,
+                                            ResponsibilityCenter = items.FKItemReference.ResponsibilityCenter == null ? items.FKPPMPReference.Department : items.FKItemReference.ResponsibilityCenter,
+                                            InventoryCode = items.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode,
+                                            Month = items.FKProjectReference.ProjectMonthStart,
+                                            MOOE = chart.ClassCode == "5" ? items.PPMPEstimatedBudget : 0.00m,
+                                            CapitalOutlay = chart.ClassCode == "1" ? items.PPMPEstimatedBudget : 0.00m
+                                        } into result
+                                        group result by new
+                                        {
+                                            result.ItemCode,
+                                            result.ItemName,
+                                            result.FundSource,
+                                            result.UACS,
+                                            result.IsTangible,
+                                            result.InventoryCode,
+                                            result.IsInstitutional,
+                                            result.ResponsibilityCenter
+                                        } into groupedResult
+                                        select new ApprovedItems
+                                        {
+                                            IsTangible = groupedResult.Key.IsTangible,
+                                            IsInstitutional = groupedResult.Key.IsInstitutional,
+                                            ItemCode = groupedResult.Key.ItemCode,
+                                            ItemName = groupedResult.Key.ItemName,
+                                            UACS = groupedResult.Key.UACS,
+                                            EstimatedBudget = groupedResult.Sum(x => x.EstimatedBudget),
+                                            FundSource = groupedResult.Key.FundSource,
+                                            MOOE = groupedResult.Sum(x => x.MOOE),
+                                            CapitalOutlay = groupedResult.Sum(x => x.CapitalOutlay),
+                                            InventoryCode = groupedResult.Key.InventoryCode,
+                                            Month = groupedResult.Max(x => x.Month),
+                                            EndUser = groupedResult.Key.ResponsibilityCenter
+                                        }).ToList();
 
-            var nonDBMSupplies = db.ProjectPlanItems
-                .Where(d => d.FKProjectReference.FiscalYear == FiscalYear && (d.Status == "Approved" || d.Status == "Posted to APP") && d.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode == "CUOS" && d.FKItemReference.ProcurementSource == ProcurementSources.Non_DBM)
-                .Select(d => new
-                {
-                    IsTangible = d.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.IsTangible,
-                    IsInstitutional = d.FKItemReference.ResponsibilityCenter == null ? false : true,
-                    UACS = d.FKItemReference.FKItemTypeReference.AccountClass,
-                    EstimatedBudget = d.PPMPEstimatedBudget,
-                    FundSource = d.FundSource,
-                    ResponsibilityCenter = d.FKItemReference.ResponsibilityCenter == null ? d.FKPPMPReference.Department : d.FKItemReference.ResponsibilityCenter,
-                    InventoryCode = d.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode,
-                    Month = d.FKProjectReference.ProjectMonthStart,
-                    MOOE = d.UnitCost < 15000.00m ? d.PPMPEstimatedBudget : 0.00m,
-                    CapitalOutlay = d.UnitCost >= 15000.00m ? d.PPMPEstimatedBudget : 0.00m
-                })
-                .GroupBy(d => new
-                {
-                    d.FundSource,
-                    d.UACS,
-                    d.IsTangible,
-                    d.InventoryCode,
-                    d.IsInstitutional,
-                    d.ResponsibilityCenter
-                })
-                .Select(d => new ApprovedItems
-                {
-                    IsTangible = d.Key.IsTangible,
-                    IsInstitutional = d.Key.IsInstitutional,
-                    ItemCode = "CUOS-2",
-                    ItemName = "Procurement of Common-use Office Supplies not available at PS-DBM",
-                    UACS = d.Key.UACS,
-                    EstimatedBudget = d.Sum(x => x.EstimatedBudget),
-                    FundSource = d.Key.FundSource,
-                    MOOE = d.Sum(x => x.MOOE),
-                    CapitalOutlay = d.Sum(x => x.CapitalOutlay),
-                    InventoryCode = d.Key.InventoryCode,
-                    Month = 1,
-                    EndUser = d.Key.ResponsibilityCenter,
-                    Remarks = "Common-use office supplies procured from Private Suppliers"
-                }).ToList();
+            var lessThanThresholdServices = (from chart in chartOfAccounts
+                                             join items in db.ProjectPlanServices.ToList() on chart.UACS_Code equals items.FKItemReference.FKItemTypeReference.UACSObjectClass
+                                             where items.UnitCost < 15000.00m && items.Status == "Approved" && items.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode != "CUOS"
+                                             select new
+                                             {
+                                                 IsTangible = items.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.IsTangible,
+                                                 IsInstitutional = items.FKItemReference.ResponsibilityCenter == null ? false : true,
+                                                 ItemCode = items.FKItemReference.ItemCode,
+                                                 ItemName = items.FKItemReference.ItemFullName,
+                                                 ItemSpecification = items.FKItemReference.ItemSpecifications,
+                                                 UACS = items.FKItemReference.FKItemTypeReference.UACSObjectClass,
+                                                 EstimatedBudget = items.PPMPEstimatedBudget,
+                                                 FundSource = items.FundSource,
+                                                 ResponsibilityCenter = items.FKItemReference.ResponsibilityCenter == null ? items.FKPPMPReference.Department : items.FKItemReference.ResponsibilityCenter,
+                                                 InventoryCode = items.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode,
+                                                 Month = items.FKProjectReference.ProjectMonthStart,
+                                                 MOOE = chart.ClassCode == "5" ? items.PPMPEstimatedBudget : 0.00m,
+                                                 CapitalOutlay = chart.ClassCode == "1" ? items.PPMPEstimatedBudget : 0.00m
+                                             } into result
+                                             group result by new
+                                             {
+                                                 result.FundSource,
+                                                 result.UACS,
+                                                 result.IsTangible,
+                                                 result.InventoryCode,
+                                                 result.IsInstitutional,
+                                                 result.ResponsibilityCenter
+                                             } into groupedResult
+                                             select new ApprovedItems
+                                             {
+                                                 IsTangible = groupedResult.Key.IsTangible,
+                                                 IsInstitutional = groupedResult.Key.IsInstitutional,
+                                                 ItemCode = groupedResult.Key.UACS,
+                                                 UACS = groupedResult.Key.UACS,
+                                                 EstimatedBudget = groupedResult.Sum(x => x.EstimatedBudget),
+                                                 FundSource = groupedResult.Key.FundSource,
+                                                 MOOE = groupedResult.Sum(x => x.MOOE),
+                                                 CapitalOutlay = groupedResult.Sum(x => x.CapitalOutlay),
+                                                 InventoryCode = groupedResult.Key.InventoryCode,
+                                                 Month = groupedResult.Max(x => x.Month),
+                                                 EndUser = groupedResult.Key.ResponsibilityCenter
+                                             }).ToList();
 
-            var emergencySupplies = db.ProjectPlanItems
-                .Where(d => d.FKProjectReference.FiscalYear == FiscalYear && (d.Status == "Approved" || d.Status == "Posted to APP") && d.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode == "CUOS")
-                .Select(d => new
-                {
-                    IsTangible = d.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.IsTangible,
-                    IsInstitutional = d.FKItemReference.ResponsibilityCenter == null ? false : true,
-                    UACS = d.FKItemReference.FKItemTypeReference.AccountClass,
-                    EstimatedBudget = d.PPMPEstimatedBudget,
-                    FundSource = d.FundSource,
-                    ResponsibilityCenter = d.FKItemReference.ResponsibilityCenter == null ? d.FKPPMPReference.Department : d.FKItemReference.ResponsibilityCenter,
-                    InventoryCode = d.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode,
-                    Month = d.FKProjectReference.ProjectMonthStart,
-                    MOOE = d.UnitCost < 15000.00m ? d.PPMPEstimatedBudget : 0.00m,
-                    CapitalOutlay = d.UnitCost >= 15000.00m ? d.PPMPEstimatedBudget : 0.00m
-                })
-                .GroupBy(d => new
-                {
-                    d.FundSource,
-                    d.UACS,
-                    d.IsTangible,
-                    d.InventoryCode,
-                    d.IsInstitutional,
-                    d.ResponsibilityCenter
-                })
-                .Select(d => new ApprovedItems
-                {
-                    IsTangible = d.Key.IsTangible,
-                    IsInstitutional = d.Key.IsInstitutional,
-                    ItemCode = "CUOS-3",
-                    ItemName = "Provision for unforeseen contingency under Section 52.1(a)",
-                    UACS = d.Key.UACS,
-                    EstimatedBudget = d.Sum(x => x.EstimatedBudget) * 0.04m,
-                    FundSource = d.Key.FundSource,
-                    MOOE = d.Sum(x => x.MOOE) * 0.04m,
-                    CapitalOutlay = d.Sum(x => x.CapitalOutlay) * 0.04m,
-                    InventoryCode = d.Key.InventoryCode,
-                    Month = 1,
-                    EndUser = d.Key.ResponsibilityCenter,
-                    Remarks = "Common-use office supplies not available at PS-DBM that can be procured under Annex H Sec. 52"
-                }).ToList();
+            lessThanThresholdProjects.AddRange(lessThanThresholdItems);
+            lessThanThresholdProjects.AddRange(lessThanThresholdServices);
 
-            var projectItems = db.ProjectPlanItems
-                .Where(d => d.FKProjectReference.FiscalYear == FiscalYear && d.Status == "Approved" && d.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode != "CUOS")
-                .Select(d => new
+            lessThanThresholdProjects = lessThanThresholdProjects
+                                        .GroupBy(d => new {
+                                            d.IsTangible,
+                                            d.IsInstitutional,
+                                            d.UACS,
+                                            d.FundSource,
+                                            d.InventoryCode,
+                                            d.Schedule,
+                                            d.EndUser
+                                        })
+                                        .Select(d => new ApprovedItems {
+                                            IsInstitutional = d.Key.IsInstitutional,
+                                            IsTangible = d.Key.IsTangible,
+                                            ItemCode = d.Key.UACS,
+                                            UACS = d.Key.UACS,
+                                            EstimatedBudget = d.Sum(x => x.EstimatedBudget),
+                                            FundSource = d.Key.FundSource,
+                                            MOOE = d.Sum(x => x.MOOE),
+                                            CapitalOutlay = d.Sum(x => x.CapitalOutlay),
+                                            InventoryCode = d.Key.InventoryCode,
+                                            Month = d.Max(x => x.Month),
+                                            EndUser = d.Key.EndUser,
+                                            Schedule = d.Key.Schedule,
+                                        }).ToList();
+
+            foreach (var project in lessThanThresholdProjects)
+            {
+                project.ItemCode = project.UACS + '-' + project.FundSource.Replace("\r\n", "");
+                project.EndUserName = hrisDataAccess.GetDepartmentDetails(project.EndUser).Department;
+                project.ItemName = abisDataAccess.GetChartOfAccounts(project.UACS).AcctName.Replace("Expenses", "").ToUpper();
+                project.ModeOfProcurement = project.IsTangible ? new string[] { "1", "5", "14" } : new string[] { "1", "14" };
+                project.ObjectClassification = abisDataAccess.GetChartOfAccounts(project.UACS).AcctName;
+                project.FundDescription = abisDataAccess.GetFundSources(project.FundSource).FUND_DESC;
+                project.Schedule = (project.Month <= 5 ? "October " + (FiscalYear - 1) : systemBDL.GetMonthName(project.Month - 5)) + " - " + systemBDL.GetMonthName(project.Month) + " " + FiscalYear.ToString();
+                var references = project.IsTangible ? db.ProjectPlanItems.Where(d => d.FKItemReference.FKItemTypeReference.UACSObjectClass == project.UACS && d.FundSource == project.FundSource && d.Status == "Approved" && d.FKPPMPReference.FiscalYear == FiscalYear).Select(d => d.FKPPMPReference.ReferenceNo).Distinct().ToList() : db.ProjectPlanServices.Where(d => d.FKItemReference.FKItemTypeReference.UACSObjectClass == project.UACS && d.FundSource == project.FundSource && d.Status == "Approved" && d.FKPPMPReference.FiscalYear == FiscalYear).Select(d => d.FKPPMPReference.ReferenceNo).Distinct().ToList();
+                project.Remarks = "PPMP References:\n";
+                project.UACSSubClass = project.UACS.Substring(0, project.UACS.Length - 5) + "00000";
+                project.ObjectSubClassification = abisDataAccess.GetChartOfAccounts(project.UACS).SubAcctName;
+                foreach (var item in references)
                 {
-                    IsTangible = d.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.IsTangible,
-                    IsInstitutional = d.FKItemReference.ResponsibilityCenter == null ? false : true,
-                    ItemCode = d.FKItemReference.ItemCode,
-                    ItemName = d.FKItemReference.ItemFullName,
-                    ItemSpecification = d.FKItemReference.ItemSpecifications,
-                    UACS = d.FKItemReference.FKItemTypeReference.AccountClass,
-                    EstimatedBudget = d.PPMPEstimatedBudget,
-                    FundSource = d.FundSource,
-                    ResponsibilityCenter = d.FKItemReference.ResponsibilityCenter == null ? d.FKPPMPReference.Department : d.FKItemReference.ResponsibilityCenter,
-                    InventoryCode = d.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode,
-                    Month = d.FKProjectReference.ProjectMonthStart,
-                    MOOE = d.UnitCost < 15000.00m ? d.PPMPEstimatedBudget : 0.00m,
-                    CapitalOutlay = d.UnitCost >= 15000.00m ? d.PPMPEstimatedBudget : 0.00m
-                })
-                .GroupBy(d => new
+                    project.Remarks += item + "\n";
+                }
+            }
+
+
+            return lessThanThresholdProjects;
+        }
+        private List<ApprovedItems> WithinThresholdProjects(int FiscalYear)
+        {
+            var withinThresholdProjects = new List<ApprovedItems>();
+            var chartOfAccounts = abisDataAccess.GetChartOfAccounts().ToList();
+            var fundSources = abisDataAccess.GetFundSources().ToList();
+            var withinThresholdItems = (from chart in chartOfAccounts
+                                        join items in db.ProjectPlanItems.ToList() on chart.UACS_Code equals items.FKItemReference.FKItemTypeReference.UACSObjectClass
+                                        join funds in fundSources on items.FundSource equals funds.FUND_CLUSTER
+                                        where items.UnitCost >= 15000.00m && items.Status == "Approved" &&
+                                              items.FKItemReference.ResponsibilityCenter != null &&
+                                              funds.FUND_DESC.Contains("General Fund")
+                                        select new
+                                        {
+                                            IsTangible = items.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.IsTangible,
+                                            IsInstitutional = items.FKItemReference.ResponsibilityCenter == null ? false : true,
+                                            ItemCode = items.FKItemReference.FKItemTypeReference.ItemTypeCode,
+                                            ItemName = items.FKItemReference.FKItemTypeReference.ItemTypeName,
+                                            ItemSpecification = items.FKItemReference.ItemSpecifications,
+                                            ProcurementSource = items.FKItemReference.ProcurementSource,
+                                            UACS = items.FKItemReference.FKItemTypeReference.UACSObjectClass,
+                                            EstimatedBudget = items.PPMPEstimatedBudget,
+                                            FundSource = items.FundSource,
+                                            ResponsibilityCenter = items.FKItemReference.ResponsibilityCenter == null ? items.FKPPMPReference.Department : items.FKItemReference.ResponsibilityCenter,
+                                            InventoryCode = items.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode,
+                                            Month = items.FKProjectReference.ProjectMonthStart,
+                                            MOOE = chart.ClassCode == "5" ? items.PPMPEstimatedBudget : 0.00m,
+                                            CapitalOutlay = chart.ClassCode == "1" ? items.PPMPEstimatedBudget : 0.00m
+                                        } into result
+                                        group result by new
+                                        {
+                                            result.ItemCode,
+                                            result.ItemName,
+                                            result.FundSource,
+                                            result.UACS,
+                                            result.IsTangible,
+                                            result.InventoryCode,
+                                            result.IsInstitutional,
+                                            result.ResponsibilityCenter,
+                                            result.ProcurementSource
+                                        } into groupedResult
+                                        select new ApprovedItems
+                                        {
+                                            IsTangible = groupedResult.Key.IsTangible,
+                                            IsInstitutional = groupedResult.Key.IsInstitutional,
+                                            ItemCode = groupedResult.Key.ItemCode,
+                                            ItemName = groupedResult.Key.ItemName,
+                                            UACS = groupedResult.Key.UACS,
+                                            EstimatedBudget = groupedResult.Sum(x => x.EstimatedBudget),
+                                            FundSource = groupedResult.Key.FundSource,
+                                            MOOE = groupedResult.Sum(x => x.MOOE),
+                                            CapitalOutlay = groupedResult.Sum(x => x.CapitalOutlay),
+                                            InventoryCode = groupedResult.Key.InventoryCode,
+                                            Month = groupedResult.Max(x => x.Month),
+                                            EndUser = groupedResult.Key.ResponsibilityCenter,
+                                            ProcurementSource = groupedResult.Key.ProcurementSource
+                                        }).ToList();
+
+            var withinThresholdItemsOtherFunds = (from chart in chartOfAccounts
+                                                  join items in db.ProjectPlanItems.ToList() on chart.UACS_Code equals items.FKItemReference.FKItemTypeReference.UACSObjectClass
+                                                  join funds in fundSources on items.FundSource equals funds.FUND_CLUSTER
+                                                  where items.UnitCost >= 15000.00m && items.Status == "Approved" &&
+                                                        !funds.FUND_DESC.Contains("General Fund")
+                                                  select new
+                                                  {
+                                                      IsTangible = items.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.IsTangible,
+                                                      IsInstitutional = items.FKItemReference.ResponsibilityCenter == null ? false : true,
+                                                      ItemCode = items.FKItemReference.FKItemTypeReference.ItemTypeCode,
+                                                      ItemName = items.FKItemReference.FKItemTypeReference.ItemTypeName,
+                                                      ItemSpecification = items.FKItemReference.ItemSpecifications,
+                                                      ProcurementSource = items.FKItemReference.ProcurementSource,
+                                                      UACS = items.FKItemReference.FKItemTypeReference.UACSObjectClass,
+                                                      EstimatedBudget = items.PPMPEstimatedBudget,
+                                                      FundSource = items.FundSource,
+                                                      ResponsibilityCenter = items.FKPPMPReference.Department,
+                                                      InventoryCode = items.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode,
+                                                      Month = items.FKProjectReference.ProjectMonthStart,
+                                                      MOOE = chart.ClassCode == "5" ? items.PPMPEstimatedBudget : 0.00m,
+                                                      CapitalOutlay = chart.ClassCode == "1" ? items.PPMPEstimatedBudget : 0.00m
+                                                  } into result
+                                                  group result by new
+                                                  {
+                                                      result.ItemCode,
+                                                      result.ItemName,
+                                                      result.FundSource,
+                                                      result.UACS,
+                                                      result.IsTangible,
+                                                      result.InventoryCode,
+                                                      result.IsInstitutional,
+                                                      result.ResponsibilityCenter,
+                                                      result.ProcurementSource
+                                                  } into groupedResult
+                                                  select new ApprovedItems
+                                                  {
+                                                      IsTangible = groupedResult.Key.IsTangible,
+                                                      IsInstitutional = groupedResult.Key.IsInstitutional,
+                                                      ItemCode = groupedResult.Key.ItemCode,
+                                                      ItemName = groupedResult.Key.ItemName,
+                                                      UACS = groupedResult.Key.UACS,
+                                                      EstimatedBudget = groupedResult.Sum(x => x.EstimatedBudget),
+                                                      FundSource = groupedResult.Key.FundSource,
+                                                      MOOE = groupedResult.Sum(x => x.MOOE),
+                                                      CapitalOutlay = groupedResult.Sum(x => x.CapitalOutlay),
+                                                      InventoryCode = groupedResult.Key.InventoryCode,
+                                                      Month = groupedResult.Max(x => x.Month),
+                                                      EndUser = groupedResult.Key.ResponsibilityCenter,
+                                                      ProcurementSource = groupedResult.Key.ProcurementSource
+                                                  }).ToList();
+
+            var withinThresholdServices = (from chart in chartOfAccounts
+                                           join items in db.ProjectPlanServices.ToList() on chart.UACS_Code equals items.FKItemReference.FKItemTypeReference.UACSObjectClass
+                                           join funds in fundSources on items.FundSource equals funds.FUND_CLUSTER
+                                           where items.UnitCost >= 15000.00m && items.Status == "Approved" &&
+                                                 funds.FUND_DESC.Contains("General Fund")
+                                           select new
+                                           {
+                                               IsTangible = items.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.IsTangible,
+                                               IsInstitutional = items.FKItemReference.ResponsibilityCenter == null ? false : true,
+                                               ItemCode = items.FKItemReference.FKItemTypeReference.ItemTypeCode,
+                                               ItemName = items.FKItemReference.ItemFullName + " - " + items.FKProjectReference.ProjectName,
+                                               ItemSpecification = items.FKItemReference.ItemSpecifications,
+                                               ProcurementSource = items.FKItemReference.ProcurementSource,
+                                               UACS = items.FKItemReference.FKItemTypeReference.UACSObjectClass,
+                                               EstimatedBudget = items.PPMPEstimatedBudget,
+                                               FundSource = items.FundSource,
+                                               ResponsibilityCenter = items.FKItemReference.ResponsibilityCenter == null ? items.FKPPMPReference.Department : items.FKItemReference.ResponsibilityCenter,
+                                               InventoryCode = items.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode,
+                                               Month = items.FKProjectReference.ProjectMonthStart,
+                                               MOOE = chart.ClassCode == "5" ? items.PPMPEstimatedBudget : 0.00m,
+                                               CapitalOutlay = chart.ClassCode == "1" ? items.PPMPEstimatedBudget : 0.00m
+                                           } into result
+                                           group result by new
+                                           {
+                                               result.ItemCode,
+                                               result.ItemName,
+                                               result.FundSource,
+                                               result.UACS,
+                                               result.IsTangible,
+                                               result.InventoryCode,
+                                               result.IsInstitutional,
+                                               result.ResponsibilityCenter,
+                                               result.ProcurementSource
+                                           } into groupedResult
+                                           select new ApprovedItems
+                                           {
+                                               IsTangible = groupedResult.Key.IsTangible,
+                                               IsInstitutional = groupedResult.Key.IsInstitutional,
+                                               ItemCode = groupedResult.Key.ItemCode,
+                                               ItemName = groupedResult.Key.ItemName,
+                                               UACS = groupedResult.Key.UACS,
+                                               EstimatedBudget = groupedResult.Sum(x => x.EstimatedBudget),
+                                               FundSource = groupedResult.Key.FundSource,
+                                               MOOE = groupedResult.Sum(x => x.MOOE),
+                                               CapitalOutlay = groupedResult.Sum(x => x.CapitalOutlay),
+                                               InventoryCode = groupedResult.Key.InventoryCode,
+                                               Month = groupedResult.Max(x => x.Month),
+                                               EndUser = groupedResult.Key.ResponsibilityCenter,
+                                               ProcurementSource = groupedResult.Key.ProcurementSource
+                                           }).ToList();
+
+            var withinThresholdServicesOtherFunds = (from chart in chartOfAccounts
+                                                     join items in db.ProjectPlanServices.ToList() on chart.UACS_Code equals items.FKItemReference.FKItemTypeReference.UACSObjectClass
+                                                     join funds in fundSources on items.FundSource equals funds.FUND_CLUSTER
+                                                     where items.UnitCost >= 15000.00m && items.Status == "Approved" &&
+                                                           !funds.FUND_DESC.Contains("General Fund")
+                                                     select new
+                                                     {
+                                                         IsTangible = items.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.IsTangible,
+                                                         IsInstitutional = items.FKItemReference.ResponsibilityCenter == null ? false : true,
+                                                         ItemCode = items.FKItemReference.FKItemTypeReference.ItemTypeCode,
+                                                         ItemName = items.FKItemReference.ItemFullName + " - " + items.FKProjectReference.ProjectName,
+                                                         ItemSpecification = items.FKItemReference.ItemSpecifications,
+                                                         ProcurementSource = items.FKItemReference.ProcurementSource,
+                                                         UACS = items.FKItemReference.FKItemTypeReference.UACSObjectClass,
+                                                         EstimatedBudget = items.PPMPEstimatedBudget,
+                                                         FundSource = items.FundSource,
+                                                         ResponsibilityCenter = items.FKItemReference.ResponsibilityCenter == null ? items.FKPPMPReference.Department : items.FKItemReference.ResponsibilityCenter,
+                                                         InventoryCode = items.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode,
+                                                         Month = items.FKProjectReference.ProjectMonthStart,
+                                                         MOOE = chart.ClassCode == "5" ? items.PPMPEstimatedBudget : 0.00m,
+                                                         CapitalOutlay = chart.ClassCode == "1" ? items.PPMPEstimatedBudget : 0.00m
+                                                     } into result
+                                                     group result by new
+                                                     {
+                                                         result.ItemCode,
+                                                         result.ItemName,
+                                                         result.FundSource,
+                                                         result.UACS,
+                                                         result.IsTangible,
+                                                         result.InventoryCode,
+                                                         result.IsInstitutional,
+                                                         result.ResponsibilityCenter,
+                                                         result.ProcurementSource
+                                                     } into groupedResult
+                                                     select new ApprovedItems
+                                                     {
+                                                         IsTangible = groupedResult.Key.IsTangible,
+                                                         IsInstitutional = groupedResult.Key.IsInstitutional,
+                                                         ItemCode = groupedResult.Key.ItemCode,
+                                                         ItemName = groupedResult.Key.ItemName,
+                                                         UACS = groupedResult.Key.UACS,
+                                                         EstimatedBudget = groupedResult.Sum(x => x.EstimatedBudget),
+                                                         FundSource = groupedResult.Key.FundSource,
+                                                         MOOE = groupedResult.Sum(x => x.MOOE),
+                                                         CapitalOutlay = groupedResult.Sum(x => x.CapitalOutlay),
+                                                         InventoryCode = groupedResult.Key.InventoryCode,
+                                                         Month = groupedResult.Max(x => x.Month),
+                                                         EndUser = groupedResult.Key.ResponsibilityCenter,
+                                                         ProcurementSource = groupedResult.Key.ProcurementSource
+                                                     }).ToList();
+
+            withinThresholdProjects.AddRange(withinThresholdItems);
+            withinThresholdProjects.AddRange(withinThresholdItemsOtherFunds);
+            withinThresholdProjects.AddRange(withinThresholdServices);
+            withinThresholdProjects.AddRange(withinThresholdServicesOtherFunds);
+
+            for (int i = 0; i < withinThresholdProjects.Count; i++)
+            {
+                var itemCode = withinThresholdProjects[i].ItemCode;
+                if (withinThresholdProjects[i].ProcurementSource == ProcurementSources.PS_DBM)
+                {
+                    withinThresholdProjects[i].ModeOfProcurement = new string[] { "1", "10" };
+                }
+                else
+                {
+                    withinThresholdProjects[i].ModeOfProcurement = new string[] { "1" };
+                }
+                withinThresholdProjects[i].ItemCode = withinThresholdProjects[i].IsTangible ? withinThresholdProjects[i].ItemCode : withinThresholdProjects[i].ItemCode + "-" + i;
+                withinThresholdProjects[i].EndUserName = hrisDataAccess.GetDepartmentDetails(withinThresholdProjects[i].EndUser).Department;
+                withinThresholdProjects[i].ObjectClassification = abisDataAccess.GetChartOfAccounts(withinThresholdProjects[i].UACS).AcctName;
+                withinThresholdProjects[i].FundDescription = abisDataAccess.GetFundSources(withinThresholdProjects[i].FundSource).FUND_DESC;
+                withinThresholdProjects[i].Schedule = (withinThresholdProjects[i].Month <= 5 ? "October " + (FiscalYear - 1) : systemBDL.GetMonthName(withinThresholdProjects[i].Month - 5)) + " - " + systemBDL.GetMonthName(withinThresholdProjects[i].Month) + " " + FiscalYear.ToString();
+                var projectName = withinThresholdProjects[i].ItemName;
+                var references = withinThresholdProjects[i].IsTangible ?
+                        db.ProjectPlanItems.Where(d => d.FKItemReference.FKItemTypeReference.ItemTypeCode == itemCode && d.Status == "Approved" && d.FKPPMPReference.FiscalYear == FiscalYear).Select(d => d.FKPPMPReference.ReferenceNo).Distinct().ToList() :
+                        db.ProjectPlanServices.Where(d => d.FKItemReference.FKItemTypeReference.ItemTypeCode == itemCode && d.Status == "Approved" && d.FKPPMPReference.FiscalYear == FiscalYear && d.FKProjectReference.ProjectName == projectName).Select(d => d.FKPPMPReference.ReferenceNo).Distinct().ToList();
+                withinThresholdProjects[i].Remarks = "PPMP References:\n";
+                withinThresholdProjects[i].UACSSubClass = withinThresholdProjects[i].UACS.Substring(0, withinThresholdProjects[i].UACS.Length - 5) + "00000";
+                withinThresholdProjects[i].ObjectSubClassification = abisDataAccess.GetChartOfAccounts(withinThresholdProjects[i].UACS).SubAcctName;
+                foreach (var item in references)
+                {
+                    withinThresholdProjects[i].Remarks += item + "\n";
+                }
+            }
+
+            return withinThresholdProjects;
+        }
+        public List<APPLineItemVM> ConsolidateAPP (int FiscalYear)
+        {
+            List<APPLineItemVM> APPLineItems = new List<APPLineItemVM>();
+
+            var commonSuppliesProject = CommonSuppliesProjects(FiscalYear);
+            var lessThanThresholdProjects = LessThanThresholdProjects(FiscalYear);
+            var withinThresholdProjects = WithinThresholdProjects(FiscalYear);
+
+            var lineItems = commonSuppliesProject
+                            .Union(lessThanThresholdProjects)
+                            .Union(withinThresholdProjects)
+                            .ToList();
+
+            var objectClasses = lineItems.Select(d => new { UACS = d.UACSSubClass, ObjectClass = d.ObjectSubClassification })
+                                .GroupBy(d => new { d.UACS, d.ObjectClass })
+                                .Select(d => new { UACS = d.Key.UACS, ObjectClass = d.Key.ObjectClass })
+                                .ToList();
+
+            foreach(var objectClass in objectClasses)
+            {
+                APPLineItems.Add(new APPLineItemVM {
+                    UACS = objectClass.UACS,
+                    ObjectClassification = objectClass.ObjectClass,
+                    ApprovedItems = lineItems.Where(d => d.UACSSubClass == objectClass.UACS).ToList()
+                });
+            }
+
+            return APPLineItems;
+        }
+        public List<AnnualProcurementPlanDetails> ExtractProcurementPrograms(List<APPLineItemVM> APPLineItems, int FiscalYear)
+        {
+            var objectClasses = APPLineItems.GroupBy(d => new { UACS = d.UACS, ObjectClass = d.ObjectClassification }).ToList();
+            var procurementPrograms = new List<AnnualProcurementPlanDetails>();
+
+            foreach (var lineItem in APPLineItems)
+            {
+                var itemCount = 1;
+                foreach (var project in lineItem.ApprovedItems)
+                {
+                    string modesOfProcurement = string.Empty;
+                    for (int i = 0; i < project.ModeOfProcurement.Count(); i++)
                     {
-                        d.ItemCode,
-                        d.ItemName,
-                        d.FundSource,
-                        d.UACS,
-                        d.IsTangible,
-                        d.InventoryCode,
-                        d.IsInstitutional,
-                        d.ResponsibilityCenter
-                    })
-                .Select(d => new ApprovedItems
-                {
-                    IsTangible = d.Key.IsTangible,
-                    IsInstitutional = d.Key.IsInstitutional,
-                    ItemCode = d.Key.ItemCode,
-                    ItemName = d.Key.ItemName,
-                    UACS = d.Key.UACS,
-                    EstimatedBudget = d.Sum(x => x.EstimatedBudget),
-                    FundSource = d.Key.FundSource,
-                    MOOE = d.Sum(x => x.MOOE),
-                    CapitalOutlay = d.Sum(x => x.CapitalOutlay),
-                    InventoryCode = d.Key.InventoryCode,
-                    Month = d.Max(x => x.Month),
-                    EndUser = d.Key.ResponsibilityCenter
-                }).ToList();
-
-            var projectServices = db.ProjectPlanServices
-                .Where(d => d.FKProjectReference.FiscalYear == FiscalYear && d.Status == "Approved" && d.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode != "CUOS")
-                .Select(d => new
-                {
-                    IsTangible = d.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.IsTangible,
-                    IsInstitutional = d.FKItemReference.ResponsibilityCenter == null ? false : true,
-                    ItemCode = d.FKItemReference.ItemCode,
-                    ItemName = d.FKItemReference.ItemFullName,
-                    ItemSpecification = d.ItemSpecifications,
-                    UACS = d.FKItemReference.FKItemTypeReference.AccountClass,
-                    EstimatedBudget = d.PPMPEstimatedBudget,
-                    FundSource = d.FundSource,
-                    ResponsibilityCenter = d.FKItemReference.ResponsibilityCenter == null ? d.FKPPMPReference.Department : d.FKItemReference.ResponsibilityCenter,
-                    InventoryCode = d.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode,
-                    Month = d.FKProjectReference.ProjectMonthStart,
-                    MOOE = d.UnitCost < 15000.00m ? d.PPMPEstimatedBudget : 0.00m,
-                    CapitalOutlay = d.UnitCost >= 15000.00m ? d.PPMPEstimatedBudget : 0.00m
-                })
-                .GroupBy(d => new
-                {
-                    d.ItemCode,
-                    d.ItemName,
-                    d.FundSource,
-                    d.UACS,
-                    d.IsTangible,
-                    d.InventoryCode,
-                    d.IsInstitutional,
-                    d.ResponsibilityCenter
-                })
-                .Select(d => new ApprovedItems
-                {
-                    IsTangible = d.Key.IsTangible,
-                    IsInstitutional = d.Key.IsInstitutional,
-                    ItemCode = d.Key.ItemCode,
-                    ItemName = d.Key.ItemName,
-                    UACS = d.Key.UACS,
-                    EstimatedBudget = d.Sum(x => x.EstimatedBudget),
-                    FundSource = d.Key.FundSource,
-                    MOOE = d.Sum(x => x.MOOE),
-                    CapitalOutlay = d.Sum(x => x.CapitalOutlay),
-                    InventoryCode = d.Key.InventoryCode,
-                    Month = d.Max(x => x.Month),
-                    EndUser = d.Key.ResponsibilityCenter
-                }).ToList();
-
-            foreach (var item in dbmSupplies)
-            {
-                item.FundDescription = abisDataAccess.GetFundSources(item.FundSource).FUND_DESC;
-                item.ObjectClassification = abisDataAccess.GetChartOfAccounts(item.UACS).AcctName;
+                        modesOfProcurement += i == project.ModeOfProcurement.Count() - 1 ? project.ModeOfProcurement[i] : project.ModeOfProcurement[i] + "_";
+                    }
+                    procurementPrograms.Add(new AnnualProcurementPlanDetails
+                    {
+                        PAPCode = project.IsInstitutional ? project.InventoryCode + "-UNIV-" + itemCount.ToString() : project.InventoryCode + "-" + project.EndUser + "-" + itemCount.ToString(),
+                        ProcurementProgram = project.ItemName.ToUpper(),
+                        APPModeOfProcurementReference = modesOfProcurement,
+                        ObjectClassification = project.UACS,
+                        EndUser = project.EndUser,
+                        Month = project.Month,
+                        StartMonth = (project.Month <= 5 ? "October " + (FiscalYear - 1) : systemBDL.GetMonthName(project.Month - 5)),
+                        EndMonth = systemBDL.GetMonthName(project.Month) + " " + FiscalYear.ToString(),
+                        FundSourceReference = project.FundSource,
+                        MOOEAmount = project.MOOE,
+                        COAmount = project.CapitalOutlay,
+                        Total = project.EstimatedBudget,
+                        Remarks = project.Remarks,
+                        IsInstitutional = project.IsInstitutional,
+                        IsTangible = project.IsTangible
+                    });
+                    itemCount++;
+                }
             }
 
-            foreach (var item in nonDBMSupplies)
-            {
-                item.FundDescription = abisDataAccess.GetFundSources(item.FundSource).FUND_DESC;
-                item.ObjectClassification = abisDataAccess.GetChartOfAccounts(item.UACS).AcctName;
-            }
-
-            foreach (var item in emergencySupplies)
-            {
-                item.FundDescription = abisDataAccess.GetFundSources(item.FundSource).FUND_DESC;
-                item.ObjectClassification = abisDataAccess.GetChartOfAccounts(item.UACS).AcctName;
-            }
-
-            foreach (var item in projectItems)
-            {
-                item.FundDescription = abisDataAccess.GetFundSources(item.FundSource).FUND_DESC;
-                item.ObjectClassification = abisDataAccess.GetChartOfAccounts(item.UACS).AcctName;
-            }
-
-            foreach (var item in projectServices)
-            {
-                item.FundDescription = abisDataAccess.GetFundSources(item.FundSource).FUND_DESC;
-                item.ObjectClassification = abisDataAccess.GetChartOfAccounts(item.UACS).AcctName;
-            }
-
-            List<ApprovedItems> approvedItems = new List<ApprovedItems>();
-            approvedItems.AddRange(dbmSupplies);
-            approvedItems.AddRange(nonDBMSupplies);
-            //approvedItems.AddRange(emergencySupplies);
-            approvedItems.AddRange(projectItems.OrderBy(d => d.ItemName).ToList());
-            approvedItems.AddRange(projectServices.OrderBy(d => d.ItemName).ToList());
-
-            return approvedItems;
+            return procurementPrograms;
         }
-        public bool PostAPP(List<ApprovedItems> ApprovedItems, int FiscalYear, string UserEmail)
+        public bool PostAPP(List<APPLineItemVM> APPLineItems, int FiscalYear, string UserEmail)
         {
             SystemBDL sysBDL = new SystemBDL();
-            var APPDetail = new List<ProcurementPrograms>();
+            var procurementPrograms = ExtractProcurementPrograms(APPLineItems, FiscalYear);
             var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
             var agencyDetails = db.AgencyDetails.FirstOrDefault();
             var hope = hrisDataAccess.GetDepartmentDetails(agencyDetails.HOPEReference);
@@ -688,317 +920,94 @@ namespace PUPFMIS.BusinessAndDataLogic
             var procurement = hrisDataAccess.GetDepartmentDetails(agencyDetails.ProcurementOfficeReference);
             var bac = hrisDataAccess.GetDepartmentDetails(agencyDetails.BACOfficeReference);
 
-            var app = db.APPHeader.Where(d => d.FiscalYear == FiscalYear && d.APPType == "Original").FirstOrDefault();
-            if (app == null)
+            var APPType = db.APPHeader.Where(d => d.FiscalYear == FiscalYear && d.APPType == "Indicative").Count() == 0 ? "Indicative" : db.APPHeader.Where(d => d.FiscalYear == FiscalYear && d.APPType == "Original").Count() == 0 ? "Original" : "Supplemental";
+            var APPHeader = new AnnualProcurementPlan()
             {
-                app = new APPHeader()
-                {
-                    FiscalYear = FiscalYear,
-                    APPType = "Original",
-                    ReferenceNo = GenerateReferenceNo(FiscalYear, "Original"),
-                    PreparedBy = procurement.DepartmentHead,
-                    PreparedByDepartmentCode = procurement.DepartmentCode,
-                    PreparedByDesignation = procurement.DepartmentHeadDesignation,
-                    RecommendingApproval = bac.DepartmentHead,
-                    RecommendingApprovalDepartmentCode = bac.DepartmentCode,
-                    RecommendingApprovalDesignation = bac.DepartmentHeadDesignation,
-                    ApprovedBy = hope.DepartmentHead,
-                    ApprovedByDepartmentCode = hope.DepartmentCode,
-                    ApprovedByDesignation = hope.DepartmentHeadDesignation,
-                    CreatedBy = user.EmpCode,
-                    CreatedAt = DateTime.Now
-                };
+                FiscalYear = FiscalYear,
+                APPType = APPType,
+                ReferenceNo = GenerateReferenceNo(FiscalYear, APPType),
+                PreparedBy = procurement.DepartmentHead,
+                PreparedByDepartmentCode = procurement.DepartmentCode,
+                PreparedByDesignation = procurement.DepartmentHeadDesignation,
+                RecommendingApproval = bac.DepartmentHead,
+                RecommendingApprovalDepartmentCode = bac.DepartmentCode,
+                RecommendingApprovalDesignation = bac.DepartmentHeadDesignation,
+                ApprovedBy = hope.DepartmentHead,
+                ApprovedByDepartmentCode = hope.DepartmentCode,
+                ApprovedByDesignation = hope.DepartmentHeadDesignation,
+                CreatedBy = user.EmpCode,
+                CreatedAt = DateTime.Now
+            };
 
-                db.APPHeader.Add(app);
-                if (db.SaveChanges() == 0)
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                app = new APPHeader()
-                {
-                    FiscalYear = FiscalYear,
-                    APPType = "Supplemental",
-                    ReferenceNo = GenerateReferenceNo(FiscalYear, "Supplemental"),
-                    PreparedBy = procurement.DepartmentHead,
-                    PreparedByDepartmentCode = procurement.DepartmentCode,
-                    PreparedByDesignation = procurement.DepartmentHeadDesignation,
-                    PreparedAt = DateTime.Now,
-                    RecommendingApproval = bac.DepartmentHead,
-                    RecommendingApprovalDepartmentCode = bac.DepartmentCode,
-                    RecommendingApprovalDesignation = bac.DepartmentHeadDesignation,
-                    ApprovedBy = hope.DepartmentHead,
-                    ApprovedByDepartmentCode = hope.DepartmentCode,
-                    ApprovedByDesignation = hope.DepartmentHeadDesignation,
-                    CreatedBy = user.EmpCode,
-                    CreatedAt = DateTime.Now
-                };
-
-                db.APPHeader.Add(app);
-                if (db.SaveChanges() == 0)
-                {
-                    return false;
-                }
-            }
-
-            var institutionalItems = ApprovedItems
-                .Where(d => d.IsInstitutional)
-                .GroupBy(d => new { d.InventoryCode, d.UACS, d.ObjectClassification, d.FundSource, d.EndUser, d.IsTangible, d.ItemCode, d.ItemName, d.IsInstitutional })
-                .Select(d => new
-                {
-                    InventoryCode = d.Key.InventoryCode,
-                    ItemCode = d.Key.ItemCode,
-                    ItemName = d.Key.ItemName,
-                    ObjectClassification = d.Key.ObjectClassification,
-                    UACS = d.Key.UACS,
-                    FundSource = d.Key.FundSource,
-                    MOOEAmount = d.Sum(x => x.MOOE),
-                    COAmount = d.Sum(x => x.CapitalOutlay),
-                    Total = d.Sum(x => x.EstimatedBudget),
-                    EndUser = d.Key.EndUser,
-                    Month = d.Max(x => x.Month),
-                    IsTangible = d.Key.IsTangible,
-                    IsInstitutional = d.Key.IsInstitutional
-                }).ToList();
-
-            var projectItems = ApprovedItems.Where(d => !d.IsInstitutional).ToList();
-
-            int itemNo = 1;
-            foreach (var item in institutionalItems)
-            {
-                var remarksList = ApprovedItems.Where(d => d.IsInstitutional && d.FundSource == item.FundSource && d.UACS == item.UACS && d.ItemCode == item.ItemCode).Select(d => d.Remarks).ToList();
-                var procurementModes = ApprovedItems.Where(d => d.IsInstitutional && d.FundSource == item.FundSource && d.UACS == item.UACS && d.ItemCode == item.ItemCode).SelectMany(d => d.ModeOfProcurement).Distinct().ToArray();
-                var projectCodes = item.IsTangible ? db.ProjectPlanItems.Where(d => d.FKItemReference.ItemCode == item.ItemCode && d.FundSource == item.FundSource && d.FKPPMPReference.FiscalYear == FiscalYear && d.Status == "Approved").Select(d => d.FKProjectReference.ProjectCode).ToList() : db.ProjectPlanServices.Where(d => d.FKItemReference.ItemCode == item.ItemCode && d.FundSource == item.FundSource && d.FKPPMPReference.FiscalYear == FiscalYear && d.Status == "Approved").Select(d => d.FKProjectReference.ProjectCode).ToList();
-                var ppmpReferences = item.IsTangible ? db.ProjectPlanItems.Where(d => d.FKItemReference.ItemCode == item.ItemCode && d.FundSource == item.FundSource && d.FKPPMPReference.FiscalYear == FiscalYear && d.Status == "Approved").Select(d => d.FKPPMPReference.ReferenceNo).ToList() : db.ProjectPlanServices.Where(d => d.FKItemReference.ItemCode == item.ItemCode && d.FundSource == item.FundSource && d.FKPPMPReference.FiscalYear == FiscalYear && d.Status == "Approved").Select(d => d.FKPPMPReference.ReferenceNo).ToList();
-
-                var remarks = string.Empty;
-                var modesOfProcurement = string.Empty;
-                var projectReference = string.Empty;
-                var ppmpReference = string.Empty;
-
-                for(int i = 0; i < procurementModes.Count(); i++)
-                {
-                    if (i == procurementModes.Count() - 1)
-                    {
-                        modesOfProcurement += procurementModes[i];
-                    }
-                    else
-                    {
-                        modesOfProcurement += procurementModes[i] + "_";
-                    }
-                }
-
-                for(int i = 0; i < remarksList.Count; i++)
-                {
-                    if(i == remarksList.Count - 1)
-                    {
-                        remarks += remarksList[i];
-                    }
-                    else
-                    {
-                        remarks += remarksList[i] + "; ";
-                    }
-                }
-
-                for (int i = 0; i < projectCodes.Count; i++)
-                {
-                    if (i == projectCodes.Count - 1)
-                    {
-                        projectReference += projectCodes[i];
-                    }
-                    else
-                    {
-                        projectReference += projectCodes[i] + "_";
-                    }
-                }
-
-                for (int i = 0; i < ppmpReferences.Count; i++)
-                {
-                    if (i == ppmpReferences.Count - 1)
-                    {
-                        ppmpReference += ppmpReferences[i];
-                    }
-                    else
-                    {
-                        ppmpReference += ppmpReferences[i] + "_";
-                    }
-                }
-
-
-                APPDetail.Add(new ProcurementPrograms
-                {
-                    APPHeaderReference = app.ID,
-                    PAPCode = GeneratePAPCode(FiscalYear, itemNo, item.InventoryCode),
-                    ProcurementProgram = item.ItemName,
-                    Month = item.Month,
-                    StartMonth = item.Month <= 5 ? "Fourth Quarter, " + (FiscalYear - 1) : sysBDL.GetMonthName(item.Month - 5) + ", " + FiscalYear.ToString(),
-                    EndMonth = sysBDL.GetMonthName(item.Month) + ", " + FiscalYear.ToString(),
-                    ObjectClassification = item.UACS,
-                    EndUser = item.EndUser,
-                    APPModeOfProcurementReference = modesOfProcurement,
-                    FundSourceReference = item.FundSource,
-                    MOOEAmount = item.MOOEAmount,
-                    COAmount = item.COAmount,
-                    Total = item.Total,
-                    Remarks = ((remarks == string.Empty || remarks == null) ? null : (remarks + "\n\n")) + (ppmpReference == string.Empty ? "" : "References:\n" + ppmpReference.Replace("_", "\n")),
-                    ProjectReferences = projectReference == string.Empty ? null : projectReference,
-                    PPMPReferences = ppmpReference == string.Empty ? null : ppmpReference,
-                    ProjectStatus = "For Assingment",
-                    IsInstitutional = item.IsInstitutional,
-                    IsTangible = item.IsTangible,
-                    IsAccepted = false
-                });
-
-                itemNo++;
-            }
-
-            foreach (var item in projectItems)
-            {
-                var procurementModes = ApprovedItems.Where(d => !d.IsInstitutional && d.FundSource == item.FundSource && d.UACS == item.UACS).SelectMany(d => d.ModeOfProcurement).Distinct().ToArray();
-                var modesOfProcurement = string.Empty;
-
-                for (int i = 0; i < procurementModes.Count(); i++)
-                {
-                    if (i == procurementModes.Count() - 1)
-                    {
-                        modesOfProcurement += procurementModes[i];
-                    }
-                    else
-                    {
-                        modesOfProcurement += procurementModes[i] + "_";
-                    }
-                }
-
-                var items = db.ProjectPlanItems.Where(d => d.FKItemReference.ItemCode == item.ItemCode && d.FundSource.Contains(item.FundSource) && d.Status == "Approved" && d.FKPPMPReference.FiscalYear == FiscalYear && d.FKPPMPReference.Department == item.EndUser).Select(d => new { d.FKProjectReference.ProjectCode, d.FKProjectReference.ProjectName, d.FKPPMPReference.Department, d.FKPPMPReference.ReferenceNo }).ToList();
-                var services = db.ProjectPlanServices.Where(d => d.FKItemReference.ItemCode == item.ItemCode && d.FundSource.Contains(item.FundSource) && d.Status == "Approved" && d.FKPPMPReference.FiscalYear == FiscalYear && d.FKPPMPReference.Department == item.EndUser).Select(d => new { d.FKProjectReference.ProjectCode, d.FKProjectReference.ProjectName, d.FKPPMPReference.Department, d.FKPPMPReference.ReferenceNo }).ToList();
-
-                var projectPlans = items.Union(services).ToList();
-
-                foreach(var plan in projectPlans)
-                {
-                    APPDetail.Add(new ProcurementPrograms
-                    {
-                        APPHeaderReference = app.ID,
-                        PAPCode = plan.ProjectCode,
-                        ProcurementProgram = item.ItemName,
-                        Month = item.Month,
-                        StartMonth = item.Month <= 5 ? "Fourth Quarter, " + (FiscalYear - 1) : sysBDL.GetMonthName(item.Month - 5) + ", " + FiscalYear.ToString(),
-                        EndMonth = sysBDL.GetMonthName(item.Month) + ", " + FiscalYear.ToString(),
-                        ObjectClassification = item.UACS,
-                        EndUser = plan.Department,
-                        APPModeOfProcurementReference = modesOfProcurement,
-                        FundSourceReference = item.FundSource,
-                        MOOEAmount = item.MOOE,
-                        COAmount = item.CapitalOutlay,
-                        Total = item.EstimatedBudget,
-                        Remarks = ((item.Remarks == string.Empty || item.Remarks == null) ? string.Empty : (item.Remarks + "; ")) + plan.ProjectName + "\n\nReference: \n" + (item.IsTangible ? db.ProjectPlanItems.Where(d => d.FKProjectReference.ProjectCode == plan.ProjectCode && d.FKItemReference.ItemCode == item.ItemCode).FirstOrDefault().FKPPMPReference.ReferenceNo : db.ProjectPlanServices.Where(d => d.FKProjectReference.ProjectCode == plan.ProjectCode && d.FKItemReference.ItemCode == item.ItemCode).FirstOrDefault().FKPPMPReference.ReferenceNo),
-                        ProjectReferences = plan.ProjectCode,
-                        PPMPReferences = plan.ReferenceNo,
-                        ProjectStatus = "For Assingment",
-                        IsInstitutional = item.IsInstitutional,
-                        IsTangible = item.IsTangible,
-                        IsAccepted = false
-                    });
-                }
-            }
-
-            db.ProcurementPrograms.AddRange(APPDetail);
+            db.APPHeader.Add(APPHeader);
             if (db.SaveChanges() == 0)
             {
                 return false;
             }
 
-            foreach (var item in projectItems)
+            procurementPrograms.ForEach(d => { d.APPHeaderReference = APPHeader.ID; d.PAPCode = FiscalYear.ToString().Substring(2, 2) + (APPHeader.APPType == "Original" || APPHeader.APPType == "Indicative" ?  "-O-" : "-S-") + d.PAPCode; });
+            db.APPDetails.AddRange(procurementPrograms);
+            if (db.SaveChanges() == 0)
             {
-                if (item.IsTangible)
+                return false;
+            }
+
+            var procurementProgramItems = procurementPrograms.Where(d => d.IsTangible == true).ToList();
+            var procurementProgramServices = procurementPrograms.Where(d => d.IsTangible == false).ToList();
+
+            foreach(var item in procurementProgramItems)
+            {
+                if(item.PAPCode.Contains("CUOS"))
                 {
-                    var projectPlanItems = db.ProjectPlanItems
-                        .Where(d => d.FKProjectReference.ProjectCode == item.PAPCode && d.FKItemReference.ItemCode == item.ItemCode)
-                        .ToList();
-                    projectPlanItems.ForEach(d => { d.Status = "Posted to APP"; d.APPReference = app.ID; });
-                    db.SaveChanges();
+                    var projectItems = db.ProjectPlanItems
+                                       .Where(d => d.FKItemReference.FKItemTypeReference.UACSObjectClass == item.ObjectClassification &&
+                                                   d.FKPPMPReference.FiscalYear == FiscalYear &&
+                                                   d.FundSource == item.FundSourceReference &&
+                                                   (d.Status == "Approved" || d.Status == "Posted to APP"))
+                                       .ToList();
+
+                    projectItems.ForEach(d => { d.APPLineReference = item.ID; d.Status = "Posted to APP"; });
                 }
                 else
                 {
-                    var projectPlanServices = db.ProjectPlanServices
-                        .Where(d => d.FKProjectReference.ProjectCode == item.PAPCode && d.FKItemReference.ItemCode == item.ItemCode)
-                        .ToList();
-                    projectPlanServices.ForEach(d => { d.Status = "Posted to APP"; d.APPReference = app.ID; });
-                    db.SaveChanges();
+                    var projectItems = db.ProjectPlanItems
+                                       .Where(d => d.FKItemReference.FKItemTypeReference.UACSObjectClass == item.ObjectClassification &&
+                                                   d.FKPPMPReference.FiscalYear == FiscalYear &&
+                                                   d.FundSource == item.FundSourceReference &&
+                                                   d.Status == "Approved")
+                                       .ToList();
+
+                    projectItems.ForEach(d => { d.APPReference = APPHeader.ID; d.APPLineReference = item.ID; d.Status = "Posted to APP"; });
                 }
+
             }
 
-            foreach (var item in ApprovedItems)
+            foreach (var item in procurementProgramServices)
             {
-                if (item.IsTangible)
-                {
-                    var projectPlanItems = db.ProjectPlanItems
-                        .Where(d =>
-                            d.FKPPMPReference.FiscalYear == FiscalYear &&
-                            d.FKItemReference.ItemCode == item.ItemCode &&
-                            d.Status == "Approved" &&
-                            (item.IsInstitutional ? d.FKItemReference.ResponsibilityCenter == item.EndUser : d.FKPPMPReference.Department == item.EndUser)
-                        ).ToList();
-                    projectPlanItems.ForEach(d => { d.Status = "Posted to APP"; d.APPReference = app.ID; });
-                    db.SaveChanges();
-                    var ppmpReferences = projectPlanItems.Select(d => d.PPMPReference).GroupBy(d => d).Select(d => d.Key);
-                    var ppmps = db.PPMPHeader.Where(d => ppmpReferences.Contains(d.ID)).ToList();
-                    ppmps.ForEach(d => { d.Status = "Posted to APP"; });
-                    db.SaveChanges();
-                }
-                else
-                {
-                    var projectPlanServices = db.ProjectPlanServices
-                        .Where(d =>
-                            d.FKPPMPReference.FiscalYear == FiscalYear &&
-                            d.FKItemReference.ItemCode == item.ItemCode &&
-                            d.Status == "Approved" &&
-                            (item.IsInstitutional ? d.FKItemReference.ResponsibilityCenter == item.EndUser : d.FKPPMPReference.Department == item.EndUser)
-                        ).ToList();
-                    projectPlanServices.ForEach(d => { d.Status = "Posted to APP"; d.APPReference = app.ID; });
-                    db.SaveChanges();
-                    var ppmpReferences = projectPlanServices.Select(d => d.PPMPReference).GroupBy(d => d).Select(d => d.Key);
-                    var ppmps = db.PPMPHeader.Where(d => ppmpReferences.Contains(d.ID)).ToList();
-                    ppmps.ForEach(d => { d.Status = "Posted to APP"; });
-                    db.SaveChanges();
-                }
+                var projectServices = db.ProjectPlanServices
+                                   .Where(d => d.FKItemReference.FKItemTypeReference.UACSObjectClass == item.ObjectClassification &&
+                                               d.FKPPMPReference.FiscalYear == FiscalYear &&
+                                               d.FundSource == item.FundSourceReference &&
+                                               d.Status == "Approved")
+                                   .ToList();
+
+                projectServices.ForEach(d => { d.APPReference = APPHeader.ID; d.APPLineReference = item.ID; d.Status = "Posted to APP"; });
             }
 
-            foreach(var item in APPDetail)
+            if (db.SaveChanges() == 0)
             {
-                var projectCodes = item.ProjectReferences == null ? null : item.ProjectReferences.Split("_".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).ToList();
-                if(projectCodes != null)
-                {
-                    foreach (var code in projectCodes)
-                    {
-                        var items = db.ProjectPlanItems.Where(d => d.FKProjectReference.ProjectCode == code && d.APPReference == app.ID && d.FKItemReference.ItemFullName == item.ProcurementProgram && d.FundSource == item.FundSourceReference).ToList();
-                        var services = db.ProjectPlanServices.Where(d => d.FKProjectReference.ProjectCode == code && d.APPReference == app.ID && d.FKItemReference.ItemFullName == item.ProcurementProgram && d.FundSource == item.FundSourceReference).ToList();
-                        if (items.Count > 0)
-                        {
-                            items.ForEach(d => { d.APPLineReference = item.PAPCode; });
-                            db.SaveChanges();
-                        }
-                        if (services.Count > 0)
-                        {
-                            services.ForEach(d => { d.APPLineReference = item.PAPCode; });
-                            db.SaveChanges();
-                        }
-                    }
-                }
+                return false;
             }
+
             return true;
         }
-
-
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
                 db.Dispose();
-                abdb.Dispose();
+                abisDataAccess.Dispose();
                 hrisDataAccess.Dispose();
             }
             base.Dispose(disposing);

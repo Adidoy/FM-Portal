@@ -8,7 +8,7 @@ using PUPFMIS.Models.HRIS;
 
 namespace PUPFMIS.Models
 {
-    [Table("PP_SYSTEM_AGENCY_DETAILS")]
+    [Table("PROC_SYTM_Agency_Details")]
     public class AgencyDetails
     {
         [Key]

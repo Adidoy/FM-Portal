@@ -203,7 +203,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             var services = db.ProjectPlanServices.Where(d => d.Status == "P/R Submission Open" && d.FKPPMPReference.Department == user.DepartmentCode).Select(d => d.APPLineReference).Distinct().ToList();
             var papCodes = items.Union(services).Distinct().ToList();
 
-            var openPrograms = db.ProcurementPrograms.Where(d => d.ProjectStatus == "P/R Submission Open" && papCodes.Contains(d.PAPCode)).ToList();
+            var openPrograms = db.APPDetails.Where(d => d.ProjectStatus == "P/R Submission Open" && papCodes.Contains(d.ID)).ToList();
             foreach (var item in openPrograms)
             {
                 programs.Add(new ProcurementProgramsVM
@@ -287,10 +287,10 @@ namespace PUPFMIS.BusinessAndDataLogic
         public ProcurementProjectsVM GetProcurementProgramDetailsByPAPCode(string PAPCode, string UserEmail)
         {
             var procurementItems = new List<ProcurementProjectItemsVM>();
-            var procurementProgram = db.ProcurementPrograms.Where(d => d.PAPCode == PAPCode).FirstOrDefault();
+            var procurementProgram = db.APPDetails.Where(d => d.PAPCode == PAPCode).FirstOrDefault();
             var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
-            var items = db.ProjectPlanItems.Where(d => d.APPLineReference == PAPCode && d.Status == "P/R Submission Open" && d.FKPPMPReference.Department == user.DepartmentCode).ToList();
-            var services = db.ProjectPlanServices.Where(d => d.APPLineReference == PAPCode && d.Status == "P/R Submission Open" && d.FKPPMPReference.Department == user.DepartmentCode).ToList();
+            var items = db.ProjectPlanItems.Where(d => d.APPLineReference == procurementProgram.ID && d.Status == "P/R Submission Open" && d.FKPPMPReference.Department == user.DepartmentCode).ToList();
+            var services = db.ProjectPlanServices.Where(d => d.APPLineReference == procurementProgram.ID && d.Status == "P/R Submission Open" && d.FKPPMPReference.Department == user.DepartmentCode).ToList();
 
             foreach (var item in items)
             {
@@ -385,11 +385,12 @@ namespace PUPFMIS.BusinessAndDataLogic
         public bool PostPurchaseRequest(ProcurementProjectsVM ProcurementProgram, string UserEmail)
         {
             var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
-            var fiscalYear = db.ProcurementPrograms.Where(d => d.PAPCode == ProcurementProgram.PAPCode).FirstOrDefault().FKAPPHeaderReference.FiscalYear;
+            var fiscalYear = db.APPDetails.Where(d => d.PAPCode == ProcurementProgram.PAPCode).FirstOrDefault().FKAPPHeaderReference.FiscalYear;
+            var appLineID = db.APPDetails.Where(d => d.PAPCode == ProcurementProgram.PAPCode).First().ID;
             var office = hris.GetFullDepartmentDetails(user.DepartmentCode);
             var officeRoot = hris.GetAllDepartments().Where(d => d.DepartmentCode == office.DepartmentCode).FirstOrDefault().RootID;
-            var items = db.ProjectPlanItems.Where(d => d.APPLineReference == ProcurementProgram.PAPCode && d.Status == "P/R Submission Open" && d.FKPPMPReference.Department == user.DepartmentCode).ToList();
-            var services = db.ProjectPlanServices.Where(d => d.APPLineReference == ProcurementProgram.PAPCode && d.Status == "P/R Submission Open" && d.FKPPMPReference.Department == user.DepartmentCode).ToList();
+            var items = db.ProjectPlanItems.Where(d => d.APPLineReference == appLineID && d.Status == "P/R Submission Open" && d.FKPPMPReference.Department == user.DepartmentCode).ToList();
+            var services = db.ProjectPlanServices.Where(d => d.APPLineReference == appLineID && d.Status == "P/R Submission Open" && d.FKPPMPReference.Department == user.DepartmentCode).ToList();
 
             var Purpose = string.Empty;
 

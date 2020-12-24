@@ -182,17 +182,10 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fa fa-list"></i></span>
                             </div>
-                            @Html.EditorFor(model => model.ModeOfProcurement, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", rows = 4 } })
+                            @Html.EditorFor(model => model.APPModeOfProcurement, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", rows = 4 } })
                         </div>
-                        @Html.ValidationMessageFor(model => model.ModeOfProcurement, "", new { @class = "text-danger" })
+                        @Html.ValidationMessageFor(model => model.APPModeOfProcurement, "", new { @class = "text-danger" })
                     </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-12">
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-12">
-                    
                 </div>
             </div>
             <div class="row">
@@ -223,6 +216,32 @@
             </div>
         </div>
     </div>
+    <hr />
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="bg-info">
+                <h6 class="p-2">Procurement Items</h6>
+            </div>
+        </div>
+    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th style="text-align:center; vertical-align:middle;" width="40%">Item Details</th>
+                <th style="text-align:center; vertical-align:middle;" width="60%">Mode of Procurement</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var item in Model.Items)
+            {
+                <tr>
+                    <td>
+                        Item Code : @Html.DisplayFor(d => item.ItemCode)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
     <hr />
     <div class="row">
         <div class="col-sm-12 text-right">

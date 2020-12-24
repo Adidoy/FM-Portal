@@ -18,6 +18,7 @@ namespace PUPFMIS.Controllers
         [ActionName("index")]
         [Route("users-management")]
         [Route("users-management/list")]
+        [Authorize(Roles = SystemRoles.SuperUser + ", " + SystemRoles.SystemAdmin)]
         public ActionResult Index()
         {
             return View("Index", accountsManagementBL.GetUserAccountsList());
@@ -59,6 +60,7 @@ namespace PUPFMIS.Controllers
                         new Claim(ClaimTypes.Name, User.Email),
                         new Claim(ClaimTypes.Role, User.UserRole),
                         new Claim("Employee", User.Employee.ToUpperInvariant()),
+                        new Claim("Office", User.OfficeCode.ToUpperInvariant()),
                         new Claim("Designation", User.UserRole)
                     };
                     var identity = new ClaimsIdentity(claims, "ApplicationCookie");

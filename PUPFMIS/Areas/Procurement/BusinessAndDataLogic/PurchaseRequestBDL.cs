@@ -173,7 +173,6 @@ namespace PUPFMIS.BusinessAndDataLogic
 
             return reports.GenerateReport();
         }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)

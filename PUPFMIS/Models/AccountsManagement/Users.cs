@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace PUPFMIS.Models
 {
-    [Table("PP_ACCOUNTS_USER_ACCOUNTS")]
+    [Table("PROC_USRM_User_Accounts")]
     public class UserAccounts
     {
         [Key]

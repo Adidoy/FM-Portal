@@ -1,0 +1,67 @@
+﻿@model PUPFMIS.Models.ItemPrice
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>ItemPrice</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.FKItemReference.ItemCode)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FKItemReference.ItemCode)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UnitPrice)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UnitPrice)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EffectivityDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EffectivityDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CreatedAt)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreatedAt)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UpdatedAt)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UpdatedAt)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DeletedAt)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DeletedAt)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

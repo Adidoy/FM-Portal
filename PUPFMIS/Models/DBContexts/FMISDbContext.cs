@@ -38,14 +38,14 @@ namespace PUPFMIS.Models
         public DbSet<ProjectPlanServices> ProjectPlanServices { get; set; }
         public DbSet<PPMPDeadlines> PPMPDeadlines { get; set; }
         public DbSet<PPMPApprovalWorkflow> PPMPApprovalWorkflow { get; set; }
-        public DbSet<APPHeader> APPHeader { get; set; }
-        public DbSet<ProcurementPrograms> ProcurementPrograms { get; set; }
+        public DbSet<AnnualProcurementPlan> APPHeader { get; set; }
+        public DbSet<AnnualProcurementPlanDetails> APPDetails { get; set; }
         public DbSet<APPCSEDetails> APPCSEDetails { get; set; }
         public DbSet<ProcurementTimeline> ProcurementTimeline { get; set; }
         public DbSet<PurchaseRequestHeader> PurchaseRequestHeader { get; set; }
         public DbSet<PurchaseRequestDetails> PurchaseRequestDetails { get; set; }
-        public DbSet<APRHeader> APRHeader { get; set; }
-        public DbSet<APRDetail> APRDetail { get; set; }
+        public DbSet<AgencyProcurementRequest> APRHeader { get; set; }
+        public DbSet<AgencyProcurementRequestDetails> APRDetail { get; set; }
         public DbSet<Supply> Supplies { get; set; }
         public DbSet<StockCard> StockCard { get; set; }
         public DbSet<RequestHeader> RequestHeader { get; set; }

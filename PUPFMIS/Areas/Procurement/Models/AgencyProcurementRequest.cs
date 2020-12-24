@@ -7,8 +7,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PUPFMIS.Models
 {
-    [Table("PP_APR_HEADER")]
-    public class APRHeader
+    [Table("PROC_TRXN_Agency_Procurement_Request")]
+    public class AgencyProcurementRequest
     {
         [Key]
         public int ID { get; set; }
@@ -26,8 +26,8 @@ namespace PUPFMIS.Models
         public string AgencyHeadDesignation { get; set; }
     }
 
-    [Table("PP_APR_DETAIL")]
-    public class APRDetail
+    [Table("PROC_TRXN_Agency_Procurement_Request_Details")]
+    public class AgencyProcurementRequestDetails
     {
         [Key]
         public int ID { get; set; }
@@ -47,7 +47,7 @@ namespace PUPFMIS.Models
         public int? PRReference { get; set; }
 
         [ForeignKey("APRHeaderReference")]
-        public virtual APRHeader FKAPRReference { get; set; }
+        public virtual AgencyProcurementRequest FKAPRReference { get; set; }
 
         [ForeignKey("ItemReference")]
         public virtual Item FKItemReference { get; set; }

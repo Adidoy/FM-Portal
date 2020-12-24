@@ -1,0 +1,297 @@
+﻿@model PUPFMIS.Models.ProcurementProjectsVM
+
+@{
+    ViewBag.Title = "Procurement Pipeline";
+    ViewBag.Description = "View Details";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Procurement Pipeline Home", "dashboard", "ProcurementPipelines", new { Area = "procurement" }, null)</li>
+        <li class="breadcrumb-item">Home</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-bookmark"></i> @Model.PAPCode - @Model.ProcurementProgram</h3>
+}
+
+@using (Ajax.BeginForm("assign-project", "ProcurementPipelines", new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "assign", Area = "procurement" }))
+{
+    @Html.HiddenFor(d => d.APPReference)
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="bg-info">
+                <h6 class="p-2">Procurement Project Details</h6>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PAPCode, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-id-card"></i></span>
+                            </div>
+                            @Html.EditorFor(model => model.PAPCode, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.PAPCode, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ProcurementProgram, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-bookmark"></i></span>
+                            </div>
+                            @Html.EditorFor(model => model.ProcurementProgram, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ProcurementProgram, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ObjectClassification, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-book-open"></i></span>
+                            </div>
+                            @Html.EditorFor(model => model.ObjectClassification, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ObjectClassification, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.FundSource, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-book-dead"></i></span>
+                            </div>
+                            @Html.EditorFor(model => model.FundSource, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ProcurementProgram, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.StartMonth, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                            </div>
+                            @Html.EditorFor(model => model.StartMonth, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.StartMonth, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.EndMonth, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                            </div>
+                            @Html.EditorFor(model => model.EndMonth, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.EndMonth, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.MOOETotal, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-coins"></i></span>
+                            </div>
+                            @Html.EditorFor(model => model.MOOETotal, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "text-align: right;", Value = Model.MOOETotal.ToString("C", new System.Globalization.CultureInfo("en-ph")), disabled = "disabled" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.MOOETotal, "", new { @class = "text-danger" })
+                    </div>
+                    
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CapitalOutlayTotal, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-coins"></i></span>
+                            </div>
+                            @Html.EditorFor(model => model.CapitalOutlayTotal, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "text-align: right;", Value = Model.CapitalOutlayTotal.ToString("C", new System.Globalization.CultureInfo("en-ph")), disabled = "disabled" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.CapitalOutlayTotal, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TotalEstimatedBudget, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-money-bill"></i></span>
+                            </div>
+                            @Html.EditorFor(model => model.TotalEstimatedBudget, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "text-align: right;", Value = Model.TotalEstimatedBudget.ToString("C", new System.Globalization.CultureInfo("en-ph")), disabled = "disabled" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.TotalEstimatedBudget, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.EndUser, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                            </div>
+                            @Html.EditorFor(model => model.EndUser, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.EndUser, "", new { @class = "text-danger" })
+                    </div>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Remarks, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-paragraph"></i></span>
+                            </div>
+                            @Html.EditorFor(model => model.Remarks, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", rows = 4 } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.Remarks, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ModeOfProcurement, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-list"></i></span>
+                            </div>
+                            @Html.EditorFor(model => model.APPModeOfProcurement, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", rows = 4 } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.APPModeOfProcurement, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ProjectCoordinator, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-user"></i></span>
+                            </div>
+                            @Html.DropDownList("ProjectCoordinator", null, htmlAttributes: new { @class = "form-control form-control-sm select2" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ProjectCoordinator, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ProjectSupport, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-user-alt"></i></span>
+                            </div>
+                            @Html.DropDownList("ProjectSupport", null, htmlAttributes: new { @class = "form-control form-control-sm select2" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ProjectSupport, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="bg-info">
+                <h6 class="p-2">Procurement Items</h6>
+            </div>
+        </div>
+    </div>
+    <table class="table table-striped table-hover" id="example2">
+        <thead>
+            <tr>
+                <th style="text-align:center; vertical-align:middle;" width="40%">Item Details</th>
+                <th style="text-align:center; vertical-align:middle;" width="60%">Mode of Procurement</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>
+                        Item Code : @Html.DisplayFor(d => item.ItemCode)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <hr />
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" onclick="SaveItem()"><i class="fa fa-save"></i>&nbsp; Save Changes</button>
+                <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("assignment-index", "ProcurementPipelines", new { area = "procurement", ReferenceNo = Model.APPReference })'"><i class="fa fa-times-circle"></i>&nbsp; Cancel</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    function SaveItem() {
+        swal.fire({
+            title: "Save record?",
+            text: "You are about to save this record, continue?",
+            type: "warning",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#assign").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    type: "error"
+                })
+            };
+        })
+    }
+    function CreateResult(data) {
+        if (data.result == true) {
+            swal.fire({
+                title: "Record Saved!",
+                text: "Procurement Program is successfully assigned.",
+                type: "success"
+            }).then((result) => {
+                if (result.value) {
+                    window.location.href = "@Url.Action("assignment-index", "ProcurementPipelines", new { Area = "procurement", ReferenceNo = Model.APPReference })";
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                type: "error"
+            });
+            $.validator.unobtrusive.parse
+        }
+    }
+</script>

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace PUPFMIS.Models
 {
-    [Table("PP_PPMP_HEADER")]
+    [Table("PROC_TRXN_Procurement_Project_Mgmt_Plan")]
     public class PPMPHeader
     {
         [Key]
@@ -58,7 +58,7 @@ namespace PUPFMIS.Models
         [ForeignKey("PPMPType")]
         public virtual InventoryType FKPPMPTypeReference { get; set; }
     }
-    [Table("PP_WORKFLOW_PPMP_APPROVAL")]
+    [Table("PROC_WKFL_PPMP_Approval")]
     public class PPMPApprovalWorkflow
     {
         [Key]

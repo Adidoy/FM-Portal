@@ -1,0 +1,97 @@
+﻿@model PUPFMIS.Models.SelectBiddingTypeVM
+
+@{
+    ViewBag.Title = "Competitive Bidding Projects";
+    ViewBag.Description = "Select Bidding Type";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">Bidding Projects</li>
+        <li class="breadcrumb-item">Create</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-bookmark"></i> Create New Bidding Project</h3>
+}
+
+@using(Html.BeginForm("select-bidding-type", "ProcurementProjects", new { Area = "procurement" }, FormMethod.Post, htmlAttributes: new { id = "type-selection" }))
+{
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="bg-info">
+                <h5 class="p-2">Bidding Type Selection</h5>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-lg-2 col-md-2 col-sm-12"></div>
+        <div class="col-lg-8 col-md-8 col-sm-12">
+            <div class="form-group">
+                @Html.LabelFor(model => Model.BiddingType, htmlAttributes: new { @class = "col-form-label" })
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-asterisk"></i></span>
+                    </div>
+                    @Html.EnumDropDownListFor(model => Model.BiddingType, htmlAttributes: new { @class = "form-control form-control-sm", style = "font-size: 100%", @onchange = "FillProgram()" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => Model.ProcurementProgram, htmlAttributes: new { @class = "col-form-label" })
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-file"></i></span>
+                    </div>
+                    @Html.DropDownList("ProcurementProgram", null, htmlAttributes: new { @class = "form-control form-control-sm", style = "font-size: 100%" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => Model.BiddingStrategy, htmlAttributes: new { @class = "col-form-label" })
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-file"></i></span>
+                    </div>
+                    @Html.EnumDropDownListFor(model => model.BiddingStrategy, null, htmlAttributes: new { @class = "form-control form-control-sm", style = "font-size: 100%" })
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-12"></div>
+    </div>
+}
+
+@section FormFooter {
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" onclick="ViewItems()"><i class="fa fa-search"></i>&nbsp; View Items</button>
+                <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("dashboard", "ProcurementProjects", new { Area = "procurement" })'"><i class="fa fa-arrow-alt-circle-left"></i>&nbsp; Back to Dashboard</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    function FillProgram() {
+        var type = $('#BiddingType').val();
+        $.ajax({
+            url: '@Url.Action("GetPrograms", "ProcurementProjects", new { Area = "procurement" })',
+            type: "GET",
+            dataType: "JSON",
+            data: { BiddingType: type },
+            success: function (programs) {
+                $('#ProcurementProgram').html("");
+                $.each(programs, function(i, program) {
+                    $('#ProcurementProgram').append($('<option></option>').val(program.Code).html(program.ProgramName));
+                });
+            }
+        });
+    }
+
+    function ViewItems() {
+        $("#type-selection").submit();
+    }
+</script>
