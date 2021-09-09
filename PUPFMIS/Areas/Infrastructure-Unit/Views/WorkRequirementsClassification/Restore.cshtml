@@ -1,0 +1,88 @@
+﻿@model PUPFMIS.Models.InfrastructureRequirementsClassification
+
+<div class="modal-header">
+    <h4 class="modal-title">View Purged Classification</h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div class="modal-body" id="form-body">
+    <h5>@Html.DisplayNameFor(m => m.ClassificationName): @Html.DisplayFor(m => m.ClassificationName).ToString().ToUpper()</h5>
+    <br />
+    <h6>Other Details:</h6>
+    <table class="table">
+        <tr>
+            <td width="30%"><strong>@Html.DisplayNameFor(model => model.PurgeFlag)</strong></td>
+            <td>@( Model.PurgeFlag == true ? "Yes" : "No" )</td>
+        </tr>
+        <tr>
+            <td width="30%"><strong>@Html.DisplayNameFor(model => model.CreatedAt)</strong></td>
+            <td>@DateTime.Parse(Html.DisplayFor(model => model.CreatedAt).ToString()).ToString("dd MMMM yyyy hh:mm tt")</td>
+        </tr>
+        <tr>
+            <td width="30%"><strong>@Html.DisplayNameFor(model => model.UpdatedAt)</strong></td>
+            <td>@( Model.UpdatedAt == null ? "Not Applicable Yet" : Model.UpdatedAt.Value.ToString("dd MMMM yyyy hh:mm tt") )</td>
+        </tr>
+        <tr>
+            <td width="30%"><strong>@Html.DisplayNameFor(model => model.DeletedAt)</strong></td>
+            <td>@( Model.DeletedAt == null ? "Not Applicable Yet" : Model.DeletedAt.Value.ToString("dd MMMM yyyy hh:mm tt") )</td>
+        </tr>
+    </table>
+</div>
+
+<div class="modal-footer">
+    <div class="form-group">
+        @using (Ajax.BeginForm("restore", "WorkRequirementsClassification", new AjaxOptions() { HttpMethod = "POST", UpdateTargetId = "modal-container", OnSuccess = "CloseModal" }, htmlAttributes: new { id = "restoreUnit" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.ID)
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" id="save-btn"><i class="fa fa-trash-restore"></i>&nbsp; Restore record</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i>&nbsp; Close</button>
+            </div>
+        }
+    </div>
+</div>
+
+<script type="text/javascript">
+    $("#save-btn").on('click', function (e)
+    {
+        e.preventDefault();
+        swal.fire({
+            title: "Restore record?",
+            text: "You are about to restore the purged record, continue?",
+            icon: "question",
+            showCancelButton: true,
+        }).then((result) =>
+        {
+            if (result.value)
+            {
+                $("#restoreUnit").submit();
+            }
+        })
+    });
+    function CloseModal(data) {
+        if (data.result === true) {
+            $('#modal-default').modal('hide');
+            if (data.result == true) {
+                swal.fire({
+                    title: "Record Restored!",
+                    text: "Record is successfully restored.",
+                    icon: "success"
+                }).then((result) => {
+                    if (result.value) {
+                        window.location.href = "@Url.Action("list", "WorkRequirementsClassification", new { Area = "infrastructure-unit" })";
+                    }
+                })
+            }
+            else {
+                swal.fire({
+                    title: "Record Not Saved!",
+                    text: "Saving record failed.",
+                    icon: "error"
+                })
+            }
+        }
+    };
+</script>

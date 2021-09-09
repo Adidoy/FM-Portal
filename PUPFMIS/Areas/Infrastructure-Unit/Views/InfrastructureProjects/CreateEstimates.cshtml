@@ -1,0 +1,225 @@
+﻿@model PUPFMIS.Models.InfrastructureProjectVM
+
+@{
+    ViewBag.Title = "Infrastructure Project";
+    ViewBag.Description = "Create";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Infrastructure Plans", "list", "InfrastructureRequests", new { area = "infrastructure-unit" }, null)</li>
+        <li class="breadcrumb-item">Create</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-right">
+        <h1 class="card-title"><i class="fa fa-bookmark"></i> Create Infrastructure Project</h1>
+    </div>
+}
+
+@using (Ajax.BeginForm("create-estimates", "InfrastructureProjects", new { Area = "infrastructure-unit" }, new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "addItem" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="card card-info">
+        <div class="card-header">
+            <h3 class="card-title"> End-User Project Details</h3>
+        </div>
+        <div class="card-body">
+            <div class="form-horizontal">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            @Html.HiddenFor(model => Model.PAPCode)
+                            @Html.LabelFor(model => model.PAPCode, htmlAttributes: new { @class = "control-label" })
+                            @Html.EditorFor(model => model.PAPCode, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", autocomplete = "off", disabled = "disabled" } })
+                            @Html.ValidationMessageFor(model => model.PAPCode, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            @Html.HiddenFor(model => Model.Program)
+                            @Html.LabelFor(model => Model.Program)
+                            @Html.EditorFor(model => model.Program, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", autocomplete = "off", disabled = "disabled" } })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            @Html.HiddenFor(model => Model.ProjectCode)
+                            @Html.LabelFor(model => Model.ProjectCode)
+                            @Html.EditorFor(model => model.ProjectCode, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", autocomplete = "off", disabled = "disabled" } })
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            @Html.HiddenFor(model => Model.EndUserProjectName)
+                            @Html.HiddenFor(model => Model.EndUserProjectReference)
+                            @Html.LabelFor(model => model.EndUserProjectName, htmlAttributes: new { @class = "control-label" })
+                            @Html.EditorFor(model => model.EndUserProjectName, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", autocomplete = "off", disabled = "disabled" } })
+                            @Html.ValidationMessageFor(model => model.EndUserProjectName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            @Html.HiddenFor(model => Model.FiscalYear)
+                            @Html.LabelFor(model => model.FiscalYear, htmlAttributes: new { @class = "control-label" })
+                            @Html.EditorFor(model => model.FiscalYear, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", autocomplete = "off", disabled = "disabled" } })
+                            @Html.ValidationMessageFor(model => model.FiscalYear, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            @Html.HiddenFor(model => Model.DeliveryMonth)
+                            @Html.LabelFor(model => model.DeliveryMonth, htmlAttributes: new { @class = "control-label" })
+                            @Html.EditorFor(model => model.DeliveryMonth, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", autocomplete = "off", disabled = "disabled" } })
+                            @Html.ValidationMessageFor(model => model.DeliveryMonth, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            @Html.HiddenFor(model => Model.Department)
+                            @Html.HiddenFor(model => Model.DepartmentCode)
+                            @Html.LabelFor(model => model.Department, htmlAttributes: new { @class = "control-label" })
+                            @Html.EditorFor(model => model.Department, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", autocomplete = "off", disabled = "disabled" } })
+                            @Html.ValidationMessageFor(model => model.Department, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            @Html.HiddenFor(model => Model.Unit)
+                            @Html.LabelFor(model => model.Unit, htmlAttributes: new { @class = "control-label" })
+                            @Html.EditorFor(model => model.Unit, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", autocomplete = "off", disabled = "disabled" } })
+                            @Html.ValidationMessageFor(model => model.Unit, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            @Html.HiddenFor(model => Model.Description)
+                            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label" })
+                            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", rows = 3, disabled = "disabled" } })
+                            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            @Html.HiddenFor(model => Model.InfraProjectType)
+                            @Html.HiddenFor(model => Model.ItemCode)
+                            @Html.LabelFor(model => model.InfraProjectType, htmlAttributes: new { @class = "control-label" })
+                            @Html.EditorFor(model => model.InfraProjectType, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled", Value = Model.InfraProjectType + " (" + Model.ItemCode + ")" } })
+                            @Html.ValidationMessageFor(model => model.InfraProjectType, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card card-info">
+        <div class="card-header"><h3 class="card-title"> Infrastructure Project Details</h3></div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => Model.ProjectTitle)
+                        @Html.EditorFor(model => model.ProjectTitle, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", autocomplete = "off" } })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-9 col-md-9 col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => Model.ProjectLocation)
+                        @Html.EditorFor(model => model.ProjectLocation, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", autocomplete = "off" } })
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => Model.ContractDuration)
+                        @Html.EditorFor(model => model.ContractDuration, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", autocomplete = "off" } })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section FormFooter {
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" onclick="SaveInfrastructureRequest()" id="btn-save"><i class="fa fa-save"></i>&nbsp; Save Infrastructure Project</button>
+                <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("office", "InfrastructureProjects", new { Area = "infrastructure-unit", FiscalYear = ViewBag.FiscalYear })'"><i class="fa fa-times-circle"></i>&nbsp; Cancel</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    function SaveInfrastructureRequest() {
+        swal.fire({
+            title: "Save Infrastructure Plan?",
+            text: "You are about to the Infrastructure Plan, continue?",
+            icon: "question",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#addItem").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    icon: "error"
+                })
+            };
+        })
+    }
+    function CreateResult(data) {
+        if (data.result == true) {
+            swal.fire({
+                title: "Record Saved!",
+                text: "Infrastructure Plan is successfully saved.",
+                icon: "success"
+            }).then((result) => {
+                if (result.value) {
+                    var url = "@Url.Action("details", "DetailedEstimates", new { Area = "infrastructure-unit", ProjectCode = Model.ProjectCode, ItemCode = Model.ItemCode })";
+                    window.location.href = url;
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                icon: "error"
+            });
+        }
+        var vsummary = $("#ValidationSummary");
+        if (vsummary.val() != null) {
+            $("input").blur();
+            $(window).scrollTop(0,0);
+        }
+    }
+    function EnableReason() {
+        var acceptance = document.getElementById('Acceptance').value;
+        if(acceptance == 1)
+        {
+            document.getElementById('ReasonForNonAcceptance').disabled = false;
+        }
+        else
+        {
+            document.getElementById('ReasonForNonAcceptance').disabled = true;
+        }
+    }
+</script>

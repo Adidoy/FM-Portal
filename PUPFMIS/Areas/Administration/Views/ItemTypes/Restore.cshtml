@@ -1,22 +1,20 @@
-﻿@model PUPFMIS.Models.ItemTypeVM
-
-@{
+﻿@{
     ViewBag.Title = "Item Types";
-    ViewBag.Description = "Purge";
+    ViewBag.Description = "Restore";
     Layout = "~/Views/Shared/_BodyLayout.cshtml";
 }
 
 @section BreadCrumb {
     <ol class="breadcrumb float-sm-right">
         <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
-        <li class="breadcrumb-item">@Html.ActionLink("Item Types List", "item-list", "ItemTypes", new { Area = "administration" }, null)</li>
-        <li class="breadcrumb-item">Purge</li>
+        <li class="breadcrumb-item">@Html.ActionLink("Item Types", "list", "ItemTypes", new { Area = "administration" }, null)</li>
+        <li class="breadcrumb-item">Restore</li>
     </ol>
 }
 
 @section Header {
     <div class="col-md-12 text-right">
-        <h1 class="card-title"><i class="fa fa-bookmark"></i> Purge Item Type Record</h1>
+        <h1 class="card-title"><i class="fa fa-bookmark"></i> Restore Item Type Record</h1>
     </div>
 }
 
@@ -33,14 +31,12 @@
     </div>
 }
 
-<script src="~/Scripts/adminlte/components/jquery/dist/jquery.js"></script>
-<script src="~/Scripts/adminlte/components/select2/js/select2.full.js"></script>
 <script type="text/javascript">
     function RestoreRecord() {
         swal.fire({
             title: "Restore record?",
             text: "You are about to restore this purged record, continue?",
-            type: "warning",
+            icon: "question",
             showCancelButton: true,
         }).then((result) => {
             if (result.value) {
@@ -50,7 +46,7 @@
                 swal.fire({
                     title: "Cancelled!",
                     text: "You have cancelled restoring the purged record.",
-                    type: "error"
+                    icon: "error"
                 })
             }
         })
@@ -60,7 +56,7 @@
             swal.fire({
                 title: "Record Restored!",
                 text: "Record is successfully restored.",
-                type: "success"
+                icon: "success"
             }).then((result) => {
                 if (result.value) {
                     window.location.href = "@Url.Action("restore-list", "ItemTypes", new { Area = "administration" })";
@@ -71,7 +67,7 @@
             swal.fire({
                 title: "Record Not Restored!",
                 text: "Restoring purged record failed.",
-                type: "error"
+                icon: "error"
             })
         }
 

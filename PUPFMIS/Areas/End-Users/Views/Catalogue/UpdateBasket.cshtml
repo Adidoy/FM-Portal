@@ -93,7 +93,7 @@
                                 </div>
                                 <div class="col-lg-9 col-md-9 col-sm-12" style="font-size: 10pt;">
                                     @Html.HiddenFor(model => model.ProcurementSource)
-                                    @( Model.ProcurementSource == PUPFMIS.Models.ProcurementSources.PS_DBM ? "DBM Procurement Store" : "Private Suppliers" )
+                                    @( Model.ProcurementSource == PUPFMIS.Models.ProcurementSources.AgencyToAgency ? "DBM Procurement Store" : "External Suppliers" )
                                 </div>
                             </div>
                             <div class="row">
@@ -217,7 +217,7 @@
     </div>
     <br />
     @Html.HiddenFor(m => m.ProposalType)
-    if (Model.ProcurementSource == PUPFMIS.Models.ProcurementSources.Non_DBM)
+    if (Model.ProcurementSource == PUPFMIS.Models.ProcurementSources.ExternalSuppliers)
     {
         <h4>Supplier Information</h4>
         <hr />
@@ -436,7 +436,7 @@
         </div>
     }
 
-    if (Model.ProcurementSource == PUPFMIS.Models.ProcurementSources.PS_DBM)
+    if (Model.ProcurementSource == PUPFMIS.Models.ProcurementSources.AgencyToAgency)
     {
         @Html.HiddenFor(d => d.Supplier1ID)
         @Html.HiddenFor(d => d.Supplier1UnitCost)

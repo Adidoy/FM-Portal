@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Web.Mvc;
 
 namespace PUPFMIS.Models
 {
@@ -15,7 +16,7 @@ namespace PUPFMIS.Models
         public int FiscalYear { get; set; }
 
         [Display(Name = "APP Type")]
-        public string APPType { get; set; }
+        public APPTypes APPType { get; set; }
 
         [Column(TypeName = "VARCHAR")]
         [Display(Name = "Reference No.")]
@@ -103,6 +104,8 @@ namespace PUPFMIS.Models
 
         public int APPHeaderReference { get; set; }
 
+        public ProcurementSources ProcurementSource { get; set; }
+
         [Column(TypeName = "VARCHAR")]
         [MaxLength(175, ErrorMessage = "{0} field must be up to {1} characters only.")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
@@ -112,11 +115,18 @@ namespace PUPFMIS.Models
         [Display(Name = "Mode of Procurement")]
         public string APPModeOfProcurementReference { get; set; }
 
-        //[Display(Name = "Mode of Procurement")]
-        //public int? ModeOfProcurementReference { get; set; }
+        [Display(Name = "Classification")]
+        public int? ClassificationReference { get; set; }
 
         [Column(TypeName = "VARCHAR")]
         public string ObjectClassification { get; set; }
+
+        [Column(TypeName = "VARCHAR")]
+        public string ObjectSubClassification { get; set; }
+
+        [Required]
+        [Display(Name = "Inventory Code")]
+        public string InventoryCode { get; set; }
 
         [Column(TypeName = "VARCHAR")]
         public string EndUser { get; set; }
@@ -153,8 +163,8 @@ namespace PUPFMIS.Models
         [Display(Name = "Project Support")]
         public string ProjectSupport { get; set; }
 
-        [Display(Name = "Status")]
-        public string ProjectStatus { get; set; }
+        //[Display(Name = "Status")]
+        //public APPStatus ProjectStatus { get; set; }
 
         public bool IsInstitutional { get; set; }
 
@@ -162,18 +172,55 @@ namespace PUPFMIS.Models
 
         [ForeignKey("APPHeaderReference")]
         public virtual AnnualProcurementPlan FKAPPHeaderReference { get; set; }
+
+        [ForeignKey("ClassificationReference")]
+        public virtual ItemClassification FKClassificationReference { get; set; }
     }
     [Table("PROC_TRXN_Annual_Procurement_Plan_CSE")]
     public class APPCSEDetails
     {
-        [Key, Column(Order = 0)]
+        [Key]
+        public int ID { get; set; }
+
         public int APPHeaderReference { get; set; }
 
-        [Key, Column(Order = 1)]
-        public int ItemReference { get; set; }
+        [Required]
+        [Display(Name = "UACS")]
+        public string UACS { get; set; }
 
-        [Display(Name = "Price Catalogue")]
-        public decimal PriceCatalogue { get; set; }
+        [Required]
+        public int ProjectDetailsID { get; set; }
+
+        public int PPMPHeaderReference { get; set; }
+
+        [Required]
+        [Display(Name = "Article")]
+        public int ArticleReference { get; set; }
+
+        [Required]
+        [MaxLength(2)]
+        public string ItemSequence { get; set; }
+
+        [Display(Name = "Item Full Name")]
+        [Column(TypeName = "VARCHAR")]
+        [MaxLength(200, ErrorMessage = "{0} field must be up to {1} characters only.")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
+        public string ItemFullName { get; set; }
+
+        [AllowHtml]
+        [DataType(DataType.MultilineText)]
+        [Display(Name = "Full Specifications")]
+        public string ItemSpecifications { get; set; }
+
+        public ProcurementSources ProcurementSource { get; set; }
+
+        [Required]
+        [Display(Name = "Unit of Measure")]
+        public int UOMReference { get; set; }
+
+        [Required]
+        [Display(Name = "Category")]
+        public int? CategoryReference { get; set; }
 
         [Display(Name = "JAN")]
         public int JanQty { get; set; }
@@ -184,6 +231,10 @@ namespace PUPFMIS.Models
         [Display(Name = "MAR")]
         public int MarQty { get; set; }
 
+        [Required]
+        [Display(Name = "Q1 Total")]
+        public int Q1TotalQty { get; set; }
+
         [Display(Name = "APR")]
         public int AprQty { get; set; }
 
@@ -192,6 +243,10 @@ namespace PUPFMIS.Models
 
         [Display(Name = "JUN")]
         public int JunQty { get; set; }
+
+        [Required]
+        [Display(Name = "Q2 Total")]
+        public int Q2TotalQty { get; set; }
 
         [Display(Name = "JUL")]
         public int JulQty { get; set; }
@@ -202,6 +257,10 @@ namespace PUPFMIS.Models
         [Display(Name = "SEP")]
         public int SepQty { get; set; }
 
+        [Required]
+        [Display(Name = "Q3 Total")]
+        public int Q3TotalQty { get; set; }
+
         [Display(Name = "OCT")]
         public int OctQty { get; set; }
 
@@ -210,23 +269,77 @@ namespace PUPFMIS.Models
 
         [Display(Name = "DEC")]
         public int DecQty { get; set; }
+
+        [Required]
+        [Display(Name = "Q4 Total")]
+        public int Q4TotalQty { get; set; }
+
+        [Display(Name = "Total Quantity")]
+        public int TotalQty { get; set; }
+
+        [Display(Name = "Unit Cost")]
+        public decimal UnitCost { get; set; }
+
+        [Required]
+        [Display(Name = "Approved Budget")]
+        public decimal ApprovedBudget { get; set; }
+
+        [Display(Name = "Fund Source")]
+        public string FundSource { get; set; }
 
         [ForeignKey("APPHeaderReference")]
         public virtual AnnualProcurementPlan FKAPPHeaderReference { get; set; }
 
-        [ForeignKey("ItemReference")]
-        public virtual Item FKItemReference { get; set; }
+        [ForeignKey("ArticleReference")]
+        public virtual ItemArticles FKItemArticleReference { get; set; }
+
+        [ForeignKey("CategoryReference")]
+        public virtual ItemCategory FKItemCategoryReference { get; set; }
+
+        [ForeignKey("UOMReference")]
+        public virtual UnitOfMeasure FKUOMReference { get; set; }
     }
 
     public class AnnualProcurementPlanCSEItemsVM
     {
-        public int ItemID { get; set; }
+        [Required]
+        [Display(Name = "Classification")]
+        public int ClassificationReference { get; set; }
 
-        [Display(Name = "Item and Specifications")]
+        [Required]
+        [Display(Name = "Item Code")]
+        public string ItemCode { get; set; }
+
+        [Required]
+        [Display(Name = "Article")]
+        public int ArticleReference { get; set; }
+
+        [Required]
+        [MaxLength(2)]
+        public string ItemSequence { get; set; }
+
+        [Display(Name = "Item Full Name")]
+        [Column(TypeName = "VARCHAR")]
+        [MaxLength(200, ErrorMessage = "{0} field must be up to {1} characters only.")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
+        public string ItemFullName { get; set; }
+
+        [Display(Name = "Full Specifications")]
         public string ItemSpecifications { get; set; }
 
+        [Display(Name = "Category")]
+        public int? CategoryReference { get; set; }
+
+        public ProcurementSources ProcurementSource { get; set; }
+
+        [Display(Name = "UACS")]
+        public string UACS { get; set; }
+
         [Display(Name = "Unit of Measure")]
-        public string UnitOfMeasure { get; set; }
+        public int UnitOfMeasure { get; set; }
+
+        [Display(Name = "Unit of Measure")]
+        public string UOM { get; set; }
 
         [Display(Name = "JAN")]
         public int JanQty { get; set; }
@@ -237,11 +350,13 @@ namespace PUPFMIS.Models
         [Display(Name = "MAR")]
         public int MarQty { get; set; }
 
+        [Required]
         [Display(Name = "Q1 Total")]
-        public int Q1Total { get; set; }
+        public int Q1TotalQty { get; set; }
 
-        [Display(Name = "Q1 Amount")]
-        public decimal Q1Amount { get; set; }
+        [Required]
+        [Display(Name = "Q1 Total Amount")]
+        public decimal Q1TotalAmount { get; set; }
 
         [Display(Name = "APR")]
         public int AprQty { get; set; }
@@ -252,11 +367,13 @@ namespace PUPFMIS.Models
         [Display(Name = "JUN")]
         public int JunQty { get; set; }
 
+        [Required]
         [Display(Name = "Q2 Total")]
-        public int Q2Total { get; set; }
+        public int Q2TotalQty { get; set; }
 
-        [Display(Name = "Q2 Amount")]
-        public decimal Q2Amount { get; set; }
+        [Required]
+        [Display(Name = "Q2 Total Amount")]
+        public decimal Q2TotalAmount { get; set; }
 
         [Display(Name = "JUL")]
         public int JulQty { get; set; }
@@ -267,11 +384,13 @@ namespace PUPFMIS.Models
         [Display(Name = "SEP")]
         public int SepQty { get; set; }
 
+        [Required]
         [Display(Name = "Q3 Total")]
-        public int Q3Total { get; set; }
+        public int Q3TotalQty { get; set; }
 
-        [Display(Name = "Q3 Amount")]
-        public decimal Q3Amount { get; set; }
+        [Required]
+        [Display(Name = "Q3 Total Amount")]
+        public decimal Q3TotalAmount { get; set; }
 
         [Display(Name = "OCT")]
         public int OctQty { get; set; }
@@ -282,20 +401,26 @@ namespace PUPFMIS.Models
         [Display(Name = "DEC")]
         public int DecQty { get; set; }
 
+        [Required]
         [Display(Name = "Q4 Total")]
-        public int Q4Total { get; set; }
+        public int Q4TotalQty { get; set; }
 
-        [Display(Name = "Q4 Amount")]
-        public decimal Q4Amount { get; set; }
+        [Required]
+        [Display(Name = "Q4 Total Amount")]
+        public decimal Q4TotalAmount { get; set; }
 
-        [Display(Name = "Total Quantity for the Year")]
+        [Display(Name = "Total Quantity")]
         public int TotalQty { get; set; }
 
-        [Display(Name = "Price Catalogue")]
-        public decimal PriceCatalogue { get; set; }
+        [Display(Name = "Unit Cost")]
+        public decimal UnitCost { get; set; }
 
-        [Display(Name = "Total Amount for the Year")]
-        public decimal TotalAmount { get; set; }
+        [Required]
+        [Display(Name = "Approved Budget")]
+        public decimal ApprovedBudget { get; set; }
+
+        [Display(Name = "Fund Source")]
+        public string FundSource { get; set; }
     }
     public class AnnualProcurementPlanCSEVM
     {
@@ -584,6 +709,9 @@ namespace PUPFMIS.Models
         [Display(Name = "Item Specification")]
         public string ItemSpecification { get; set; }
 
+        [Display(Name = "Classification")]
+        public int ClassificationReference { get; set; }
+
         [Display(Name = "UACS")]
         public string UACS { get; set; }
 
@@ -637,5 +765,31 @@ namespace PUPFMIS.Models
 
         [Display(Name = "Remarks")]
         public string Remarks { get; set; }
+    }
+
+    public enum APPTypes
+    {
+        [Display(Name = "Common-use Supplies and Equipment", ShortName = "CSE")]
+        APPCSE = 0,
+
+        [Display(Name = "Indicative Annual Procurement Plan", ShortName = "INDC")]
+        Indicative = 1,
+
+        [Display(Name = "Annual Procurement Plan", ShortName = "ORIG")]
+        Original = 2,
+
+        [Display(Name = "Supplemental Annual Procurement Plan", ShortName = "SUPP")]
+        Supplemental = 3,
+
+        [Display(Name = "Amendatory Annual Procurement Plan", ShortName = "AMND")]
+        Amendatory = 4
+    }
+    public enum APPStatus
+    {
+        [Display(Name = "Posted to APP")]
+        PostedToAPP = 0,
+
+        [Display(Name = "Posted to Procurement Project")]
+        PostedToProcurementProject = 1
     }
 }

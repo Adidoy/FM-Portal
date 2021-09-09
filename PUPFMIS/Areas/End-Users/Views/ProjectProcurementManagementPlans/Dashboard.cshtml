@@ -1,0 +1,93 @@
+﻿@model PUPFMIS.Models.PPMPDashboard
+
+@{
+    ViewBag.Title = "Project Procurement Plans";
+    ViewBag.Description = "Home";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">Dashboard</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-right">
+        <h1 class="card-title"><i class="fa fa-tachometer-alt"></i>&nbsp; Procurement Management Plans</h1>
+    </div>
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <h3>Dashboard</h3>
+    </div>
+</div>
+<hr />
+<div class="card card-info">
+    <div class="card-header"><h3 class="card-title">Statistics</h3></div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-12">
+                <div class="small-box bg-primary">
+                    <div class="inner">
+                        <h3>@Model.TotalNoOfPPMPs</h3>
+                        <p>Total PPMPs</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-file"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-12">
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3>@Model.TotalOrigianalPPMPs</h3>
+                        <p>Total Original PPMPs</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-file-export"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-12">
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>@Model.TotalSupplementalPPMPs</h3>
+                        <p>Total Supplemental PPMPs</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-share"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card card-info">
+            <div class="card-header"><h3 class="card-title">View Budget Proposals</h3></div>
+            <div class="card-body">
+                <table class="table table-hover table-striped" id="projectList">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center; vertical-align:middle" width="30%">Fiscal Year</th>
+                            <th style="text-align:center; vertical-align:middle" width="70%">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.FiscalYears)
+                        {
+                            <tr>
+                                <td style="text-align:center; vertical-align:middle">@Html.DisplayFor(modelItem => item)</td>
+                                <td style="text-align:center; vertical-align:middle"><button class="btn btn-primary btn-sm" onclick="window.location = '@Url.Action("list", "ProjectProcurementManagementPlans", new { Area = "end-users", FiscalYear = item })'"><i class="fa fa-eye"></i> View Budget Proopsals</button></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

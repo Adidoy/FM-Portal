@@ -1,0 +1,332 @@
+﻿@model PUPFMIS.Models.IndividualProcurementProjectVM
+@using PUPFMIS.Helpers
+
+<div class="row">
+    <div class="col-12 col-sm-4">
+        <div class="info-box bg-light">
+            <div class="info-box-content">
+                @Html.HiddenFor(model => model.ApprovedBudgetForContract)
+                <span class="info-box-text text-center text-muted">@Html.DisplayNameFor(model => model.ApprovedBudgetForContract)</span>
+                <span class="info-box-number text-primary text-center mb-0" style="font-size:14pt;">@( Model.ApprovedBudgetForContract.ToString("C", new System.Globalization.CultureInfo("en-ph")) )</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-4">
+        <div class="info-box bg-light">
+            <div class="info-box-content">
+                @Html.HiddenFor(model => model.ContractStatus)
+                <span class="info-box-text text-center text-muted">@Html.DisplayNameFor(model => model.ContractStatus)</span>
+                <span class="info-box-number text-primary text-center mb-0" style="font-size:14pt;">@( Model.ContractStatus.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-4">
+        <div class="info-box bg-light">
+            <div class="info-box-content">
+                @Html.HiddenFor(model => model.ProcurementProjectStage)
+                <span class="info-box-text text-center text-muted">Estimated project duration</span>
+                <span class="info-box-number text-primary text-center mb-0" style="font-size:14pt;">@( Model.ProcurementProjectStage.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-md-12 col-lg-8 order-2 order-md-2">
+        <div class="row">
+            <div class="col-sm-12">
+                <h5><i class="fas fa-edit"></i> Other Details</h5>
+                <hr />
+            </div>
+            <div class="col-sm-12">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            @Html.LabelFor(model => Model.ContractLocation)
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-map-pin"></i></span>
+                                </div>
+                                @Html.EditorFor(model => Model.ContractLocation, null, new { htmlAttributes = new { @class = "form-control form-control-sm", placeholder = Html.DisplayNameFor(model => Model.ContractLocation) } })
+                            </div>
+                            @Html.ValidationMessageFor(model => Model.ContractLocation, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            @Html.LabelFor(model => Model.DeliveryPeriod)
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-calendar-check"></i></span>
+                                </div>
+                                @Html.EditorFor(model => Model.DeliveryPeriod, null, new { htmlAttributes = new { @class = "form-control form-control-sm", placeholder = "No. of Calendar Days", min = "1", Value = Model.DeliveryPeriod == 0 ? (int?)null : Model.DeliveryPeriod } })
+                            </div>
+                            @Html.ValidationMessageFor(model => Model.DeliveryPeriod, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            @Html.LabelFor(model => Model.ProjectCoordinator, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-user"></i></span>
+                                </div>
+                                @Html.DropDownList("ProjectCoordinator", null, htmlAttributes: new { @class = "form-control form-control-sm select2", style = "font-size:100%; width:90%" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br /><br />
+        <div class="row">
+            <div class="col-sm-12">
+                <h5><i class="fas fa-calendar-plus"></i> Schedule of Activities (Target Dates)</h5>
+                <hr />
+            </div>
+            <div class="col-sm-12">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            @Html.LabelFor(model => Model.PRSubmissionOpen, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group date" id="PRSubmissionOpen1" data-target-input="nearest">
+                                <div class="input-group-prepend" data-target="#PRSubmissionOpen1" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                                @Html.EditorFor(model => Model.PRSubmissionOpen, new { htmlAttributes = new { @class = "form-control form-control-sm datetimepicker-input", data_target = "#PRSubmissionOpen1", style = "font-size: 100%", placeholder = Html.DisplayNameFor(model => Model.PRSubmissionOpen), Value = Model.PRSubmissionOpen == null || Model.PRSubmissionOpen == Convert.ToDateTime("01/01/0001 12:00 AM") ? (DateTime?)null : Model.PRSubmissionOpen } })
+                            </div>
+                            @Html.ValidationMessageFor(model => Model.PRSubmissionOpen, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            @Html.LabelFor(model => Model.PRSubmissionClose, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group date" id="PRSubmissionClose1" data-target-input="nearest">
+                                <div class="input-group-prepend" data-target="#PRSubmissionClose1" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                                @Html.EditorFor(model => Model.PRSubmissionClose, new { htmlAttributes = new { @class = "form-control form-control-sm datetimepicker-input", data_target = "#PRSubmissionClose1", style = "font-size: 100%", placeholder = Html.DisplayNameFor(model => Model.PRSubmissionClose), Value = Model.PRSubmissionClose == null || Model.PRSubmissionClose == Convert.ToDateTime("01/01/0001 12:00 AM") ? (DateTime?)null : Model.PRSubmissionClose } })
+                            </div>
+                            @Html.ValidationMessageFor(model => Model.PRSubmissionOpen, "", new { @class = "text-danger" })
+                        </div></div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.PreProcurementConference, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group date" id="PreProcurementConference1" data-target-input="nearest">
+                                <div class="input-group-prepend" data-target="#PreProcurementConference1" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                                @Html.EditorFor(model => Model.PreProcurementConference, new { htmlAttributes = new { @class = "form-control form-control-sm datetimepicker-input", data_target = "#PreProcurementConference1", style = "font-size: 100%", placeholder = Html.DisplayShortNameFor(model => Model.PreProcurementConference).ToString() + " (Optional, only if applicable)", Value = Model.PreProcurementConference == null || Model.PreProcurementConference == Convert.ToDateTime("01/01/0001 12:00 AM") ? (DateTime?)null : Model.PreProcurementConference } })
+                            </div>
+                            @Html.ValidationMessageFor(model => Model.PreProcurementConference, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.IBPreparation, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group date" id="IBPreparation1" data-target-input="nearest">
+                                <div class="input-group-prepend" data-target="#IBPreparation1" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                                @Html.EditorFor(model => Model.IBPreparation, new { htmlAttributes = new { @class = "form-control form-control-sm datetimepicker-input", data_target = "#IBPreparation1", style = "font-size: 100%", placeholder = Html.DisplayShortNameFor(model => Model.IBPreparation).ToString(), Value = Model.IBPreparation == null || Model.IBPreparation == Convert.ToDateTime("01/01/0001 12:00 AM") ? (DateTime?)null : Model.IBPreparation } })
+                            </div>
+                            @Html.ValidationMessageFor(model => Model.IBPreparation, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            @Html.Label(Model.ModeOfProcurementReference != 1 ? Html.DisplayShortNameFor(model => Model.PostingOfIB).ToString() : Html.DisplayNameFor(model => Model.PostingOfIB).ToString(), htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group date" id="PostingOfIB1" data-target-input="nearest">
+                                <div class="input-group-prepend" data-target="#PostingOfIB1" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                                @Html.EditorFor(model => Model.PostingOfIB, new { htmlAttributes = new { @class = "form-control form-control-sm datetimepicker-input", data_target = "#PostingOfIB1", style = "font-size: 100%", placeholder = Model.ModeOfProcurementReference != 1 ? Html.DisplayShortNameFor(model => Model.PostingOfIB).ToString() : Html.DisplayNameFor(model => Model.PostingOfIB).ToString(), Value = Model.PostingOfIB == null || Model.PostingOfIB == Convert.ToDateTime("01/01/0001 12:00 AM") ? (DateTime?)null : Model.PostingOfIB } })
+                            </div>
+                            @Html.ValidationMessageFor(model => Model.PostingOfIB, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            @Html.LabelFor(model => Model.PreBidConference, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group date" id="PreBidConference1" data-target-input="nearest">
+                                <div class="input-group-prepend" data-target="#PreBidConference1" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                                @if (Model.ModeOfProcurementReference != 1)
+                                {
+                                    @Html.EditorFor(model => Model.PreBidConference, new { htmlAttributes = new { @class = "form-control form-control-sm datetimepicker-input", data_target = "#PreBidConference1", style = "font-size: 100%", placeholder = Html.DisplayNameFor(model => Model.PreBidConference), Value = Model.PreBidConference == null || Model.PreBidConference == Convert.ToDateTime("01/01/0001 12:00 AM") ? (DateTime?)null : Model.PreBidConference, disabled = "disabled" } })
+                                }
+                                else
+                                {
+                                    @Html.EditorFor(model => Model.PreBidConference, new { htmlAttributes = new { @class = "form-control form-control-sm datetimepicker-input", data_target = "#PreBidConference1", style = "font-size: 100%", placeholder = Html.DisplayNameFor(model => Model.PreBidConference), Value = Model.PreBidConference == null || Model.PreBidConference == Convert.ToDateTime("01/01/0001 12:00 AM") ? (DateTime?)null : Model.PreBidConference } })
+                                }
+                            </div>
+                            @Html.ValidationMessageFor(model => Model.PreBidConference, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            @Html.Label(Model.ModeOfProcurementReference != 1 ? Html.DisplayShortNameFor(model => Model.DeadlineOfSubmissionOfBids).ToString() : Html.DisplayNameFor(model => Model.DeadlineOfSubmissionOfBids).ToString(), htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group date" id="DeadlineOfSubmissionOfBids1" data-target-input="nearest">
+                                <div class="input-group-prepend" data-target="#DeadlineOfSubmissionOfBids1" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                                @Html.EditorFor(model => Model.DeadlineOfSubmissionOfBids, new { htmlAttributes = new { @class = "form-control form-control-sm datetimepicker-input", data_target = "#DeadlineOfSubmissionOfBids1", style = "font-size: 100%", placeholder = Model.ModeOfProcurementReference != 1 ? Html.DisplayShortNameFor(model => Model.DeadlineOfSubmissionOfBids).ToString() : Html.DisplayNameFor(model => Model.DeadlineOfSubmissionOfBids).ToString(), Value = Model.DeadlineOfSubmissionOfBids == null || Model.DeadlineOfSubmissionOfBids == Convert.ToDateTime("01/01/0001 12:00 AM") ? (DateTime?)null : Model.DeadlineOfSubmissionOfBids } })
+                            </div>
+                            @Html.ValidationMessageFor(model => Model.DeadlineOfSubmissionOfBids, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            @Html.Label(Model.ModeOfProcurementReference != 1 ? Html.DisplayShortNameFor(model => Model.OpeningOfBids).ToString() : Html.DisplayNameFor(model => Model.OpeningOfBids).ToString(), htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group date" id="OpeningOfBids1" data-target-input="nearest">
+                                <div class="input-group-prepend" data-target="#OpeningOfBids1" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                                @Html.EditorFor(model => Model.OpeningOfBids, new { htmlAttributes = new { @class = "form-control form-control-sm datetimepicker-input", data_target = "#OpeningOfBids1", style = "font-size: 100%", placeholder = Model.ModeOfProcurementReference != 1 ? Html.DisplayShortNameFor(model => Model.OpeningOfBids).ToString() : Html.DisplayNameFor(model => Model.OpeningOfBids).ToString(), Value = Model.OpeningOfBids == null || Model.OpeningOfBids == Convert.ToDateTime("01/01/0001 12:00 AM") ? (DateTime?)null : Model.OpeningOfBids } })
+                            </div>
+                            @Html.ValidationMessageFor(model => Model.OpeningOfBids, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            @Html.LabelFor(model => Model.NOAIssuance, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group date" id="NOAIssuance1" data-target-input="nearest">
+                                <div class="input-group-prepend" data-target="#NOAIssuance1" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                                @Html.EditorFor(model => Model.NOAIssuance, new { htmlAttributes = new { @class = "form-control form-control-sm datetimepicker-input", data_target = "#NOAIssuance1", style = "font-size: 100%", placeholder = Html.DisplayNameFor(model => Model.NOAIssuance), Value = Model.NOAIssuance == null || Model.NOAIssuance == Convert.ToDateTime("01/01/0001 12:00 AM") ? (DateTime?)null : Model.NOAIssuance } })
+                            </div>
+                            @Html.ValidationMessageFor(model => Model.NOAIssuance, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            @Html.LabelFor(model => Model.NTPIssuance, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group date" id="NTPIssuance1" data-target-input="nearest">
+                                <div class="input-group-prepend" data-target="#NTPIssuance1" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                                @Html.EditorFor(model => Model.NTPIssuance, new { htmlAttributes = new { @class = "form-control form-control-sm datetimepicker-input", data_target = "#NTPIssuance1", style = "font-size: 100%", placeholder = Html.DisplayNameFor(model => Model.NTPIssuance), Value = Model.NTPIssuance == null || Model.NTPIssuance == Convert.ToDateTime("01/01/0001 12:00 AM") ? (DateTime?)null : Model.NTPIssuance } })
+                            </div>
+                            @Html.ValidationMessageFor(model => Model.NTPIssuance, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-12 col-lg-4 order-1 order-md-1">
+        <h5><i class="fas fa-file-contract"></i> Contract Details</h5>
+        <hr />
+        <div class="text-muted">
+            <p class="text-sm">
+                @Html.HiddenFor(model => model.FiscalYear)
+                @Html.DisplayNameFor(model => model.FiscalYear)
+                <b class="d-block text-primary">@Html.DisplayFor(model => model.FiscalYear)</b>
+            </p>
+            <p class="text-sm">
+                @Html.HiddenFor(model => model.PAPCode)
+                @Html.DisplayNameFor(model => model.PAPCode)
+                <b class="d-block text-primary">@Html.DisplayFor(model => model.PAPCode)</b>
+            </p>
+            <p class="text-sm">
+                @Html.HiddenFor(model => model.ContractCode)
+                @Html.DisplayNameFor(model => model.ContractCode)
+                <b class="d-block text-primary">@Html.DisplayFor(model => model.ContractCode)</b>
+            </p>
+            <p class="text-sm">
+                @Html.HiddenFor(model => model.ContractName)
+                @Html.DisplayNameFor(model => model.ContractName)
+                <b class="d-block text-primary">@Html.DisplayFor(model => model.ContractName)</b>
+            </p>
+            <p class="text-sm">
+                @Html.HiddenFor(model => model.ContractStrategy)
+                @Html.DisplayNameFor(model => model.ContractStrategy)
+                <b class="d-block text-primary">@( Model.ContractStrategy.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</b>
+            </p>
+            <p class="text-sm">
+                @Html.HiddenFor(model => model.Classification)
+                @Html.HiddenFor(model => model.ClassificationReference)
+                @Html.DisplayNameFor(model => model.Classification)
+                <b class="d-block text-primary">@Html.DisplayFor(model => model.Classification)</b>
+            </p>
+            <p class="text-sm">
+                @Html.HiddenFor(model => model.FundSource)
+                @Html.HiddenFor(model => model.FundDescription)
+                @Html.DisplayNameFor(model => model.FundSource)
+                <b class="d-block text-primary">@Html.DisplayFor(model => model.FundDescription)</b>
+            </p>
+            <p class="text-sm">
+                @Html.HiddenFor(model => model.ModeOfProcurement)
+                @Html.HiddenFor(model => model.ModeOfProcurementReference)
+                @Html.DisplayNameFor(model => model.ModeOfProcurement)
+                <b class="d-block text-primary">@Html.DisplayFor(model => model.ModeOfProcurement)</b>
+            </p>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-sm-12">
+        <h5><i class="fas fa-pencil-ruler"></i> Contract Items</h5>
+        <hr />
+        <div class="card-body table-responsive p-sm-0">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th style="text-align:center; vertical-align:middle" width="5%">Item No.</th>
+                        <th style="text-align:center; vertical-align:middle" width="10%">Quantity</th>
+                        <th style="text-align:center; vertical-align:middle" width="10%">Unit</th>
+                        <th style="text-align:center; vertical-align:middle" width="40%">Item Description</th>
+                        <th style="text-align:center; vertical-align:middle" width="15%">Unit Cost</th>
+                        <th style="text-align:center; vertical-align:middle" width="20%">Total Cost</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.ContractItems.Count; i++)
+                    {
+                        <tr>
+                            <td style="text-align:center; vertical-align:middle;">@(i + 1)</td>
+                            <td style="text-align:center; vertical-align:middle;">
+                                @Html.HiddenFor(model => Model.ContractItems[i].Quantity)
+                                @Html.DisplayFor(model => Model.ContractItems[i].Quantity)
+                            </td>
+                            <td style="text-align:center; vertical-align:middle;">
+                                @Html.HiddenFor(model => Model.ContractItems[i].UOMReference)
+                                @Html.HiddenFor(model => Model.ContractItems[i].UnitOfMeasure)
+                                @Html.DisplayFor(model => Model.ContractItems[i].UnitOfMeasure)
+                            </td>
+                            <td style="text-align:left; vertical-align:middle;">
+                                @Html.HiddenFor(model => Model.ContractItems[i].ArticleReference)
+                                @Html.HiddenFor(model => Model.ContractItems[i].ItemSequence)
+                                @Html.HiddenFor(model => Model.ContractItems[i].ItemSpecifications)
+                                @Html.HiddenFor(model => Model.ContractItems[i].ItemFullName)
+                                @Html.DisplayFor(model => Model.ContractItems[i].ItemFullName)
+                            </td>
+                            <td style="text-align:right; vertical-align:middle;">
+                                @Html.HiddenFor(model => Model.ContractItems[i].EstimatedUnitCost)
+                                @( Model.ContractItems[i].EstimatedUnitCost.ToString("N", new System.Globalization.CultureInfo("en-ph")) )
+                            </td>
+                            <td style="text-align:right; vertical-align:middle;">
+                                @Html.HiddenFor(model => Model.ContractItems[i].ApprovedBudgetForItem)
+                                @( Model.ContractItems[i].ApprovedBudgetForItem.ToString("N", new System.Globalization.CultureInfo("en-ph")) )
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

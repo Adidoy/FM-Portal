@@ -1,0 +1,146 @@
+﻿@{
+    ViewBag.Title = "Contract Projects";
+    ViewBag.Description = "Create";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Contracts", "dashboard", "Contracts", new { Area = "procurement" }, null)</li>
+        <li class="breadcrumb-item">Create</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-bookmark"></i> Create New Contract Project: Individual Item Procurement</h3>
+}
+
+@using (Ajax.BeginForm("create-lot-contract", "Contracts", null, new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult", UpdateTargetId = "form-container" }, htmlAttributes: new { id = "projectDetails", Area = "procurement" }))
+{
+    @Html.AntiForgeryToken()
+    <div id="form-container">
+        @Html.Partial("_CreateAlternativePerItemContract")
+    </div>
+}
+
+@section FormFooter {
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" onclick="SaveBiddingProject()"><i class="fa fa-plus"></i>&nbsp; Create Bidding Project</button>
+                <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("dashboard", "Contracts", new { Area = "procurement" })'"><i class="fa fa-arrow-alt-circle-left"></i>&nbsp; Back to Dashboard</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    function SaveBiddingProject() {
+        swal.fire({
+            title: "Save Contract Project?",
+            text: "You are about to save this Contract Project, continue?",
+            icon: "question",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#projectDetails").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    icon: "error"
+                })
+            };
+        })
+    }
+    function CreateResult(data) {
+        if (data.result == true) {
+            swal.fire({
+                title: "Record Saved!",
+                text: "Contract Project is successfully saved.",
+                icon: "success"
+            }).then((result) => {
+                if (result.value) {
+                    var url = "@Url.Action("dashboard", "Contracts", new { Area = "procurement" })";
+                    window.location.href = url;
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                icon: "error"
+            });
+        }
+        var vsummary = $("#ValidationSummary");
+        if (vsummary.val() != null) {
+            $("input").blur();
+            $(window).scrollTop(0,0);
+        }
+    }
+    $(function () {
+        $('#items').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": false,
+            "info": true,
+            "autoWidth": false,
+        });
+    });
+    var lotCount = '@Model.Count'
+    $(function () {
+        for(i = 0; i<lotCount; i++)
+        {
+            var PRSubmissionOpen1 = "#PRSubmissionOpen1" + i;
+            var PRSubmissionClose1 = "#PRSubmissionClose1" + i;
+            var PreProcurementConference1 = "#PreProcurementConference1" + i;
+            var PostingOfIB1 = "#PostingOfIB1" + i;
+            var PreBidConference1 = "#PreBidConference1" + i;
+            var DeadlineOfSubmissionOfBids1 = "#DeadlineOfSubmissionOfBids1" + i;
+            var OpeningOfBids1 = "#OpeningOfBids1" + i;
+            var NOAIssuance1 = "#NOAIssuance1" + i;
+            var NTPIssuance1 = "#NTPIssuance1" + i;
+
+            $(PRSubmissionOpen1).datetimepicker({
+                defaultDate: '@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")',
+                format: 'DD MMMM YYYY hh:mm A'
+            });
+            $(PRSubmissionClose1).datetimepicker({
+                defaultDate: '@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")',
+                format: 'DD MMMM YYYY hh:mm A'
+            });
+            $(PreProcurementConference1).datetimepicker({
+                defaultDate: '@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")',
+                format: 'DD MMMM YYYY hh:mm A'
+            });
+            $(PostingOfIB1).datetimepicker({
+                defaultDate: '@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")',
+                format: 'DD MMMM YYYY hh:mm A'
+            });
+            $(PreBidConference1).datetimepicker({
+                defaultDate: '@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")',
+                format: 'DD MMMM YYYY hh:mm A'
+            });
+            $(DeadlineOfSubmissionOfBids1).datetimepicker({
+                defaultDate: '@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")',
+                format: 'DD MMMM YYYY hh:mm A'
+            });
+            $(OpeningOfBids1).datetimepicker({
+                defaultDate: '@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")',
+                format: 'DD MMMM YYYY hh:mm A'
+            });
+            $(NOAIssuance1).datetimepicker({
+                defaultDate: '@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")',
+                format: 'DD MMMM YYYY hh:mm A'
+            });
+            $(NTPIssuance1).datetimepicker({
+                defaultDate: '@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")',
+                format: 'DD MMMM YYYY hh:mm A'
+            });
+        }
+    });
+</script>

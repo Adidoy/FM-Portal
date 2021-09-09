@@ -13,7 +13,6 @@ namespace PUPFMIS.Models.HRIS
             ((IObjectContextAdapter)this).ObjectContext.CommandTimeout = 250;
         }
         
-        public DbSet<Offices> OfficeModel { get; set; }
         public DbSet<HRISDepartment> HRISDepartments { get; set; }
         public DbSet<HRISEmployeeDesignation> HRISEmployeeDesignation { get; set; }
         public DbSet<HRISEmployeeDetails> HRISEmployeeDetails { get; set; }

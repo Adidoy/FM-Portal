@@ -7,23 +7,23 @@ using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
+using PUPFMIS.BusinessAndDataLogic;
 
 namespace PUPFMIS.Controllers
 {
     [Route("{action}")]
     [RouteArea("administration")]
     [RoutePrefix("units-of-measure")]
-    [Authorize(Roles = SystemRoles.SuperUser + ", " + SystemRoles.SystemAdmin)]
+    [UserAuthorization(Roles = SystemRoles.SuperUser + ", " + SystemRoles.SystemAdmin)]
     public class UnitOfMeasureController : Controller
     {
-        private FMISDbContext db = new FMISDbContext();
+        private UnitOfMeasureDataAccess uomDAL = new UnitOfMeasureDataAccess();
 
         [Route("")]
-        [Route("list")]
-        [ActionName("index")]
+        [ActionName("list")]
         public ActionResult Index()
         {
-            return View(db.UOM.Where(d => d.PurgeFlag == false).OrderBy(d => d.UnitName).ToList());
+            return View("Index", uomDAL.GetUOMs(false));
         }
 
         public ActionResult Details(int? id)
@@ -32,7 +32,7 @@ namespace PUPFMIS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            UnitOfMeasure UOM = db.UOM.Find(id);
+            UnitOfMeasure UOM = uomDAL.GetUOM(id);
             if (UOM == null)
             {
                 return HttpNotFound();
@@ -52,19 +52,7 @@ namespace PUPFMIS.Controllers
             Validate(UOM);
             if (ModelState.IsValid)
             {
-                UOM.PurgeFlag = false;
-                UOM.CreatedAt = DateTime.Now;
-                db.UOM.Add(UOM);
-                var _currentValues = db.ChangeTracker.Entries().Where(d => d.State == EntityState.Added).First().CurrentValues;
-                db.SaveChanges();
-                LogsMasterTables _log = new LogsMasterTables();
-                _log.AuditableKey = UOM.ID;
-                _log.ProcessedBy = null;
-                _log.Action = "Add Record";
-                _log.TableName = "master_UOM";
-                MasterTablesLogger _logger = new MasterTablesLogger();
-                _logger.Log(_log, null, _currentValues);
-                return Json(new { status = "success" });
+                return Json(new { result = uomDAL.AddUOM(UOM) });
             }
             return PartialView(UOM);
         }
@@ -75,7 +63,7 @@ namespace PUPFMIS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            UnitOfMeasure _uom = db.UOM.Find(id);
+            UnitOfMeasure _uom = uomDAL.GetUOM(id);
             if (_uom == null)
             {
                 return HttpNotFound();
@@ -87,24 +75,9 @@ namespace PUPFMIS.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(UnitOfMeasure UOM)
         {
-            UnitOfMeasure _unitOfMeasureUpdate = db.UOM.Find(UOM.ID);
-            _unitOfMeasureUpdate.UnitName = UOM.UnitName;
-            _unitOfMeasureUpdate.Abbreviation = UOM.Abbreviation;
-            _unitOfMeasureUpdate.UpdatedAt = DateTime.Now;
-            var _currentValues = db.ChangeTracker.Entries().Where(d => d.State == EntityState.Modified).First().CurrentValues;
-            var _originalValues = db.ChangeTracker.Entries().Where(d => d.State == EntityState.Modified).First().OriginalValues;
-
             if (ModelState.IsValid)
             {
-                LogsMasterTables _log = new LogsMasterTables();
-                _log.AuditableKey = UOM.ID;
-                _log.ProcessedBy = null;
-                _log.Action = "Update Record";
-                _log.TableName = "master_UOM";
-                MasterTablesLogger _logger = new MasterTablesLogger();
-                _logger.Log(_log, _originalValues, _currentValues);
-                db.SaveChanges();
-                return Json(new { status = "success" });
+                return Json(new { result = uomDAL.UpdateUOM(UOM) });
             }
             return PartialView(UOM);
         }
@@ -115,7 +88,7 @@ namespace PUPFMIS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            UnitOfMeasure UOM = db.UOM.Find(id);
+            UnitOfMeasure UOM = uomDAL.GetUOM(id);
             if (UOM == null)
             {
                 return HttpNotFound();
@@ -127,27 +100,14 @@ namespace PUPFMIS.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            UnitOfMeasure _unitOfMeasureDelete = db.UOM.Find(id);
-            _unitOfMeasureDelete.PurgeFlag = true;
-            _unitOfMeasureDelete.DeletedAt = DateTime.Now;
-            var _currentValues = db.ChangeTracker.Entries().Where(d => d.State == EntityState.Modified).First().CurrentValues;
-            var _originalValues = db.ChangeTracker.Entries().Where(d => d.State == EntityState.Modified).First().OriginalValues;
-            LogsMasterTables _log = new LogsMasterTables();
-            _log.AuditableKey = id;
-            _log.ProcessedBy = null;
-            _log.Action = "Purge Record";
-            _log.TableName = "master_UOM";
-            MasterTablesLogger _logger = new MasterTablesLogger();
-            _logger.Log(_log, _originalValues, _currentValues);
-            db.SaveChanges();
-            return Json(new { status = "success" });
+            return Json(new { result = uomDAL.PurgeUOM(id) });
         }
 
         [Route("restore-list")]
         [ActionName("restoreindex")]
         public ActionResult RestoreIndex()
         {
-            return View(db.UOM.Where(d => d.PurgeFlag == true).ToList());
+            return View(uomDAL.GetUOMs(true));
         }
 
         public ActionResult Restore(int? id)
@@ -156,7 +116,7 @@ namespace PUPFMIS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            UnitOfMeasure UOM = db.UOM.Find(id);
+            UnitOfMeasure UOM = uomDAL.GetUOM(id);
             if (UOM == null)
             {
                 return HttpNotFound();
@@ -168,20 +128,7 @@ namespace PUPFMIS.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult RestorConfirmed(int id)
         {
-            UnitOfMeasure _unitOfMeasureDelete = db.UOM.Find(id);
-            _unitOfMeasureDelete.PurgeFlag = false;
-            _unitOfMeasureDelete.DeletedAt = DateTime.Now;
-            var _currentValues = db.ChangeTracker.Entries().Where(d => d.State == EntityState.Modified).First().CurrentValues;
-            var _originalValues = db.ChangeTracker.Entries().Where(d => d.State == EntityState.Modified).First().OriginalValues;
-            LogsMasterTables _log = new LogsMasterTables();
-            _log.AuditableKey = id;
-            _log.ProcessedBy = null;
-            _log.Action = "Record Restored";
-            _log.TableName = "master_UOM";
-            MasterTablesLogger _logger = new MasterTablesLogger();
-            _logger.Log(_log, _originalValues, _currentValues);
-            db.SaveChanges();
-            return Json(new { status = "success" });
+            return Json(new { result = uomDAL.RestoreUOM(id) });
         }
 
         private void Validate(UnitOfMeasure UOM)
@@ -201,7 +148,7 @@ namespace PUPFMIS.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                uomDAL.Dispose();
             }
             base.Dispose(disposing);
         }

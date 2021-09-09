@@ -6,21 +6,24 @@ using System.Linq;
 
 namespace PUPFMIS.Models
 {
-    [Table("PROC_MSTR_Units_Of_Measure")]
+    [Table("PROC_MSTR_UnitsOfMeasure")]
     public class UnitOfMeasure
     {
+        private string _unitName;
+        private string _abbreviation;
+
         [Key]
         public int ID { get; set; }
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
         [MaxLength(75, ErrorMessage = "{0} field must be up to {1} characters only")]
         [Display(Name = "Unit Name")]
-        public string UnitName { get; set; }
+        public string UnitName { get { return _unitName; } set { _unitName = value.ToUpper(); } }
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
         [MaxLength(5, ErrorMessage = "{0} field must be up to {1} characters only")]
         [Display(Name = "Abbreviation")]
-        public string Abbreviation { get; set; }
+        public string Abbreviation { get { return _abbreviation; } set { _abbreviation = value.ToUpper(); } }
         
         [Required]
         [Display(Name = "Is Deleted?")]

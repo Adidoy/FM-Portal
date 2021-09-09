@@ -1,95 +1,75 @@
-﻿@model PUPFMIS.Models.Supplier
+﻿@{
+    ViewBag.Title = "Suppliers";
+    ViewBag.Description = "Purge";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
 
-<div class="modal-header">
-    <h4 class="modal-title">Purge Supplier Record</h4>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
-</div>
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Suppliers", "list")</li>
+        <li class="breadcrumb-item">Purge</li>
+    </ol>
+}
 
-<div class="modal-body" id="form-body">
-    <h5>@Model.SupplierName</h5>
-    <br />
-    <h6>Other Details:</h6>
-    <table class="table">
-        <tr>
-            <td><strong>@Html.DisplayNameFor(model => model.Address)</strong></td>
-            <td>@Html.DisplayFor(model => model.Address)</td>
-        </tr>
-        <tr>
-            <td><strong>@Html.DisplayNameFor(model => model.ContactNumber)</strong></td>
-            <td>@Html.DisplayFor(model => model.ContactNumber)</td>
-        </tr>
-        <tr>
-            <td><strong>@Html.DisplayNameFor(model => model.AlternateContactNumber)</strong></td>
-            <td>@(Model.AlternateContactNumber == null ? "No data provided" : Model.AlternateContactNumber)</td>
-        </tr>
-        <tr>
-            <td><strong>@Html.DisplayNameFor(model => model.TaxIdNumber)</strong></td>
-            <td>@(Model.TaxIdNumber == null ? "No data provided" : Model.TaxIdNumber )</td>
-        </tr>
-        <tr>
-            <td><strong>@Html.DisplayNameFor(model => model.EmailAddress)</strong></td>
-            <td>@(Model.EmailAddress == null ? "No data provided" : Model.EmailAddress )</td>
-        </tr>
-        <tr>
-            <td><strong>@Html.DisplayNameFor(model => model.Website)</strong></td>
-            <td>@(Model.Website == null ? "No data provided" : Model.Website )</td>
-        </tr>
-        <tr>
-            <td><strong>@Html.DisplayNameFor(model => model.CreatedAt)</strong></td>
-            <td>@Model.CreatedAt.ToString("dd MMMM yyyy hh:mm tt")</td>
-        </tr>
-    </table>
-</div>
+@section Header {
+    <div class="col-md-12 text-right">
+        <h1 class="card-title"><i class="fa fa-bookmark"></i> Purge Supplier Record</h1>
+    </div>
+}
 
-<div class="modal-footer">
-    <div class="form-group">
-        @using (Ajax.BeginForm("delete", "Suppliers", new AjaxOptions() { HttpMethod = "POST", UpdateTargetId = "modal-container", OnSuccess = "CloseModal" }, htmlAttributes: new { id = "deleteSupplier" }))
+@Html.Partial("_Details")
+
+@section FormFooter {
+    <div class="float-right">
+        @using (Ajax.BeginForm("delete", "Suppliers", new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "addItem", Area = "administration", SupplierID = Model.ID }))
         {
             @Html.AntiForgeryToken()
-            @Html.HiddenFor(m => m.ID)
-            <div class="form-group">
-                <button type="button" class="btn btn-primary" id="save-btn"><i class="fa fa-trash"></i>&nbsp; Delete record</button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i>&nbsp; Close</button>
-            </div>
+            <button type="button" class="btn btn-primary" id="save-btn" onclick="DeleteRecord()"><i class="fa fa-trash"></i> Delete Record</button>
+            <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("list","Suppliers", new { Area = "administration" })'"><i class="fa fa-arrow-circle-left"></i> Back to List</button>
         }
     </div>
-</div>
+}
 
 <script type="text/javascript">
-    $("#save-btn").on('click', function (e)
-    {
-        e.preventDefault();
+    function DeleteRecord() {
         swal.fire({
             title: "Delete record?",
             text: "You are about to delete this record, continue?",
-            type: "warning",
+            icon: "warning",
             showCancelButton: true,
-        }).then((result) =>
-        {
-            if (result.value)
-            {
-                $("#deleteSupplier").submit();
+        }).then((result) => {
+            if (result.value) {
+                $("#addItem").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    icon: "error"
+                })
             }
         })
-    });
-    function CloseModal(data) {
-        if (data.status === "success") {
-            $('#modal-default').modal('hide');
-            toastr.success('Unit of measure is deleted!', 'Delete', { timeOut: 50000, preventDuplicates: false });
-            window.location.href = "@Url.Action("index", "Suppliers")";
-        } else {
+    }
+    function CreateResult(data) {
+        if (data.result == true) {
             swal.fire({
-                title: "Error!",
-                text: "An error occured. Please try again",
-                type: "danger",
-                showCancelButton: true,
+                title: "Record Deleted!",
+                text: "Record is successfully deleted.",
+                icon: "success"
             }).then((result) => {
                 if (result.value) {
-                    window.location.href = "@Url.Action("index", "Suppliers")";
+                    window.location.href = "@Url.Action("list", "Suppliers")";
                 }
             })
         }
-    };
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                icon: "error"
+            })
+        }
+
+    }
 </script>

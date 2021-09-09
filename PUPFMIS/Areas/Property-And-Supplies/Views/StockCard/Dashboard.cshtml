@@ -1,0 +1,83 @@
+﻿@model IEnumerable<PUPFMIS.Models.Supplies>
+
+@{
+    ViewBag.Title = "Stock Cards";
+    ViewBag.Description = "Home";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">Stock Cards</li>
+        <li class="breadcrumb-item">Home</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-list"></i> Supplies List</h3>
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card-body table-responsive p-sm-0">
+            <table class="table table-striped table-hover display">
+                <thead>
+                    <tr>
+                        <th style="text-align: center; vertical-align: middle;" width="15%">
+                            Stock No.
+                        </th>
+                        <th style="text-align: center; vertical-align: middle;" width="30%">
+                            Description
+                        </th>
+                        <th style="text-align: center; vertical-align: middle;" width="15%">
+                            Issuance Unit
+                        </th>
+                        <th style="text-align: center; vertical-align: middle;" width="10%">
+                            Reorder Point
+                        </th>
+                        <th style="text-align: center; vertical-align: middle;" width="30%">
+                            Action
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td style="text-align:center; vertical-align:middle;">
+                                <b>@Html.DisplayFor(modelItem => item.StockNumber)</b>
+                            </td>
+                            <td style="text-align:left; vertical-align:middle;">
+                                <b>@Html.DisplayFor(modelItem => item.Description)</b>
+                            </td>
+                            <td style="text-align:center; vertical-align:middle;">
+                                @Html.DisplayFor(modelItem => item.FKIndividualUnitReference.Abbreviation)
+                            </td>
+                            <td style="text-align:center; vertical-align:middle;">
+                                @Html.DisplayFor(modelItem => item.ReOrderPoint)
+                            </td>
+                            <td style="text-align:center; vertical-align:middle;">
+                                <a class="btn btn-sm btn-primary mb-1" style="width:200px;" href="@Url.Action("print-stock-card", "StockCard", new { Area = "property-and-supplies", StockNo = item.StockNumber })" target="_blank"><i class="fa fa-print"></i> Print Stock Card</a>
+                                <a class="btn btn-sm btn-success" style="width:200px;" href="@Url.Action("print-supply-ledger-card", "StockCard", new { Area = "property-and-supplies", StockNo = item.StockNumber })" target="_blank"><i class="fa fa-print"></i> Print Supplies Ledger Card</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $('table.display').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": false,
+            "info": true,
+            "autoWidth": false,
+        });
+    });
+</script>

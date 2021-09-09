@@ -3,20 +3,20 @@ using PUPFMIS.BusinessAndDataLogic;
 using PUPFMIS.Models;
 using System.Net;
 using System.Web.Mvc;
+using System.Linq;
 
 namespace PUPFMIS.Controllers
 {
     [Route("{action}")]
     [RouteArea("administration")]
     [RoutePrefix("suppliers")]
-    [Authorize(Roles = SystemRoles.SuperUser + ", " + SystemRoles.SystemAdmin)]
+    [UserAuthorization(Roles = SystemRoles.SuperUser + ", " + SystemRoles.SystemAdmin)]
     public class SuppliersController : Controller
     {
         private SuppliersBL suppliersBL = new SuppliersBL();
 
         [Route("")]
-        [Route("list")]
-        [ActionName("index")]
+        [ActionName("list")]
         public ActionResult Index()
         {
             return View("Index", suppliersBL.GetActiveSuppliers());
@@ -28,101 +28,101 @@ namespace PUPFMIS.Controllers
             return PartialView(suppliersBL.GetActiveSuppliers());
         }
 
+        [Route("{id}/details")]
+        [ActionName("details")]
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Supplier _supplier = suppliersBL.GetSupplierDetails(id);
-            if (_supplier == null)
+            var supplier = suppliersBL.GetSupplierDetails(id);
+            if (supplier == null)
             {
                 return HttpNotFound();
-            }
-            return PartialView(_supplier);
-        }
-
-        public ActionResult Create()
-        {
-            return PartialView();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(Supplier supplier)
-        {
-            ValidateSupplier(supplier);
-            if (ModelState.IsValid)
-            {
-                if (suppliersBL.AddSupplierRecord(supplier))
-                {
-                    return Json(new { status = "success" });
-                }
-                else
-                {
-                    return Json(new { status = "failed" });
-                }
             }
             return PartialView(supplier);
         }
 
+        [Route("create")]
+        [ActionName("create")]
+        public ActionResult Create()
+        {
+            var supplier = new SupplierVM();
+            supplier.CategoryList = suppliersBL.GetCategories();
+            supplier.ItemTypesList = suppliersBL.GetItemTypes();
+            return View(supplier);
+        }
+
+        [HttpPost]
+        [Route("create")]
+        [ActionName("create")]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(SupplierVM supplier)
+        {
+            ValidateSupplier(supplier);
+            if (ModelState.IsValid)
+            {
+                return Json(new { result = suppliersBL.AddSupplierRecord(supplier, User.Identity.Name) });
+            }
+
+            return PartialView("_Form", supplier);
+        }
+
+        [Route("{id}/edit")]
+        [ActionName("edit")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Supplier _supplier = suppliersBL.GetSupplierDetails(id);
-            if (_supplier == null)
+            var supplier = suppliersBL.GetSupplierDetails(id);
+            if (supplier == null)
             {
                 return HttpNotFound();
             }
-            return PartialView(_supplier);
+
+            return View("Edit", supplier);
         }
 
         [HttpPost]
+        [Route("{id}/edit")]
+        [ActionName("edit")]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Supplier supplier)
+        public ActionResult Edit(SupplierVM Supplier)
         {
-            ValidateSupplier(supplier);
             if (ModelState.IsValid)
             {
-                if (suppliersBL.UpdateSupplierRecord(supplier, false))
-                {
-                    return Json(new { status = "success" });
-                }
-                else
-                {
-                    return Json(new { status = "failed" });
-                }
+                return Json(new { result = suppliersBL.UpdateSupplierRecord(Supplier, User.Identity.Name) });
             }
-            return PartialView(supplier);
+
+            return PartialView("_Form", Supplier);
         }
 
+        [Route("{id}/delete")]
+        [ActionName("delete")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Supplier _supplier = suppliersBL.GetSupplierDetails(id);
-            if (_supplier == null)
+            var supplier = suppliersBL.GetSupplierDetails(id);
+            if (supplier == null)
             {
                 return HttpNotFound();
             }
-            return PartialView(_supplier);
+            ViewBag.SupplierID = supplier.ID;
+            return View(supplier);
         }
 
-        [HttpPost, ActionName("Delete")]
+        [Route("{SupplierID}/delete")]
+        [HttpPost, ActionName("delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(int SupplierID)
         {
-            Supplier _supplier = suppliersBL.GetSupplierDetails(id);
-            if(suppliersBL.UpdateSupplierRecord(_supplier, true))
-            {
-                return Json(new { status = "success" });
-            }
-            return Json(new { status = "failed" });
+            return Json(new { result = suppliersBL.DeleteSupplierRecord(SupplierID, User.Identity.Name) });
         }
 
         [Route("restore-list")]
@@ -132,33 +132,31 @@ namespace PUPFMIS.Controllers
             return View(suppliersBL.GetPurgedSuppliers());
         }
 
+        [Route("{id}/restore")]
+        [ActionName("restore")]
         public ActionResult Restore(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Supplier _supplier = suppliersBL.GetSupplierDetails(id);
-            if (_supplier == null)
+            var supplier = suppliersBL.GetSupplierDetails(id);
+            if (supplier == null)
             {
                 return HttpNotFound();
             }
-            return PartialView(_supplier);
+            return PartialView(supplier);
         }
 
-        [HttpPost, ActionName("Restore")]
+        [Route("{SupplierID}/restore")]
+        [HttpPost, ActionName("restore")]
         [ValidateAntiForgeryToken]
-        public ActionResult RestoreConfirmed(int id)
+        public ActionResult RestoreConfirmed(int SupplierID)
         {
-            Supplier _supplier = suppliersBL.GetSupplierDetails(id);
-            if (suppliersBL.RestoreSupplierRecord(_supplier))
-            {
-                return Json(new { status = "success" });
-            }
-            return Json(new { status = "failed" });
+            return Json(new { result = suppliersBL.RestoreSupplierRecord(SupplierID, User.Identity.Name) });
         }
 
-        private void ValidateSupplier(Supplier supplier)
+        private void ValidateSupplier(SupplierVM supplier)
         {
             SupplierValidator _validator = new SupplierValidator();
             ValidationResult _validationResult = _validator.Validate(supplier);

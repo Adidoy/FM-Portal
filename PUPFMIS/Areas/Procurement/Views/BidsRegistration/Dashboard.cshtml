@@ -1,0 +1,328 @@
+﻿@model PUPFMIS.Models.BidsDashboard
+
+@{
+    ViewBag.Title = "Bids";
+    ViewBag.Description = "Dashboard";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">Bids Dashboard</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-list"></i> Dashboard</h3>
+}
+
+<div class="row">
+    <div class="col-sm-2">
+        <div class="nav flex-column nav-tabs h-100" id="vert-tabs-tab" role="tablist" aria-orientation="vertical">
+            <a class="nav-link active" id="vert-tabs-open-contracts-tab" data-toggle="pill" href="#vert-tabs-open-contracts" role="tab" aria-controls="vert-tabs-open-contracts" aria-selected="true">Bids Registration</a>
+            <a class="nav-link" id="vert-tabs-messages-tab" data-toggle="pill" href="#vert-tabs-messages" role="tab" aria-controls="vert-tabs-messages" aria-selected="false">Bids Evaluation</a>
+            <a class="nav-link" id="vert-tabs-home-tab" data-toggle="pill" href="#vert-tabs-home" role="tab" aria-controls="vert-tabs-home" aria-selected="true">Statistics</a>
+            <a class="nav-link" id="vert-tabs-profile-tab" data-toggle="pill" href="#vert-tabs-profile" role="tab" aria-controls="vert-tabs-profile" aria-selected="false">Reporting</a>
+            <a class="nav-link" id="vert-tabs-settings-tab" data-toggle="pill" href="#vert-tabs-settings" role="tab" aria-controls="vert-tabs-settings" aria-selected="false">Abstract of Quotations/Bids as Read</a>
+            @*<a class="nav-link" id="vert-pre-bid-conference-tab" data-toggle="pill" href="#vert-pre-bid-conference" role="tab" aria-controls="vert-pre-bid-conference" aria-selected="false">Pre-Bid Conference</a>
+            <a class="nav-link" id="vert-opening-of-bids-tab" data-toggle="pill" href="#vert-opening-of-bids" role="tab" aria-controls="vert-opening-of-bids" aria-selected="false">Opening of Bids</a>*@
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <div class="tab-content" id="vert-tabs-tabContent">
+            <div class="tab-pane text-left fade show active" id="vert-tabs-open-contracts" role="tabpanel" aria-labelledby="vert-tabs-open-contracts-tab">
+                <div class="card card-info">
+                    <div class="card-header"><h3 class="card-title">Contract List</h3></div>
+                    <div class="card-body">
+                        <div class="card-body table-responsive p-sm-0">
+                            <table class="table table-striped table-hover display">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: center; vertical-align: middle;" width="40%">
+                                            @Html.DisplayNameFor(model => model.Contracts.FirstOrDefault().ContractName)
+                                        </th>
+                                        <th style="text-align: center; vertical-align: middle;" width="20%">
+                                            @Html.DisplayNameFor(model => model.Contracts.FirstOrDefault().ProcurementProjectStage)
+                                        </th>
+                                        <th style="text-align: center; vertical-align: middle;" width="20%">
+                                            @Html.DisplayNameFor(model => model.Contracts.FirstOrDefault().ApprovedBudgetForContract)
+                                        </th>
+                                        <th style="text-align: center; vertical-align: middle;" width="20%">
+                                            Action
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.Contracts)
+                                    {
+                                        <tr>
+                                            <td style="text-align:left; vertical-align:middle;">
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <b>@Html.DisplayFor(modelItem => item.ContractName)</b>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <i>(@Html.DisplayFor(modelItem => item.ContractCode))</i>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td style="text-align:left; vertical-align:top;">
+                                                @( item.ProcurementProjectStage.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )
+                                            </td>
+                                            <td style="text-align:right; vertical-align:top;">
+                                                @( item.ApprovedBudgetForContract.ToString("C", new System.Globalization.CultureInfo("en-ph")) )
+                                            </td>
+                                            <td style="text-align:center; vertical-align:middle;">
+                                                <button type="button" class="btn btn-sm btn-primary" onclick="window.location.href = '@Url.Action("index", "BidsRegistration", new { Area = "procurement", ContractCode = item.ContractCode })'"><i class="fa fa-eye"></i> View Details</button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="2" style="text-align:right; font-size:14pt;"><b>Ongoing Contracts ABC:</b></td>
+                                        <td style="text-align:right; font-size:14pt;"><b>@( Model.Contracts.Sum(d => d.ApprovedBudgetForContract).ToString("C", new System.Globalization.CultureInfo("en-ph")) )</b></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane text-left fade" id="vert-tabs-messages" role="tabpanel" aria-labelledby="vert-tabs-messages-tab">
+                <div class="card card-info">
+                    <div class="card-header"><h3 class="card-title">Bids Evaluation</h3></div>
+                    <div class="card-body">
+                        <div class="card-body table-responsive p-sm-0">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="vert-tabs-profile" role="tabpanel" aria-labelledby="vert-tabs-profile-tab">
+                <div class="card card-info">
+                    <div class="card-header"><h3 class="card-title">Statistics</h3></div>
+                    <div class="card-body">
+                        <div class="card-body table-responsive p-sm-0">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="vert-tabs-settings" role="tabpanel" aria-labelledby="vert-tabs-settings-tab">
+                <div class="card card-info">
+                    <div class="card-header"><h3 class="card-title">Abstract of Quotations/Bids as Read</h3></div>
+                    <div class="card-body">
+                        <div class="card-body table-responsive p-sm-0">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @*<div class="tab-pane fade" id="vert-tabs-settings" role="tabpanel" aria-labelledby="vert-tabs-settings-tab">
+                    <div class="card card-info">
+                        <div class="card-header"><h3 class="card-title">Posting of Invitation to Bid</h3></div>
+                        <div class="card-body">
+                            <div class="card-body table-responsive p-sm-0">
+                                <table class="table table-striped table-hover" id="preProcurementConferenceList">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align: center; vertical-align: middle;" width="50%">
+                                                @Html.DisplayNameFor(model => model.NewProjects.FirstOrDefault().ContractName)
+                                            </th>
+                                            <th style="text-align: center; vertical-align: middle;" width="15%">
+                                                @Html.DisplayNameFor(model => model.NewProjects.FirstOrDefault().BiddingStrategy)
+                                            </th>
+                                            <th style="text-align: center; vertical-align: middle;" width="15%">
+                                                @Html.DisplayNameFor(model => model.NewProjects.FirstOrDefault().ABC)
+                                            </th>
+                                            <th style="text-align: center; vertical-align: middle;" width="20%">
+                                                Action
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.ForPreProcurementConference)
+                                        {
+                                            <tr>
+                                                <td style="text-align:left; vertical-align:middle;">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <b>@Html.DisplayFor(modelItem => item.ContractName)</b>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <i>(@Html.DisplayFor(modelItem => item.ContractCode))</i>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td style="text-align:center; vertical-align:middle;">
+                                                    @( item.BiddingStrategy.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )
+                                                </td>
+                                                <td style="text-align:right; vertical-align:middle;">
+                                                    @( item.ABC.ToString("C", new System.Globalization.CultureInfo("en-ph")) )
+                                                </td>
+                                                <td style="text-align:center; vertical-align:middle;">
+                                                    <button type="button" class="btn btn-sm btn-primary" onclick="window.location = '@Url.Action("details", "MyCPBProjects", new { Area = "procurement", ContractCode = item.ContractCode })'"><i class="fa fa-edit"></i> Update</button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="2" style="text-align:right; font-size:14pt;"><b>Approved Budget:</b></td>
+                                            <td style="text-align:right; font-size:14pt;"><b>@( Model.ForPreProcurementConference.Sum(d => d.ABC).ToString("C", new System.Globalization.CultureInfo("en-ph")) )</b></td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="vert-pre-bid-conference" role="tabpanel" aria-labelledby="vert-pre-bid-conference-tab">
+                    <div class="card card-info">
+                        <div class="card-header"><h3 class="card-title">Pre-Bid Conference</h3></div>
+                        <div class="card-body">
+                            <div class="card-body table-responsive p-sm-0">
+                                <table class="table table-striped table-hover" id="preBidConferenceList">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align: center; vertical-align: middle;" width="50%">
+                                                @Html.DisplayNameFor(model => model.NewProjects.FirstOrDefault().ContractName)
+                                            </th>
+                                            <th style="text-align: center; vertical-align: middle;" width="15%">
+                                                @Html.DisplayNameFor(model => model.NewProjects.FirstOrDefault().BiddingStrategy)
+                                            </th>
+                                            <th style="text-align: center; vertical-align: middle;" width="15%">
+                                                @Html.DisplayNameFor(model => model.NewProjects.FirstOrDefault().ABC)
+                                            </th>
+                                            <th style="text-align: center; vertical-align: middle;" width="20%">
+                                                Action
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.ForPreBidConference)
+                                        {
+                                            <tr>
+                                                <td style="text-align:left; vertical-align:middle;">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <b>@Html.DisplayFor(modelItem => item.ContractName)</b>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <i>(@Html.DisplayFor(modelItem => item.ContractCode))</i>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td style="text-align:center; vertical-align:middle;">
+                                                    @( item.BiddingStrategy.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )
+                                                </td>
+                                                <td style="text-align:right; vertical-align:middle;">
+                                                    @( item.ABC.ToString("C", new System.Globalization.CultureInfo("en-ph")) )
+                                                </td>
+                                                <td style="text-align:center; vertical-align:middle;">
+                                                    <button type="button" class="btn btn-sm btn-primary" onclick="window.location = '@Url.Action("details", "MyCPBProjects", new { Area = "procurement", ContractCode = item.ContractCode })'"><i class="fa fa-edit"></i> Update</button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="2" style="text-align:right; font-size:14pt;"><b>Approved Budget:</b></td>
+                                            <td style="text-align:right; font-size:14pt;"><b>@( Model.ForPreBidConference.Sum(d => d.ABC).ToString("C", new System.Globalization.CultureInfo("en-ph")) )</b></td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="vert-opening-of-bids" role="tabpanel" aria-labelledby="vert-opening-of-bids-tab">
+                    <div class="card card-info">
+                        <div class="card-header"><h3 class="card-title">Opening of Bids</h3></div>
+                        <div class="card-body">
+                            <div class="card-body table-responsive p-sm-0">
+                                <table class="table table-striped table-hover" id="openingOfBidsList">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align: center; vertical-align: middle;" width="50%">
+                                                @Html.DisplayNameFor(model => model.NewProjects.FirstOrDefault().ContractName)
+                                            </th>
+                                            <th style="text-align: center; vertical-align: middle;" width="15%">
+                                                @Html.DisplayNameFor(model => model.NewProjects.FirstOrDefault().BiddingStrategy)
+                                            </th>
+                                            <th style="text-align: center; vertical-align: middle;" width="15%">
+                                                @Html.DisplayNameFor(model => model.NewProjects.FirstOrDefault().ABC)
+                                            </th>
+                                            <th style="text-align: center; vertical-align: middle;" width="20%">
+                                                Action
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.ForOpeningOfBids)
+                                        {
+                                            <tr>
+                                                <td style="text-align:left; vertical-align:middle;">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <b>@Html.DisplayFor(modelItem => item.ContractName)</b>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <i>(@Html.DisplayFor(modelItem => item.ContractCode))</i>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td style="text-align:center; vertical-align:middle;">
+                                                    @( item.BiddingStrategy.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )
+                                                </td>
+                                                <td style="text-align:right; vertical-align:middle;">
+                                                    @( item.ABC.ToString("C", new System.Globalization.CultureInfo("en-ph")) )
+                                                </td>
+                                                <td style="text-align:center; vertical-align:middle;">
+                                                    <button type="button" class="btn btn-sm btn-primary" onclick="window.location = '@Url.Action("details", "MyCPBProjects", new { Area = "procurement", ContractCode = item.ContractCode })'"><i class="fa fa-edit"></i> Update</button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="2" style="text-align:right; font-size:14pt;"><b>Approved Budget:</b></td>
+                                            <td style="text-align:right; font-size:14pt;"><b>@( Model.ForOpeningOfBids.Sum(d => d.ABC).ToString("C", new System.Globalization.CultureInfo("en-ph")) )</b></td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>*@
+        </div>
+    </div>
+    <br />
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $('table.display').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": false,
+            "info": true,
+            "autoWidth": false,
+        });
+    });
+</script>

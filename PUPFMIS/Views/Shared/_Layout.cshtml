@@ -5,39 +5,68 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
         <title>@ViewBag.Title - PUP FM Portal</title>
+        <link rel="stylesheet" href="~/Scripts/fontawesome/css/all.min.css">
         @Styles.Render("~/bundles/styles")
         @Scripts.Render("~/bundles/preScripts")
-        @if (ViewBag.Title == "Dashboard")
-        {
-            @Scripts.Render("~/bundles/dashboardScripts")
-        }
-        <link href="~/Scripts/adminlte/components/font-awesome/css/font-awesome.css" rel="stylesheet" />
-        <link href="~/Scripts/adminlte/components/ionicons/css/ionicons.min.css" rel="stylesheet" />
     </head>
-    <body class="sidebar-mini layout-fixed" style="height:auto; min-height:100%; font-size:11pt; font-family:Arial;">
+    <body class="sidebar-mini layout-fixed" style="height:auto; min-height:100%; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
         <div class="wrapper">
             @Html.Partial("_Header")
-            @Html.Partial("_Sidebar")      
+            @Html.Partial("_Sidebar")
             @RenderBody()
             @Html.Partial("_Footer")
             @Html.Partial("_Aside")
+            @{ 
+                if((!((string)ViewBag.Title).Contains("Catalogue")) && (!((string)ViewBag.Title).Contains("Items Basket")) && (ViewBag.Title != null))
+                {
+                    Session.Remove("Basket");
+                }
+            }
             <div id="sidebar-overlay"></div>
         </div>
 
-        @Scripts.Render("~/bundles/postScripts")
+        @if (ViewBag.Title == "Dashboard")
+        {
+            <script>
+                $.widget.bridge('uibutton', $.ui.button);
+            </script>
+            @Scripts.Render("~/bundles/dashboardScripts")
+        }
+        else
+        {
+            @Scripts.Render("~/bundles/postScripts")
+            <script type="text/javascript">
+                $(function () {
+                    $(document).ready(function () {
+                        bsCustomFileInput.init();
+                    });
+                    $('.datetimepicker-input').datetimepicker({
+                        format: 'DD-MM-YYYY',
+                        locale: 'ru',
+                        useCurrent: false,
+                        defaultDate: new Date()
+                    });
+                });
+                $.fn.datetimepicker.Constructor.Default = $.extend({},
+                    $.fn.datetimepicker.Constructor.Default,
+                    {
+                        icons:
+                              {
+                                  time: 'fas fa-clock',
+                                  date: 'fas fa-calendar',
+                                  up: 'fas fa-arrow-up',
+                                  down: 'fas fa-arrow-down',
+                                  previous: 'fas fa-arrow-circle-left',
+                                  next: 'fas fa-arrow-circle-right',
+                                  today: 'far fa-calendar-check-o',
+                                  clear: 'fas fa-trash',
+                                  close: 'far fa-times'
+                              }
+                    });
+                $('.select2').select2();
+            </script>
+        }
         @RenderSection("scripts", false)
-        <script type="text/javascript">
-            $(function () {
-                //Initialize Select2 Elements
-                $('.select2').select2({
-                    theme: 'bootstrap4'
-                })
 
-                //Initialize Select2 Elements
-                $('.select2bs4').select2({
-                    theme: 'bootstrap4'
-                })
-            })
-        </script>
     </body>
 </html>

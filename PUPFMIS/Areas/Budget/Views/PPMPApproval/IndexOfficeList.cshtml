@@ -1,4 +1,4 @@
-﻿@model IEnumerable<PUPFMIS.Models.PPMPByOfficeVM>
+﻿@model IEnumerable<PUPFMIS.Models.PPMPOfficeListVM>
 
 @{
     ViewBag.Title = "Budget Proposals";
@@ -8,7 +8,7 @@
 
 @section BreadCrumb {
     <ol class="breadcrumb float-sm-right">
-        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
         <li class="breadcrumb-item">@Html.ActionLink("PPMP Approval", "dashboard", "Dashboard", new { Area = "budget" }, null)</li>
         <li class="breadcrumb-item">Offices List</li>
     </ol>
@@ -49,10 +49,10 @@
                                 @Html.DisplayFor(modelItem => item.Department)
                             </td>
                             <td style="text-align:right; vertical-align:middle;">
-                                @( String.Format("{0:C}", item.EstimatedBudget) )
+                                @( item.EstimatedBudget.ToString("C", new System.Globalization.CultureInfo("en-ph")) )
                             </td>
                             <td style="text-align:center; vertical-align:middle;">
-                                <button style="text-align:left;" class="btn btn-primary btn-sm" onclick="window.location = '@Url.Action("office-ppmp-list", "PPMPApproval", new { Area = "budget", OfficeCode = item.DepartmentCode, FiscalYear = item.FiscalYear })'"><i class="fa fa-eye"></i> View Account Objects</button>
+                                <button style="text-align:left;" class="btn btn-primary btn-sm" onclick="window.location = '@Url.Action("ppmp-list", "PPMPApproval", new { Area = "budget", FiscalYear = item.FiscalYear, Department = item.DepartmentCode })'"><i class="fa fa-eye"></i> View PPMPs</button>
                             </td>
                         </tr>
                     }

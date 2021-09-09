@@ -1,0 +1,193 @@
+﻿@model PUPFMIS.Models.AbstactOfQuotationVM
+
+@{
+    ViewBag.Title = "Requests for Quotation";
+    ViewBag.Description = "Details";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Request for Quotation", "dashboard", "RequestForQuotation", new { Area = "procurement" }, null)</li>
+        <li class="breadcrumb-item">Details</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-list"></i> @Model.ContractName <small>(@Model.ContractCode)</small></h3>
+}
+
+<div class="card card-info">
+    <div class="card-header"><h3 class="card-title">Request For Quotation Details</h3></div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.FiscalYear, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.FiscalYear)
+                        @Html.EditorFor(model => Model.FiscalYear, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.ContractCode, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-barcode"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.ContractCode)
+                        @Html.EditorFor(model => Model.ContractCode, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.ContractName, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-id-badge"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.ContractName)
+                        @Html.EditorFor(model => Model.ContractName, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.FiscalYear, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-coins"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.ABC)
+                        @Html.EditorFor(model => Model.ABC, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", Value = Model.ABC.ToString("C", new System.Globalization.CultureInfo("en-ph")) } })
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.OpenedAt, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.OpenedAt)
+                        @Html.EditorFor(model => Model.OpenedAt, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", Value = Model.OpenedAt.ToString("dd MMMM yyyy hh:mm tt") } })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.PlaceOpened, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-building"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.PlaceOpened)
+                        @Html.EditorFor(model => Model.PlaceOpened, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card card-info">
+    <div class="card-header"><h3 class="card-title">Quotations Solicited</h3></div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card-body table-responsive p-sm-0">
+                    <table class="table table-striped table-hover display">
+                        <thead>
+                            <tr>
+                                <th style="text-align: center; vertical-align: middle;" width="25%">
+                                    Supplier
+                                </th>
+                                <th style="text-align: center; vertical-align: middle;" width="15%">
+                                    Total Bid<br />(PhP)
+                                </th>
+                                <th style="text-align: center; vertical-align: middle;" width="15%">
+                                    Variance<br />(%)
+                                </th>
+                                <th style="text-align: center; vertical-align: middle;" width="15%">
+                                    Savings<br />(PhP)
+                                </th>
+                                <th style="text-align: center; vertical-align: middle;" width="30%">
+                                    Remarks
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Suppliers)
+                            {
+                                <tr>
+                                    <td style="text-align:left; vertical-align:top;">
+                                        <b>@Html.DisplayFor(modelItem => item.SupplierName)</b>
+                                    </td>
+                                    <td style=@( item.TotalBid == null ? "text-align:center; vertical-align:top" : "text-align:right; vertical-align:top")>
+                                        @( item.TotalBid == null ? "No Bid/Incomplete Bid" : item.TotalBid.Value.ToString("C", new System.Globalization.CultureInfo("en-ph")) )
+                                    </td>
+                                    <td style="text-align:center; vertical-align:top;">
+                                        @( item.TotalBid == null ? "" : item.Variance.Value.ToString("P", new System.Globalization.CultureInfo("en-ph")) )
+                                    </td>
+                                    <td style="text-align:right; vertical-align:top;">
+                                        @( item.TotalBid == null ? "" : item.Savings.Value.ToString("C", new System.Globalization.CultureInfo("en-ph")) )
+                                    </td>
+                                    <td style="text-align:left; vertical-align:top;">
+                                        <b>@Html.DisplayNameFor(modelItem => item.EligibilityRequirements)</b>: <i>@( item.EligibilityRequirements == true ? "PASSED" : "FAILED" )</i>
+                                        <br />
+                                        <b>@Html.DisplayNameFor(modelItem => item.TechnicalRequirements)</b>: <i>@( item.TechnicalRequirements == true ? "PASSED" : "FAILED" )</i>
+                                        <br />
+                                        <b>@Html.DisplayNameFor(modelItem => item.FinancialRequirements)</b>: <i>@( item.FinancialRequirements == true ? "PASSED" : "FAILED" )</i>
+                                        <br />
+                                        <b>@Html.DisplayNameFor(modelItem => item.LCRQ)</b>: <i>@( item.LCRQ == true ? "YES" : "NO" )</i>
+                                        <br />
+                                        <b>@Html.DisplayNameFor(modelItem => item.RecommendToAward)</b>: <i>@( item.RecommendToAward == true ? "YES" : "NO" )</i>
+                                        <br />
+                                        <i>@Html.DisplayFor(modelItem => item.Remarks)</i>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section FormFooter {
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <div class="form-group">
+                <a class="btn btn-md btn-primary" href="@Url.Action("print-abstract", "RequestForQuotation", new { Area = "procurement", SolicitationNo = ViewBag.SolicitationNo })" target="_blank"><i class="fa fa-print"></i> Print Abstract of Quotations</a>
+                <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("dashboard", "RequestForQuotation", new { area = "procurement" })'"><i class="fa fa-arrow-alt-circle-left"></i>&nbsp; Back to Dashboard</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        $('table.display').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": false,
+            "info": true,
+            "autoWidth": false,
+        });
+    });
+</script>

@@ -1,5 +1,4 @@
-﻿using FluentValidation.Results;
-using PUPFMIS.BusinessAndDataLogic;
+﻿using PUPFMIS.BusinessAndDataLogic;
 using PUPFMIS.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,31 +9,26 @@ namespace PUPFMIS.Controllers
 {
     [Route("{action}")]
     [RouteArea("administration")]
-    [RoutePrefix("item-types")]
-    [Authorize(Roles = SystemRoles.SuperUser + ", " + SystemRoles.SystemAdmin)]
+    [RoutePrefix("items/types")]
+    [UserAuthorization(Roles = SystemRoles.SuperUser + ", " + SystemRoles.SystemAdmin)]
     public class ItemTypesController : Controller
     {
+        private FMISDbContext db = new FMISDbContext();
         private HRISDataAccess hrisDataAccess = new HRISDataAccess();
-        private ABISDataAccess abisDataAccess = new ABISDataAccess();
-        private ItemTypeDataAccess itemTypesDAL = new ItemTypeDataAccess();
-        private InventoryTypeDataAccess inventoryTypeDataAccess = new InventoryTypeDataAccess();
-        private ItemCategoriesDataAccess itemCategoriesDataAccess = new ItemCategoriesDataAccess();
+        private ItemTypesDataAccess itemTypesDL = new ItemTypesDataAccess();
 
         [Route("")]
-        [Route("list")]
         [ActionName("list")]
         public ActionResult Index()
         {
-            var itemTypes = itemTypesDAL.GetItemTypes(false);
-            return View("Index", itemTypes.ToList());
+            return View("Index", itemTypesDL.GetItemTypes().Where(d => d.PurgeFlag == false).ToList());
         }
 
-        [Route("restore-list")]
+        [Route("restore")]
         [ActionName("restore-list")]
         public ActionResult RestoreIndex()
         {
-            var itemTypes = itemTypesDAL.GetItemTypes(true);
-            return View("RestoreIndex", itemTypes.ToList());
+            return View("RestoreIndex", itemTypesDL.GetItemTypes().Where(d => d.PurgeFlag == true).ToList());
         }
 
         [ActionName("details")]
@@ -45,86 +39,12 @@ namespace PUPFMIS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ItemTypeVM itemTypeVM = itemTypesDAL.GetItemTypeDetails(ItemTypeCode, false);
-            if (itemTypeVM == null)
+            var ItemType = itemTypesDL.GetItemTypes(ItemTypeCode);
+            if (ItemType == null)
             {
                 return HttpNotFound();
             }
-            return View("Details", itemTypeVM);
-        }
-
-        [Route("create")]
-        [ActionName("create")]
-        public ActionResult Create()
-        {
-            var itemType = new ItemTypeVM();
-            var InventoryTypes = inventoryTypeDataAccess.GetInventoryTypes().OrderBy(d => d.InventoryTypeName).ToList();
-            ViewBag.InventoryTypeReference = new SelectList(InventoryTypes, "ID", "InventoryTypeName");
-            ViewBag.AccountClass = new SelectList(abisDataAccess.GetDetailedChartOfAccounts().Where(d => d.GenAcctName == "Maintenance and Other Operating Expenses" || d.GenAcctName == "Inventories" || d.GenAcctName == "Property, Plant and Equipment" || d.GenAcctName == "Intangible Assets").ToList(), "UACS_Code", "AcctName");
-            return View(itemType);
-        }
-
-        [HttpPost]
-        [Route("create")]
-        [ActionName("create")]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(ItemTypeVM ItemType)
-        {
-            ModelState.Remove("ItemTypeCode");
-            if (ModelState.IsValid)
-            {
-                ItemTypeValidator validator = new ItemTypeValidator();
-                ValidationResult result = validator.Validate(ItemType);
-                if (!result.IsValid)
-                {
-                    foreach (ValidationFailure error in result.Errors)
-                    {
-                        ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
-                    }
-                    return View(ItemType);
-                }
-                return Json(new { result = itemTypesDAL.AddItemTypeRecord(ItemType, User.Identity.Name) });
-            }
-
-            var InventoryTypes = inventoryTypeDataAccess.GetInventoryTypes().OrderBy(d => d.InventoryTypeName).ToList();
-            ViewBag.InventoryTypeReference = new SelectList(InventoryTypes, "ID", "InventoryTypeName", ItemType.InventoryTypeReference);
-            ViewBag.AccountClass = new SelectList(abisDataAccess.GetDetailedChartOfAccounts().Where(d => d.GenAcctName == "Maintenance and Other Operating Expenses").ToList(), "UACS_Code", "AcctName");
-            return View(ItemType);
-        }
-
-        [ActionName("edit")]
-        [Route("{ItemTypeCode}/edit")]
-        public ActionResult Edit(string ItemTypeCode)
-        {
-            if (ItemTypeCode == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            ItemTypeVM itemType = itemTypesDAL.GetItemType(ItemTypeCode, false);
-            if (itemType == null)
-            {
-                return HttpNotFound();
-            }
-            var InventoryTypes = inventoryTypeDataAccess.GetInventoryTypes().OrderBy(d => d.InventoryTypeName).ToList();
-            ViewBag.InventoryTypeReference = new SelectList(InventoryTypes, "ID", "InventoryTypeName", itemType.InventoryTypeReference);
-            ViewBag.AccountClass = new SelectList(abisDataAccess.GetDetailedChartOfAccounts().Where(d => d.GenAcctName == "Maintenance and Other Operating Expenses").ToList(), "UACS_Code", "AcctName", itemType.UACSObjectClass);
-            return View(itemType);
-        }
-
-        [HttpPost]
-        [ActionName("edit")]
-        [ValidateAntiForgeryToken]
-        [Route("{ItemTypeCode}/edit")]
-        public ActionResult Edit(ItemType ItemType)
-        {
-            if (ModelState.IsValid)
-            {
-                return Json(new { result = itemTypesDAL.UpdateItemTypeRecord(ItemType, User.Identity.Name) });
-            }
-            var InventoryTypes = inventoryTypeDataAccess.GetInventoryTypes().OrderBy(d => d.InventoryTypeName).ToList();
-            ViewBag.InventoryTypeReference = new SelectList(InventoryTypes, "ID", "InventoryTypeName", ItemType.InventoryTypeReference);
-            ViewBag.AccountClass = new SelectList(abisDataAccess.GetDetailedChartOfAccounts().Where(d => d.GenAcctName == "Maintenance and Other Operating Expenses").ToList(), "UACS_Code", "AcctName", ItemType.UACSObjectClass);
-            return View(ItemType);
+            return View("details", ItemType);
         }
 
         [ActionName("delete")]
@@ -135,25 +55,125 @@ namespace PUPFMIS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ItemTypeVM itemTypeVM = itemTypesDAL.GetItemTypeDetails(ItemTypeCode, false);
-            if (itemTypeVM == null)
+            ItemTypes itemType = itemTypesDL.GetItemTypes(ItemTypeCode);
+            if (itemType == null)
             {
                 return HttpNotFound();
             }
-            return View(itemTypeVM);
+            return View("delete", itemType);
+        }
+
+        [Route("create")]
+        [ActionName("create")]
+        public ActionResult Create()
+        {
+            ViewBag.ItemClassificationReference = new SelectList(itemTypesDL.GetItemClassifications(), "ID", "Classification");
+            ViewBag.ResponsibilityCenter = new SelectList(itemTypesDL.GetDepartments(), "DepartmentCode", "Department");
+            ViewBag.PurchaseRequestCenter = new SelectList(itemTypesDL.GetDepartments(), "DepartmentCode", "Department");
+            return View();
         }
 
         [HttpPost]
-        [ActionName("delete")]
+        [Route("create")]
+        [ActionName("create")]
         [ValidateAntiForgeryToken]
-        [Route("{ItemTypeCode}/delete")]
-        public ActionResult DeleteConfirmed(string ItemTypeCode)
+        public ActionResult Create(ItemTypes ItemTypeModel)
+        {
+            if (ItemTypeModel == null)
+            {
+                return Json(new { result = false });
+            }
+
+            ModelState.Remove("ID");
+            ModelState.Remove("PurgeFlag");
+            ModelState.Remove("CreatedAt");
+
+            if (ModelState.IsValid)
+            {
+                var Key = string.Empty;
+                var Message = new List<string>();
+                itemTypesDL.Validate(ItemTypeModel, out Key, out Message);
+                if(Key != null)
+                {
+                    foreach(var errorMessage in Message)
+                    {
+                        ModelState.AddModelError(Key, errorMessage);
+                    }
+                    ViewBag.ItemClassificationReference = new SelectList(itemTypesDL.GetItemClassifications(), "ID", "Classification", ItemTypeModel.ItemClassificationReference);
+                    ViewBag.ResponsibilityCenter = new SelectList(itemTypesDL.GetDepartments(), "DepartmentCode", "Department", ItemTypeModel.ResponsibilityCenter);
+                    ViewBag.PurchaseRequestCenter = new SelectList(itemTypesDL.GetDepartments(), "DepartmentCode", "Department", ItemTypeModel.PurchaseRequestCenter);
+                    return PartialView("_Form", ItemTypeModel);
+                }
+                return Json(new { result = itemTypesDL.AddItemTypeRecord(ItemTypeModel, User.Identity.Name) });
+            }
+
+            ViewBag.ItemClassificationReference = new SelectList(itemTypesDL.GetItemClassifications(), "ID", "Classification", ItemTypeModel.ItemClassificationReference);
+            ViewBag.ResponsibilityCenter = new SelectList(itemTypesDL.GetDepartments(), "DepartmentCode", "Department", ItemTypeModel.ResponsibilityCenter);
+            ViewBag.PurchaseRequestCenter = new SelectList(itemTypesDL.GetDepartments(), "DepartmentCode", "Department", ItemTypeModel.PurchaseRequestCenter);
+            return PartialView("_Form", ItemTypeModel);
+        }
+
+        [ActionName("edit")]
+        [Route("{ItemTypeCode}/edit")]
+        public ActionResult Edit(string ItemTypeCode)
+        {
+            if (ItemTypeCode == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            ItemTypes itemType = itemTypesDL.GetItemTypes(ItemTypeCode);
+            if (itemType == null)
+            {
+                return HttpNotFound();
+            }
+            ViewBag.ItemClassificationReference = new SelectList(itemTypesDL.GetItemClassifications(), "ID", "Classification", itemType.ItemClassificationReference);
+            ViewBag.ResponsibilityCenter = new SelectList(itemTypesDL.GetDepartments(), "DepartmentCode", "Department", itemType.ResponsibilityCenter);
+            ViewBag.PurchaseRequestCenter = new SelectList(itemTypesDL.GetDepartments(), "DepartmentCode", "Department", itemType.PurchaseRequestCenter);
+            return View(itemType);
+        }
+
+        [HttpPost]
+        [ActionName("edit")]
+        [ValidateAntiForgeryToken]
+        [Route("{ItemTypeCode}/edit")]
+        public ActionResult Edit(ItemTypes ItemTypeModel)
         {
             if (ModelState.IsValid)
             {
-                return Json(new { result = itemTypesDAL.PurgeItemTypeRecord(ItemTypeCode, User.Identity.Name) });
+                string Key = null;
+                string Message = null;
+                var result = itemTypesDL.UpdateItemTypeRecord(ItemTypeModel, User.Identity.Name, out Key, out Message);
+                if(result == false && (Key != null && Message != null))
+                {
+                    ModelState.AddModelError(Key, Message);
+                    ViewBag.ItemClassificationReference = new SelectList(itemTypesDL.GetItemClassifications(), "ID", "Classification", ItemTypeModel.ItemClassificationReference);
+                    ViewBag.ResponsibilityCenter = new SelectList(itemTypesDL.GetDepartments(), "DepartmentCode", "Department", ItemTypeModel.ResponsibilityCenter);
+                    ViewBag.PurchaseRequestCenter = new SelectList(itemTypesDL.GetDepartments(), "DepartmentCode", "Department", ItemTypeModel.PurchaseRequestCenter);
+                    return PartialView("_Form", ItemTypeModel);
+                }
+                else
+                {
+                    return Json(new { result = result });
+                }
             }
-            return RedirectToAction("Index");
+
+            ViewBag.ItemClassificationReference = new SelectList(itemTypesDL.GetItemClassifications(), "ID", "Classification", ItemTypeModel.ItemClassificationReference);
+            ViewBag.ResponsibilityCenter = new SelectList(itemTypesDL.GetDepartments(), "DepartmentCode", "Department", ItemTypeModel.ResponsibilityCenter);
+            ViewBag.PurchaseRequestCenter = new SelectList(itemTypesDL.GetDepartments(), "DepartmentCode", "Department", ItemTypeModel.PurchaseRequestCenter);
+            return PartialView("_Form", ItemTypeModel);
+        }
+
+        [ValidateAntiForgeryToken]
+        [Route("{ItemTypeCode}/delete")]
+        [HttpPost, ActionName("delete")]
+        public ActionResult DeleteConfirmed(string ItemTypeCode)
+        {
+            if (ItemTypeCode == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var itemType = itemTypesDL.GetItemTypes(ItemTypeCode);
+            return Json(new { result = itemTypesDL.DeleteItemTypeRecord(itemType, User.Identity.Name) });
         }
 
         [ActionName("restore")]
@@ -164,35 +184,34 @@ namespace PUPFMIS.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ItemTypeVM itemTypeVM = itemTypesDAL.GetItemTypeDetails(ItemTypeCode, true);
-            if (itemTypeVM == null)
+            ItemTypes itemType = itemTypesDL.GetItemTypes(ItemTypeCode);
+            if (itemType == null)
             {
                 return HttpNotFound();
             }
-            return View(itemTypeVM);
+            return View("restore", itemType);
         }
 
-        [HttpPost]
-        [ActionName("restore")]
         [ValidateAntiForgeryToken]
         [Route("{ItemTypeCode}/restore")]
+        [HttpPost, ActionName("restore-item")]
         public ActionResult RestoreConfirmed(string ItemTypeCode)
         {
-            if (ModelState.IsValid)
+            if (ItemTypeCode == null)
             {
-                return Json(new { result = itemTypesDAL.RestoreItemTypeRecord(ItemTypeCode, User.Identity.Name) });
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            return RedirectToAction("Index");
+            var itemType = itemTypesDL.GetItemTypes(ItemTypeCode);
+            return Json(new { result =  itemTypesDL.RestoreItemTypeRecord(itemType, User.Identity.Name) });
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                itemTypesDAL.Dispose();
-                abisDataAccess.Dispose();
+                db.Dispose();
                 hrisDataAccess.Dispose();
-                inventoryTypeDataAccess.Dispose();
+                itemTypesDL.Dispose();
             }
             base.Dispose(disposing);
         }

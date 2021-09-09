@@ -48,7 +48,7 @@
         swal.fire({
             title: "Restore record?",
             text: "You are about to restore the purged record, continue?",
-            type: "warning",
+            icon: "question",
             showCancelButton: true,
         }).then((result) =>
         {
@@ -59,10 +59,26 @@
         })
     });
     function CloseModal(data) {
-        if (data.status === "success") {
+        if (data.result === true) {
             $('#modal-default').modal('hide');
-            toastr.success('Unit of measure recored is restored!', 'Restore', { timeOut: 10000, preventDuplicates: false });
-            window.location.href = "@Url.Action("index", "UnitOfMeasure")";
+            if (data.result == true) {
+                swal.fire({
+                    title: "Record Restored!",
+                    text: "Record is successfully restored.",
+                    icon: "success"
+                }).then((result) => {
+                    if (result.value) {
+                        window.location.href = "@Url.Action("list", "UnitOfMeasure", new { Area = "administration" })";
+                    }
+                })
+            }
+            else {
+                swal.fire({
+                    title: "Record Not Saved!",
+                    text: "Saving record failed.",
+                    icon: "error"
+                })
+            }
         }
     };
 </script>

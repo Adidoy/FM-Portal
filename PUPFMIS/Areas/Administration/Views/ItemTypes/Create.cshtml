@@ -7,7 +7,7 @@
 @section BreadCrumb {
     <ol class="breadcrumb float-sm-right">
         <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
-        <li class="breadcrumb-item">@Html.ActionLink("Item Types List", "list", "ItemTypes", new { Area = "administration" }, null)</li>
+        <li class="breadcrumb-item">@Html.ActionLink("Item Types", "list", "ItemTypes", new { Area = "administration" }, null)</li>
         <li class="breadcrumb-item">Add</li>
     </ol>
 }
@@ -18,9 +18,8 @@
     </div>
 }
 
-@using (Ajax.BeginForm("create", "ItemTypes", new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "addItem", Area = "administration" }))
+@using (Ajax.BeginForm("create", "ItemTypes", new { Area = "administration" }, new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult", UpdateTargetId = "addItem" }, htmlAttributes: new { id = "addItem" }))
 {
-    @Html.AntiForgeryToken()
     @Html.Partial("_Form")
 }
 
@@ -31,13 +30,12 @@
     </div>
 }
 
-<script src="~/Scripts/adminlte/components/select2/js/select2.min.js"></script>
 <script type="text/javascript">
     function SaveItem() {
         swal.fire({
             title: "Save record?",
             text: "You are about to save this record, continue?",
-            type: "warning",
+            icon: "question",
             showCancelButton: true,
         }).then((result) => {
             if (result.value) {
@@ -47,7 +45,7 @@
                 swal.fire({
                     title: "Cancelled!",
                     text: "You have cancelled saving the record.",
-                    type: "error"
+                    icon: "error"
                 })
             }
         })
@@ -57,7 +55,7 @@
             swal.fire({
                 title: "Record Saved!",
                 text: "Record is successfully saved.",
-                type: "success"
+                icon: "success"
             }).then((result) => {
                 if (result.value) {
                     window.location.href = "@Url.Action("list", "ItemTypes", new { Area = "administration" })";
@@ -68,26 +66,8 @@
             swal.fire({
                 title: "Record Not Saved!",
                 text: "Saving record failed.",
-                type: "error"
+                icon: "error"
             })
         }
     }
-    $.fn.select2.defaults.set( "theme", "bootstrap" );
-    $(".select2").select2();
-    $(function () {
-        $('#attributes-tbl').DataTable({
-            "columnDefs": [
-            {
-                "targets": [ 0 ],
-                "visible": false
-            }
-            ],
-            "paging": true,
-            "lengthChange": false,
-            "searching": false,
-            "ordering": false,
-            "info": true,
-            "autoWidth": false,
-        });
-    });
 </script>

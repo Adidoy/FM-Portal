@@ -1,4 +1,5 @@
 ﻿using System.Web.Mvc;
+using PUPFMIS.Models;
 
 namespace PUPFMIS.Controllers
 {
@@ -7,6 +8,11 @@ namespace PUPFMIS.Controllers
     {
         public ActionResult Index()
         {
+            Session["BidRegistrationOption"] = BidRegistrationOptions.WinningBidsOnly;
+            if (User.IsInRole(SystemRoles.ResponsibilityCenterPlanner))
+            {
+                return RedirectToAction("dashboard", "StrategicPlanning", new { Area = "responsibility-centers" });
+            }
             return View("Index");
         }
 

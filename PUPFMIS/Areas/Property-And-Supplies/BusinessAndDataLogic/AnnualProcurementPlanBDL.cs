@@ -14,7 +14,6 @@ namespace PUPFMIS.BusinessAndDataLogic
     public class AnnualProcurementPlanCSEBL : Controller
     {
         private AnnualProcurementPlanCSEDAL appCSEDAL = new AnnualProcurementPlanCSEDAL();
-        private ReportsConfig reportConfig = new ReportsConfig();
         private FMISDbContext db = new FMISDbContext();
 
         public MemoryStream GenerateAPPCSE(string ReferenceNo, string LogoPath, string UserEmail)
@@ -249,30 +248,30 @@ namespace PUPFMIS.BusinessAndDataLogic
                 {
                     rows = new List<ContentCell>();
                     rows.Add(new ContentCell(item.ItemSpecifications, 0, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-                    rows.Add(new ContentCell(item.UnitOfMeasure, 1, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+                    rows.Add(new ContentCell(db.UOM.Find(item.UnitOfMeasure).Abbreviation, 1, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                     rows.Add(new ContentCell(String.Format("{0:#,##0}", item.JanQty), 2, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                     rows.Add(new ContentCell(String.Format("{0:#,##0}", item.FebQty), 3, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                     rows.Add(new ContentCell(String.Format("{0:#,##0}", item.MarQty), 4, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-                    rows.Add(new ContentCell(String.Format("{0:#,##0}", item.Q1Total), 5, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-                    rows.Add(new ContentCell(String.Format("{0:#,0.00}", item.Q1Amount), 6, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+                    rows.Add(new ContentCell(String.Format("{0:#,##0}", item.Q1TotalQty), 5, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+                    rows.Add(new ContentCell(String.Format("{0:#,0.00}", item.Q1TotalQty), 6, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                     rows.Add(new ContentCell(String.Format("{0:#,##0}", item.AprQty), 7, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                     rows.Add(new ContentCell(String.Format("{0:#,##0}", item.MayQty), 8, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                     rows.Add(new ContentCell(String.Format("{0:#,##0}", item.JunQty), 9, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-                    rows.Add(new ContentCell(String.Format("{0:#,##0}", item.Q2Total), 10, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-                    rows.Add(new ContentCell(String.Format("{0:#,0.00}", item.Q2Amount), 11, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+                    rows.Add(new ContentCell(String.Format("{0:#,##0}", item.Q2TotalQty), 10, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+                    rows.Add(new ContentCell(String.Format("{0:#,0.00}", item.Q2TotalAmount), 11, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                     rows.Add(new ContentCell(String.Format("{0:#,##0}", item.JulQty), 12, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                     rows.Add(new ContentCell(String.Format("{0:#,##0}", item.AugQty), 13, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                     rows.Add(new ContentCell(String.Format("{0:#,##0}", item.SepQty), 14, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-                    rows.Add(new ContentCell(String.Format("{0:#,##0}", item.Q3Total), 15, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-                    rows.Add(new ContentCell(String.Format("{0:#,0.00}", item.Q3Amount), 16, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+                    rows.Add(new ContentCell(String.Format("{0:#,##0}", item.Q3TotalQty), 15, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+                    rows.Add(new ContentCell(String.Format("{0:#,0.00}", item.Q3TotalAmount), 16, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                     rows.Add(new ContentCell(String.Format("{0:#,##0}", item.OctQty), 17, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                     rows.Add(new ContentCell(String.Format("{0:#,##0}", item.NovQty), 18, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                     rows.Add(new ContentCell(String.Format("{0:#,##0}", item.DecQty), 19, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-                    rows.Add(new ContentCell(String.Format("{0:#,##0}", item.Q4Total), 20, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-                    rows.Add(new ContentCell(String.Format("{0:#,0.00}", item.Q4Amount), 21, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+                    rows.Add(new ContentCell(String.Format("{0:#,##0}", item.Q4TotalQty), 20, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+                    rows.Add(new ContentCell(String.Format("{0:#,0.00}", item.Q4TotalAmount), 21, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                     rows.Add(new ContentCell(String.Format("{0:#,##0}", item.TotalQty), 22, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-                    rows.Add(new ContentCell(String.Format("{0:#,0.00}", item.PriceCatalogue), 23, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-                    rows.Add(new ContentCell(String.Format("{0:#,0.00}", item.TotalAmount), 24, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+                    rows.Add(new ContentCell(String.Format("{0:#,0.00}", item.UnitCost), 23, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+                    rows.Add(new ContentCell(String.Format("{0:#,0.00}", item.ApprovedBudget), 24, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                     APPReport.AddRowContent(rows, 0.25);
                 }
             }
@@ -313,7 +312,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             columns.Add(new ContentColumn(0.75));
             APPReport.AddTable(columns, true);
 
-            if(appCSEVM.APPNonDBMItems.Count == 0)
+            if (appCSEVM.APPNonDBMItems.Count == 0)
             {
                 rows = new List<ContentCell>();
                 rows.Add(new ContentCell("", 0, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
@@ -349,34 +348,34 @@ namespace PUPFMIS.BusinessAndDataLogic
                 {
                     rows = new List<ContentCell>();
                     rows.Add(new ContentCell(item.ItemSpecifications, 0, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-                    rows.Add(new ContentCell(item.UnitOfMeasure, 1, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+                    rows.Add(new ContentCell(db.UOM.Find(item.UnitOfMeasure).Abbreviation, 1, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                     rows.Add(new ContentCell(String.Format("{0:#,##0}", item.JanQty), 2, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                     rows.Add(new ContentCell(String.Format("{0:#,##0}", item.FebQty), 3, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                     rows.Add(new ContentCell(String.Format("{0:#,##0}", item.MarQty), 4, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-                    rows.Add(new ContentCell(String.Format("{0:#,##0}", item.Q1Total), 5, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-                    rows.Add(new ContentCell(String.Format("{0:#,0.00}", item.Q1Amount), 6, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+                    rows.Add(new ContentCell(String.Format("{0:#,##0}", item.Q1TotalQty), 5, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+                    rows.Add(new ContentCell(String.Format("{0:#,0.00}", item.Q1TotalAmount), 6, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                     rows.Add(new ContentCell(String.Format("{0:#,##0}", item.AprQty), 7, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                     rows.Add(new ContentCell(String.Format("{0:#,##0}", item.MayQty), 8, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                     rows.Add(new ContentCell(String.Format("{0:#,##0}", item.JunQty), 9, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-                    rows.Add(new ContentCell(String.Format("{0:#,##0}", item.Q2Total), 10, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-                    rows.Add(new ContentCell(String.Format("{0:#,0.00}", item.Q2Amount), 11, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+                    rows.Add(new ContentCell(String.Format("{0:#,##0}", item.Q2TotalQty), 10, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+                    rows.Add(new ContentCell(String.Format("{0:#,0.00}", item.Q2TotalAmount), 11, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                     rows.Add(new ContentCell(String.Format("{0:#,##0}", item.JulQty), 12, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                     rows.Add(new ContentCell(String.Format("{0:#,##0}", item.AugQty), 13, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                     rows.Add(new ContentCell(String.Format("{0:#,##0}", item.SepQty), 14, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-                    rows.Add(new ContentCell(String.Format("{0:#,##0}", item.Q3Total), 15, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-                    rows.Add(new ContentCell(String.Format("{0:#,0.00}", item.Q3Amount), 16, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+                    rows.Add(new ContentCell(String.Format("{0:#,##0}", item.Q3TotalQty), 15, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+                    rows.Add(new ContentCell(String.Format("{0:#,0.00}", item.Q3TotalAmount), 16, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                     rows.Add(new ContentCell(String.Format("{0:#,##0}", item.OctQty), 17, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                     rows.Add(new ContentCell(String.Format("{0:#,##0}", item.NovQty), 18, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                     rows.Add(new ContentCell(String.Format("{0:#,##0}", item.DecQty), 19, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-                    rows.Add(new ContentCell(String.Format("{0:#,##0}", item.Q4Total), 20, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-                    rows.Add(new ContentCell(String.Format("{0:#,0.00}", item.Q4Amount), 21, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+                    rows.Add(new ContentCell(String.Format("{0:#,##0}", item.Q4TotalQty), 20, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+                    rows.Add(new ContentCell(String.Format("{0:#,0.00}", item.Q4TotalAmount), 21, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                     rows.Add(new ContentCell(String.Format("{0:#,##0}", item.TotalQty), 22, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-                    rows.Add(new ContentCell(String.Format("{0:#,0.00}", item.PriceCatalogue), 23, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-                    rows.Add(new ContentCell(String.Format("{0:#,0.00}", item.TotalAmount), 24, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+                    rows.Add(new ContentCell(String.Format("{0:#,0.00}", item.UnitCost), 23, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+                    rows.Add(new ContentCell(String.Format("{0:#,0.00}", item.ApprovedBudget), 24, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
                     APPReport.AddRowContent(rows, 0.25);
                 }
             }
-            
+
 
             APPReport.AddNewLine();
 
@@ -386,14 +385,14 @@ namespace PUPFMIS.BusinessAndDataLogic
             columns.Add(new ContentColumn(2.25, new MigraDoc.DocumentObjectModel.Color(74, 132, 249)));
             APPReport.AddTable(columns, true);
 
-            var total = appCSEVM.APPDBMItems.Sum(d => d.TotalAmount) + appCSEVM.APPNonDBMItems.Sum(d => d.TotalAmount);
+            var total = appCSEVM.APPDBMItems.Sum(d => d.ApprovedBudget) + appCSEVM.APPNonDBMItems.Sum(d => d.ApprovedBudget);
             rows = new List<ContentCell>();
             rows.Add(new ContentCell("A. TOTAL", 0, 7, true, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
             rows.Add(new ContentCell("", 1, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
             rows.Add(new ContentCell(String.Format("{0:C}", total), 2, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
             APPReport.AddRowContent(rows, 0.30);
 
-            decimal inflation = Math.Round(((appCSEVM.APPDBMItems.Sum(d => d.TotalAmount) + appCSEVM.APPNonDBMItems.Sum(d => d.TotalAmount)) * 0.1m), 2);
+            decimal inflation = Math.Round(((appCSEVM.APPDBMItems.Sum(d => d.ApprovedBudget) + appCSEVM.APPNonDBMItems.Sum(d => d.ApprovedBudget)) * 0.1m), 2);
             rows = new List<ContentCell>();
             rows.Add(new ContentCell("B. ADDITIONAL PROVISION FOR INFLATION (10% of TOTAL)", 0, 7, true, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
             rows.Add(new ContentCell("", 1, 5, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
@@ -441,31 +440,31 @@ namespace PUPFMIS.BusinessAndDataLogic
             rows = new List<ContentCell>();
             rows.Add(new ContentCell("G.1 Available at Procurement Service Stores", 0, 7, true, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
             rows.Add(new ContentCell("", 1, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center, 0, 2));
-            rows.Add(new ContentCell(String.Format("{0:#,0.00}", appCSEVM.APPDBMItems.Sum(d => d.Q1Amount)), 2, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+            rows.Add(new ContentCell(String.Format("{0:#,0.00}", appCSEVM.APPDBMItems.Sum(d => d.Q1TotalAmount)), 2, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
             rows.Add(new ContentCell("", 3, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center, 0, 2));
-            rows.Add(new ContentCell(String.Format("{0:#,0.00}", appCSEVM.APPDBMItems.Sum(d => d.Q2Amount)), 4, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+            rows.Add(new ContentCell(String.Format("{0:#,0.00}", appCSEVM.APPDBMItems.Sum(d => d.Q2TotalAmount)), 4, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
             rows.Add(new ContentCell("", 5, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center, 0, 2));
-            rows.Add(new ContentCell(String.Format("{0:#,0.00}", appCSEVM.APPDBMItems.Sum(d => d.Q3Amount)), 6, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+            rows.Add(new ContentCell(String.Format("{0:#,0.00}", appCSEVM.APPDBMItems.Sum(d => d.Q3TotalAmount)), 6, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
             rows.Add(new ContentCell("", 7, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center, 0, 2));
-            rows.Add(new ContentCell(String.Format("{0:#,0.00}", appCSEVM.APPDBMItems.Sum(d => d.Q4Amount)), 8, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-            rows.Add(new ContentCell(String.Format("{0:C}", appCSEVM.APPDBMItems.Sum(d => d.TotalAmount)), 9, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+            rows.Add(new ContentCell(String.Format("{0:#,0.00}", appCSEVM.APPDBMItems.Sum(d => d.Q4TotalAmount)), 8, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+            rows.Add(new ContentCell(String.Format("{0:C}", appCSEVM.APPDBMItems.Sum(d => d.ApprovedBudget)), 9, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
             APPReport.AddRowContent(rows, 0.30);
 
             rows = new List<ContentCell>();
             rows.Add(new ContentCell("G.2 Other Items not available at PS but regulary purchased from other sources", 0, 7, true, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-            rows.Add(new ContentCell(String.Format("{0:#,0.00}", appCSEVM.APPNonDBMItems.Sum(d => d.Q1Amount)), 2, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-            rows.Add(new ContentCell(String.Format("{0:#,0.00}", appCSEVM.APPNonDBMItems.Sum(d => d.Q2Amount)), 4, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-            rows.Add(new ContentCell(String.Format("{0:#,0.00}", appCSEVM.APPNonDBMItems.Sum(d => d.Q3Amount)), 6, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-            rows.Add(new ContentCell(String.Format("{0:#,0.00}", appCSEVM.APPNonDBMItems.Sum(d => d.Q4Amount)), 8, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-            rows.Add(new ContentCell(String.Format("{0:C}", appCSEVM.APPNonDBMItems.Sum(d => d.TotalAmount)), 9, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+            rows.Add(new ContentCell(String.Format("{0:#,0.00}", appCSEVM.APPNonDBMItems.Sum(d => d.Q1TotalAmount)), 2, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+            rows.Add(new ContentCell(String.Format("{0:#,0.00}", appCSEVM.APPNonDBMItems.Sum(d => d.Q2TotalAmount)), 4, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+            rows.Add(new ContentCell(String.Format("{0:#,0.00}", appCSEVM.APPNonDBMItems.Sum(d => d.Q3TotalAmount)), 6, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+            rows.Add(new ContentCell(String.Format("{0:#,0.00}", appCSEVM.APPNonDBMItems.Sum(d => d.Q4TotalAmount)), 8, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+            rows.Add(new ContentCell(String.Format("{0:C}", appCSEVM.APPNonDBMItems.Sum(d => d.ApprovedBudget)), 9, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
             APPReport.AddRowContent(rows, 0.30);
 
             rows = new List<ContentCell>();
             rows.Add(new ContentCell("TOTAL MONTHLY CASH REQUIREMENTS", 0, 7, true, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-            rows.Add(new ContentCell(String.Format("{0:#,0.00}", (appCSEVM.APPDBMItems.Sum(d => d.Q1Amount) + appCSEVM.APPNonDBMItems.Sum(d => d.Q1Amount))), 2, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-            rows.Add(new ContentCell(String.Format("{0:#,0.00}", (appCSEVM.APPDBMItems.Sum(d => d.Q2Amount) + appCSEVM.APPNonDBMItems.Sum(d => d.Q2Amount))), 4, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-            rows.Add(new ContentCell(String.Format("{0:#,0.00}", (appCSEVM.APPDBMItems.Sum(d => d.Q3Amount) + appCSEVM.APPNonDBMItems.Sum(d => d.Q3Amount))), 6, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-            rows.Add(new ContentCell(String.Format("{0:#,0.00}", (appCSEVM.APPDBMItems.Sum(d => d.Q4Amount) + appCSEVM.APPNonDBMItems.Sum(d => d.Q4Amount))), 8, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+            rows.Add(new ContentCell(String.Format("{0:#,0.00}", (appCSEVM.APPDBMItems.Sum(d => d.Q1TotalAmount) + appCSEVM.APPNonDBMItems.Sum(d => d.Q1TotalAmount))), 2, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+            rows.Add(new ContentCell(String.Format("{0:#,0.00}", (appCSEVM.APPDBMItems.Sum(d => d.Q2TotalAmount) + appCSEVM.APPNonDBMItems.Sum(d => d.Q2TotalAmount))), 4, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+            rows.Add(new ContentCell(String.Format("{0:#,0.00}", (appCSEVM.APPDBMItems.Sum(d => d.Q3TotalAmount) + appCSEVM.APPNonDBMItems.Sum(d => d.Q3TotalAmount))), 6, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+            rows.Add(new ContentCell(String.Format("{0:#,0.00}", (appCSEVM.APPDBMItems.Sum(d => d.Q4TotalAmount) + appCSEVM.APPNonDBMItems.Sum(d => d.Q4TotalAmount))), 8, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
             rows.Add(new ContentCell(String.Format("{0:C}", total), 9, 7, false, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Right, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
             APPReport.AddRowContent(rows, 0.30);
 
@@ -519,11 +518,11 @@ namespace PUPFMIS.BusinessAndDataLogic
 
             rows = new List<ContentCell>();
             rows.Add(new ContentCell("", 0, 7, true, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-            rows.Add(new ContentCell("Property/Supplier Officer", 1, 7, true, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+            rows.Add(new ContentCell("Property / Supplies Officer", 1, 7, true, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
             rows.Add(new ContentCell("", 2, 7, true, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
             rows.Add(new ContentCell("Accountant / Local Budget Officer", 3, 7, true, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
             rows.Add(new ContentCell("", 4, 7, true, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
-            rows.Add(new ContentCell("Head of Office/Agency", 5, 7, true, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
+            rows.Add(new ContentCell("Head of Office / Agency", 5, 7, true, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Center, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
             rows.Add(new ContentCell("", 6, 7, true, false, MigraDoc.DocumentObjectModel.ParagraphAlignment.Left, MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center));
             APPReport.AddRowContent(rows, 0);
 
@@ -542,31 +541,28 @@ namespace PUPFMIS.BusinessAndDataLogic
     public class AnnualProcurementPlanCSEDAL : Controller
     {
         private FMISDbContext db = new FMISDbContext();
-        private HRISDbContext hrdb = new HRISDbContext();
-        private TEMPAccounting abdb = new TEMPAccounting();
-        private HRISDataAccess hrisDataAccess = new HRISDataAccess();
+        private ABISDataAccess abis = new ABISDataAccess();
+        private HRISDataAccess hris = new HRISDataAccess();
 
         public List<int> GetFiscalYears()
         {
-            var fiscalYears = db.PPMPHeader.Where(d => d.Status == "PPMP Evaluated").GroupBy(d => d.FiscalYear).Select(d => d.Key).ToList();
+            var fiscalYears = db.PPMPHeader.Where(d => d.PPMPStatus == PPMPStatus.EvaluatedByBudgetOffice).GroupBy(d => d.FiscalYear).Select(d => d.Key).ToList();
             return fiscalYears;
         }
         public List<int> GetPPMPFiscalYears()
         {
-            var itemYears = db.ProjectPlanItems.Where(d => d.Status == "Approved").Select(d => d.FKPPMPReference.FiscalYear).Distinct().ToList();
-            var serviceYears = db.ProjectPlanServices.Where(d => d.Status == "Approved").Select(d => d.FKPPMPReference.FiscalYear).Distinct().ToList();
-            var fiscalYears = itemYears.Union(serviceYears).Distinct().ToList();
+            var fiscalYears = db.PPMPHeader.Select(d => d.FiscalYear).Distinct().ToList();
             return fiscalYears;
         }
         public AnnualProcurementPlanCSEVM GetAPPCSE(int FiscalYear)
         {
             AgencyDetails agencyDetails = db.AgencyDetails.First();
 
-            var hope = hrisDataAccess.GetFullDepartmentDetails(agencyDetails.HOPEReference);
-            var property = hrisDataAccess.GetFullDepartmentDetails(agencyDetails.PropertyOfficeReference);
-            var accounting = hrisDataAccess.GetFullDepartmentDetails(agencyDetails.AccountingOfficeReference);
-            var procurement = hrisDataAccess.GetFullDepartmentDetails(agencyDetails.ProcurementOfficeReference);
-            var bac = hrisDataAccess.GetFullDepartmentDetails(agencyDetails.BACOfficeReference);
+            var hope = hris.GetDepartmentDetails(agencyDetails.HOPEReference);
+            var property = hris.GetDepartmentDetails(agencyDetails.PropertyOfficeReference);
+            var accounting = hris.GetDepartmentDetails(agencyDetails.AccountingOfficeReference);
+            var procurement = hris.GetDepartmentDetails(agencyDetails.ProcurementOfficeReference);
+            var bac = hris.GetDepartmentDetails(agencyDetails.BACOfficeReference);
 
             return new AnnualProcurementPlanCSEVM
             {
@@ -576,82 +572,99 @@ namespace PUPFMIS.BusinessAndDataLogic
                 Address = agencyDetails.Address,
                 Region = agencyDetails.Region,
                 OrganizationType = agencyDetails.OrganizationType,
-                ApprovedBy = hope.DepartmentHead + ", " + hope.DepartmentHeadDesignation + " / " + hope.Department,
+                ApprovedBy = hope.SectorHead + ", " + hope.SectorHeadDesignation + " / " + hope.Sector,
                 PreparedBy = property.DepartmentHead + ", " + property.DepartmentHeadDesignation + " / " + property.Department,
                 CertifiedBy = accounting.DepartmentHead + ", " + accounting.DepartmentHeadDesignation + " / " + accounting.Department,
                 ProcurementOfficer = procurement.DepartmentHead + ", " + procurement.DepartmentHeadDesignation + " / " + procurement.Department,
                 BACSecretariat = bac.SectionCode == null ? bac.DepartmentHead + ", " + bac.DepartmentHeadDesignation + " / " + bac.Department : bac.SectionHead + ", " + bac.SectionHeadDesignation + " / " + bac.Section,
                 APPDBMItems = GetAPPDBMItems(FiscalYear),
                 APPNonDBMItems = GetAPPNonDBMItems(FiscalYear)
-        };
+            };
         }
         public AnnualProcurementPlanCSEVM GetAPPCSE(string ReferenceNo)
         {
             AgencyDetails agencyDetails = db.AgencyDetails.First();
 
-            var hope = hrisDataAccess.GetFullDepartmentDetails(agencyDetails.HOPEReference);
-            var property = hrisDataAccess.GetFullDepartmentDetails(agencyDetails.PropertyOfficeReference);
-            var accounting = hrisDataAccess.GetFullDepartmentDetails(agencyDetails.AccountingOfficeReference);
-            var procurement = hrisDataAccess.GetFullDepartmentDetails(agencyDetails.ProcurementOfficeReference);
-            var bac = hrisDataAccess.GetFullDepartmentDetails(agencyDetails.BACOfficeReference);
+            var hope = hris.GetDepartmentDetails(agencyDetails.HOPEReference);
+            var property = hris.GetDepartmentDetails(agencyDetails.PropertyOfficeReference);
+            var accounting = hris.GetDepartmentDetails(agencyDetails.AccountingOfficeReference);
+            var procurement = hris.GetDepartmentDetails(agencyDetails.ProcurementOfficeReference);
+            var bac = hris.GetDepartmentDetails(agencyDetails.BACOfficeReference);
             var appCSE = db.APPHeader.Where(d => d.ReferenceNo == ReferenceNo).FirstOrDefault();
-            var appDBM = db.APPCSEDetails.Where(d => d.APPHeaderReference == appCSE.ID && d.FKItemReference.ProcurementSource == ProcurementSources.PS_DBM)
-                         .Select(d => new AnnualProcurementPlanCSEItemsVM {
-                             ItemSpecifications = d.FKItemReference.ItemFullName,
-                             UnitOfMeasure = d.FKItemReference.FKIndividualUnitReference.Abbreviation,
+            var appDBM = db.APPCSEDetails.Where(d => d.APPHeaderReference == appCSE.ID && d.ProcurementSource == ProcurementSources.AgencyToAgency).ToList()
+                         .Select(d => new AnnualProcurementPlanCSEItemsVM
+                         {
+                             ItemCode = db.ItemArticles.Find(d.ArticleReference).ArticleCode + "-" + d.ItemSequence,
+                             ItemFullName = d.ItemFullName,
+                             ItemSpecifications = d.ItemFullName,
+                             UnitOfMeasure = d.UOMReference,
+                             ArticleReference = d.ArticleReference,
+                             UACS = d.FKItemArticleReference.UACSObjectClass,
+                             CategoryReference = d.CategoryReference,
+                             FundSource = d.FundSource,
+                             ItemSequence = d.ItemSequence,
+                             ProcurementSource = d.ProcurementSource,
                              JanQty = d.JanQty,
                              FebQty = d.FebQty,
                              MarQty = d.MarQty,
-                             Q1Total = d.JanQty + d.FebQty + d.MarQty,
-                             Q1Amount = (d.JanQty + d.FebQty + d.MarQty) * d.PriceCatalogue,
+                             Q1TotalQty = d.Q1TotalQty,
+                             Q1TotalAmount = Math.Round((d.Q1TotalQty * d.UnitCost), 2),
                              AprQty = d.AprQty,
                              MayQty = d.MayQty,
                              JunQty = d.JunQty,
-                             Q2Total = d.AprQty + d.MayQty + d.JunQty,
-                             Q2Amount = (d.AprQty + d.MayQty + d.JunQty) * d.PriceCatalogue,
+                             Q2TotalQty = d.Q2TotalQty,
+                             Q2TotalAmount = Math.Round((d.Q2TotalQty * d.UnitCost), 2),
                              JulQty = d.JulQty,
                              AugQty = d.AugQty,
                              SepQty = d.SepQty,
-                             Q3Total = d.JulQty + d.AugQty + d.SepQty,
-                             Q3Amount = (d.JulQty + d.AugQty + d.SepQty) * d.PriceCatalogue,
+                             Q3TotalQty = d.Q3TotalQty,
+                             Q3TotalAmount = Math.Round((d.Q3TotalQty * d.UnitCost), 2),
                              OctQty = d.OctQty,
                              NovQty = d.NovQty,
                              DecQty = d.DecQty,
-                             Q4Total = d.OctQty + d.NovQty + d.DecQty,
-                             Q4Amount = (d.OctQty + d.NovQty + d.DecQty) * d.PriceCatalogue,
-                             TotalQty = (d.JanQty + d.FebQty + d.MarQty + d.AprQty + d.MayQty + d.JunQty + d.JulQty + d.AugQty + d.SepQty + d.OctQty + d.NovQty + d.DecQty),
-                             TotalAmount = (d.JanQty + d.FebQty + d.MarQty + d.AprQty + d.MayQty + d.JunQty + d.JulQty + d.AugQty + d.SepQty + d.OctQty + d.NovQty + d.DecQty) * d.PriceCatalogue,
-                             PriceCatalogue = d.PriceCatalogue
+                             Q4TotalQty = d.Q1TotalQty,
+                             Q4TotalAmount = Math.Round((d.Q4TotalQty * d.UnitCost), 2),
+                             TotalQty = d.TotalQty,
+                             ApprovedBudget = d.ApprovedBudget,
+                             UnitCost = d.UnitCost
                          }).ToList();
-            var appNonDB = db.APPCSEDetails.Where(d => d.APPHeaderReference == appCSE.ID && d.FKItemReference.ProcurementSource == ProcurementSources.Non_DBM)
-                            .Select(d => new AnnualProcurementPlanCSEItemsVM
-                            {
-                                ItemSpecifications = d.FKItemReference.ItemFullName,
-                                UnitOfMeasure = d.FKItemReference.FKIndividualUnitReference.Abbreviation,
-                                JanQty = d.JanQty,
-                                FebQty = d.FebQty,
-                                MarQty = d.MarQty,
-                                Q1Total = d.JanQty + d.FebQty + d.MarQty,
-                                Q1Amount = (d.JanQty + d.FebQty + d.MarQty) * d.PriceCatalogue,
-                                AprQty = d.AprQty,
-                                MayQty = d.MayQty,
-                                JunQty = d.JunQty,
-                                Q2Total = d.AprQty + d.MayQty + d.JunQty,
-                                Q2Amount = (d.AprQty + d.MayQty + d.JunQty) * d.PriceCatalogue,
-                                JulQty = d.JulQty,
-                                AugQty = d.AugQty,
-                                SepQty = d.SepQty,
-                                Q3Total = d.JulQty + d.AugQty + d.SepQty,
-                                Q3Amount = (d.JulQty + d.AugQty + d.SepQty) * d.PriceCatalogue,
-                                OctQty = d.OctQty,
-                                NovQty = d.NovQty,
-                                DecQty = d.DecQty,
-                                Q4Total = d.OctQty + d.NovQty + d.DecQty,
-                                Q4Amount = (d.OctQty + d.NovQty + d.DecQty) * d.PriceCatalogue,
-                                TotalQty = (d.JanQty + d.FebQty + d.MarQty + d.AprQty + d.MayQty + d.JunQty + d.JulQty + d.AugQty + d.SepQty + d.OctQty + d.NovQty + d.DecQty),
-                                TotalAmount = (d.JanQty + d.FebQty + d.MarQty + d.AprQty + d.MayQty + d.JunQty + d.JulQty + d.AugQty + d.SepQty + d.OctQty + d.NovQty + d.DecQty) * d.PriceCatalogue,
-                                PriceCatalogue = d.PriceCatalogue
-                            }).ToList();
+            var appNonDB = db.APPCSEDetails.Where(d => d.APPHeaderReference == appCSE.ID && d.ProcurementSource == ProcurementSources.ExternalSuppliers).ToList()
+                         .Select(d => new AnnualProcurementPlanCSEItemsVM
+                         {
+                             ItemCode = db.ItemArticles.Find(d.ArticleReference).ArticleCode + "-" + d.ItemSequence,
+                             ItemFullName = d.ItemFullName,
+                             ItemSpecifications = d.ItemFullName,
+                             UnitOfMeasure = d.UOMReference,
+                             ArticleReference = d.ArticleReference,
+                             UACS = d.FKItemArticleReference.UACSObjectClass,
+                             CategoryReference = d.CategoryReference,
+                             FundSource = d.FundSource,
+                             ItemSequence = d.ItemSequence,
+                             ProcurementSource = d.ProcurementSource,
+                             JanQty = d.JanQty,
+                             FebQty = d.FebQty,
+                             MarQty = d.MarQty,
+                             Q1TotalQty = d.Q1TotalQty,
+                             Q1TotalAmount = Math.Round((d.Q1TotalQty * d.UnitCost), 2),
+                             AprQty = d.AprQty,
+                             MayQty = d.MayQty,
+                             JunQty = d.JunQty,
+                             Q2TotalQty = d.Q2TotalQty,
+                             Q2TotalAmount = Math.Round((d.Q2TotalQty * d.UnitCost), 2),
+                             JulQty = d.JulQty,
+                             AugQty = d.AugQty,
+                             SepQty = d.SepQty,
+                             Q3TotalQty = d.Q3TotalQty,
+                             Q3TotalAmount = Math.Round((d.Q3TotalQty * d.UnitCost), 2),
+                             OctQty = d.OctQty,
+                             NovQty = d.NovQty,
+                             DecQty = d.DecQty,
+                             Q4TotalQty = d.Q1TotalQty,
+                             Q4TotalAmount = Math.Round((d.Q4TotalQty * d.UnitCost), 2),
+                             TotalQty = d.TotalQty,
+                             ApprovedBudget = d.ApprovedBudget,
+                             UnitCost = d.UnitCost
+                         }).ToList();
 
             return new AnnualProcurementPlanCSEVM
             {
@@ -665,9 +678,9 @@ namespace PUPFMIS.BusinessAndDataLogic
                 PreparedBy = property.DepartmentHead,
                 PreparedByDepartment = property.DepartmentCode,
                 PreparedByDesignation = property.DepartmentHeadDesignation,
-                ApprovedBy = hope.DepartmentHead,
-                ApprovedByDepartment = hope.DepartmentCode,
-                ApprovedByDesignation = hope.DepartmentHeadDesignation,
+                ApprovedBy = hope.SectorHead,
+                ApprovedByDepartment = hope.Sector,
+                ApprovedByDesignation = hope.SectorHeadDesignation,
                 CertifiedBy = accounting.DepartmentHead,
                 CertifiedByDepartment = accounting.DepartmentCode,
                 CertifiedByDesignation = accounting.DepartmentHeadDesignation,
@@ -677,163 +690,94 @@ namespace PUPFMIS.BusinessAndDataLogic
         }
         public List<AnnualProcurementPlanCSEItemsVM> GetAPPDBMItems(int FiscalYear)
         {
-            var ppmpItems = (from items in db.ProjectPlanItems
-                             where items.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode == "CUOS" &&
-                                   items.Status == "Approved" &&
-                                   items.FKPPMPReference.FiscalYear == FiscalYear &&
-                                   items.FKItemReference.ProcurementSource == ProcurementSources.PS_DBM
-                             select new
-                             {
-                                 ItemID = items.FKItemReference.ID,
-                                 ItemName = items.FKItemReference.ItemFullName.ToUpper(),
-                                 UnitOfMeasure = items.FKItemReference.FKIndividualUnitReference.UnitName,
-                                 PriceCatalogue = items.UnitCost,
-                                 Jan = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPJan == null ? "0" : items.PPMPJan : items.FKProjectReference.ProjectMonthStart == 1 ?  items.PPMPTotalQty.ToString() : "0",
-                                 Feb = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPFeb == null ? "0" : items.PPMPFeb : items.FKProjectReference.ProjectMonthStart == 2 ?  items.PPMPTotalQty.ToString() : "0",
-                                 Mar = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPMar == null ? "0" : items.PPMPMar : items.FKProjectReference.ProjectMonthStart == 3 ?  items.PPMPTotalQty.ToString() : "0",
-                                 Apr = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPApr == null ? "0" : items.PPMPApr : items.FKProjectReference.ProjectMonthStart == 4 ?  items.PPMPTotalQty.ToString() : "0",
-                                 May = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPMay == null ? "0" : items.PPMPMay : items.FKProjectReference.ProjectMonthStart == 5 ?  items.PPMPTotalQty.ToString() : "0",
-                                 Jun = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPJun == null ? "0" : items.PPMPJun : items.FKProjectReference.ProjectMonthStart == 6 ?  items.PPMPTotalQty.ToString() : "0",
-                                 Jul = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPJul == null ? "0" : items.PPMPJul : items.FKProjectReference.ProjectMonthStart == 7 ?  items.PPMPTotalQty.ToString() : "0",
-                                 Aug = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPAug == null ? "0" : items.PPMPAug : items.FKProjectReference.ProjectMonthStart == 8 ?  items.PPMPTotalQty.ToString() : "0",
-                                 Sep = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPSep == null ? "0" : items.PPMPSep : items.FKProjectReference.ProjectMonthStart == 9 ?  items.PPMPTotalQty.ToString() : "0",
-                                 Oct = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPOct == null ? "0" : items.PPMPOct : items.FKProjectReference.ProjectMonthStart == 10 ? items.PPMPTotalQty.ToString() : "0",
-                                 Nov = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPNov == null ? "0" : items.PPMPNov : items.FKProjectReference.ProjectMonthStart == 11 ? items.PPMPTotalQty.ToString() : "0",
-                                 Dec = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPDec == null ? "0" : items.PPMPDec : items.FKProjectReference.ProjectMonthStart == 12 ? items.PPMPTotalQty.ToString() : "0"
-                             }).ToList();
-
-            var appcseItems = (from ppmpItem in ppmpItems
-                               select new
-                               {
-                                   ItemID = ppmpItem.ItemID,
-                                   ItemName = ppmpItem.ItemName,
-                                   UnitOfMeasure = ppmpItem.UnitOfMeasure,
-                                   PriceCatalogue = ppmpItem.PriceCatalogue,
-                                   Jan = int.Parse(ppmpItem.Jan),
-                                   Feb = int.Parse(ppmpItem.Feb),
-                                   Mar = int.Parse(ppmpItem.Mar),
-                                   Apr = int.Parse(ppmpItem.Apr),
-                                   May = int.Parse(ppmpItem.May),
-                                   Jun = int.Parse(ppmpItem.Jun),
-                                   Jul = int.Parse(ppmpItem.Jul),
-                                   Aug = int.Parse(ppmpItem.Aug),
-                                   Sep = int.Parse(ppmpItem.Sep),
-                                   Oct = int.Parse(ppmpItem.Oct),
-                                   Nov = int.Parse(ppmpItem.Nov),
-                                   Dec = int.Parse(ppmpItem.Dec)
-                               } into results group results by new { results.ItemID, results.ItemName, results.UnitOfMeasure, results.PriceCatalogue } into groupResults
-                               select new AnnualProcurementPlanCSEItemsVM
-                               {
-                                   ItemID = groupResults.Key.ItemID,
-                                   ItemSpecifications = groupResults.Key.ItemName,
-                                   UnitOfMeasure = groupResults.Key.UnitOfMeasure,
-                                   PriceCatalogue = groupResults.Key.PriceCatalogue,
-                                   JanQty = groupResults.Sum(x => x.Jan),
-                                   FebQty = groupResults.Sum(x => x.Feb),
-                                   MarQty = groupResults.Sum(x => x.Mar),
-                                   Q1Total = groupResults.Sum(x => x.Jan) + groupResults.Sum(x => x.Feb) + groupResults.Sum(x => x.Mar),
-                                   Q1Amount = groupResults.Key.PriceCatalogue * (groupResults.Sum(x => x.Jan) + groupResults.Sum(x => x.Feb) + groupResults.Sum(x => x.Mar)),
-                                   AprQty = groupResults.Sum(x => x.Apr),
-                                   MayQty = groupResults.Sum(x => x.May),
-                                   JunQty = groupResults.Sum(x => x.Jun),
-                                   Q2Total = groupResults.Sum(x => x.Apr) + groupResults.Sum(x => x.May) + groupResults.Sum(x => x.Jun),
-                                   Q2Amount = groupResults.Key.PriceCatalogue * (groupResults.Sum(x => x.Apr) + groupResults.Sum(x => x.May) + groupResults.Sum(x => x.Jun)),
-                                   JulQty = groupResults.Sum(x => x.Jul),
-                                   AugQty = groupResults.Sum(x => x.Aug),
-                                   SepQty = groupResults.Sum(x => x.Sep),
-                                   Q3Total = groupResults.Sum(x => x.Jul) + groupResults.Sum(x => x.Aug) + groupResults.Sum(x => x.Sep),
-                                   Q3Amount = groupResults.Key.PriceCatalogue * (groupResults.Sum(x => x.Jul) + groupResults.Sum(x => x.Aug) + groupResults.Sum(x => x.Sep)),
-                                   OctQty = groupResults.Sum(x => x.Oct),
-                                   NovQty = groupResults.Sum(x => x.Nov),
-                                   DecQty = groupResults.Sum(x => x.Dec),
-                                   Q4Total = groupResults.Sum(x => x.Oct) + groupResults.Sum(x => x.Nov) + groupResults.Sum(x => x.Dec),
-                                   Q4Amount = groupResults.Key.PriceCatalogue * (groupResults.Sum(x => x.Oct) + groupResults.Sum(x => x.Nov) + groupResults.Sum(x => x.Dec)),
-                                   TotalQty = groupResults.Sum(x => x.Jan) + groupResults.Sum(x => x.Feb) + groupResults.Sum(x => x.Mar) + groupResults.Sum(x => x.Apr) + groupResults.Sum(x => x.May) + groupResults.Sum(x => x.Jun) + groupResults.Sum(x => x.Jul) + groupResults.Sum(x => x.Aug) + groupResults.Sum(x => x.Sep) + groupResults.Sum(x => x.Oct) + groupResults.Sum(x => x.Nov) + groupResults.Sum(x => x.Dec),
-                                   TotalAmount = groupResults.Key.PriceCatalogue * (groupResults.Sum(x => x.Jan) + groupResults.Sum(x => x.Feb) + groupResults.Sum(x => x.Mar) + groupResults.Sum(x => x.Apr) + groupResults.Sum(x => x.May) + groupResults.Sum(x => x.Jun) + groupResults.Sum(x => x.Jul) + groupResults.Sum(x => x.Aug) + groupResults.Sum(x => x.Sep) + groupResults.Sum(x => x.Oct) + groupResults.Sum(x => x.Nov) + groupResults.Sum(x => x.Dec))
-                               }).ToList();
-
-            return appcseItems;
+            return db.PPMPDetails.ToList()
+                                 .Where(d => d.FKPPMPHeaderReference.FiscalYear == FiscalYear &&
+                                             d.ProcurementSource == ProcurementSources.AgencyToAgency &&
+                                             d.FKItemArticleReference.FKItemTypeReference.FKItemClassificationReference.ID == 1 &&
+                                             d.PPMPDetailStatus == PPMPDetailStatus.ItemAccepted)
+                                 .GroupBy(d => new { d.ArticleReference, d.ItemSequence, d.UACS, d.CategoryReference, d.ItemFullName, d.ItemSpecifications, d.UnitCost, d.UOMReference, d.ProcurementSource })
+                                 .Select(d => new AnnualProcurementPlanCSEItemsVM
+                                 {
+                                     ItemCode = db.ItemArticles.Find(d.Key.ArticleReference).ArticleCode + "-" + d.Key.ItemSequence,
+                                     ArticleReference = (int)d.Key.ArticleReference,
+                                     ItemSequence = d.Key.ItemSequence,
+                                     ItemFullName = d.Key.ItemFullName,
+                                     ProcurementSource = d.Key.ProcurementSource,
+                                     ItemSpecifications = d.Key.ItemSpecifications,
+                                     UnitOfMeasure = d.Key.UOMReference,
+                                     UOM = db.UOM.Find(d.Key.UOMReference).Abbreviation,
+                                     CategoryReference = d.Key.CategoryReference,
+                                     UnitCost = d.Key.UnitCost,
+                                     UACS = d.Key.UACS,
+                                     JanQty = d.Sum(x => x.JanQty),
+                                     FebQty = d.Sum(x => x.FebQty),
+                                     MarQty = d.Sum(x => x.MarQty),
+                                     Q1TotalQty = d.Sum(x => x.Q1TotalQty),
+                                     Q1TotalAmount = Math.Round((d.Sum(x => x.Q1TotalQty) * d.Key.UnitCost), 2),
+                                     AprQty = d.Sum(x => x.AprQty),
+                                     MayQty = d.Sum(x => x.MayQty),
+                                     JunQty = d.Sum(x => x.JunQty),
+                                     Q2TotalQty = d.Sum(x => x.Q2TotalQty),
+                                     Q2TotalAmount = Math.Round((d.Sum(x => x.Q2TotalQty) * d.Key.UnitCost), 2),
+                                     JulQty = d.Sum(x => x.JulQty),
+                                     AugQty = d.Sum(x => x.AugQty),
+                                     SepQty = d.Sum(x => x.SepQty),
+                                     Q3TotalQty = d.Sum(x => x.Q3TotalQty),
+                                     Q3TotalAmount = Math.Round((d.Sum(x => x.Q3TotalQty) * d.Key.UnitCost), 2),
+                                     OctQty = d.Sum(x => x.OctQty),
+                                     NovQty = d.Sum(x => x.NovQty),
+                                     DecQty = d.Sum(x => x.DecQty),
+                                     Q4TotalQty = d.Sum(x => x.Q3TotalQty),
+                                     Q4TotalAmount = Math.Round((d.Sum(x => x.Q4TotalQty) * d.Key.UnitCost), 2),
+                                     TotalQty = d.Sum(x => x.TotalQty),
+                                     ApprovedBudget = Math.Round((d.Sum(x => x.TotalQty) * d.Key.UnitCost), 2)
+                                 }).ToList();
         }
         public List<AnnualProcurementPlanCSEItemsVM> GetAPPNonDBMItems(int FiscalYear)
         {
-            var ppmpItems = (from items in db.ProjectPlanItems
-                             where items.FKItemReference.FKItemTypeReference.FKInventoryTypeReference.InventoryCode == "CUOS" &&
-                                   items.Status == "Approved" &&
-                                   items.FKPPMPReference.FiscalYear == FiscalYear &&
-                                   items.FKItemReference.ProcurementSource == ProcurementSources.Non_DBM
-                             select new
-                             {
-                                 ItemID = items.FKItemReference.ID,
-                                 ItemName = items.FKItemReference.ItemFullName.ToUpper(),
-                                 UnitOfMeasure = items.FKItemReference.FKIndividualUnitReference.UnitName,
-                                 PriceCatalogue = items.UnitCost,
-
-                                 Jan = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPJan == null ? "0" : items.PPMPJan : items.FKProjectReference.ProjectMonthStart == 1 ? items.PPMPTotalQty.ToString() : "0",
-                                 Feb = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPFeb == null ? "0" : items.PPMPFeb : items.FKProjectReference.ProjectMonthStart == 2 ? items.PPMPTotalQty.ToString() : "0",
-                                 Mar = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPMar == null ? "0" : items.PPMPMar : items.FKProjectReference.ProjectMonthStart == 3 ? items.PPMPTotalQty.ToString() : "0",
-                                 Apr = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPApr == null ? "0" : items.PPMPApr : items.FKProjectReference.ProjectMonthStart == 4 ? items.PPMPTotalQty.ToString() : "0",
-                                 May = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPMay == null ? "0" : items.PPMPMay : items.FKProjectReference.ProjectMonthStart == 5 ? items.PPMPTotalQty.ToString() : "0",
-                                 Jun = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPJun == null ? "0" : items.PPMPJun : items.FKProjectReference.ProjectMonthStart == 6 ? items.PPMPTotalQty.ToString() : "0",
-                                 Jul = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPJul == null ? "0" : items.PPMPJul : items.FKProjectReference.ProjectMonthStart == 7 ? items.PPMPTotalQty.ToString() : "0",
-                                 Aug = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPAug == null ? "0" : items.PPMPAug : items.FKProjectReference.ProjectMonthStart == 8 ? items.PPMPTotalQty.ToString() : "0",
-                                 Sep = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPSep == null ? "0" : items.PPMPSep : items.FKProjectReference.ProjectMonthStart == 9 ? items.PPMPTotalQty.ToString() : "0",
-                                 Oct = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPOct == null ? "0" : items.PPMPOct : items.FKProjectReference.ProjectMonthStart == 10 ? items.PPMPTotalQty.ToString() : "0",
-                                 Nov = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPNov == null ? "0" : items.PPMPNov : items.FKProjectReference.ProjectMonthStart == 11 ? items.PPMPTotalQty.ToString() : "0",
-                                 Dec = items.FKProjectReference.ProjectCode.StartsWith("CSPR") ? items.PPMPDec == null ? "0" : items.PPMPDec : items.FKProjectReference.ProjectMonthStart == 12 ? items.PPMPTotalQty.ToString() : "0"
-                             }).ToList();
-
-            var appcseItems = (from ppmpItem in ppmpItems
-                               select new
-                               {
-                                   ItemID = ppmpItem.ItemID,
-                                   ItemName = ppmpItem.ItemName,
-                                   UnitOfMeasure = ppmpItem.UnitOfMeasure,
-                                   PriceCatalogue = ppmpItem.PriceCatalogue,
-                                   Jan = int.Parse(ppmpItem.Jan),
-                                   Feb = int.Parse(ppmpItem.Feb),
-                                   Mar = int.Parse(ppmpItem.Mar),
-                                   Apr = int.Parse(ppmpItem.Apr),
-                                   May = int.Parse(ppmpItem.May),
-                                   Jun = int.Parse(ppmpItem.Jun),
-                                   Jul = int.Parse(ppmpItem.Jul),
-                                   Aug = int.Parse(ppmpItem.Aug),
-                                   Sep = int.Parse(ppmpItem.Sep),
-                                   Oct = int.Parse(ppmpItem.Oct),
-                                   Nov = int.Parse(ppmpItem.Nov),
-                                   Dec = int.Parse(ppmpItem.Dec)
-                               } into results
-                               group results by new { results.ItemID, results.ItemName, results.UnitOfMeasure } into groupResults
-                               select new AnnualProcurementPlanCSEItemsVM
-                               {
-                                   ItemID = groupResults.Key.ItemID,
-                                   ItemSpecifications = groupResults.Key.ItemName,
-                                   UnitOfMeasure = groupResults.Key.UnitOfMeasure,
-                                   PriceCatalogue = groupResults.Average(x => x.PriceCatalogue),
-                                   JanQty = groupResults.Sum(x => x.Jan),
-                                   FebQty = groupResults.Sum(x => x.Feb),
-                                   MarQty = groupResults.Sum(x => x.Mar),
-                                   Q1Total = groupResults.Sum(x => x.Jan) + groupResults.Sum(x => x.Feb) + groupResults.Sum(x => x.Mar),
-                                   Q1Amount = groupResults.Average(x => x.PriceCatalogue) * (groupResults.Sum(x => x.Jan) + groupResults.Sum(x => x.Feb) + groupResults.Sum(x => x.Mar)),
-                                   AprQty = groupResults.Sum(x => x.Apr),
-                                   MayQty = groupResults.Sum(x => x.May),
-                                   JunQty = groupResults.Sum(x => x.Jun),
-                                   Q2Total = groupResults.Sum(x => x.Apr) + groupResults.Sum(x => x.May) + groupResults.Sum(x => x.Jun),
-                                   Q2Amount = groupResults.Average(x => x.PriceCatalogue) * (groupResults.Sum(x => x.Apr) + groupResults.Sum(x => x.May) + groupResults.Sum(x => x.Jun)),
-                                   JulQty = groupResults.Sum(x => x.Jul),
-                                   AugQty = groupResults.Sum(x => x.Aug),
-                                   SepQty = groupResults.Sum(x => x.Sep),
-                                   Q3Total = groupResults.Sum(x => x.Jul) + groupResults.Sum(x => x.Aug) + groupResults.Sum(x => x.Sep),
-                                   Q3Amount = groupResults.Average(x => x.PriceCatalogue) * (groupResults.Sum(x => x.Jul) + groupResults.Sum(x => x.Aug) + groupResults.Sum(x => x.Sep)),
-                                   OctQty = groupResults.Sum(x => x.Oct),
-                                   NovQty = groupResults.Sum(x => x.Nov),
-                                   DecQty = groupResults.Sum(x => x.Dec),
-                                   Q4Total = groupResults.Sum(x => x.Oct) + groupResults.Sum(x => x.Nov) + groupResults.Sum(x => x.Dec),
-                                   Q4Amount = groupResults.Average(x => x.PriceCatalogue) * (groupResults.Sum(x => x.Oct) + groupResults.Sum(x => x.Nov) + groupResults.Sum(x => x.Dec)),
-                                   TotalQty = groupResults.Sum(x => x.Jan) + groupResults.Sum(x => x.Feb) + groupResults.Sum(x => x.Mar) + groupResults.Sum(x => x.Apr) + groupResults.Sum(x => x.May) + groupResults.Sum(x => x.Jun) + groupResults.Sum(x => x.Jul) + groupResults.Sum(x => x.Aug) + groupResults.Sum(x => x.Sep) + groupResults.Sum(x => x.Oct) + groupResults.Sum(x => x.Nov) + groupResults.Sum(x => x.Dec),
-                                   TotalAmount = groupResults.Average(x => x.PriceCatalogue) * (groupResults.Sum(x => x.Jan) + groupResults.Sum(x => x.Feb) + groupResults.Sum(x => x.Mar) + groupResults.Sum(x => x.Apr) + groupResults.Sum(x => x.May) + groupResults.Sum(x => x.Jun) + groupResults.Sum(x => x.Jul) + groupResults.Sum(x => x.Aug) + groupResults.Sum(x => x.Sep) + groupResults.Sum(x => x.Oct) + groupResults.Sum(x => x.Nov) + groupResults.Sum(x => x.Dec))
-                               }).ToList();
-
-            return appcseItems;
+            return db.PPMPDetails.ToList()
+                                 .Where(d => d.FKPPMPHeaderReference.FiscalYear == FiscalYear &&
+                                             d.ProcurementSource == ProcurementSources.ExternalSuppliers &&
+                                             d.ArticleReference != null &&
+                                             d.FKItemArticleReference.FKItemTypeReference.FKItemClassificationReference.ID == 1 &&
+                                             d.PPMPDetailStatus == PPMPDetailStatus.ItemAccepted)
+                                 .GroupBy(d => new { d.ArticleReference, d.ItemSequence, d.UACS, d.CategoryReference, d.ItemFullName, d.ItemSpecifications, d.UnitCost, d.UOMReference, d.ProcurementSource })
+                                 .Select(d => new AnnualProcurementPlanCSEItemsVM
+                                 {
+                                     ItemCode = db.ItemArticles.Find(d.Key.ArticleReference).ArticleCode + "-" + d.Key.ItemSequence,
+                                     ArticleReference = (int)d.Key.ArticleReference,
+                                     ItemSequence = d.Key.ItemSequence,
+                                     ItemFullName = d.Key.ItemFullName,
+                                     ProcurementSource = d.Key.ProcurementSource,
+                                     ItemSpecifications = d.Key.ItemSpecifications,
+                                     UnitOfMeasure = d.Key.UOMReference,
+                                     UOM = db.UOM.Find(d.Key.UOMReference).Abbreviation,
+                                     CategoryReference = d.Key.CategoryReference,
+                                     UnitCost = d.Key.UnitCost,
+                                     UACS = d.Key.UACS,
+                                     JanQty = d.Sum(x => x.JanQty),
+                                     FebQty = d.Sum(x => x.FebQty),
+                                     MarQty = d.Sum(x => x.MarQty),
+                                     Q1TotalQty = d.Sum(x => x.Q1TotalQty),
+                                     Q1TotalAmount = Math.Round((d.Sum(x => x.Q1TotalQty) * d.Key.UnitCost), 2),
+                                     AprQty = d.Sum(x => x.AprQty),
+                                     MayQty = d.Sum(x => x.MayQty),
+                                     JunQty = d.Sum(x => x.JunQty),
+                                     Q2TotalQty = d.Sum(x => x.Q2TotalQty),
+                                     Q2TotalAmount = Math.Round((d.Sum(x => x.Q2TotalQty) * d.Key.UnitCost), 2),
+                                     JulQty = d.Sum(x => x.JulQty),
+                                     AugQty = d.Sum(x => x.AugQty),
+                                     SepQty = d.Sum(x => x.SepQty),
+                                     Q3TotalQty = d.Sum(x => x.Q3TotalQty),
+                                     Q3TotalAmount = Math.Round((d.Sum(x => x.Q3TotalQty) * d.Key.UnitCost), 2),
+                                     OctQty = d.Sum(x => x.OctQty),
+                                     NovQty = d.Sum(x => x.NovQty),
+                                     DecQty = d.Sum(x => x.DecQty),
+                                     Q4TotalQty = d.Sum(x => x.Q3TotalQty),
+                                     Q4TotalAmount = Math.Round((d.Sum(x => x.Q4TotalQty) * d.Key.UnitCost), 2),
+                                     TotalQty = d.Sum(x => x.TotalQty),
+                                     ApprovedBudget = Math.Round((d.Sum(x => x.TotalQty) * d.Key.UnitCost), 2)
+                                 }).ToList();
         }
         public bool PostAPPCSE(AnnualProcurementPlanCSEVM APPCSEViewModel, string UserEmail)
         {
@@ -841,16 +785,16 @@ namespace PUPFMIS.BusinessAndDataLogic
 
             AgencyDetails agencyDetails = db.AgencyDetails.First();
 
-            var hope = hrisDataAccess.GetFullDepartmentDetails(agencyDetails.HOPEReference);
-            var property = hrisDataAccess.GetFullDepartmentDetails(agencyDetails.PropertyOfficeReference);
-            var accounting = hrisDataAccess.GetFullDepartmentDetails(agencyDetails.AccountingOfficeReference);
-            var procurement = hrisDataAccess.GetFullDepartmentDetails(agencyDetails.ProcurementOfficeReference);
-            var bac = hrisDataAccess.GetFullDepartmentDetails(agencyDetails.BACOfficeReference);
+            var hope = hris.GetDepartmentDetails(agencyDetails.HOPEReference);
+            var property = hris.GetDepartmentDetails(agencyDetails.PropertyOfficeReference);
+            var accounting = hris.GetDepartmentDetails(agencyDetails.AccountingOfficeReference);
+            var procurement = hris.GetDepartmentDetails(agencyDetails.ProcurementOfficeReference);
+            var bac = hris.GetDepartmentDetails(agencyDetails.BACOfficeReference);
 
             AnnualProcurementPlan appHeader = new AnnualProcurementPlan()
             {
                 FiscalYear = APPCSEViewModel.FiscalYear,
-                APPType = "CSE",
+                APPType = APPTypes.APPCSE,
                 ReferenceNo = GenerateAPPCSEReferenceNo(APPCSEViewModel.FiscalYear),
                 PreparedBy = property.DepartmentHead,
                 PreparedByDepartmentCode = property.DepartmentCode,
@@ -858,103 +802,87 @@ namespace PUPFMIS.BusinessAndDataLogic
                 RecommendingApproval = accounting.DepartmentHead,
                 RecommendingApprovalDesignation = accounting.DepartmentHeadDesignation,
                 RecommendingApprovalDepartmentCode = accounting.DepartmentCode,
-                ApprovedBy = hope.DepartmentHead,
-                ApprovedByDesignation = hope.DepartmentHeadDesignation,
-                ApprovedByDepartmentCode = hope.DepartmentCode,
+                ApprovedBy = hope.SectorHead,
+                ApprovedByDesignation = hope.SectorHeadDesignation,
+                ApprovedByDepartmentCode = hope.SectorCode,
                 CreatedBy = user.EmpCode,
                 CreatedAt = DateTime.Now
             };
 
             db.APPHeader.Add(appHeader);
-            if(db.SaveChanges() == 0)
+            if (db.SaveChanges() == 0)
             {
                 return false;
             }
 
-            List<APPCSEDetails> appCSEDetails = new List<APPCSEDetails>();
-            if(APPCSEViewModel.APPDBMItems != null)
-            {
-                foreach (var item in APPCSEViewModel.APPDBMItems)
-                {
-                    appCSEDetails.Add(new APPCSEDetails
-                    {
-                        APPHeaderReference = appHeader.ID,
-                        ItemReference = item.ItemID,
-                        PriceCatalogue = item.PriceCatalogue,
-                        JanQty = item.JanQty,
-                        FebQty = item.FebQty,
-                        MarQty = item.MarQty,
-                        AprQty = item.AprQty,
-                        MayQty = item.MayQty,
-                        JunQty = item.JunQty,
-                        JulQty = item.JulQty,
-                        AugQty = item.AugQty,
-                        SepQty = item.SepQty,
-                        OctQty = item.OctQty,
-                        NovQty = item.NovQty,
-                        DecQty = item.DecQty
-                    });
-                }
-            }
-            
-            if(APPCSEViewModel.APPNonDBMItems != null)
-            {
-                foreach (var item in APPCSEViewModel.APPNonDBMItems)
-                {
-                    appCSEDetails.Add(new APPCSEDetails
-                    {
-                        APPHeaderReference = appHeader.ID,
-                        ItemReference = item.ItemID,
-                        PriceCatalogue = item.PriceCatalogue,
-                        JanQty = item.JanQty,
-                        FebQty = item.FebQty,
-                        MarQty = item.MarQty,
-                        AprQty = item.AprQty,
-                        MayQty = item.MayQty,
-                        JunQty = item.JunQty,
-                        JulQty = item.JulQty,
-                        AugQty = item.AugQty,
-                        SepQty = item.SepQty,
-                        OctQty = item.OctQty,
-                        NovQty = item.NovQty,
-                        DecQty = item.DecQty
-                    });
-                }
-            }
+            db.APPCSEDetails.AddRange(APPCSEViewModel.APPDBMItems
+                                               .Union(APPCSEViewModel.APPNonDBMItems)
+                                               .ToList()
+                                               .Select(d => new APPCSEDetails
+                                               {
+                                                   APPHeaderReference = appHeader.ID,
+                                                   ArticleReference = d.ArticleReference,
+                                                   ItemFullName = d.ItemFullName,
+                                                   ItemSpecifications = d.ItemSpecifications,
+                                                   CategoryReference = d.CategoryReference,
+                                                   ItemSequence = d.ItemSequence,
+                                                   ProcurementSource = d.ProcurementSource,
+                                                   UOMReference = d.UnitOfMeasure,
+                                                   UACS = d.UACS,
+                                                   FundSource = d.FundSource,
+                                                   JanQty = d.JanQty,
+                                                   FebQty = d.FebQty,
+                                                   MarQty = d.MarQty,
+                                                   Q1TotalQty = d.Q1TotalQty,
+                                                   AprQty = d.AprQty,
+                                                   MayQty = d.MayQty,
+                                                   JunQty = d.JunQty,
+                                                   Q2TotalQty = d.Q2TotalQty,
+                                                   JulQty = d.JulQty,
+                                                   AugQty = d.AugQty,
+                                                   SepQty = d.SepQty,
+                                                   Q3TotalQty = d.Q3TotalQty,
+                                                   OctQty = d.OctQty,
+                                                   NovQty = d.NovQty,
+                                                   DecQty = d.DecQty,
+                                                   Q4TotalQty = d.Q4TotalQty,
+                                                   TotalQty = d.TotalQty,
+                                                   UnitCost = d.UnitCost,
+                                                   ApprovedBudget = d.ApprovedBudget
+                                               }).ToList());
 
-            db.APPCSEDetails.AddRange(appCSEDetails);
-            if(db.SaveChanges() == 0)
+            if (db.SaveChanges() == 0)
             {
                 return false;
             }
 
-            if(APPCSEViewModel.APPDBMItems != null)
-            {
-                foreach (var appItem in APPCSEViewModel.APPDBMItems)
-                {
-                    var ppmpItems = db.ProjectPlanItems.Where(d => d.FKPPMPReference.FiscalYear == APPCSEViewModel.FiscalYear && d.FKItemReference.ID == appItem.ItemID && d.Status == "Approved").ToList();
-                    ppmpItems.ForEach(d => { d.APPReference = appHeader.ID; d.Status = "Posted to APP"; });
-                    db.SaveChanges();
-                    var ppmpReferences = ppmpItems.Select(d => d.PPMPReference).GroupBy(d => d).Select(d => d.Key).ToList();
-                    var ppmps = db.PPMPHeader.Where(d => ppmpReferences.Contains(d.ID)).ToList();
-                    ppmps.ForEach(d => { d.Status = "Posted to APP"; });
-                    db.SaveChanges();
-                }
-            }
+            //if (APPCSEViewModel.APPDBMItems != null)
+            //{
+            //    foreach (var appItem in APPCSEViewModel.APPDBMItems)
+            //    {
+            //        var ppmpItems = db.ProjectPlanItems.Where(d => d.FKPPMPReference.FiscalYear == APPCSEViewModel.FiscalYear && d.FKItemReference.ID == appItem.ItemID && d.Status == "Approved").ToList();
+            //        ppmpItems.ForEach(d => { d.APPReference = appHeader.ID; d.Status = "Posted to APP"; });
+            //        db.SaveChanges();
+            //        var ppmpReferences = ppmpItems.Select(d => d.PPMPReference).GroupBy(d => d).Select(d => d.Key).ToList();
+            //        var ppmps = db.PPMPHeader.Where(d => ppmpReferences.Contains(d.ID)).ToList();
+            //        ppmps.ForEach(d => { d.Status = "Posted to APP"; });
+            //        db.SaveChanges();
+            //    }
+            //}
 
-            if(APPCSEViewModel.APPNonDBMItems != null)
-            {
-                foreach (var appItem in APPCSEViewModel.APPNonDBMItems)
-                {
-                    var ppmpItems = db.ProjectPlanItems.Where(d => d.FKPPMPReference.FiscalYear == APPCSEViewModel.FiscalYear && d.FKItemReference.ID == appItem.ItemID && d.Status == "Approved").ToList();
-                    ppmpItems.ForEach(d => { d.APPReference = appHeader.ID; d.Status = "Posted to APP"; });
-                    db.SaveChanges();
-                    var ppmpReferences = ppmpItems.Select(d => d.PPMPReference).GroupBy(d => d).Select(d => d.Key).ToList();
-                    var ppmps = db.PPMPHeader.Where(d => ppmpReferences.Contains(d.ID)).ToList();
-                    ppmps.ForEach(d => { d.Status = "Posted to APP"; });
-                    db.SaveChanges();
-                }
-            }
+            //if (APPCSEViewModel.APPNonDBMItems != null)
+            //{
+            //    foreach (var appItem in APPCSEViewModel.APPNonDBMItems)
+            //    {
+            //        var ppmpItems = db.ProjectPlanItems.Where(d => d.FKPPMPReference.FiscalYear == APPCSEViewModel.FiscalYear && d.FKItemReference.ID == appItem.ItemID && d.Status == "Approved").ToList();
+            //        ppmpItems.ForEach(d => { d.APPReference = appHeader.ID; d.Status = "Posted to APP"; });
+            //        db.SaveChanges();
+            //        var ppmpReferences = ppmpItems.Select(d => d.PPMPReference).GroupBy(d => d).Select(d => d.Key).ToList();
+            //        var ppmps = db.PPMPHeader.Where(d => ppmpReferences.Contains(d.ID)).ToList();
+            //        ppmps.ForEach(d => { d.Status = "Posted to APP"; });
+            //        db.SaveChanges();
+            //    }
+            //}
 
             return true;
         }
@@ -963,7 +891,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             string referenceNo = String.Empty;
             var sequenceNo = (db.APPHeader.Where(d => d.ReferenceNo.Contains("ANPP-CSE") && d.FiscalYear == FiscalYear).Count() + 1).ToString();
             sequenceNo = (sequenceNo.Length == 1) ? "00" + sequenceNo : (sequenceNo.Length == 2) ? "0" + sequenceNo : sequenceNo;
-            referenceNo = "ANPP-CSE-" + sequenceNo + "-" + FiscalYear;
+            referenceNo = "ANPP-" + APPTypes.APPCSE.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().ShortName + "-" + sequenceNo + "-" + FiscalYear;
             return referenceNo;
         }
         protected override void Dispose(bool disposing)
@@ -971,8 +899,8 @@ namespace PUPFMIS.BusinessAndDataLogic
             if (disposing)
             {
                 db.Dispose();
-                hrdb.Dispose();
-                abdb.Dispose();
+                hris.Dispose();
+                abis.Dispose();
             }
             base.Dispose(disposing);
         }

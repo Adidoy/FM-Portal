@@ -1,0 +1,1026 @@
+﻿@model PUPFMIS.Models.PPMPItemDetailsVM
+
+@{
+    ViewBag.Title = "Project Procurement Plans";
+    ViewBag.Description = "Item Details";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Dashboard", "dashboard", "ProjectProcurementManagementPlans", new { Area = "end-users" })</li>
+        <li class="breadcrumb-item">@Html.ActionLink("PPMP Details", "details", "ProjectProcurementManagementPlans", new { Area = "end-users", ReferenceNo = ViewBag.ReferenceNo })</li>
+        <li class="breadcrumb-item">Item Details</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-right">
+        <h1 class="card-title"><i class="fa fa-bookmark"></i>&nbsp; PPMP Item Details</h1>
+    </div>
+}
+
+@using (Ajax.BeginForm("update-item-details", "ProjectProcurementManagementPlans", new { Area = "end-users" }, new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult", UpdateTargetId = "form-container" }, htmlAttributes: new { id = "addItem" }))
+{
+    <div id="form-container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card card-info">
+                    <div class="card-header">
+                        <h3 class="card-title">ITEM AND SPECIFICATIONS</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                @Html.HiddenFor(d => d.Item.ItemCode)
+                                                @Html.HiddenFor(d => d.Item.ReferenceNo)
+                                                <h4 class="card-title"><b>@Model.Item.ItemName <small>(@Model.Item.ItemCode)</small></b></h4>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <h6>ITEM DETAILS:</h6>
+                                                        <div class="row">
+                                                            <div class="col-sm-2"><b>Item Type</b></div>
+                                                            @Html.HiddenFor(modelItem => modelItem.Item.ItemType)
+                                                            <div class="col-sm-1">:</div>
+                                                            <div class="col-sm-9"><i>@Html.DisplayFor(modelItem => modelItem.Item.ItemType)</i></div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-2"><b>Category</b></div>
+                                                            @Html.HiddenFor(modelItem => modelItem.Item.Category)
+                                                            <div class="col-sm-1">:</div>
+                                                            <div class="col-sm-9"><i>@Html.DisplayFor(modelItem => modelItem.Item.Category)</i></div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-2"><b>Procurement Source</b></div>
+                                                            <div class="col-sm-1">:</div>
+                                                            @Html.HiddenFor(modelItem => modelItem.Item.ProcurementSource)
+                                                            <div class="col-sm-9"><i>@Html.DisplayFor(modelItem => modelItem.Item.ProcurementSource)</i></div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-2"><b>Unit of Measure</b></div>
+                                                            <div class="col-sm-1">:</div>
+                                                            @Html.HiddenFor(modelItem => modelItem.Item.IndividualUOMReference)
+                                                            <div class="col-sm-9"><i>@Html.DisplayFor(modelItem => modelItem.Item.IndividualUOMReference)</i></div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-2"><b>Unit Cost</b></div>
+                                                            <div class="col-sm-1">:</div>
+                                                            @Html.HiddenFor(modelItem => modelItem.Item.UnitCost)
+                                                            <div class="col-sm-9">
+                                                                <i>@( Model.Item.UnitCost.Value.ToString("C", new System.Globalization.CultureInfo("en-ph")) )</i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title"><b>ITEM SPECIFICATIONS</b></h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="ml-3 mr-3">
+                                                    <p style="text-align:justify; font-size:9pt;">@Html.DisplayFor(modelItem => modelItem.Item.ItemSpecifications)</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card card-info">
+                    <div class="card-header">
+                        <h3 class="card-title">PROJECTS</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="card card-primary card-outline">
+                            <div class="card-header d-flex p-0">
+                                <ul class="nav nav-pills p-2">
+                                    @for (int i = 0; i < Model.ProjectPlans.Count; i++)
+                                    {
+                                        if (i == 0)
+                                        {
+                                            <li class="nav-item" style="font-size:12pt;"><a class="nav-link active" href="#@Model.ProjectPlans[i].ProjectCode" data-toggle="tab"><i class="fa fa-list"></i>&nbsp; @Model.ProjectPlans[i].ProjectCode</a></li>
+                                        }
+                                        else
+                                        {
+                                            <li class="nav-item" style="font-size:12pt;"><a class="nav-link" href="#@Model.ProjectPlans[i].ProjectCode" data-toggle="tab"><i class="fa fa-list"></i>&nbsp; @Model.ProjectPlans[i].ProjectCode</a></li>
+                                        }
+                                    }
+                                </ul>
+                            </div>
+                            <div class="tab-content">
+                                @for (int i = 0; i < Model.ProjectPlans.Count; i++)
+                                {
+                                    if (i == 0)
+                                    {
+                                        <div class="tab-pane active" id="@Model.ProjectPlans[i].ProjectCode">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-lg-3 col-md-3 col-sm-12">
+                                                        <b>@Html.DisplayNameFor(model => Model.ProjectPlans[i].UnitName)</b>
+                                                    </div>
+                                                    <div class="col-lg-9 col-md-9 col-sm-12">
+                                                        @Html.HiddenFor(d => Model.ProjectPlans[i].UnitName)
+                                                        @Html.HiddenFor(d => Model.ProjectPlans[i].UnitName)
+                                                        <span>:&nbsp;</span><b>@Html.DisplayFor(model => Model.ProjectPlans[i].UnitName).ToString().ToUpper()</b>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-3 col-md-3 col-sm-12">
+                                                        <b>@Html.DisplayNameFor(model => Model.ProjectPlans[i].Program)</b>
+                                                    </div>
+                                                    <div class="col-lg-9 col-md-9 col-sm-12">
+                                                        @Html.HiddenFor(d => Model.ProjectPlans[i].PAPCode)
+                                                        @Html.HiddenFor(d => Model.ProjectPlans[i].Program)
+                                                        <span>:&nbsp;</span>@Html.DisplayFor(model => Model.ProjectPlans[i].Program) (@Html.DisplayFor(model => Model.ProjectPlans[i].PAPCode))
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-3 col-md-3 col-sm-12">
+                                                        <b>@Html.DisplayNameFor(model => Model.ProjectPlans[i].ProjectName)</b>
+                                                    </div>
+                                                    <div class="col-lg-9 col-md-9 col-sm-12">
+                                                        @Html.HiddenFor(d => Model.ProjectPlans[i].ProjectCode)
+                                                        @Html.HiddenFor(d => Model.ProjectPlans[i].ProjectName)
+                                                        <span>:&nbsp;</span>@Html.DisplayFor(model => Model.ProjectPlans[i].ProjectName) (@Html.DisplayFor(model => Model.ProjectPlans[i].ProjectCode))
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-3 col-md-3 col-sm-12">
+                                                        <b>@Html.DisplayNameFor(model => Model.ProjectPlans[i].Description)</b>
+                                                    </div>
+                                                    <div class="col-lg-9 col-md-9 col-sm-12">
+                                                        @Html.HiddenFor(d => Model.ProjectPlans[i].Description)
+                                                        <span>:&nbsp;</span>@Html.DisplayFor(model => Model.ProjectPlans[i].Description)
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-3 col-md-3 col-sm-12">
+                                                        <b>@Html.DisplayNameFor(model => Model.ProjectPlans[i].ItemStatus)</b>
+                                                    </div>
+                                                    <div class="col-lg-9 col-md-9 col-sm-12">
+                                                        @Html.HiddenFor(d => Model.ProjectPlans[i].ItemStatus)
+                                                        <span>:&nbsp;</span>
+                                                        @if (Model.ProjectPlans[i].ItemStatus == PUPFMIS.Models.PPMPDetailStatus.PostedToPPMP)
+                                                        {
+                                                            <span class="badge bg-primary p-1" style="font-size:100%;">@( Model.ProjectPlans[i].ItemStatus.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</span>
+                                                            <br />
+                                                        }
+                                                        @if (Model.ProjectPlans[i].ItemStatus == PUPFMIS.Models.PPMPDetailStatus.ForEvaluation)
+                                                        {
+                                                            <span class="badge bg-secondary p-1" style="font-size:100%;">@( Model.ProjectPlans[i].ItemStatus.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</span>
+                                                            <br />
+                                                        }
+                                                        @if (Model.ProjectPlans[i].ItemStatus == PUPFMIS.Models.PPMPDetailStatus.ItemAccepted)
+                                                        {
+                                                            <span class="badge bg-success p-1" style="font-size:100%;">@( Model.ProjectPlans[i].ItemStatus.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</span>
+                                                            <br />
+                                                        }
+                                                        @if (Model.ProjectPlans[i].ItemStatus == PUPFMIS.Models.PPMPDetailStatus.ForRevision)
+                                                        {
+                                                            <span class="badge bg-warning p-1" style="font-size:100%;">@( Model.ProjectPlans[i].ItemStatus.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</span>
+                                                            <br />
+                                                        }
+                                                        @if (Model.ProjectPlans[i].ItemStatus == PUPFMIS.Models.PPMPDetailStatus.ItemNotAccepted)
+                                                        {
+                                                            <span class="badge bg-danger p-1" style="font-size:100%;">@( Model.ProjectPlans[i].ItemStatus.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</span>
+                                                        }
+                                                    </div>
+                                                </div>
+                                                @if (Model.ProjectPlans[i].ItemStatus == PUPFMIS.Models.PPMPDetailStatus.ForRevision || Model.ProjectPlans[i].ItemStatus == PUPFMIS.Models.PPMPDetailStatus.ItemNotAccepted)
+                                                {
+                                                    <div class="row">
+                                                        <div class="col-lg-3 col-md-3 col-sm-12">
+                                                            <b>@Html.DisplayNameFor(model => Model.ProjectPlans[i].ReasonForNonAcceptance)</b>
+                                                        </div>
+                                                        <div class="col-lg-9 col-md-9 col-sm-12">
+                                                            @Html.HiddenFor(d => Model.ProjectPlans[i].ItemStatus)
+                                                            <span>:&nbsp;</span>@( Model.ProjectPlans[i].ReasonForNonAcceptance.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )
+                                                        </div>
+                                                    </div>
+                                                }
+                                                <hr />
+                                                @if (Model.ProjectPlans[i].ProjectCode.Contains("CSPR"))
+                                                {
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <div class="card">
+                                                                <div class="card-header">
+                                                                    <h3 class="card-title">Quantity Requirement</h3>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    @if (Model.ProjectPlans[i].UpdateFlag == true)
+                                                                    {
+                                                                        <div class="row">
+                                                                            <div class="col-lg-3 col-md-3 col-sm-12">
+                                                                                <b>Quarter 1</b>
+                                                                                <br /><br />
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].JanQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].JanQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].JanQty == 0) ? 0 : Model.ProjectPlans[i].JanQty } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].JanQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].FebQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].FebQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].FebQty == 0) ? 0 : Model.ProjectPlans[i].FebQty } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].FebQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].MarQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].MarQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].MarQty == 0) ? 0 : Model.ProjectPlans[i].MarQty } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].MarQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-lg-3 col-md-3 col-sm-12">
+                                                                                <b>Quarter 2</b>
+                                                                                <br /><br />
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].AprQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].AprQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].AprQty == 0) ? 0 : Model.ProjectPlans[i].AprQty } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].AprQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].MayQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].MayQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].MayQty == 0) ? 0 : Model.ProjectPlans[i].MayQty } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].MayQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].JunQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].JunQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].JunQty == 0) ? 0 : Model.ProjectPlans[i].JunQty } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].JunQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-lg-3 col-md-3 col-sm-12">
+                                                                                <b>Quarter 3</b>
+                                                                                <br /><br />
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].JulQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].JulQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].JulQty == 0) ? 0 : Model.ProjectPlans[i].JulQty } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].JulQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].AugQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].AugQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].AugQty == 0) ? 0 : Model.ProjectPlans[i].AugQty } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].AugQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].SepQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].SepQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].SepQty == 0) ? 0 : Model.ProjectPlans[i].SepQty } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].SepQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-lg-3 col-md-3 col-sm-12">
+                                                                                <b>Quarter 4</b>
+                                                                                <br /><br />
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].OctQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].OctQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].OctQty == 0) ? 0 : Model.ProjectPlans[i].OctQty } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].OctQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].NovQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].NovQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].NovQty == 0) ? 0 : Model.ProjectPlans[i].NovQty } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].NovQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].DecQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].DecQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].DecQty == 0) ? 0 : Model.ProjectPlans[i].DecQty } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].DecQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <div class="row">
+                                                                            <div class="col-lg-3 col-md-3 col-sm-12">
+                                                                                <b>Quarter 1</b>
+                                                                                <br /><br />
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].JanQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].JanQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].JanQty == 0) ? 0 : Model.ProjectPlans[i].JanQty, disabled = "disabled" } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].JanQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].FebQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].FebQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].FebQty == 0) ? 0 : Model.ProjectPlans[i].FebQty, disabled = "disabled" } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].FebQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].MarQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].MarQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].MarQty == 0) ? 0 : Model.ProjectPlans[i].MarQty, disabled = "disabled" } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].MarQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-lg-3 col-md-3 col-sm-12">
+                                                                                <b>Quarter 2</b>
+                                                                                <br /><br />
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].AprQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].AprQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].AprQty == 0) ? 0 : Model.ProjectPlans[i].AprQty, disabled = "disabled" } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].AprQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].MayQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].MayQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].MayQty == 0) ? 0 : Model.ProjectPlans[i].MayQty, disabled = "disabled" } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].MayQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].JunQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].JunQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].JunQty == 0) ? 0 : Model.ProjectPlans[i].JunQty, disabled = "disabled" } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].JunQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-lg-3 col-md-3 col-sm-12">
+                                                                                <b>Quarter 3</b>
+                                                                                <br /><br />
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].JulQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].JulQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].JulQty == 0) ? 0 : Model.ProjectPlans[i].JulQty, disabled = "disabled" } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].JulQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].AugQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].AugQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].AugQty == 0) ? 0 : Model.ProjectPlans[i].AugQty, disabled = "disabled" } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].AugQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].SepQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].SepQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].SepQty == 0) ? 0 : Model.ProjectPlans[i].SepQty, disabled = "disabled" } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].SepQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-lg-3 col-md-3 col-sm-12">
+                                                                                <b>Quarter 4</b>
+                                                                                <br /><br />
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].OctQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].OctQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].OctQty == 0) ? 0 : Model.ProjectPlans[i].OctQty, disabled = "disabled" } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].OctQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].NovQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].NovQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].NovQty == 0) ? 0 : Model.ProjectPlans[i].NovQty, disabled = "disabled" } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].NovQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].DecQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].DecQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].DecQty == 0) ? 0 : Model.ProjectPlans[i].DecQty, disabled = "disabled" } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].DecQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <div class="card">
+                                                                <div class="card-header">
+                                                                    <h3 class="card-title">Quantity Requirement</h3>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    @if (Model.ProjectPlans[i].UpdateFlag == true)
+                                                                    {
+                                                                        <div class="row">
+                                                                            <div class="col-sm-3">
+                                                                                <div class="row mt-2">
+                                                                                    <div class="col-sm-12">
+                                                                                        <h6 style="color:black;"><b>Quantity Requirement:</b></h6>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-sm-2">
+                                                                                @Html.EditorFor(m => Model.ProjectPlans[i].TotalQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].TotalQty == 0) ? 0 : Model.ProjectPlans[i].TotalQty } })
+                                                                                @Html.ValidationMessageFor(model => Model.ProjectPlans[i].TotalQty, "", new { @class = "text-danger" })
+                                                                            </div>
+                                                                            <div class="col-sm-4"></div>
+                                                                        </div>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <div class="row">
+                                                                            <div class="col-sm-3">
+                                                                                <div class="row mt-2">
+                                                                                    <div class="col-sm-12">
+                                                                                        <h6 style="color:black;"><b>Quantity Requirement:</b></h6>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-sm-2">
+                                                                                @Html.EditorFor(m => Model.ProjectPlans[i].TotalQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].TotalQty == 0) ? 0 : Model.ProjectPlans[i].TotalQty, disabled = "disabled" } })
+                                                                                @Html.ValidationMessageFor(model => Model.ProjectPlans[i].TotalQty, "", new { @class = "text-danger" })
+                                                                            </div>
+                                                                            <div class="col-sm-4"></div>
+                                                                        </div>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                @if (Model.ProjectPlans[i].UpdateFlag == true)
+                                                {
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <div class="card">
+                                                                <div class="card-header">
+                                                                    <h3 class="card-title">Justification</h3>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <div class="form-group">
+                                                                        @Html.Label("Justification", htmlAttributes: new { @class = "control-label" })
+                                                                        <div class="input-group input-group-sm mb-3">
+                                                                            <div class="input-group-prepend">
+                                                                                <span class="input-group-text"><i class="fa fa-paragraph"></i></span>
+                                                                            </div>
+                                                                            @Html.EditorFor(m => Model.ProjectPlans[i].Justification, new { htmlAttributes = new { @class = "form-control form-control-sm", placeholder = "Enter the justification here...", style = "font-size: 100%; height: 75px", Value = (Model.ProjectPlans[i].Justification == null || Model.ProjectPlans[i].Justification == string.Empty) ? string.Empty : Model.ProjectPlans[i].Justification } })
+                                                                        </div>
+                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].Justification, "", new { @class = "text-danger" })
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <div class="card">
+                                                                <div class="card-header">
+                                                                    <h3 class="card-title">Justification</h3>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <div class="form-group">
+                                                                        @Html.Label("Justification", htmlAttributes: new { @class = "control-label" })
+                                                                        <div class="input-group input-group-sm mb-3">
+                                                                            <div class="input-group-prepend">
+                                                                                <span class="input-group-text"><i class="fa fa-paragraph"></i></span>
+                                                                            </div>
+                                                                            @Html.EditorFor(m => Model.ProjectPlans[i].Justification, new { htmlAttributes = new { @class = "form-control form-control-sm", placeholder = "Enter the justification here...", style = "font-size: 100%; height: 75px", Value = (Model.ProjectPlans[i].Justification == null || Model.ProjectPlans[i].Justification == string.Empty) ? string.Empty : Model.ProjectPlans[i].Justification, disabled = "disabled" } })
+                                                                        </div>
+                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].Justification, "", new { @class = "text-danger" })
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="tab-pane" id="@Model.ProjectPlans[i].ProjectCode">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-lg-3 col-md-3 col-sm-12">
+                                                        <b>@Html.DisplayNameFor(model => Model.ProjectPlans[i].UnitName)</b>
+                                                    </div>
+                                                    <div class="col-lg-9 col-md-9 col-sm-12">
+                                                        @Html.HiddenFor(d => Model.ProjectPlans[i].UnitName)
+                                                        @Html.HiddenFor(d => Model.ProjectPlans[i].UnitName)
+                                                        <span>:&nbsp;</span><b>@Html.DisplayFor(model => Model.ProjectPlans[i].UnitName).ToString().ToUpper()</b>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-3 col-md-3 col-sm-12">
+                                                        <b>@Html.DisplayNameFor(model => Model.ProjectPlans[i].Program)</b>
+                                                    </div>
+                                                    <div class="col-lg-9 col-md-9 col-sm-12">
+                                                        @Html.HiddenFor(d => Model.ProjectPlans[i].PAPCode)
+                                                        @Html.HiddenFor(d => Model.ProjectPlans[i].Program)
+                                                        <span>:&nbsp;</span>@Html.DisplayFor(model => Model.ProjectPlans[i].Program) (@Html.DisplayFor(model => Model.ProjectPlans[i].PAPCode))
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-3 col-md-3 col-sm-12">
+                                                        <b>@Html.DisplayNameFor(model => Model.ProjectPlans[i].ProjectName)</b>
+                                                    </div>
+                                                    <div class="col-lg-9 col-md-9 col-sm-12">
+                                                        @Html.HiddenFor(d => Model.ProjectPlans[i].ProjectCode)
+                                                        @Html.HiddenFor(d => Model.ProjectPlans[i].ProjectName)
+                                                        <span>:&nbsp;</span>@Html.DisplayFor(model => Model.ProjectPlans[i].ProjectName) (@Html.DisplayFor(model => Model.ProjectPlans[i].ProjectCode))
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-3 col-md-3 col-sm-12">
+                                                        <b>@Html.DisplayNameFor(model => Model.ProjectPlans[i].Description)</b>
+                                                    </div>
+                                                    <div class="col-lg-9 col-md-9 col-sm-12">
+                                                        @Html.HiddenFor(d => Model.ProjectPlans[i].Description)
+                                                        <span>:&nbsp;</span>@Html.DisplayFor(model => Model.ProjectPlans[i].Description)
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-3 col-md-3 col-sm-12">
+                                                        <b>@Html.DisplayNameFor(model => Model.ProjectPlans[i].ItemStatus)</b>
+                                                    </div>
+                                                    <div class="col-lg-9 col-md-9 col-sm-12">
+                                                        @Html.HiddenFor(d => Model.ProjectPlans[i].ItemStatus)
+                                                        <span>:&nbsp;</span>
+                                                        @if (Model.ProjectPlans[i].ItemStatus == PUPFMIS.Models.PPMPDetailStatus.PostedToPPMP)
+                                                        {
+                                                            <span class="badge bg-primary p-1" style="font-size:100%;">@( Model.ProjectPlans[i].ItemStatus.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</span>
+                                                            <br />
+                                                        }
+                                                        @if (Model.ProjectPlans[i].ItemStatus == PUPFMIS.Models.PPMPDetailStatus.ForEvaluation)
+                                                        {
+                                                            <span class="badge bg-secondary p-1" style="font-size:100%;">@( Model.ProjectPlans[i].ItemStatus.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</span>
+                                                            <br />
+                                                        }
+                                                        @if (Model.ProjectPlans[i].ItemStatus == PUPFMIS.Models.PPMPDetailStatus.ItemAccepted)
+                                                        {
+                                                            <span class="badge bg-success p-1" style="font-size:100%;">@( Model.ProjectPlans[i].ItemStatus.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</span>
+                                                            <br />
+                                                        }
+                                                        @if (Model.ProjectPlans[i].ItemStatus == PUPFMIS.Models.PPMPDetailStatus.ForRevision)
+                                                        {
+                                                            <span class="badge bg-warning p-1" style="font-size:100%;">@( Model.ProjectPlans[i].ItemStatus.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</span>
+                                                            <br />
+                                                        }
+                                                        @if (Model.ProjectPlans[i].ItemStatus == PUPFMIS.Models.PPMPDetailStatus.ItemNotAccepted)
+                                                        {
+                                                            <span class="badge bg-danger p-1" style="font-size:100%;">@( Model.ProjectPlans[i].ItemStatus.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</span>
+                                                        }
+                                                    </div>
+                                                </div>
+                                                @if (Model.ProjectPlans[i].ItemStatus == PUPFMIS.Models.PPMPDetailStatus.ForRevision || Model.ProjectPlans[i].ItemStatus == PUPFMIS.Models.PPMPDetailStatus.ItemNotAccepted)
+                                                {
+                                                    <div class="row">
+                                                        <div class="col-lg-3 col-md-3 col-sm-12">
+                                                            <b>@Html.DisplayNameFor(model => Model.ProjectPlans[i].ReasonForNonAcceptance)</b>
+                                                        </div>
+                                                        <div class="col-lg-9 col-md-9 col-sm-12">
+                                                            @Html.HiddenFor(d => Model.ProjectPlans[i].ItemStatus)
+                                                            <span>:&nbsp;</span>@( Model.ProjectPlans[i].ReasonForNonAcceptance.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )
+                                                        </div>
+                                                    </div>
+                                                }
+                                                <hr />
+                                                @if (Model.ProjectPlans[i].ProjectCode.Contains("CSPR"))
+                                                {
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <div class="card">
+                                                                <div class="card-header">
+                                                                    <h3 class="card-title">Quantity Requirement</h3>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    @if (Model.ProjectPlans[i].UpdateFlag == true)
+                                                                    {
+                                                                        <div class="row">
+                                                                            <div class="col-lg-3 col-md-3 col-sm-12">
+                                                                                <b>Quarter 1</b>
+                                                                                <br /><br />
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].JanQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].JanQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].JanQty == 0) ? 0 : Model.ProjectPlans[i].JanQty } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].JanQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].FebQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].FebQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].FebQty == 0) ? 0 : Model.ProjectPlans[i].FebQty } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].FebQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].MarQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].MarQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].MarQty == 0) ? 0 : Model.ProjectPlans[i].MarQty } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].MarQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-lg-3 col-md-3 col-sm-12">
+                                                                                <b>Quarter 2</b>
+                                                                                <br /><br />
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].AprQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].AprQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].AprQty == 0) ? 0 : Model.ProjectPlans[i].AprQty } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].AprQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].MayQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].MayQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].MayQty == 0) ? 0 : Model.ProjectPlans[i].MayQty } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].MayQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].JunQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].JunQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].JunQty == 0) ? 0 : Model.ProjectPlans[i].JunQty } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].JunQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-lg-3 col-md-3 col-sm-12">
+                                                                                <b>Quarter 3</b>
+                                                                                <br /><br />
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].JulQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].JulQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].JulQty == 0) ? 0 : Model.ProjectPlans[i].JulQty } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].JulQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].AugQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].AugQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].AugQty == 0) ? 0 : Model.ProjectPlans[i].AugQty } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].AugQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].SepQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].SepQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].SepQty == 0) ? 0 : Model.ProjectPlans[i].SepQty } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].SepQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-lg-3 col-md-3 col-sm-12">
+                                                                                <b>Quarter 4</b>
+                                                                                <br /><br />
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].OctQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].OctQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].OctQty == 0) ? 0 : Model.ProjectPlans[i].OctQty } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].OctQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].NovQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].NovQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].NovQty == 0) ? 0 : Model.ProjectPlans[i].NovQty } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].NovQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].DecQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].DecQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].DecQty == 0) ? 0 : Model.ProjectPlans[i].DecQty } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].DecQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <div class="row">
+                                                                            <div class="col-lg-3 col-md-3 col-sm-12">
+                                                                                <b>Quarter 1</b>
+                                                                                <br /><br />
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].JanQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].JanQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].JanQty == 0) ? 0 : Model.ProjectPlans[i].JanQty, disabled = "disabled" } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].JanQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].FebQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].FebQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].FebQty == 0) ? 0 : Model.ProjectPlans[i].FebQty, disabled = "disabled" } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].FebQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].MarQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].MarQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].MarQty == 0) ? 0 : Model.ProjectPlans[i].MarQty, disabled = "disabled" } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].MarQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-lg-3 col-md-3 col-sm-12">
+                                                                                <b>Quarter 2</b>
+                                                                                <br /><br />
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].AprQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].AprQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].AprQty == 0) ? 0 : Model.ProjectPlans[i].AprQty, disabled = "disabled" } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].AprQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].MayQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].MayQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].MayQty == 0) ? 0 : Model.ProjectPlans[i].MayQty, disabled = "disabled" } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].MayQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].JunQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].JunQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].JunQty == 0) ? 0 : Model.ProjectPlans[i].JunQty, disabled = "disabled" } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].JunQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-lg-3 col-md-3 col-sm-12">
+                                                                                <b>Quarter 3</b>
+                                                                                <br /><br />
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].JulQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].JulQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].JulQty == 0) ? 0 : Model.ProjectPlans[i].JulQty, disabled = "disabled" } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].JulQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].AugQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].AugQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].AugQty == 0) ? 0 : Model.ProjectPlans[i].AugQty, disabled = "disabled" } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].AugQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].SepQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].SepQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].SepQty == 0) ? 0 : Model.ProjectPlans[i].SepQty, disabled = "disabled" } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].SepQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-lg-3 col-md-3 col-sm-12">
+                                                                                <b>Quarter 4</b>
+                                                                                <br /><br />
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].OctQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].OctQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].OctQty == 0) ? 0 : Model.ProjectPlans[i].OctQty, disabled = "disabled" } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].OctQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].NovQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].NovQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].NovQty == 0) ? 0 : Model.ProjectPlans[i].NovQty, disabled = "disabled" } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].NovQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group-sm row mb-1">
+                                                                                    @Html.LabelFor(m => Model.ProjectPlans[i].DecQty, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+                                                                                    <div class="col-sm-8">
+                                                                                        @Html.EditorFor(m => Model.ProjectPlans[i].DecQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].DecQty == 0) ? 0 : Model.ProjectPlans[i].DecQty, disabled = "disabled" } })
+                                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].DecQty, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <div class="card">
+                                                                <div class="card-header">
+                                                                    <h3 class="card-title">Quantity Requirement</h3>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    @if (Model.ProjectPlans[i].UpdateFlag == true)
+                                                                    {
+                                                                        <div class="row">
+                                                                            <div class="col-sm-3">
+                                                                                <div class="row mt-2">
+                                                                                    <div class="col-sm-12">
+                                                                                        <h6 style="color:black;"><b>Quantity Requirement:</b></h6>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-sm-2">
+                                                                                @Html.EditorFor(m => Model.ProjectPlans[i].TotalQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].TotalQty == 0) ? 0 : Model.ProjectPlans[i].TotalQty } })
+                                                                                @Html.ValidationMessageFor(model => Model.ProjectPlans[i].TotalQty, "", new { @class = "text-danger" })
+                                                                            </div>
+                                                                            <div class="col-sm-4"></div>
+                                                                        </div>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <div class="row">
+                                                                            <div class="col-sm-3">
+                                                                                <div class="row mt-2">
+                                                                                    <div class="col-sm-12">
+                                                                                        <h6 style="color:black;"><b>Quantity Requirement:</b></h6>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-sm-2">
+                                                                                @Html.EditorFor(m => Model.ProjectPlans[i].TotalQty, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%; text-align: right;", type = "number", Value = (Model.ProjectPlans[i].TotalQty == 0) ? 0 : Model.ProjectPlans[i].TotalQty, disabled = "disabled" } })
+                                                                                @Html.ValidationMessageFor(model => Model.ProjectPlans[i].TotalQty, "", new { @class = "text-danger" })
+                                                                            </div>
+                                                                            <div class="col-sm-4"></div>
+                                                                        </div>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+
+                                                @if (Model.ProjectPlans[i].UpdateFlag == true)
+                                                {
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <div class="card">
+                                                                <div class="card-header">
+                                                                    <h3 class="card-title">Justification</h3>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <div class="form-group">
+                                                                        @Html.Label("Justification", htmlAttributes: new { @class = "control-label" })
+                                                                        <div class="input-group input-group-sm mb-3">
+                                                                            <div class="input-group-prepend">
+                                                                                <span class="input-group-text"><i class="fa fa-paragraph"></i></span>
+                                                                            </div>
+                                                                            @Html.EditorFor(m => Model.ProjectPlans[i].Justification, new { htmlAttributes = new { @class = "form-control form-control-sm", placeholder = "Enter the justification here...", style = "font-size: 100%; height: 75px", Value = (Model.ProjectPlans[i].Justification == null || Model.ProjectPlans[i].Justification == string.Empty) ? string.Empty : Model.ProjectPlans[i].Justification } })
+                                                                        </div>
+                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].Justification, "", new { @class = "text-danger" })
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <div class="card">
+                                                                <div class="card-header">
+                                                                    <h3 class="card-title">Justification</h3>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <div class="form-group">
+                                                                        @Html.Label("Justification", htmlAttributes: new { @class = "control-label" })
+                                                                        <div class="input-group input-group-sm mb-3">
+                                                                            <div class="input-group-prepend">
+                                                                                <span class="input-group-text"><i class="fa fa-paragraph"></i></span>
+                                                                            </div>
+                                                                            @Html.EditorFor(m => Model.ProjectPlans[i].Justification, new { htmlAttributes = new { @class = "form-control form-control-sm", placeholder = "Enter the justification here...", style = "font-size: 100%; height: 75px", Value = (Model.ProjectPlans[i].Justification == null || Model.ProjectPlans[i].Justification == string.Empty) ? string.Empty : Model.ProjectPlans[i].Justification, disabled = "disabled" } })
+                                                                        </div>
+                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].Justification, "", new { @class = "text-danger" })
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section FormFooter {
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <div class="form-group">
+                @if (Model.ProjectPlans.Where(d => d.ItemStatus == PUPFMIS.Models.PPMPDetailStatus.ForRevision).Count() > 0)
+                {
+                    <button type="button" class="btn btn-primary" onclick='SavePPMPDetails()' id="btn-save"><i class="fa fa-save"></i>&nbsp; Save PPMP Item Detail</button>
+                }
+                <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("details", "ProjectProcurementManagementPlans", new { Area = "end-users", ReferenceNo = Model.Item.ReferenceNo })'"><i class="fa fa-arrow-alt-circle-left"></i>&nbsp; Back to PPMP Details</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    function SavePPMPDetails() {
+        swal.fire({
+            title: "Update PPMP Item Detail?",
+            text: "You are about to update this PPMP Item, continue?",
+            icon: "question",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#addItem").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    icon: "error"
+                })
+            };
+        })
+    }
+    function CreateResult(data) {
+        if (data.result == true) {
+            swal.fire({
+                title: "Record Saved!",
+                text: "Project Plan is successfully saved.",
+                icon: "success"
+            }).then((result) => {
+                if (result.value) {
+                    var url = "@Url.Action("details", "ProjectProcurementManagementPlans", new { Area = "end-users", ReferenceNo = Model.Item.ReferenceNo })";
+                    window.location.href = url;
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                icon: "error"
+            });
+        }
+    }
+</script>

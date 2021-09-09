@@ -42,7 +42,7 @@
         swal.fire({
             title: "Save Annual Procurement Plan?",
             text: "You are about to save this record, continue?",
-            type: "warning",
+            icon: "question",
             showCancelButton: true,
         }).then((result) => {
             if (result.value) {
@@ -52,7 +52,7 @@
                 swal.fire({
                     title: "Cancelled!",
                     text: "You have cancelled saving the record.",
-                    type: "error"
+                    icon: "error"
                 })
             }
         })
@@ -62,7 +62,7 @@
             swal.fire({
                 title: "Record Saved!",
                 text: "Record is successfully saved.",
-                type: "success"
+                icon: "success"
             }).then((result) => {
                 if (result.value) {
                     window.location.href = "@Url.Action("dashboard", "AnnualProcurementPlans", new { Area = "procurement" })";
@@ -73,7 +73,7 @@
             swal.fire({
                 title: "Record Not Saved!",
                 text: "Saving record failed.",
-                type: "error"
+                icon: "error"
             })
         }
     }

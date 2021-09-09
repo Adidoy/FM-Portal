@@ -1,478 +1,383 @@
 ﻿@model PUPFMIS.Models.PPMPViewModel
 
 @{
-    ViewBag.Title = "PPMP";
+    ViewBag.Title = "Project Procurement Plans";
     ViewBag.Description = "Details";
     Layout = "~/Views/Shared/_BodyLayout.cshtml";
 }
 
 @section BreadCrumb {
     <ol class="breadcrumb float-sm-right">
-        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
-        <li class="breadcrumb-item">@Html.ActionLink("PPMP", "index")</li>
-        <li class="breadcrumb-item">Details</li>
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-list"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Dashboard", "dashboard", "ProjectProcurementManagementPlans", new { Area = "end-users" })</li>
+        <li class="breadcrumb-item">PPMP Details</li>
     </ol>
 }
 
 @section Header {
     <div class="col-md-12 text-right">
-        <h1 class="card-title"><i class="fa fa-bookmark"></i> @Model.Header.PPMPType: @Model.Header.ReferenceNo</h1>
+        <h1 class="card-title"><i class="fa fa-bookmark"></i>&nbsp; @Model.Header.ReferenceNo<span>&nbsp;:&nbsp;</span>@Model.Header.Classification</h1>
     </div>
 }
 
-@Html.HiddenFor(d => d.Header.Unit)
-<div class="row">
-    <div class="col-sm-12">
-        <div class="text-right">
-            <a href="@Url.Action("print-ppmp", "ProjectProcurementManagementPlans", new { Area = "end-users", ReferenceNo = Model.Header.ReferenceNo })" target="_blank" class="btn btn-md btn-primary"><i class="fa fa-download"></i>&nbsp; Download</a>
-            <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("index", "PPMP")'"><i class="fa fa-arrow-circle-left"></i>&nbsp; Back to List</button>
-        </div>
+<div class="card card-info">
+    <div class="card-header">
+        <h3 class="card-title">PPMP Information</h3>
     </div>
-</div>
-<br />
-<h4>PPMP Information</h4>
-<hr />
-<div class="row">
-    <div class="col-sm-12 pl-0 pr-0 ml-0 mr-0">
-        <div class="card card-primary card-outline">
-            <div class="card-header d-flex p-0">
-                <ul class="nav nav-pills p-2">
-                    <li class="nav-item" style="font-size:12pt;"><a class="nav-link active" href="#ppmpInformation" data-toggle="tab"><i class="fa fa-list"></i>&nbsp; PPMP Details</a></li>
-                    <li class="nav-item" style="font-size:12pt;"><a class="nav-link" href="#workFlowInformation" data-toggle="tab"><i class="fa fa-briefcase"></i>&nbsp; Workflow Information</a></li>
-                </ul>
-            </div>
-            <div class="tab-content">
-                <div class="tab-pane active" id="ppmpInformation">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div class="card card-info">
-                                    <div class="card-header"><h3 class="card-title">PPMP Details</h3></div>
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-lg-6 col-md-6 col-sm-12">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.Header.ReferenceNo, htmlAttributes: new { @class = "control-label" })
-                                                    <div class="input-group mb-3">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text"><i class="fa fa-id-card"></i></span>
-                                                        </div>
-                                                        @Html.EditorFor(model => model.Header.ReferenceNo, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", style = "font-size: 100%;" } })
-                                                    </div>
-                                                    @Html.ValidationMessageFor(model => model.Header.ReferenceNo, "", new { @class = "text-danger" })
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-md-6 col-sm-12">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.Header.FiscalYear, htmlAttributes: new { @class = "control-label" })
-                                                    <div class="input-group mb-3">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                                                        </div>
-                                                        @Html.EditorFor(model => model.Header.FiscalYear, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", style = "font-size: 100%;" } })
-                                                    </div>
-                                                    @Html.ValidationMessageFor(model => model.Header.FiscalYear, "", new { @class = "text-danger" })
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-lg-6 col-md-6 col-sm-12">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.Header.CreatedAt, htmlAttributes: new { @class = "control-label" })
-                                                    <div class="input-group mb-3">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text"><i class="fa fa-calendar-check"></i></span>
-                                                        </div>
-                                                        @Html.EditorFor(model => model.Header.CreatedAt, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", style = "font-size: 100%;", Value = ((DateTime)Model.Header.CreatedAt).ToString("dd MMMM yyyy hh:mm tt") } })
-                                                    </div>
-                                                    @Html.ValidationMessageFor(model => model.Header.CreatedAt, "", new { @class = "text-danger" })
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6 col-md-6 col-sm-12">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.Header.PreparedBy, htmlAttributes: new { @class = "control-label" })
-                                                    <div class="input-group mb-3">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text"><i class="fa fa-user"></i></span>
-                                                        </div>
-                                                        @Html.EditorFor(model => model.Header.PreparedBy, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", style = "font-size: 100%;" } })
-                                                    </div>
-                                                    @Html.ValidationMessageFor(model => model.Header.PreparedBy, "", new { @class = "text-danger" })
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Header.ReferenceNo, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-id-badge"></i></span>
                         </div>
+                        @Html.EditorFor(model => model.Header.ReferenceNo, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", Value = Model.Header.ReferenceNo, disabled = "disabled" } })
                     </div>
+                    @Html.ValidationMessageFor(model => model.Header.ReferenceNo, "", new { @class = "text-danger" })
                 </div>
-                <div class="tab-pane" id="workFlowInformation">
-                    <div class="card-body">
-                        <div class="card card-info">
-                            <div class="card-header"><h3 class="card-title">Workflow Information</h3></div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="card-body table-responsive p-sm-0">
-                                            <table class="table table-striped table-hover" id="workflowItems">
-                                                <thead>
-                                                    <tr>
-                                                        <th style="text-align: center; vertical-align: middle;" width="20%">Date</th>
-                                                        <th style="text-align: center; vertical-align: middle;" width="35%">Details</th>
-                                                        <th style="text-align: center; vertical-align: middle;" width="20%">Status</th>
-                                                        <th style="text-align: center; vertical-align: middle;" width="25%">Office / Personnel</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach (var item in Model.Workflow)
-                                                    {
-                                                        <tr>
-                                                            <td><b>@item.UpdatedAt.ToString("dd MMM yyyy hh:mm tt")</b></td>
-                                                            <td align="justify">@item.Remarks</td>
-                                                            <td>@item.Status</td>
-                                                            <td>@item.Office<br /><i>@item.Personnel</i></td>
-                                                        </tr>
-                                                    }
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Header.FiscalYear, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                         </div>
+                        @Html.EditorFor(model => model.Header.FiscalYear, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", Value = Model.Header.FiscalYear, disabled = "disabled" } })
                     </div>
+                    @Html.ValidationMessageFor(model => model.Header.FiscalYear, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Header.UACS, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-folder"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.Header.UACS, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", Value = Model.Header.UACS, disabled = "disabled" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Header.UACS, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Header.Classification, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-book"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.Header.Classification, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", Value = Model.Header.Classification, disabled = "disabled" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Header.Classification, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Header.Status, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-comment-alt"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.Header.Status, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", Value = Model.Header.Status.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name, disabled = "disabled" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Header.Status, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Header.PPMPType, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-align-justify"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.Header.PPMPType, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", Value = Model.Header.PPMPType.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name, disabled = "disabled" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Header.PPMPType, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Header.CreatedAt, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-calendar-alt"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.Header.CreatedAt, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", Value = Model.Header.CreatedAt.ToString("dd MMMM yyyy hh:mm tt"), disabled = "disabled" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Header.CreatedAt, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Header.EstimatedBudget, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-coins"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.Header.EstimatedBudget, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size:100%; text-align:right;", Value = Model.Header.EstimatedBudget.ToString("C", new System.Globalization.CultureInfo("en-ph")), disabled = "disabled" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Header.EstimatedBudget, "", new { @class = "text-danger" })
                 </div>
             </div>
         </div>
     </div>
 </div>
-<br />
-<h4>PPMP Line Items</h4>
-<hr />
-<div class="row">
-    <div class="col-sm-12 pl-0 pr-0 ml-0 mr-0">
-        <div class="card card-primary card-outline">
-            <div class="card-header d-flex p-0">
-                <ul class="nav nav-pills p-2">
-                    <li class="nav-item" style="font-size:12pt;"><a class="nav-link active" href="#dbm" data-toggle="tab"><i class="fa fa-list"></i>&nbsp; PART I. Items Available at DBM-PS</a></li>
-                    <li class="nav-item" style="font-size:12pt;"><a class="nav-link" href="#nonDBM" data-toggle="tab"><i class="fa fa-list"></i>&nbsp; PART II. Items Purchased from Other Sources</a></li>
-                </ul>
+<div class="card card-info">
+    <div class="card-header">
+        <h3 class="card-title">PPMP Items</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="table table-striped table-hover" id="ppmpDetails">
+                    <thead>
+                        <tr>
+                            <th width="35%" style="text-align:center; vertical-align:middle">Item Name</th>
+                            <th width="10%" style="text-align:center; vertical-align:middle">Status</th>
+                            <th width="10%" style="text-align:center; vertical-align:middle">Total Qty. for the Year</th>
+                            <th width="20%" style="text-align:center; vertical-align:middle">Estimated Budget</th>
+                            <th width="25%" style="text-align:center; vertical-align:middle">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Details)
+                        {
+                            <tr>
+                                <td style="text-align:left; vertical-align:middle;">
+                                    <b>@Html.DisplayFor(d => item.ItemFullName)</b>
+                                </td>
+                                <td style="text-align:center; vertical-align:middle;">
+                                    @if (item.NoOfAccepted > 0)
+                                    {
+                                        <span class="badge bg-success p-1 mb-1" style="font-size:100%; width:179px">@Html.DisplayFor(modelItem => item.NoOfAccepted) Project Item Accepted</span>
+                                        <br />
+                                    }
+                                    @if (item.NoOfForRevision > 0)
+                                    {
+                                        <span class="badge bg-warning p-1 mb-1" style="font-size:100%; width:179px">@Html.DisplayFor(modelItem => item.NoOfForRevision) Project Item For Revision</span>
+                                        <br />
+                                    }
+                                    @if (item.NoOfNotAccepted > 0)
+                                    {
+                                        <span class="badge bg-danger p-1 mb-1" style="font-size:100%; width:179px">@Html.DisplayFor(modelItem => item.NoOfNotAccepted) Project Item Not Accepted</span>
+                                    }
+                                </td>
+                                <td style="text-align:center; vertical-align:middle;">
+                                    @Html.DisplayFor(d => item.TotalQty)
+                                </td>
+                                <td style="text-align:right; vertical-align:middle;">
+                                    @( item.EstimatedBudget.ToString("C", new System.Globalization.CultureInfo("en-ph")) )
+                                </td>
+                                <td style="text-align:center; vertical-align:middle;">
+                                    <button type="button" class="btn btn-sm btn-primary" onclick="window.location = '@Url.Action("item-details", "ProjectProcurementManagementPlans", new { Area = "end-users", ReferenceNo = Model.Header.ReferenceNo, ItemCode = item.ItemCode })'"><i class="fa fa-eye"></i> View Details</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" style="text-align:right; vertical-align:middle;">
+                                <h6><b>Total Estimated Budget:</b></h6>
+                            </td>
+                            <td style="text-align:right; vertical-align:middle;">
+                                <h6><b>@( Model.Details.Sum(d => d.EstimatedBudget).ToString("C", new System.Globalization.CultureInfo("en-ph")) )</b></h6>
+                            </td>
+                            <td style="text-align:right; vertical-align:middle;"></td>
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
-            <div class="tab-content">
-                <div class="tab-pane active" id="dbm">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div class="card card-info">
-                                    <div class="card-header"><h3 class="card-title">AVAILABLE AT PROCUREMENT SERVICE STORES</h3></div>
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <div class="card-body table-responsive p-sm-0">
-                                                    <table class="table table-striped table-hover" id="dbmItems">
-                                                        <thead>
-                                                            <tr>
-                                                                <th rowspan="2" width="45%" style="text-align:center; vertical-align:middle">Item and Specifications</th>
-                                                                <th colspan="3" style="text-align:center; vertical-align:middle">Quantity Requirement</th>
-                                                                <th rowspan="2" width="15%" style="text-align:center; vertical-align:middle">Unit Cost</th>
-                                                                <th rowspan="2" width="14%" style="text-align:center; vertical-align:middle">Estimated Budget</th>
-                                                            </tr>
-                                                            <tr>
-                                                                <th width="14%" colspan="2" style="text-align:center; vertical-align:middle">Distribution</th>
-                                                                <th width="7%" style="text-align:center; vertical-align:middle">Total</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            @foreach (var item in Model.DBMItems)
-                                                            {
-                                                                <tr>
-                                                                    <td style="text-align:justify; vertical-align: middle;">
-                                                                        <span style="font-size:12pt"><b>@Html.DisplayFor(modelItem => item.ItemName) (<small><b>@Html.DisplayFor(modelItem => item.ItemCode)</b></small>)</b></span>
-                                                                        <br /><br />
-                                                                        <span style="font-size:9pt;">
-                                                                            <b>@Html.DisplayNameFor(modelItem => item.ItemSpecifications)</b>
-                                                                            <br />
-                                                                            @Html.DisplayFor(modelItem => item.ItemSpecifications)
-                                                                            <br /><br />
-                                                                            <b>Unit of Measure : </b>@Html.DisplayFor(model => item.IndividualUOMReference)
-                                                                            <br />
-                                                                            <b>@Html.DisplayNameFor(modelItem => item.Remarks) : </b>@Html.DisplayFor(model => item.Remarks)
-                                                                            <br />
-                                                                            <b>@Html.DisplayNameFor(modelItem => item.Project) : </b>(@Html.DisplayFor(model => item.ProjectCode)) @Html.DisplayFor(model => item.Project)
-                                                                        </span>
-                                                                    </td>
-                                                                    <td style="text-align:left; vertical-align:top;" width="7%">
-                                                                        @if (item.JanMilestone != null)
-                                                                        {
-                                                                            @Html.DisplayNameFor(modelItem => item.JanMilestone)<span>:</span>
-                                                                            <br />
-                                                                        }
-                                                                        @if (item.FebMilestone != null)
-                                                                        {
-                                                                            @Html.DisplayNameFor(modelItem => item.FebMilestone)<span>:</span>
-                                                                            <br />
-                                                                        }
-                                                                        @if (item.MarMilestone != null)
-                                                                        {
-                                                                            @Html.DisplayNameFor(modelItem => item.MarMilestone)<span>:</span>
-                                                                            <br />
-                                                                        }
-                                                                        @if (item.AprMilestone != null)
-                                                                        {
-                                                                            @Html.DisplayNameFor(modelItem => item.AprMilestone)<span>:</span>
-                                                                            <br />
-                                                                        }
-                                                                        @if (item.MayMilestone != null)
-                                                                        {
-                                                                            @Html.DisplayNameFor(modelItem => item.MayMilestone)<span>:</span>
-                                                                            <br />
-                                                                        }
-                                                                        @if (item.JunMilestone != null)
-                                                                        {
-                                                                            @Html.DisplayNameFor(modelItem => item.JunMilestone)<span>:</span>
-                                                                            <br />
-                                                                        }
-                                                                        @if (item.JulMilestone != null)
-                                                                        {
-                                                                            @Html.DisplayNameFor(modelItem => item.JulMilestone)<span>:</span>
-                                                                            <br />
-                                                                        }
-                                                                        @if (item.AugMilestone != null)
-                                                                        {
-                                                                            @Html.DisplayNameFor(modelItem => item.AugMilestone)<span>:</span>
-                                                                            <br />
-                                                                        }
-                                                                        @if (item.SepMilestone != null)
-                                                                        {
-                                                                            @Html.DisplayNameFor(modelItem => item.SepMilestone)<span>:</span>
-                                                                            <br />
-                                                                        }
-                                                                        @if (item.OctMilestone != null)
-                                                                        {
-                                                                            @Html.DisplayNameFor(modelItem => item.OctMilestone)<span>:</span>
-                                                                            <br />
-                                                                        }
-                                                                        @if (item.NovMilestone != null)
-                                                                        {
-                                                                            @Html.DisplayNameFor(modelItem => item.NovMilestone)<span>:</span>
-                                                                            <br />
-                                                                        }
-                                                                        @if (item.DecMilestone != null)
-                                                                        {
-                                                                            @Html.DisplayNameFor(modelItem => item.DecMilestone)<span>:</span>
-                                                                        }
-                                                                    </td>
-                                                                    <td style="text-align:right; vertical-align:top;" width="7%">
-                                                                        @if (item.JanMilestone != null)
-                                                                        {
-                                                                            @Html.DisplayFor(modelItem => item.JanMilestone)
-                                                                            <br />
-                                                                        }
-                                                                        @if (item.FebMilestone != null)
-                                                                        {
-                                                                            @Html.DisplayFor(modelItem => item.FebMilestone)
-                                                                            <br />
-                                                                        }
-                                                                        @if (item.MarMilestone != null)
-                                                                        {
-                                                                            @Html.DisplayFor(modelItem => item.MarMilestone)
-                                                                            <br />
-                                                                        }
-                                                                        @if (item.AprMilestone != null)
-                                                                        {
-                                                                            @Html.DisplayFor(modelItem => item.AprMilestone)
-                                                                            <br />
-                                                                        }
-                                                                        @if (item.MayMilestone != null)
-                                                                        {
-                                                                            @Html.DisplayFor(modelItem => item.MayMilestone)
-                                                                            <br />
-                                                                        }
-                                                                        @if (item.JunMilestone != null)
-                                                                        {
-                                                                            @Html.DisplayFor(modelItem => item.JunMilestone)
-                                                                            <br />
-                                                                        }
-                                                                        @if (item.JulMilestone != null)
-                                                                        {
-                                                                            @Html.DisplayFor(modelItem => item.JulMilestone)
-                                                                            <br />
-                                                                        }
-                                                                        @if (item.AugMilestone != null)
-                                                                        {
-                                                                            @Html.DisplayFor(modelItem => item.AugMilestone)
-                                                                            <br />
-                                                                        }
-                                                                        @if (item.SepMilestone != null)
-                                                                        {
-                                                                            @Html.DisplayFor(modelItem => item.OctMilestone)
-                                                                            <br />
-                                                                        }
-                                                                        @if (item.OctMilestone != null)
-                                                                        {
-                                                                            @Html.DisplayFor(modelItem => item.OctMilestone)
-                                                                            <br />
-                                                                        }
-                                                                        @if (item.NovMilestone != null)
-                                                                        {
-                                                                            @Html.DisplayFor(modelItem => item.NovMilestone)
-                                                                            <br />
-                                                                        }
-                                                                        @if (item.DecMilestone != null)
-                                                                        {
-                                                                            @Html.DisplayFor(modelItem => item.DecMilestone)
-                                                                        }
-                                                                    </td>
-                                                                    <td style="text-align:center; vertical-align:top;">
-                                                                        @Html.DisplayFor(modelItem => item.TotalQty)
-                                                                    </td>
-                                                                    <td style="text-align:right; vertical-align:top;">
-                                                                        @( String.Format("{0:C}", item.UnitCost) )
-                                                                    </td>
-                                                                    <td style="text-align:right; vertical-align:top;">
-                                                                        @( String.Format("{0:C}", item.EstimatedBudget) )
-                                                                    </td>
-                                                                </tr>
-                                                            }
-                                                        </tbody>
-                                                        <tfoot>
-                                                            <tr>
-                                                                <td colspan="5" align="right"><h5>Total Estimated Budget (Part I):</h5></td>
-                                                                <td align="right"><h5>@( string.Format("{0:C}", Model.DBMItems.Sum(d => d.EstimatedBudget)) )</h5></td>
-                                                            </tr>
-                                                        </tfoot>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane" id="nonDBM">
-                    <div class="card-body">
-                        <div class="card card-info">
-                            <div class="card-header"><h3 class="card-title">OTHER ITEMS NOT AVALABLE AT PS BUT REGULARLY PURCHASED FROM OTHER SOURCES</h3></div>
-                            <div class="card-body">
+        </div>
+    </div>
+</div>
+<div class="card card-info">
+    <div class="card-header">
+        <h3 class="card-title">Milestones</h3>
+    </div>
+    <div class="card-body">
+        <div class="card-body table-responsive p-sm-0">
+            <table class="table table-striped table-bordered table-hover" id="ppmpListOriginal">
+                <thead>
+                    <tr>
+                        <th width="60%" rowspan="2" style="text-align:center; vertical-align:middle">Item</th>
+                        <th width="40%" colspan="12" style="text-align:center; vertical-align:middle">Schedule/Milestones</th>
+                    </tr>
+                    <tr>
+                        <th style="text-align:center; vertical-align:middle">JAN</th>
+                        <th style="text-align:center; vertical-align:middle">FEB</th>
+                        <th style="text-align:center; vertical-align:middle">MAR</th>
+                        <th style="text-align:center; vertical-align:middle">APR</th>
+                        <th style="text-align:center; vertical-align:middle">MAY</th>
+                        <th style="text-align:center; vertical-align:middle">JUN</th>
+                        <th style="text-align:center; vertical-align:middle">JUL</th>
+                        <th style="text-align:center; vertical-align:middle">AUG</th>
+                        <th style="text-align:center; vertical-align:middle">SEP</th>
+                        <th style="text-align:center; vertical-align:middle">OCT</th>
+                        <th style="text-align:center; vertical-align:middle">NOV</th>
+                        <th style="text-align:center; vertical-align:middle">DEC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Details)
+                    {
+                        <tr>
+                            <td align="left">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <div class="card-body table-responsive p-sm-0">
-                                            <table class="table table-striped table-hover" id="nonDBMItems">
-                                                <thead>
-                                                    <tr>
-                                                        <th rowspan="2" width="45%" style="text-align:center; vertical-align:middle">Item and Specifications</th>
-                                                        <th colspan="3" style="text-align:center; vertical-align:middle">Quantity Requirement</th>
-                                                        <th rowspan="2" width="15%" style="text-align:center; vertical-align:middle">Unit Cost</th>
-                                                        <th rowspan="2" width="14%" style="text-align:center; vertical-align:middle">Estimated Budget</th>
-                                                    </tr>
-                                                    <tr>
-                                                        <th width="14%" colspan="2" style="text-align:center; vertical-align:middle">Distribution</th>
-                                                        <th width="7%" style="text-align:center; vertical-align:middle">Total</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach (var item in Model.NonDBMItems)
-                                                    {
-                                                        <tr>
-                                                            <td style="text-align:justify; vertical-align: middle;">
-                                                                <span style="font-size:12pt"><b>@Html.DisplayFor(modelItem => item.ItemName) (<small><b>@Html.DisplayFor(modelItem => item.ItemCode)</b></small>)</b></span>
-                                                                <br /><br />
-                                                                <b>@Html.DisplayNameFor(modelItem => item.ItemSpecifications)</b>
-                                                                <br />
-                                                                @Html.DisplayFor(modelItem => item.ItemSpecifications)
-                                                                <br /><br />
-                                                                <b>Unit of Measure : </b>@Html.DisplayFor(model => item.IndividualUOMReference)
-                                                                <br />
-                                                                <b>@Html.DisplayNameFor(modelItem => item.Remarks) : </b>@Html.DisplayFor(model => item.Remarks)
-                                                                <br />
-                                                                <b>@Html.DisplayNameFor(modelItem => item.Project) : </b>(@Html.DisplayFor(model => item.ProjectCode)) @Html.DisplayFor(model => item.Project)
-                                                            </td>
-                                                            <td style="text-align:left; vertical-align:top;" width="7%">
-                                                                @Html.DisplayNameFor(modelItem => item.JanMilestone)<span>:</span>
-                                                                <br />
-                                                                @Html.DisplayNameFor(modelItem => item.FebMilestone)<span>:</span>
-                                                                <br />
-                                                                @Html.DisplayNameFor(modelItem => item.MarMilestone)<span>:</span>
-                                                                <br />
-                                                                @Html.DisplayNameFor(modelItem => item.AprMilestone)<span>:</span>
-                                                                <br />
-                                                                @Html.DisplayNameFor(modelItem => item.MayMilestone)<span>:</span>
-                                                                <br />
-                                                                @Html.DisplayNameFor(modelItem => item.JunMilestone)<span>:</span>
-                                                                <br />
-                                                                @Html.DisplayNameFor(modelItem => item.JulMilestone)<span>:</span>
-                                                                <br />
-                                                                @Html.DisplayNameFor(modelItem => item.AugMilestone)<span>:</span>
-                                                                <br />
-                                                                @Html.DisplayNameFor(modelItem => item.SepMilestone)<span>:</span>
-                                                                <br />
-                                                                @Html.DisplayNameFor(modelItem => item.OctMilestone)<span>:</span>
-                                                                <br />
-                                                                @Html.DisplayNameFor(modelItem => item.NovMilestone)<span>:</span>
-                                                                <br />
-                                                                @Html.DisplayNameFor(modelItem => item.DecMilestone)<span>:</span>
-                                                            </td>
-                                                            <td style="text-align:right; vertical-align:top;" width="7%">
-                                                                @Html.DisplayFor(modelItem => item.JanMilestone)
-                                                                <br />
-                                                                @Html.DisplayFor(modelItem => item.FebMilestone)
-                                                                <br />
-                                                                @Html.DisplayFor(modelItem => item.MarMilestone)
-                                                                <br />
-                                                                @Html.DisplayFor(modelItem => item.AprMilestone)
-                                                                <br />
-                                                                @Html.DisplayFor(modelItem => item.MayMilestone)
-                                                                <br />
-                                                                @Html.DisplayFor(modelItem => item.JunMilestone)
-                                                                <br />
-                                                                @Html.DisplayFor(modelItem => item.JulMilestone)
-                                                                <br />
-                                                                @Html.DisplayFor(modelItem => item.AugMilestone)
-                                                                <br />
-                                                                @Html.DisplayFor(modelItem => item.SepMilestone)
-                                                                <br />
-                                                                @Html.DisplayFor(modelItem => item.OctMilestone)
-                                                                <br />
-                                                                @Html.DisplayFor(modelItem => item.NovMilestone)
-                                                                <br />
-                                                                @Html.DisplayFor(modelItem => item.DecMilestone)
-                                                            </td>
-                                                            <td style="text-align:center; vertical-align:top;">
-                                                                @Html.DisplayFor(modelItem => item.TotalQty)
-                                                            </td>
-                                                            <td style="text-align:right; vertical-align:top;">
-                                                                @( String.Format("{0:C}", item.UnitCost) )
-                                                            </td>
-                                                            <td style="text-align:right; vertical-align:top;">
-                                                                @( String.Format("{0:C}", item.EstimatedBudget) )
-                                                            </td>
-                                                        </tr>
-                                                    }
-                                                </tbody>
-                                                <tfoot>
-                                                    <tr>
-                                                        <td colspan="5" align="right"><h5>Total Estimated Budget (Part II):</h5></td>
-                                                        <td align="right"><h5>@( string.Format("{0:C}", Model.NonDBMItems.Sum(d => d.EstimatedBudget)) )</h5></td>
-                                                    </tr>
-                                                </tfoot>
-                                            </table>
-                                        </div>
+                                        <b>@Html.DisplayFor(d => item.ItemFullName)</b>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                                <div class="row">
+                                    <div class="col-sm-5">
+                                        <b>Total Quantity</b>
+                                    </div>
+                                    <div class="col-sm-7">
+                                        :&nbsp;@Html.DisplayFor(d => item.TotalQty)
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-5">
+                                        <b>Unit Cost</b>
+                                    </div>
+                                    <div class="col-sm-7">
+                                        :&nbsp;@( item.UnitCost.ToString("C", new System.Globalization.CultureInfo("en-ph")) )
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-5">
+                                        <b>Estimated Budget</b>
+                                    </div>
+                                    <div class="col-sm-7">
+                                        :&nbsp;@( item.EstimatedBudget.ToString("C", new System.Globalization.CultureInfo("en-ph")) )
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="text-align:center; vertical-align:middle; @( item.JANMilestone != string.Empty ? "background-color:yellow;" : "background-color:none" )">
+                                <b>@item.JANMilestone</b>
+                            </td>
+                            <td style="text-align:center; vertical-align:middle; @( item.FEBMilestone != string.Empty ? "background-color:yellow;" : "background-color:none" )">
+                                <b>@item.FEBMilestone</b>
+                            </td>
+                            <td style="text-align:center; vertical-align:middle; @( item.MARMilestone != string.Empty ? "background-color:yellow;" : "background-color:none" )">
+                                <b>@item.MARMilestone</b>
+                            </td>
+                            <td style="text-align:center; vertical-align:middle; @( item.APRMilestone != string.Empty ? "background-color:yellow;" : "background-color:none" )">
+                                <b>@item.APRMilestone</b>
+                            </td>
+                            <td style="text-align:center; vertical-align:middle; @( item.MAYMilestone != string.Empty ? "background-color:yellow;" : "background-color:none" )">
+                                <b>@item.MAYMilestone</b>
+                            </td>
+                            <td style="text-align:center; vertical-align:middle; @( item.JUNMilestone != string.Empty ? "background-color:yellow;" : "background-color:none" )">
+                                <b>@item.JUNMilestone</b>
+                            </td>
+                            <td style="text-align:center; vertical-align:middle; @( item.JULMilestone != string.Empty ? "background-color:yellow;" : "background-color:none" )">
+                                <b>@item.JULMilestone</b>
+                            </td>
+                            <td style="text-align:center; vertical-align:middle; @( item.AUGMilestone != string.Empty ? "background-color:yellow;" : "background-color:none" )">
+                                <b>@item.AUGMilestone</b>
+                            </td>
+                            <td style="text-align:center; vertical-align:middle; @( item.SEPMilestone != string.Empty ? "background-color:yellow;" : "background-color:none" )">
+                                <b>@item.SEPMilestone</b>
+                            </td>
+                            <td style="text-align:center; vertical-align:middle; @( item.OCTMilestone != string.Empty ? "background-color:yellow;" : "background-color:none" )">
+                                <b>@item.OCTMilestone</b>
+                            </td>
+                            <td style="text-align:center; vertical-align:middle; @( item.NOVMilestone != string.Empty ? "background-color:yellow;" : "background-color:none" )">
+                                <b>@item.NOVMilestone</b>
+                            </td>
+                            <td style="text-align:center; vertical-align:middle; @( item.DECMilestone != string.Empty ? "background-color:yellow;" : "background-color:none" )">
+                                <b>@item.DECMilestone</b>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+    <div class="card-footer">
+        <div class="row" style="font-size:10pt; color:red;">
+            <div class="col-sm-12">
+                <b>LEGEND:</b>
             </div>
-            <div class="card-footer">
+        </div>
+        <div class="row" style="font-size:9pt; color:red;">
+            <div class="col-sm-6">
                 <div class="row">
-                    <div class="col-sm-12">
-                        <div class="float-right">
-                            <h4>Total Estimated Budget: @( String.Format("{0:C}", Model.DBMItems.Sum(d => d.EstimatedBudget) + Model.NonDBMItems.Sum(d => d.EstimatedBudget)) )</h4>
-                        </div>
+                    <div class="col-sm-2">
+                        EPA-OCT 
+                    </div>
+                    <div class="col-sm-1">
+                        -
+                    </div>
+                    <div class="col-sm-9">
+                        Early Procurement Activities Starting OCT @(Model.Header.FiscalYear - 1)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-2">
+                        EPA-NOV
+                    </div>
+                    <div class="col-sm-1">
+                        -
+                    </div>
+                    <div class="col-sm-9">
+                        Early Procurement Activities Starting NOV @(Model.Header.FiscalYear - 1)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-2">
+                        EPA-DEC
+                    </div>
+                    <div class="col-sm-1">
+                        -
+                    </div>
+                    <div class="col-sm-9">
+                        Early Procurement Activities Starting DEC @(Model.Header.FiscalYear - 1)
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="row">
+                    <div class="col-sm-2">
+                        PRPC
+                    </div>
+                    <div class="col-sm-1">
+                        -
+                    </div>
+                    <div class="col-sm-9">
+                        P/R Preparation / Pre-Procurement Conference
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-2">
+                        PRAC
+                    </div>
+                    <div class="col-sm-1">
+                        -
+                    </div>
+                    <div class="col-sm-9">
+                        Procurement Activities
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-2">
+                        DRIS
+                    </div>
+                    <div class="col-sm-1">
+                        -
+                    </div>
+                    <div class="col-sm-9">
+                        Delivery/Preparation of RIS
                     </div>
                 </div>
             </div>
@@ -480,11 +385,20 @@
     </div>
 </div>
 
+@section FormFooter{
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" onclick="window.location = '@Url.Action("print-ppmp", "ProjectProcurementManagementPlans", new { Area = "end-users" })'"><i class="fa fa-print"></i>&nbsp; Print PPMP</button>
+                <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("dashboard", "ProjectProcurementManagementPlans", new { area = "end-users" })'"><i class="fa fa-times-circle"></i>&nbsp; Back to Dashboard</button>
+            </div>
+        </div>
+    </div>
+}
 
-<script src="~/Scripts/adminlte/components/jquery/dist/jquery.min.js"></script>
 <script type="text/javascript">
     $(function () {
-        $('#dbmItems').DataTable({
+        $('#ppmpDetails').DataTable({
             "paging": true,
             "lengthChange": true,
             "searching": true,
@@ -492,42 +406,5 @@
             "info": true,
             "autoWidth": false,
         });
-    });
-    $(function () {
-        $('#nonDBMItems').DataTable({
-            "paging": true,
-            "lengthChange": true,
-            "searching": true,
-            "ordering": false,
-            "info": true,
-            "autoWidth": false,
-        });
-    });
-    $(function () {
-        $('#workflowItems').DataTable({
-            "paging": true,
-            "lengthChange": false,
-            "searching": true,
-            "ordering": false,
-            "info": true,
-            "autoWidth": false,
-        });
-    });
-    $("#submitPPMP").on('click', function (e) {
-        e.preventDefault();
-        swal.fire({
-            title: "Submit PPMP?",
-            text: "Submitting your PPMP shall be mean that it is final and is subject for approval, continue?",
-            type: "warning",
-            showCancelButton: true,
-        }).then((result) => {
-            if (result.value) {
-                $.ajax({
-                    url: "@Url.Action("submitPPMP", "PPMPCSE")",
-                    data: { ReferenceNo: '@Model.Header.ReferenceNo.ToString()' },
-                    success: window.location = "@Url.Action("index","PPMP")"
-                })
-            }
-        })
     });
 </script>

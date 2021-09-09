@@ -1,0 +1,251 @@
+﻿@model PUPFMIS.Models.PurchaseRequestDashboard
+
+@{
+    ViewBag.Title = "Purchase Requests";
+    ViewBag.Description = "Dashboard";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Purchase Requests", "dashboard")</li>
+        <li class="breadcrumb-item">Dashboard</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-home"></i> Purchase Request Dashboard</h3>
+}
+
+<div class="card card-info">
+    <div class="card-header"><h3 class="card-title">Purchase Request Actions</h3></div>
+    <div class="card-body">
+        <h6><i class="fa fa-edit"></i> Purchase Request Actions</h6>
+        <div class="row">
+            <div class="col-sm-2">
+                <div class="nav flex-column nav-tabs h-100" id="vert-tabs-tab" role="tablist" aria-orientation="vertical">
+                    <a class="nav-link active" id="vert-tabs-home-tab" data-toggle="pill" href="#vert-tabs-home" role="tab" aria-controls="vert-tabs-home" aria-selected="true">Create Purchase Requests</a>
+                    <a class="nav-link" id="vert-tabs-profile-tab" data-toggle="pill" href="#vert-tabs-profile" role="tab" aria-controls="vert-tabs-profile" aria-selected="false">Submit Purchase Request</a>
+                    <a class="nav-link" id="vert-tabs-messages-tab" data-toggle="pill" href="#vert-tabs-messages" role="tab" aria-controls="vert-tabs-messages" aria-selected="false">View Purchase Requests</a>
+                </div>
+            </div>
+            <div class="col-sm-10">
+                <div class="tab-content" id="vert-tabs-tabContent">
+                    <div class="tab-pane text-left fade show active" id="vert-tabs-home" role="tabpanel" aria-labelledby="vert-tabs-home-tab">
+                        <div class="card card-info">
+                            <div class="card-header"><h3 class="card-title">Open Purchase Request Submissions</h3></div>
+                            <div class="card-body">
+                                <div class="card-body table-responsive p-sm-0">
+                                    <table class="table table-striped table-hover display">
+                                        <thead>
+                                            <tr>
+                                                <th style="text-align: center; vertical-align: middle;" width="50%">
+                                                    @Html.DisplayNameFor(model => model.OpenSubmissions.FirstOrDefault().ContractName)
+                                                </th>
+                                                <th style="text-align: center; vertical-align: middle;" width="30%">
+                                                    @Html.DisplayNameFor(model => model.OpenSubmissions.FirstOrDefault().ApprovedBudgetForContract)
+                                                </th>
+                                                <th style="text-align: center; vertical-align: middle;" width="20%">
+                                                    Action
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model.OpenSubmissions)
+                                            {
+                                                <tr>
+                                                    <td style="text-align:left; vertical-align:middle;">
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <b>@Html.DisplayFor(modelItem => item.ContractName)</b>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <i>(@Html.DisplayFor(modelItem => item.ContractCode))</i>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td style="text-align:right; vertical-align:top;">
+                                                        @( item.ApprovedBudgetForContract.ToString("C", new System.Globalization.CultureInfo("en-ph")) )
+                                                    </td>
+                                                    <td style="text-align:center; vertical-align:middle;">
+                                                        <button type="button" class="btn btn-sm btn-primary" onclick="window.location.href = '@Url.Action("create", "PurchaseRequests", new { Area = "", ContractCode = item.ContractCode })'"><i class="fa fa-eye"></i> View Details</button>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td style="text-align:right; font-size:14pt;"><b>Approved Budget:</b></td>
+                                                <td style="text-align:right; font-size:14pt;"><b>@( Model.OpenSubmissions.Sum(d => d.ApprovedBudgetForContract).ToString("C", new System.Globalization.CultureInfo("en-ph")) )</b></td>
+                                                <td></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="vert-tabs-profile" role="tabpanel" aria-labelledby="vert-tabs-profile-tab">
+                        <div class="card card-info">
+                            <div class="card-header"><h3 class="card-title">Purchase Requests for Submission</h3></div>
+                            <div class="card-body">
+                                <div class="card-body table-responsive p-sm-0">
+                                    <table class="table table-striped table-hover display">
+                                        <thead>
+                                            <tr>
+                                                <th style="text-align:center; vertical-align:middle" width="15%">
+                                                    @Html.DisplayNameFor(d => d.ForSubmission.FirstOrDefault().PRNumber)
+                                                </th>
+                                                <th style="text-align:center; vertical-align:middle" width="30%">
+                                                    Contract Reference
+                                                </th>
+                                                <th style="text-align:center; vertical-align:middle" width="30%">
+                                                    @Html.DisplayNameFor(d => d.ForSubmission.FirstOrDefault().CreatedAt)
+                                                </th>
+                                                <th style="text-align:center; vertical-align:middle" width="25%">
+                                                    Action
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model.ForSubmission)
+                                            {
+                                                <tr>
+                                                    <td style="text-align:left; vertical-align:top">
+                                                        <b>@Html.DisplayFor(d => item.PRNumber)</b>
+                                                        <br />
+                                                        <i>(@Html.DisplayFor(d => item.FundCluster))</i>
+                                                    </td>
+                                                    <td style="text-align:left; vertical-align:top">
+                                                        <b>@Html.DisplayFor(d => item.ContractName)</b>
+                                                        <br />
+                                                        <i>@Html.DisplayFor(d => item.ContractCode)</i>
+                                                    </td>
+                                                    <td style="text-align:center; vertical-align:top">
+                                                        @( item.CreatedAt.ToString("dd MMMM yyyy hh:mm tt") )
+                                                        <br />
+                                                        <i>@Html.DisplayFor(d => item.CreatedBy)</i>
+                                                    </td>
+                                                    <td style="text-align:center; vertical-align:top">
+                                                        @if (item.PRStatus == PUPFMIS.Models.PurchaseRequestStatus.PurchaseRequestCreated)
+                                                        {
+                                                            <button type="button" style="width:193px;" class="btn btn-sm btn-success mb-1" onclick="SubmitPurchaseRequest('@item.PRNumber')"><i class="fa fa-share"></i> Submit Purchase Request</button>
+                                                        }
+                                                        <br />
+                                                        <a class="btn btn-sm btn-primary" style="width:193px;" href="@Url.Action("print", "PurchaseRequests", new { Area = "", PRNumber = item.PRNumber })" target="_blank"><i class="fa fa-print"></i> Print Purchase Request</a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="vert-tabs-messages" role="tabpanel" aria-labelledby="vert-tabs-messages-tab">
+                        <div class="card card-info">
+                            <div class="card-header"><h3 class="card-title">View Purchase Requests</h3></div>
+                            <div class="card-body">
+                                <div class="card-body table-responsive p-sm-0">
+                                    <table class="table table-striped table-hover display">
+                                        <thead>
+                                            <tr>
+                                                <th style="text-align:center; vertical-align:middle" width="50%">
+                                                    Fiscal Years
+                                                </th>
+                                                <th style="text-align:center; vertical-align:middle" width="50%">
+                                                    Action
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model.PRFiscalYears)
+                                            {
+                                                <tr>
+                                                    <td style="text-align:center; vertical-align:middle">
+                                                        @Html.DisplayFor(d => item)
+                                                    </td>
+                                                    <td style="text-align:center; vertical-align:middle">
+                                                        <button class="btn btn-primary btn-sm" onclick="window.location = '@Url.Action("index", "PurchaseRequests", new { Area = "", FiscalYear = item })'"><i class="fa fa-eye"></i> View Purchase Requests</button>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $('table.display').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": false,
+            "info": true,
+            "autoWidth": false,
+        });
+    });
+    function SubmitPurchaseRequest(PRNumber) {
+        var url = '@Url.Action("submit", "PurchaseRequests", new { Area = "", PRNumber = "xxxx" })';
+        url = url.replace("xxxx", PRNumber);
+        swal.fire({
+            title: "Submit Purchase Request?",
+            text: "You are about to submit this Purchase Request, continue?",
+            icon: "question",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    success: function (data) {
+                        if (data.result == true) {
+                            swal.fire({
+                                title: "Purchase Request Submitted",
+                                text: "Purchase Request is successfuly submitted. Please forward the duly signed Purchase Request to Procurement Office",
+                                icon: "success"
+                            }).then((result) => {
+                                if (result.value) {
+                                    window.location.href = '@Url.Action("dashboard", "PurchaseRequests", new { Area = "" })'
+                                }
+                            })
+                        }
+                        else {
+                            swal.fire({
+                                title: "Record not Saved",
+                                text: "A problem has occured and the record is not updated.",
+                                icon: "error"
+                            })
+                        }
+                    },
+                    error: function (error) {
+                        swal.fire({
+                            title: "Error",
+                            text: "An error has occured, please try again. If you still get this message, please contact the System Administrator.",
+                            icon: "error"
+                        })
+                    },
+                })
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    icon: "error"
+                })
+            };
+        })
+    };
+</script>

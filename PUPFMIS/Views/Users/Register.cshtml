@@ -1,7 +1,7 @@
 ﻿@model PUPFMIS.Models.UsersVM
 
 
-@using (Ajax.BeginForm("register", "Users", new AjaxOptions() { HttpMethod = "POST", UpdateTargetId = "modal-container", OnSuccess = "CloseModal" }, htmlAttributes: new { id = "addUser", Area = "" }))
+@using (Ajax.BeginForm("register", "Users", new AjaxOptions() { HttpMethod = "POST", UpdateTargetId = "modal-container", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "addUser", Area = "" }))
 {
     <div class="modal-body" id="form-body">
         @Html.AntiForgeryToken()
@@ -13,10 +13,9 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fa fa-building"></i></span>
                 </div>
-                @Html.DropDownList("OfficeCode", null, htmlAttributes: new { @class = "form-control form-control-sm select2", onchange = "GetEmployees()" })
+                @Html.DropDownList("DepartmentCode", null, htmlAttributes: new { @class = "form-control form-control-sm select2", onchange = "GetEmployees()" })
             </div>
         </div>
-
         <div class="form-group">
             @Html.Label("Employee Name", htmlAttributes: new { @class = "control-label" })
             <div class="input-group mb-3">
@@ -26,7 +25,6 @@
                 @Html.DropDownList("EmpCode", null, htmlAttributes: new { @class = "form-control form-control-sm select2", onchange = "GetEmployeeDetails()" })
             </div>
         </div>
-
         <div class="form-group">
             @Html.LabelFor(model => model.Designation, htmlAttributes: new { @class = "control-label" })
             <div class="input-group mb-3">
@@ -37,7 +35,6 @@
                 @Html.EditorFor(model => model.Designation, new { htmlAttributes = new { id = "DesignationDisplay", @class = "form-control form-control-sm", style = "font-size:100%;", disabled = "disabled" } })
             </div>
         </div>
-
         <div class="form-group">
             @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label" })
             <div class="input-group mb-3">
@@ -48,17 +45,24 @@
                 @Html.EditorFor(model => model.Email, new { htmlAttributes = new { id = "EmailDisplay", @class = "form-control form-control-sm", style = "font-size:100%;", disabled = "disabled" } })
             </div>
         </div>
-
+        <div class="form-group">
+            @Html.Label("Focus Unit", htmlAttributes: new { @class = "control-label" })
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-building"></i></span>
+                </div>
+                @Html.DropDownList("UnitCode", null, htmlAttributes: new { @class = "form-control form-control-sm select2" })
+            </div>
+        </div>
         <div class="form-group">
             @Html.Label("System Role", htmlAttributes: new { @class = "control-label" })
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fa fa-user-cog"></i></span>
                 </div>
-                @Html.DropDownList("UserRole", null, htmlAttributes: new { @class = "form-control form-control-sm" })
+                @Html.DropDownList("UserRole", null, htmlAttributes: new { @class = "form-control form-control-sm select2", style = "font-size:100%;" })
             </div>
         </div>
-
     </div>
 }
 
@@ -75,7 +79,7 @@
         swal.fire({
             title: "Save record?",
             text: "You are about to save this record, continue?",
-            type: "warning",
+            icon: "question",
             showCancelButton: true,
         }).then((result) => {
             if (result.value) {
@@ -83,26 +87,52 @@
             }
         })
     });
-    function CloseModal(data) {
-        if (data.status === "success") {
-            $('#modal-default').modal('hide');
-            window.location.href = "@Url.Action("index", "Users", new { Area = "" })";
-            toastr.success('User Account is saved!', 'Save', { timeOut: 10000, preventDuplicates: false });
+    function CreateResult(data) {
+        if (data.result == true) {
+            swal.fire({
+                title: "Record Saved!",
+                text: "User Account is successfully saved!",
+                icon: "success"
+            }).then((result) => {
+                if (result.value) {
+                    window.location.href = "@Url.Action("users-management", "Users", new { Area = "" })";
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                icon: "error"
+            })
         }
     };
     function GetEmployees() {
-        var deptCode = $('#OfficeCode').val();
-        var url = '@Url.Action("get-employees", "Users")';
+        var deptCode = $('#DepartmentCode').val();
+        var urlUsers = '@Url.Action("get-employees", "Users")';
+        var urlUnits = '@Url.Action("get-units", "Users")';
         $.ajax({
-            url: url,
+            url: urlUsers,
             data: { DepartmentCode: deptCode },
             type: "GET",
             success: function (data) {
                 var s = '<option value="-1">Please Select an Employee</option>';
                 for (var i = 0; i < data.length; i++) {
-                    s += '<option value="' + data[i].EmpCode + '">' + data[i].EmployeeName + '</option>';
+                    s += '<option value="' + data[i].EmployeeCode + '">' + data[i].EmployeeName + '</option>';
                 }
                 $("#EmpCode").html(s);
+            }
+        });
+        $.ajax({
+            url: urlUnits,
+            data: { DepartmentCode: deptCode },
+            type: "GET",
+            success: function (data) {
+                var s = '<option value="-1">Please Select a Unit</option>';
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].DepartmentCode + '">' + data[i].Department + '</option>';
+                }
+                $("#UnitCode").html(s);
             }
         });
     };
@@ -125,13 +155,6 @@
     };
     $(function () {
         //Initialize Select2 Elements
-        $('.select2').select2({
-            theme: 'bootstrap4'
-        })
-
-        //Initialize Select2 Elements
-        $('.select2bs4').select2({
-            theme: 'bootstrap4'
-        })
+        $('.select2').select2();
     })
 </script>

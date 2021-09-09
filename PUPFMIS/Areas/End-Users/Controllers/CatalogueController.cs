@@ -6,533 +6,392 @@ using System.Net;
 using System.Web.Mvc;
 using System;
 
-namespace PUPFMIS.Areas.EndUsers.Controllers
+namespace PUPFMIS.Controllers
 {
-    [RouteArea("end-users")]
-    [RoutePrefix("catalogue")]
     [Route("{action}")]
-    [Authorize(Roles = SystemRoles.SuperUser + ", " + SystemRoles.EndUser)]
+    [RouteArea("end-users")]
+
+    [UserAuthorization(Roles = SystemRoles.SuperUser + ", " + SystemRoles.EndUser + ", " + SystemRoles.ResponsibilityCenterPlanner + ", " + SystemRoles.SuppliesChief + ", " + SystemRoles.ResponsibilityCenterPlanner)]
     public class CatalogueController : Controller
     {
-        private CatalogueBL catalogueBL = new CatalogueBL();
         private CatalogueDAL catalogueDAL = new CatalogueDAL();
-        private ItemDataAccess itemDataAccess = new ItemDataAccess();
+        private SuppliersBL suppliersDataAccess = new SuppliersBL();
         private HRISDataAccess hrisDataAccess = new HRISDataAccess();
 
-        [HttpPost]
-        [Route("")]
-        [ActionName("view-item-catalogue")]
-        public ActionResult CommonSuppliesCatalogue(string ProjectCode, bool FromCatalogue)
+        [ActionName("view-catalogue")]
+        [Route("{ProjectCode}/catalogue")]
+        [UserAuthorization(Roles = SystemRoles.SuperUser + ", " + SystemRoles.EndUser)]
+        public ActionResult ViewCatalogue(string ProjectCode)
         {
-            var departmentCode = hrisDataAccess.GetEmployee(User.Identity.Name).DepartmentCode;
-            if(FromCatalogue == false)
+            if (Session["Basket"] == null)
             {
-                Session["ProjectPlan"] = new ProjectPlanVM();
-                Session["ProjectPlan"] = catalogueDAL.GetProject(ProjectCode);
-                ((ProjectPlanVM)Session["ProjectPlan"]).ProjectPlanItems = new List<ProjectPlanItemsVM>();
-                ((ProjectPlanVM)Session["ProjectPlan"]).NewItemProposals = new List<ProjectPlanItemsVM>();
-            }
-            ViewBag.Categories = catalogueDAL.GetItemCategories();
-            if(ProjectCode.Substring(0, 4) == "CSPR")
-            {
-                ViewBag.ProjectCode = ProjectCode;
-                return View("CommonSuppliesCatalogue", itemDataAccess.GetItemCatalogueView(false, "CUOS", departmentCode));
+                var projectPlanDAL = new ProjectPlansDAL();
+                var project = projectPlanDAL.GetProjectPlan(ProjectCode);
+                var basket = new Basket
+                {
+                    DeliveryMonth = project.DeliveryMonth,
+                    ProjectCode = project.ProjectCode,
+                    BasketItems = new List<BasketItems>()
+                };
+                Session["Basket"] = basket;
             }
 
-            if (ProjectCode.Substring(0, 4) == "EUPR")
+            if (((Basket)Session["Basket"]).ProjectCode != ProjectCode)
             {
-                ViewBag.ProjectCode = ProjectCode;
-                return View("CommonSuppliesCatalogue", itemDataAccess.GetItemCatalogueView(false, departmentCode));
+                var projectPlanDAL = new ProjectPlansDAL();
+                var project = projectPlanDAL.GetProjectPlan(ProjectCode);
+                var basket = new Basket
+                {
+                    DeliveryMonth = project.DeliveryMonth,
+                    ProjectCode = project.ProjectCode,
+                    BasketItems = new List<BasketItems>()
+                };
+                Session["Basket"] = basket;
             }
-            return RedirectToAction("project-details", "ProjectPlans", new { Area = "end-user", ProjectCode = ProjectCode });
+
+            ViewBag.ProjectCode = ProjectCode;
+            ViewBag.Categories = new SelectList(catalogueDAL.GetItemCategories(), "ID", "ItemCategoryName");
+            ViewBag.ItemTypes = new SelectList(catalogueDAL.GetItemTypes(), "ID", "ItemType");
+            return View("ViewCatalogue", catalogueDAL.GetCatalogue(User.Identity.Name, ProjectCode));
         }
 
-        [Route("")]
-        [ActionName("view-item-catalogue")]
-        public ActionResult CommonSuppliesCatalogue()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("{ProjectCode}/catalogue")]
+        [ActionName("view-catalogue-search")]
+        [UserAuthorization(Roles = SystemRoles.SuperUser + ", " + SystemRoles.EndUser)]
+        public ActionResult ViewCatalogueFromSearch(string ProjectCode, string SearchByItemName, int? Categories, int? ItemTypes)
         {
-            var departmentCode = hrisDataAccess.GetEmployee(User.Identity.Name).DepartmentCode;
-            var projectPlan = Session["ProjectPlan"] as ProjectPlanVM;
-            if (projectPlan == null)
+            if (Session["Basket"] == null)
             {
-                return RedirectToAction("list", "ProjectPlans", new { Area = "end-users" });
-            }
-            ViewBag.Categories = catalogueDAL.GetItemCategories();
-            if (projectPlan.ProjectCode.Substring(0, 4) == "CSPR")
-            {
-                ViewBag.ProjectCode = projectPlan.ProjectCode;
-                return View("CommonSuppliesCatalogue", itemDataAccess.GetItemCatalogueView(false, "CUOS", departmentCode));
+                var projectPlanDAL = new ProjectPlansDAL();
+                var project = projectPlanDAL.GetProjectPlan(ProjectCode);
+                var basket = new Basket();
+                basket.DeliveryMonth = project.DeliveryMonth;
+                basket.ProjectCode = project.ProjectCode;
+                basket.BasketItems = new List<BasketItems>();
+                Session["Basket"] = basket;
             }
 
-            if (projectPlan.ProjectCode.Substring(0, 4) == "EUPR")
+            if (((Basket)Session["Basket"]).ProjectCode != ProjectCode)
             {
-                ViewBag.ProjectCode = projectPlan.ProjectCode;
-                return View("CommonSuppliesCatalogue", itemDataAccess.GetItemCatalogueView(false, departmentCode));
+                var projectPlanDAL = new ProjectPlansDAL();
+                var project = projectPlanDAL.GetProjectPlan(ProjectCode);
+                var basket = new Basket();
+                basket.DeliveryMonth = project.DeliveryMonth;
+                basket.ProjectCode = project.ProjectCode;
+                basket.BasketItems = new List<BasketItems>();
+                Session["Basket"] = basket;
             }
-            return RedirectToAction("project-details", "ProjectPlans", new { Area = "end-user", ProjectCode = projectPlan.ProjectCode });
+
+            ModelState.Clear();
+            ViewBag.ProjectCode = ProjectCode;
+            ViewBag.Categories = new SelectList(catalogueDAL.GetItemCategories(), "ID", "ItemCategoryName");
+            ViewBag.ItemTypes = new SelectList(catalogueDAL.GetItemTypes(), "ID", "ItemType");
+            return View("ViewCatalogue", catalogueDAL.GetCatalogueFromSearch(User.Identity.Name, ProjectCode, Categories, ItemTypes, SearchByItemName));
+        }
+
+        [ActionName("add-to-basket")]
+        [Route("{ProjectCode}/catalogue/{ItemCode}")]
+        [UserAuthorization(Roles = SystemRoles.SuperUser + ", " + SystemRoles.EndUser)]
+        public ActionResult AddToBasket(string ProjectCode, string ItemCode)
+        {
+            if (Session["Basket"] == null)
+            {
+                var projectPlanDAL = new ProjectPlansDAL();
+                var project = projectPlanDAL.GetProjectPlan(ProjectCode);
+                var basket = new Basket
+                {
+                    DeliveryMonth = project.DeliveryMonth,
+                    ProjectCode = project.ProjectCode,
+                    BasketItems = new List<BasketItems>()
+                };
+                Session["Basket"] = basket;
+            }
+
+            if (((Basket)Session["Basket"]).ProjectCode != ProjectCode)
+            {
+                var projectPlanDAL = new ProjectPlansDAL();
+                var project = projectPlanDAL.GetProjectPlan(ProjectCode);
+                var basket = new Basket
+                {
+                    DeliveryMonth = project.DeliveryMonth,
+                    ProjectCode = project.ProjectCode,
+                    BasketItems = new List<BasketItems>()
+                };
+                Session["Basket"] = basket;
+            }
+
+            var projectItem = catalogueDAL.GetProjectDetails(ProjectCode, ItemCode);
+            if (projectItem != null)
+            {
+                return View("AddToBasket", projectItem);
+            }
+
+            if (((Basket)Session["Basket"]).BasketItems.Where(d => d.ItemCode == ItemCode).Count() >= 1)
+            {
+                var basket = ((Basket)Session["Basket"]);
+                BasketItems basketItem = basket.BasketItems.Where(d => d.ItemCode == ItemCode).FirstOrDefault();
+                return View("AddToBasket", basketItem);
+            }
+
+            var item = catalogueDAL.GetItem(ItemCode);
+            return View("AddToBasket", item);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionName("add-to-basket")]
+        [Route("{ProjectCode}/catalogue/{ItemCode}")]
+        [UserAuthorization(Roles = SystemRoles.SuperUser + ", " + SystemRoles.EndUser)]
+        public ActionResult AddToBasket(BasketItems BasketItem, string ProjectCode, string ItemCode)
+        {
+            if (Session["Basket"] == null)
+            {
+                var projectPlanDAL = new ProjectPlansDAL();
+                var project = projectPlanDAL.GetProjectPlan(ProjectCode);
+                var basket = new Basket();
+                basket.DeliveryMonth = project.DeliveryMonth;
+                basket.ProjectCode = project.ProjectCode;
+                basket.BasketItems = new List<BasketItems>();
+                Session["Basket"] = basket;
+            }
+
+            if (((Basket)Session["Basket"]).ProjectCode != ProjectCode)
+            {
+                var projectPlanDAL = new ProjectPlansDAL();
+                var project = projectPlanDAL.GetProjectPlan(ProjectCode);
+                var basket = new Basket();
+                basket.DeliveryMonth = project.DeliveryMonth;
+                basket.ProjectCode = project.ProjectCode;
+                basket.BasketItems = new List<BasketItems>();
+                Session["Basket"] = basket;
+            }
+
+            if (ProjectCode.Contains("CSPR"))
+            {
+                BasketItem.TotalQty = BasketItem.JanQty + BasketItem.FebQty + BasketItem.MarQty + BasketItem.AprQty + BasketItem.MayQty + BasketItem.JunQty + BasketItem.JulQty + BasketItem.AugQty + BasketItem.SepQty + BasketItem.OctQty + BasketItem.NovQty + BasketItem.DecQty;
+            }
+
+            if(BasketItem.Classification == "Repair and Maintenance" || BasketItem.Classification == "Infrastructure")
+            {
+                BasketItem.TotalQty = 1;
+            }
+
+            if (BasketItem.TotalQty == 0)
+            {
+
+                ModelState.AddModelError("", "Quantity must be at least one (1).");
+                return View("AddToBasket", BasketItem);
+            }
+
+            if (BasketItem.Justification == null || BasketItem.Justification == String.Empty)
+            {
+                ModelState.AddModelError("", "Please provide justification for this item.");
+                return View("AddToBasket", BasketItem);
+            }
+
+            if (BasketItem.ProcurementSource == "External Suppliers" && BasketItem.ResponsibilityCenter == "Requesting Office")
+            {
+                var supplier1 = suppliersDataAccess.GetSupplierDetails(BasketItem.Supplier1ID);
+                var supplier2 = suppliersDataAccess.GetSupplierDetails(BasketItem.Supplier2ID);
+                var supplier3 = suppliersDataAccess.GetSupplierDetails(BasketItem.Supplier3ID);
+                BasketItem.Supplier1Name = supplier1.SupplierName;
+                BasketItem.Supplier1Address = supplier1.Address;
+                BasketItem.Supplier1ContactNo = supplier1.ContactNumber;
+                BasketItem.Supplier1EmailAddress = supplier1.EmailAddress;
+                BasketItem.Supplier2Name = supplier2.SupplierName;
+                BasketItem.Supplier2Address = supplier2.Address;
+                BasketItem.Supplier2ContactNo = supplier2.ContactNumber;
+                BasketItem.Supplier2EmailAddress = supplier2.EmailAddress;
+                BasketItem.Supplier3Name = supplier3.SupplierName;
+                BasketItem.Supplier3Address = supplier3.Address;
+                BasketItem.Supplier3ContactNo = supplier3.ContactNumber;
+                BasketItem.Supplier3EmailAddress = supplier3.EmailAddress;
+                BasketItem.UnitCost = catalogueDAL.ComputeUnitCost(BasketItem.Supplier1UnitCost, BasketItem.Supplier2UnitCost, BasketItem.Supplier3UnitCost);
+                BasketItem.UnitCost = Math.Round((decimal)BasketItem.UnitCost, 2, MidpointRounding.AwayFromZero);
+                BasketItem.EstimatedBudget = BasketItem.UnitCost * BasketItem.TotalQty;
+            }
+            else if (BasketItem.ProcurementSource == "Department of Budget and Management - Procurement Service")
+            {
+                var supplier = suppliersDataAccess.GetSupplierDetails(1);
+                BasketItem.Supplier1ID = 1;
+                BasketItem.Supplier1Name = supplier.SupplierName;
+                BasketItem.Supplier1Address = supplier.Address;
+                BasketItem.Supplier1ContactNo = supplier.ContactNumber;
+                BasketItem.Supplier1EmailAddress = supplier.EmailAddress;
+                BasketItem.Supplier1UnitCost = (decimal)BasketItem.UnitCost;
+                BasketItem.EstimatedBudget = BasketItem.UnitCost * BasketItem.TotalQty;
+            }
+            else
+            {
+                BasketItem.UnitCost = BasketItem.UnitCost == null ? null : BasketItem.UnitCost;
+                BasketItem.EstimatedBudget = BasketItem.UnitCost == null ? null : BasketItem.UnitCost * BasketItem.TotalQty;
+            }
+
+            if (BasketItem.Supplier1ID == 0 && ((BasketItem.ProcurementSource == "External Suppliers" && BasketItem.ResponsibilityCenter == "Requesting Office") || BasketItem.ProcurementSource == "Department of Budget and Management - Procurement Service"))
+            {
+                ModelState.AddModelError("", "Please provide at least one (1) Supplier Information and Unit Cost.");
+                return View("AddToBasket", BasketItem);
+            }
+
+            if (BasketItem.Supplier1UnitCost == 0 && ((BasketItem.ProcurementSource == "External Suppliers" && BasketItem.ResponsibilityCenter == "Requesting Office") || BasketItem.ProcurementSource == "Department of Budget and Management - Procurement Service"))
+            {
+                ModelState.AddModelError("", "Unit Cost for Supplier 1 must be greater than " + (0.00m).ToString("C", new System.Globalization.CultureInfo("en-ph")) + ".");
+                return View("AddToBasket", BasketItem);
+            }
+
+            if ((BasketItem.Supplier2ID != null || BasketItem.Supplier2ID != 0) && BasketItem.Supplier2UnitCost == 0 && (BasketItem.ProcurementSource == "External Suppliers" && BasketItem.ResponsibilityCenter == "Requesting Office"))
+            {
+                ModelState.AddModelError("", "Unit Cost for Supplier 2 must be greater than " + (0.00m).ToString("C", new System.Globalization.CultureInfo("en-ph")) + ".");
+                return View("AddToBasket", BasketItem);
+            }
+
+            if ((BasketItem.Supplier3ID != null || BasketItem.Supplier3ID != 0) && BasketItem.Supplier3UnitCost == 0 && (BasketItem.ProcurementSource == "External Suppliers" && BasketItem.ResponsibilityCenter == "Requesting Office"))
+            {
+                ModelState.AddModelError("", "Unit Cost for Supplier 3 must be greater than " + (0.00m).ToString("C", new System.Globalization.CultureInfo("en-ph")) + ".");
+                return View("AddToBasket", BasketItem);
+            }
+
+            if (((Basket)Session["Basket"]).BasketItems.Where(d => d.ItemCode == ItemCode).Count() >= 1)
+            {
+                var basket = ((Basket)Session["Basket"]);
+                BasketItems basketItem = basket.BasketItems.Where(d => d.ItemCode == ItemCode).FirstOrDefault();
+                basket.BasketItems.Remove(basketItem);
+                basket.BasketItems.Add(BasketItem);
+            }
+            else
+            {
+                ((Basket)Session["Basket"]).BasketItems.Add(BasketItem);
+            }
+            return RedirectToAction("view-catalogue");
+        }
+
+        [ActionName("view-basket")]
+        [Route("{ProjectCode}/view-basket")]
+        [UserAuthorization(Roles = SystemRoles.SuperUser + ", " + SystemRoles.EndUser)]
+        public ActionResult ViewBasket(string ProjectCode)
+        {
+            if (Session["Basket"] == null)
+            {
+                var projectPlanDAL = new ProjectPlansDAL();
+                var project = projectPlanDAL.GetProjectPlan(ProjectCode);
+                var basket = new Basket
+                {
+                    DeliveryMonth = project.DeliveryMonth,
+                    ProjectCode = project.ProjectCode,
+                    BasketItems = new List<BasketItems>()
+                };
+                Session["Basket"] = basket;
+            }
+
+            if (((Basket)Session["Basket"]).ProjectCode != ProjectCode)
+            {
+                var projectPlanDAL = new ProjectPlansDAL();
+                var project = projectPlanDAL.GetProjectPlan(ProjectCode);
+                var basket = new Basket
+                {
+                    DeliveryMonth = project.DeliveryMonth,
+                    ProjectCode = project.ProjectCode,
+                    BasketItems = new List<BasketItems>()
+                };
+                Session["Basket"] = basket;
+            }
+
+            var basketWithItems = Session["Basket"];
+            return View("ViewBasket", basketWithItems);
+        }
+
+        [ActionName("remove-basket-item")]
+        [Route("{ProjectCode}/remove-basket-item/{ItemCode}")]
+        [UserAuthorization(Roles = SystemRoles.SuperUser + ", " + SystemRoles.EndUser)]
+        public ActionResult RemoveBasketItem(string ProjectCode, string ItemCode)
+        {
+            if (Session["Basket"] == null)
+            {
+                var projectPlanDAL = new ProjectPlansDAL();
+                var project = projectPlanDAL.GetProjectPlan(ProjectCode);
+                var basket = new Basket
+                {
+                    DeliveryMonth = project.DeliveryMonth,
+                    ProjectCode = project.ProjectCode,
+                    BasketItems = new List<BasketItems>()
+                };
+                Session["Basket"] = basket;
+            }
+
+            if (((Basket)Session["Basket"]).ProjectCode != ProjectCode)
+            {
+                var projectPlanDAL = new ProjectPlansDAL();
+                var project = projectPlanDAL.GetProjectPlan(ProjectCode);
+                var basket = new Basket();
+                basket.DeliveryMonth = project.DeliveryMonth;
+                basket.ProjectCode = project.ProjectCode;
+                basket.BasketItems = new List<BasketItems>();
+                Session["Basket"] = basket;
+            }
+
+            var basketWithItems = Session["Basket"] as Basket;
+            var itemToRemove = basketWithItems.BasketItems.Where(d => d.ItemCode == ItemCode).FirstOrDefault();
+            basketWithItems.BasketItems.Remove(itemToRemove);
+            return View("ViewBasket", basketWithItems);
+        }
+
+        [ActionName("clear-basket")]
+        [Route("{ProjectCode}/clear-basket")]
+        [UserAuthorization(Roles = SystemRoles.SuperUser + ", " + SystemRoles.EndUser)]
+        public ActionResult ClearBasket(string ProjectCode)
+        {
+            if (Session["Basket"] == null)
+            {
+                var projectPlanDAL = new ProjectPlansDAL();
+                var project = projectPlanDAL.GetProjectPlan(ProjectCode);
+                var basket = new Basket
+                {
+                    DeliveryMonth = project.DeliveryMonth,
+                    ProjectCode = project.ProjectCode,
+                    BasketItems = new List<BasketItems>()
+                };
+                Session["Basket"] = basket;
+            }
+
+            if (((Basket)Session["Basket"]).ProjectCode != ProjectCode)
+            {
+                var projectPlanDAL = new ProjectPlansDAL();
+                var project = projectPlanDAL.GetProjectPlan(ProjectCode);
+                var basket = new Basket
+                {
+                    DeliveryMonth = project.DeliveryMonth,
+                    ProjectCode = project.ProjectCode,
+                    BasketItems = new List<BasketItems>()
+                };
+                Session["Basket"] = basket;
+            }
+
+            var basketWithItems = Session["Basket"] as Basket;
+            basketWithItems.BasketItems.Clear();
+            return RedirectToAction("view-basket");
         }
 
         [Route("view-suppliers")]
         [ActionName("view-suppliers")]
-        public ActionResult ViewSuppliers(int SupplierNo)
+        [UserAuthorization(Roles = SystemRoles.ResponsibilityCenterPlanner + ", " + SystemRoles.SuppliesChief + ", " + SystemRoles.ResponsibilityCenterPlanner)]
+        public ActionResult ViewSuppliers(int SupplierNo, int Supplier1ID, int? Supplier2ID, int? Supplier3ID, string ItemCode)
         {
             ViewBag.SupplierNo = SupplierNo;
-            return PartialView("SupplierView", catalogueDAL.GetSuppliers());
-        }
-
-        [ActionName("add-to-basket")]
-        [Route("{InventoryType}/{ItemCode}/add-to-basket")]
-        public ActionResult AddToBasket(string ItemCode, string InventoryType)
-        {
-            var projectPlan = Session["ProjectPlan"] as ProjectPlanVM;
-            if (projectPlan == null)
-            {
-                return RedirectToAction("list", "ProjectPlans", new { Area = "end-users" });
-            }
-
-            if (ItemCode == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-
-            var item = catalogueDAL.GetItem(ItemCode, InventoryType);
-            if (item == null)
-            {
-                return HttpNotFound();
-            }
-
-            if (projectPlan.ProjectCode.Substring(0, 4) == "CSPR")
-            {
-                return AddSupplies(item, projectPlan);
-            }
-            else
-            {
-                return AddProjectItem(item, projectPlan);
-            }
-        }
-
-        private ActionResult AddSupplies(CatalogueBasketItemVM Item, ProjectPlanVM ProjectPlan)
-        {
-            if (Item.InventoryType == "Common Use Office Supplies" && Item.ProcurementSource == ProcurementSources.PS_DBM)
-            {
-                var supplierInfo = catalogueDAL.GetSupplier(1);
-                Item.Supplier1ID = supplierInfo.ID;
-                Item.Supplier1Name = supplierInfo.SupplierName;
-                Item.Supplier1Address = supplierInfo.Address;
-                Item.Supplier1ContactNo = supplierInfo.ContactNumber;
-                Item.Supplier1EmailAddress = (supplierInfo.EmailAddress == null) ? "Email Address not provided." : supplierInfo.EmailAddress;
-                Item.Supplier1UnitCost = Item.UnitCost == null ? 0.00m : (decimal)Item.UnitCost;
-                Item.UnitCost = Item.UnitCost == null ? 0.00m : (decimal)Item.UnitCost;
-            }
-
-            if (catalogueBL.ItemBelongsToProject(ProjectPlan.ProjectCode, Item.ItemCode))
-            {
-                ModelState.AddModelError("", "Item is included in the Project.");
-                ViewBag.EnableElement = false;
-                return View("AddCommonSuppliesToBasket", Item);
-            }
-
-            if (catalogueBL.ItemBelongsToProjectActual(ProjectPlan.ProjectCode, Item.ItemCode))
-            {
-                ModelState.AddModelError("", "Item is already included in the Project as your Actual Obligation for the previous year.");
-                ModelState.AddModelError("", "By continuing, item will be added to your New Spending Proposal (Tier 2).");
-                ViewBag.EnableElement = true;
-                Item.ProposalType = BudgetProposalType.NewProposal;
-                return View("AddCommonSuppliesToBasket", Item);
-            }
-
-            var newProposalItem = ProjectPlan.NewItemProposals.Where(d => d.ItemCode == Item.ItemCode).FirstOrDefault();
-            if (newProposalItem != null)
-            {
-                ModelState.AddModelError("", "Item is already in the Basket.");
-                ViewBag.EnableElement = true;
-                return View("AddCommonSuppliesToBasket", Item);
-            }
-
-            Item.ProposalType = BudgetProposalType.NewProposal;
-            ViewBag.EnableElement = true;
-            return View("AddCommonSuppliesToBasket", Item);
-        }
-
-        private ActionResult AddProjectItem(CatalogueBasketItemVM Item, ProjectPlanVM ProjectPlan)
-        {
-            if (catalogueBL.ItemBelongsToProject(ProjectPlan.ProjectCode, Item.ItemCode))
-            {
-                ModelState.AddModelError("", "Item is included in the Project.");
-                ViewBag.IsTangible = catalogueBL.IsItemTangible(Item.ItemCode);
-                ViewBag.EnableElement = false;
-                return View("AddToBasket", Item);
-            }
-
-            if (catalogueBL.ItemBelongsToProjectActual(ProjectPlan.ProjectCode, Item.ItemCode))
-            {
-                ModelState.AddModelError("", "Item is already included in the Project as your Actual Obligation for the previous year.");
-                ModelState.AddModelError("", "By continuing, item will be added to your New Spending Proposal (Tier 2).");
-                ViewBag.EnableElement = true;
-                Item.ProposalType = BudgetProposalType.NewProposal;
-                return View("AddToBasket", Item);
-            }
-
-            if (Item.ProcurementSource == ProcurementSources.PS_DBM)
-            {
-                var supplierInfo = catalogueDAL.GetSupplier(1);
-                Item.Supplier1ID = supplierInfo.ID;
-                Item.Supplier1Name = supplierInfo.SupplierName;
-                Item.Supplier1Address = supplierInfo.Address;
-                Item.Supplier1ContactNo = supplierInfo.ContactNumber;
-                Item.Supplier1EmailAddress = (supplierInfo.EmailAddress == null) ? "Email Address not provided." : supplierInfo.EmailAddress;
-                Item.Supplier1UnitCost = (decimal)Item.UnitCost;
-                Item.UnitCost = (decimal)Item.UnitCost;
-            }
-
-            var newProposalItem = ProjectPlan.NewItemProposals.Where(d => d.ItemCode == Item.ItemCode).FirstOrDefault();
-            if (newProposalItem != null)
-            {
-                ModelState.AddModelError("", "Item is included in the basket.");
-                ModelState.AddModelError("", "You may update the details of the item.");
-                Item.ProposalType = newProposalItem.ProposalType;
-                Item.TotalQty = newProposalItem.TotalQty;
-                Item.Remarks = newProposalItem.Remarks;
-                Item.UnitCost = newProposalItem.UnitCost;
-                Item.Supplier1ID = newProposalItem.Supplier1ID;
-                Item.Supplier1UnitCost = newProposalItem.Supplier1UnitCost;
-                Item.Supplier2ID = newProposalItem.Supplier2ID;
-                Item.Supplier2UnitCost = newProposalItem.Supplier2UnitCost;
-                Item.Supplier3ID = newProposalItem.Supplier3ID;
-                Item.Supplier3UnitCost = newProposalItem.Supplier3UnitCost;
-                ViewBag.IsTangible = catalogueBL.IsItemTangible(Item.ItemCode);
-                ViewBag.EnableElement = true;
-                return View("AddToBasket", Item);
-            }
-
-            ViewBag.IsTangible = catalogueBL.IsItemTangible(Item.ItemCode);
-            Item.ProposalType = BudgetProposalType.NewProposal;
-            ViewBag.EnableElement = true;
-            return View("AddToBasket", Item);
+            return PartialView("SupplierView", catalogueDAL.GetSuppliers(Supplier1ID, Supplier2ID, Supplier3ID, ItemCode));
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [ActionName("add-to-basket")]
-        [Route("{InventoryType}/{ItemCode}/add-to-basket")]
-        public ActionResult AddToBasket(CatalogueBasketItemVM itemBasket)
+        [Route("view-suppliers")]
+        [ActionName("post-to-project")]
+        [UserAuthorization(Roles = SystemRoles.SuperUser + ", " + SystemRoles.EndUser)]
+        public ActionResult PostItems(string ProjectCode)
         {
-            var projectPlan = Session["ProjectPlan"] as ProjectPlanVM;
-            if (projectPlan == null)
-            {
-                return RedirectToAction("list", "ProjectPlans", new { Area = "end-users" });
-            }
-
-            string Message = string.Empty;
-            if (!catalogueBL.ValidateAddItem(itemBasket, projectPlan.ProjectCode, out Message))
-            {
-                ModelState.AddModelError("", Message);
-                ViewBag.IsTangible = catalogueBL.IsItemTangible(itemBasket.ItemCode);
-                ViewBag.EnableElement = true;
-                if(projectPlan.ProjectCode.StartsWith("CSPR"))
-                {
-                    return View("AddCommonSuppliesToBasket", itemBasket);
-                }
-                else
-                {
-                    return View("AddToBasket", itemBasket);
-                }
-                
-            }
-
-            if (itemBasket.ProcurementSource == ProcurementSources.PS_DBM)
-            {
-                var supplierInfo = catalogueDAL.GetSupplier(1);
-                itemBasket.Supplier1ID = supplierInfo.ID;
-                itemBasket.Supplier1Name = supplierInfo.SupplierName;
-                itemBasket.Supplier1Address = supplierInfo.Address;
-                itemBasket.Supplier1ContactNo = supplierInfo.ContactNumber;
-                itemBasket.Supplier1EmailAddress = (supplierInfo.EmailAddress == null) ? "Email Address not provided." : supplierInfo.EmailAddress;
-                itemBasket.Supplier1UnitCost = (decimal)itemBasket.UnitCost;
-                itemBasket.UnitCost = (decimal)itemBasket.UnitCost;
-            }
-
-            var newItemProposal = projectPlan.NewItemProposals.Where(d => d.ItemCode == itemBasket.ItemCode).FirstOrDefault();
-            if(newItemProposal != null)
-            {
-                projectPlan.NewItemProposals.Remove(newItemProposal);
-            }
-
-            if(itemBasket.ProcurementSource == ProcurementSources.PS_DBM && itemBasket.InventoryType == "Common Use Office Supplies")
-            {
-                itemBasket.Supplier1ID = 1;
-                itemBasket.Supplier1UnitCost = (decimal)itemBasket.UnitCost;
-                itemBasket.UnitCost = (decimal)itemBasket.UnitCost;
-            }
-            else
-            {
-                itemBasket.UnitCost = catalogueBL.ComputeUnitCost(itemBasket.Supplier1UnitCost, itemBasket.Supplier2UnitCost, itemBasket.Supplier3UnitCost);
-                itemBasket.UnitCost = Math.Round((decimal)itemBasket.UnitCost, 2, MidpointRounding.AwayFromZero);
-            }
-
-            if (ModelState.IsValid)
-            {
-                projectPlan.NewItemProposals.Add(new ProjectPlanItemsVM
-                {
-                    ProjectCode = projectPlan.ProjectCode,
-                    ItemCode = itemBasket.ItemCode,
-                    ItemName = itemBasket.ItemName,
-                    ItemImage = itemBasket.ItemImage,
-                    ItemSpecifications = itemBasket.ItemSpecifications,
-                    InventoryType = itemBasket.InventoryType,
-                    ItemCategory = itemBasket.ItemCategory,
-                    ProcurementSource = itemBasket.ProcurementSource,
-                    IndividualUOMReference = itemBasket.IndividualUOMReference,
-                    PackagingUOMReference = itemBasket.PackagingUOMReference,
-                    ProposalType = BudgetProposalType.NewProposal,
-                    JanQty = itemBasket.JanQty,
-                    FebQty = itemBasket.FebQty,
-                    MarQty = itemBasket.MarQty,
-                    AprQty = itemBasket.AprQty,
-                    MayQty = itemBasket.MayQty,
-                    JunQty = itemBasket.JunQty,
-                    JulQty = itemBasket.JulQty,
-                    AugQty = itemBasket.AugQty,
-                    SepQty = itemBasket.SepQty,
-                    OctQty = itemBasket.OctQty,
-                    NovQty = itemBasket.NovQty,
-                    DecQty = itemBasket.DecQty,
-                    TotalQty = itemBasket.TotalQty,
-                    UnitCost = (decimal)itemBasket.UnitCost,
-                    Supplier1ID = itemBasket.Supplier1ID,
-                    Supplier1UnitCost = itemBasket.Supplier1UnitCost,
-                    Supplier2ID = itemBasket.Supplier2ID,
-                    Supplier2UnitCost = itemBasket.Supplier2UnitCost,
-                    Supplier3ID = itemBasket.Supplier3ID,
-                    Supplier3UnitCost = itemBasket.Supplier3UnitCost,
-                    EstimatedBudget = (int)itemBasket.TotalQty * (decimal)itemBasket.UnitCost,
-                    Remarks = itemBasket.Remarks
-                });
-                Session["ProjectPlan"] = projectPlan;
-                ViewBag.StartMonth = projectPlan.ProjectMonthStart;
-                return RedirectToAction("view-item-catalogue", "Catalogue", new { Area = "end-users" });
-            }
-            
-            ViewBag.EnableElement = true;
-            ViewBag.IsTangible = catalogueBL.IsItemTangible(itemBasket.ItemCode);
-            return View("AddToBasket", itemBasket);
-        }
-
-        [ActionName("update-basket-item")]
-        [Route("{InventoryType}/{ItemCode}/update-basket-item")]
-        public ActionResult UpdateBasketItem(string ItemCode, string InventoryType)
-        {
-            var projectPlan = Session["ProjectPlan"] as ProjectPlanVM;
-            if (projectPlan == null)
-            {
-                return RedirectToAction("list", "ProjectPlans", new { Area = "end-users" });
-            }
-
-            if (ItemCode == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-
-            var item = catalogueDAL.GetItem(ItemCode, InventoryType);
-            if (item == null)
-            {
-                return HttpNotFound();
-            }
-
-            var basketItem = projectPlan.NewItemProposals.Where(d => d.ItemCode == item.ItemCode).FirstOrDefault();
-            if (basketItem == null)
-            {
-                return HttpNotFound();
-            }
-
-            var supplier1 = catalogueDAL.GetSupplier(basketItem.Supplier1ID);
-            var supplier2 = catalogueDAL.GetSupplier(basketItem.Supplier2ID);
-            var supplier3 = catalogueDAL.GetSupplier(basketItem.Supplier3ID);
-
-            item.JanQty = basketItem.JanQty;
-            item.FebQty = basketItem.FebQty;
-            item.MarQty = basketItem.MarQty;
-            item.AprQty = basketItem.AprQty;
-            item.MayQty = basketItem.MayQty;
-            item.JunQty = basketItem.JunQty;
-            item.JulQty = basketItem.JulQty;
-            item.AugQty = basketItem.AugQty;
-            item.SepQty = basketItem.SepQty;
-            item.OctQty = basketItem.OctQty;
-            item.NovQty = basketItem.NovQty;
-            item.DecQty = basketItem.DecQty;
-            item.UnitCost = basketItem.UnitCost;
-            item.TotalQty = basketItem.TotalQty;
-            item.Remarks = basketItem.Remarks;
-            item.UnitCost = basketItem.UnitCost;
-            item.Supplier1ID = supplier1.ID;
-            item.Supplier1Name = supplier1.SupplierName;
-            item.Supplier1Address = supplier1.Address;
-            item.Supplier1ContactNo = supplier1.ContactNumber;
-            item.Supplier1EmailAddress = (supplier1.EmailAddress == null) ? "No data provided." : supplier1.EmailAddress;
-            item.Supplier1UnitCost = basketItem.Supplier1UnitCost;
-            item.Supplier2ID = supplier2 == null ? null : (int?)supplier2.ID;
-            item.Supplier2Name = supplier2 == null ? null : supplier2.SupplierName;
-            item.Supplier2Address = supplier2 == null ? null : supplier2.Address;
-            item.Supplier2ContactNo = supplier2 == null ? null : supplier2.ContactNumber;
-            item.Supplier2EmailAddress = supplier2 == null ? null : (supplier2.EmailAddress == null) ? "No data provided." : supplier2.EmailAddress;
-            item.Supplier2UnitCost = basketItem.Supplier2UnitCost;
-            item.Supplier3ID = supplier3 == null ? null : (int?)supplier3.ID;
-            item.Supplier3Name = supplier3 == null ? null : supplier3.SupplierName;
-            item.Supplier3Address = supplier3 == null ? null : supplier3.Address;
-            item.Supplier3ContactNo = supplier3 == null ? null : supplier3.ContactNumber;
-            item.Supplier3EmailAddress = supplier3 == null ? null : (supplier3.EmailAddress == null) ? "No data provided." : supplier3.EmailAddress;
-            item.Supplier3UnitCost = basketItem.Supplier3UnitCost;
-
-            if (projectPlan.ProjectCode.Substring(0, 4) == "CSPR")
-            {
-                ViewBag.EnableElement = true;
-                return View("UpdateCommonSuppliesBasket", item);
-            }
-            else
-            {
-                ViewBag.IsTangible = catalogueBL.IsItemTangible(item.ItemCode);
-                ViewBag.EnableElement = true;
-                return View("UpdateBasket", item);
-            }
-        }
-
-        [HttpPost]
-        [ActionName("update-basket-item")]
-        [Route("{InventoryType}/{ItemCode}/update-basket-item")]
-        public ActionResult UpdateBasketItem(CatalogueBasketItemVM BasketItem)
-        {
-            var projectPlan = Session["ProjectPlan"] as ProjectPlanVM;
-            if (projectPlan == null)
-            {
-                return RedirectToAction("list", "ProjectPlans", new { Area = "end-users" });
-            }
-            var item = projectPlan.NewItemProposals.Where(d => d.ItemCode == BasketItem.ItemCode).FirstOrDefault();
-            if(item == null)
-            {
-                ModelState.AddModelError("", "Something went wrong. Please try again.");
-                return View("UpdateCommonSuppliesBasket", BasketItem);
-            }
-
-            if (BasketItem.InventoryType == "Common Use Office Supplies")
-            {
-                var supplierInfo = catalogueDAL.GetSupplier(1);
-                BasketItem.Supplier1ID = supplierInfo.ID;
-                BasketItem.Supplier1Name = supplierInfo.SupplierName;
-                BasketItem.Supplier1Address = supplierInfo.Address;
-                BasketItem.Supplier1ContactNo = supplierInfo.ContactNumber;
-                BasketItem.Supplier1EmailAddress = (supplierInfo.EmailAddress == null) ? "Email Address not provided." : supplierInfo.EmailAddress;
-                BasketItem.Supplier1UnitCost = (decimal)BasketItem.UnitCost;
-                BasketItem.UnitCost = (decimal)BasketItem.UnitCost;
-            }
-
-            string Message = string.Empty;
-            if (!catalogueBL.ValidateAddItem(BasketItem, projectPlan.ProjectCode, out Message))
-            {
-                ModelState.AddModelError("", Message);
-                ViewBag.EnableElement = true;
-                ViewBag.IsTangible = catalogueBL.IsItemTangible(BasketItem.ItemCode);
-                return View("UpdateCommonSuppliesBasket", BasketItem);
-            }
-
-            var supplier1UnitCost = item.Supplier1ID == 0 ? 0.00m : (decimal)item.Supplier1UnitCost;
-            var supplier2UnitCost = item.Supplier2ID == null ? 0.00m : (decimal)item.Supplier2UnitCost;
-            var supplier3UnitCost = item.Supplier3ID == null ? 0.00m : (decimal)item.Supplier3UnitCost;
-            var newUnitCost = supplier1UnitCost + supplier2UnitCost + supplier3UnitCost;
-
-            projectPlan.NewItemProposals.Remove(item);
-            projectPlan.NewItemProposals.Add(new ProjectPlanItemsVM
-            {
-                ProjectCode = projectPlan.ProjectCode,
-                ItemCode = BasketItem.ItemCode,
-                ItemName = BasketItem.ItemName,
-                ItemImage = BasketItem.ItemImage,
-                ItemSpecifications = BasketItem.ItemSpecifications,
-                InventoryType = BasketItem.InventoryType,
-                ItemCategory = BasketItem.ItemCategory,
-                ProcurementSource = BasketItem.ProcurementSource,
-                IndividualUOMReference = BasketItem.IndividualUOMReference,
-                PackagingUOMReference = BasketItem.PackagingUOMReference,
-                ProposalType = BudgetProposalType.NewProposal,
-                JanQty = BasketItem.JanQty,
-                FebQty = BasketItem.FebQty,
-                MarQty = BasketItem.MarQty,
-                AprQty = BasketItem.AprQty,
-                MayQty = BasketItem.MayQty,
-                JunQty = BasketItem.JunQty,
-                JulQty = BasketItem.JulQty,
-                AugQty = BasketItem.AugQty,
-                SepQty = BasketItem.SepQty,
-                OctQty = BasketItem.OctQty,
-                NovQty = BasketItem.NovQty,
-                DecQty = BasketItem.DecQty,
-                TotalQty = BasketItem.TotalQty,
-                UnitCost = newUnitCost,
-                Supplier1ID = BasketItem.Supplier1ID,
-                Supplier1UnitCost = BasketItem.Supplier1UnitCost,
-                Supplier2ID = BasketItem.Supplier2ID,
-                Supplier2UnitCost = BasketItem.Supplier2UnitCost,
-                Supplier3ID = BasketItem.Supplier3ID,
-                Supplier3UnitCost = BasketItem.Supplier3UnitCost,
-                EstimatedBudget = (int)BasketItem.TotalQty * newUnitCost,
-                Remarks = BasketItem.Remarks
-            });
-            Session["ProjectPlan"] = projectPlan;
-            return RedirectToAction("common-supplies-basket", "Catalogue", new { Area = "end-users" });
-        }
-        
-        [ActionName("remove-basket-item")]
-        [Route("{ItemCode}/remove-basket-item")]
-        public ActionResult RemoveBasketItem(string ItemCode)
-        {
-            var projectPlan = Session["ProjectPlan"] as ProjectPlanVM;
-            if (projectPlan == null)
-            {
-                return RedirectToAction("list", "ProjectPlans", new { Area = "end-users" });
-            }
-            var item = projectPlan.NewItemProposals.Where(d => d.ItemCode == ItemCode).FirstOrDefault();
-            if (item == null)
-            {
-                ModelState.AddModelError("", "Something went wrong. Please try again.");
-                return RedirectToAction("common-supplies-basket", "Catalogue", new { Area = "end-users" });
-            }
-            projectPlan.NewItemProposals.Remove(item);
-            return RedirectToAction("common-supplies-basket", "Catalogue", new { Area = "end-users" });
-        }
-
-        [ActionName("common-supplies-basket")]
-        [Route("view-basket")]
-        public ActionResult ViewCommonSuppliesBasket()
-        {
-            var projectPlan = Session["ProjectPlan"] as ProjectPlanVM;
-            if(projectPlan == null)
-            {
-                return RedirectToAction("list", "ProjectPlans", new { Area = "end-users" });
-            }
-            return View("ViewBasket", projectPlan);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [ActionName("save-common-supplies")]
-        [Route("view-basket")]
-        public ActionResult SaveCommonSupplies(ProjectPlanVM projectPlan)
-        {
-            string Message = string.Empty;
-            if (!catalogueBL.ValidateProjectPlan(projectPlan, out Message))
-            {
-                ModelState.AddModelError("", Message);
-                return View("ViewBasket", projectPlan);
-            }
-            if (ModelState.IsValid)
-            {
-                if(catalogueDAL.SaveBasket(projectPlan, out Message))
-                { 
-                    return RedirectToAction("project-details", "ProjectPlans", new { Area = "end-users", ProjectCode = projectPlan.ProjectCode });
-                }
-                ModelState.AddModelError("", "Something went wrong. Please try again.");
-            }
-            return View("common-supplies-basket", projectPlan);
+            var basket = ((Basket)Session["Basket"]);
+            Session.RemoveAll();
+            return Json(new { result = catalogueDAL.PostToProject(basket, User.Identity.Name) });
         }
 
         protected override void Dispose(bool disposing)

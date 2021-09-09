@@ -11,7 +11,7 @@ using System.Web.Mvc;
 
 namespace PUPFMIS.BusinessAndDataLogic
 {
-    
+
     public class AgencyProcurementRequestBL : Controller
     {
         private AgencyProcurementRequestDAL aprDAL = new AgencyProcurementRequestDAL();
@@ -20,7 +20,7 @@ namespace PUPFMIS.BusinessAndDataLogic
         public MemoryStream GenerateAgencyProcurementRequest(string AgencyControlNo, string LogoPath, string UserEmail)
         {
             Reports reports = new Reports();
-            var aprVM = aprDAL.GetAPR(AgencyControlNo);
+            var aprVM = aprDAL.GetAgencyProcurementRequestDetail(AgencyControlNo);
             reports.ReportFilename = "APR " + AgencyControlNo;
             reports.CreateDocument(8.50, 13.00, Orientation.Portrait, 0.25);
 
@@ -33,7 +33,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             rows.Add(new ContentCell("APR FORM revised MAY 2015", 0, 8, false, false, ParagraphAlignment.Left, VerticalAlignment.Center));
             rows.Add(new ContentCell("FORM NO. 062\t\t", 1, 8, false, false, ParagraphAlignment.Right, VerticalAlignment.Center));
             reports.AddRowContent(rows, 0.25);
-            
+
             columns = new List<ContentColumn>();
             columns.Add(new ContentColumn(2.00));
             columns.Add(new ContentColumn(3.00));
@@ -42,8 +42,8 @@ namespace PUPFMIS.BusinessAndDataLogic
             reports.AddTable(columns, false);
 
             rows = new List<ContentCell>();
-            rows.Add(new ContentCell("NAME AND ADDRESS OF", 0, 8, false, false, ParagraphAlignment.Left, VerticalAlignment.Center, 0, 0, false, new Color(0,0,0), false, true, true));
-            rows.Add(new ContentCell("POLYTECHNIC UNIVERSITY OF THE PHILIPPINES", 1, 8, false, false, ParagraphAlignment.Left, VerticalAlignment.Center, 0, 0, false, new Color(0,0,0), true, true, true));
+            rows.Add(new ContentCell("NAME AND ADDRESS OF", 0, 8, false, false, ParagraphAlignment.Left, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), false, true, true));
+            rows.Add(new ContentCell("POLYTECHNIC UNIVERSITY OF THE PHILIPPINES", 1, 8, false, false, ParagraphAlignment.Left, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), true, true, true));
             rows.Add(new ContentCell("AGENCY ACCT. CODE", 2, 8, false, false, ParagraphAlignment.Left, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), false, true, true));
             rows.Add(new ContentCell("Z006", 3, 8, false, false, ParagraphAlignment.Left, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), true, true, true));
             reports.AddRowContent(rows, 0.15);
@@ -188,28 +188,20 @@ namespace PUPFMIS.BusinessAndDataLogic
             reports.AddTable(columns, true);
 
             int count = 1;
-            var aprItems = aprVM.APRDetails
-                .GroupBy(d => new { d.ItemFullName, d.UnitReference, d.UnitPrice })
-                .Select(d => new {
-                    ItemFullName = d.Key.ItemFullName,
-                    Quantity = d.Sum(x => x.Quantity),
-                    UnitReference = d.Key.UnitReference,
-                    UnitPrice = d.Key.UnitPrice,
-                    Amount = d.Sum(x => x.Amount)
-                }).ToList();
-            foreach(var item in aprItems)
+            var aprItems = aprVM.APRDetails;
+            foreach (var item in aprItems)
             {
                 rows = new List<ContentCell>();
                 rows.Add(new ContentCell((count++).ToString(), 0, 7, false, false, ParagraphAlignment.Center, VerticalAlignment.Center));
                 rows.Add(new ContentCell(item.ItemFullName, 1, 7, false, false, ParagraphAlignment.Left, VerticalAlignment.Center));
                 rows.Add(new ContentCell(item.Quantity.ToString(), 2, 7, false, false, ParagraphAlignment.Center, VerticalAlignment.Center));
-                rows.Add(new ContentCell(item.UnitReference, 3, 7, false, false, ParagraphAlignment.Center, VerticalAlignment.Center));
-                rows.Add(new ContentCell(string.Format("{0:0,0.00}", item.UnitPrice), 4, 7, false, false, ParagraphAlignment.Right, VerticalAlignment.Center));
-                rows.Add(new ContentCell(string.Format("{0:0,0.00}", item.Amount), 5, 7, false, false, ParagraphAlignment.Right, VerticalAlignment.Center));
+                rows.Add(new ContentCell(item.UnitOfMeasure, 3, 7, false, false, ParagraphAlignment.Center, VerticalAlignment.Center));
+                rows.Add(new ContentCell(item.UnitCost.ToString("N", new System.Globalization.CultureInfo("en-ph")), 4, 7, false, false, ParagraphAlignment.Right, VerticalAlignment.Center));
+                rows.Add(new ContentCell(item.TotalCost.ToString("N", new System.Globalization.CultureInfo("en-ph")), 5, 7, false, false, ParagraphAlignment.Right, VerticalAlignment.Center));
                 reports.AddRowContent(rows, 0.20);
             }
 
-            for(int i = aprItems.Count(); i < 30; i++)
+            for (int i = aprItems.Count(); i < 30; i++)
             {
                 rows = new List<ContentCell>();
                 rows.Add(new ContentCell("", 0, 7, false, false, ParagraphAlignment.Center, VerticalAlignment.Center));
@@ -235,7 +227,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             rows.Add(new ContentCell("", 1, 7, false, false, ParagraphAlignment.Left, VerticalAlignment.Center));
             rows.Add(new ContentCell("", 2, 7, false, false, ParagraphAlignment.Center, VerticalAlignment.Center));
             rows.Add(new ContentCell("TOTAL AMOUNT", 3, 7, true, false, ParagraphAlignment.Left, VerticalAlignment.Center, 1));
-            rows.Add(new ContentCell(string.Format("{0:0,0.00}", aprVM.APRDetails.Sum(d => d.Amount)), 5, 7, false, false, ParagraphAlignment.Right, VerticalAlignment.Center));
+            rows.Add(new ContentCell(aprVM.APRDetails.Sum(d => d.TotalCost).ToString("C", new System.Globalization.CultureInfo("en-ph")), 5, 7, false, false, ParagraphAlignment.Right, VerticalAlignment.Center));
             reports.AddRowContent(rows, 0.20);
 
             columns = new List<ContentColumn>();
@@ -253,7 +245,7 @@ namespace PUPFMIS.BusinessAndDataLogic
             reports.AddTable(columns, false);
 
             rows = new List<ContentCell>();
-            rows.Add(new ContentCell("STOCKS REQUESTED ARE CERTIFIED TO BE", 0, 7, false, false, ParagraphAlignment.Left, VerticalAlignment.Center, 0, 0, false, new Color(0,0,0), true, true, true));
+            rows.Add(new ContentCell("STOCKS REQUESTED ARE CERTIFIED TO BE", 0, 7, false, false, ParagraphAlignment.Left, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), true, true, true));
             rows.Add(new ContentCell("FUNDS CERTIFIED AVAILABLE:", 1, 7, false, false, ParagraphAlignment.Left, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), true, true, true));
             rows.Add(new ContentCell("APPROVED", 2, 7, false, false, ParagraphAlignment.Left, VerticalAlignment.Center, 0, 0, false, new Color(0, 0, 0), true, true, true));
             reports.AddRowContent(rows, 0.15);
@@ -340,248 +332,239 @@ namespace PUPFMIS.BusinessAndDataLogic
     public class AgencyProcurementRequestDAL : Controller
     {
         private FMISDbContext db = new FMISDbContext();
-        private HRISDataAccess hrisDataAccess = new HRISDataAccess();
-        private TEMPAccounting abdb = new TEMPAccounting();
-        private ABISDataAccess abisDataAccess = new ABISDataAccess();
+        private HRISDataAccess hris = new HRISDataAccess();
+        private ABISDataAccess abis = new ABISDataAccess();
         private SystemBDL systemBDL = new SystemBDL();
-        
-        public List<AgencyProcurementRequestVM> GetAPR()
+
+        public List<int> GetFiscalYears()
         {
-            var agencyProcurementRequest = new List<AgencyProcurementRequestVM>();
-            var aprHeaders = db.APRHeader.ToList();
-            
-            foreach(var item in aprHeaders)
-            {
-                var aprDetails = db.APRDetail.Where(d => d.FKAPRReference.AgencyControlNo == item.AgencyControlNo).ToList();
-                var aprDetailsVM = new List<APRDetailVM>();
-                foreach(var detail in aprDetails)
-                {
-                    aprDetailsVM.Add(new APRDetailVM
-                    {
-                        ItemFullName = detail.FKItemReference.ItemFullName,
-                        UnitReference = detail.FKUnitOfMeasureReference.Abbreviation,
-                        UnitPrice = detail.UnitPrice,
-                        Quantity = detail.Quantity,
-                        Amount = detail.Amount
-                    });
-                }
-                var procurement = hrisDataAccess.GetDepartmentDetails(item.ProcurementDepartment);
-                var accounting = hrisDataAccess.GetDepartmentDetails(item.ChiefAccountantDepartment);
-                var agencyHead = hrisDataAccess.GetDepartmentDetails(item.AgencyHeadDepartment);
-                agencyProcurementRequest.Add(new AgencyProcurementRequestVM
-                {
-                    AgencyControlNo = item.AgencyControlNo,
-                    CreatedAt = item.CreatedAt,
-                    ProcurementHead = procurement.DepartmentHead,
-                    ProcurementDepartment = procurement.Department,
-                    ProcurementHeadDesignation = procurement.DepartmentHeadDesignation,
-                    ChiefAccountant = accounting.DepartmentHead,
-                    ChiefAccountantDepartment = accounting.Department,
-                    ChiefAccountantDesignation = accounting.DepartmentHeadDesignation,
-                    AgencyHead = agencyHead.DepartmentHead,
-                    AgencyHeadDepartment = agencyHead.Department,
-                    AgencyHeadDesignation = agencyHead.DepartmentHeadDesignation,
-                    APRDetails = aprDetailsVM
-                });
-            }
-
-            return agencyProcurementRequest;
+            return db.APRHeader.Select(d => d.FiscalYear).Distinct().ToList();
         }
-        public AgencyProcurementRequestVM GetAPR(string AgencyControlNo)
-        {
-            var agencyProcurementRequest = new AgencyProcurementRequestVM();
-            var aprHeader = db.APRHeader.Where(d => d.AgencyControlNo == AgencyControlNo).FirstOrDefault();
-
-            var aprDetails = db.APRDetail.Where(d => d.FKAPRReference.AgencyControlNo == aprHeader.AgencyControlNo).ToList();
-            var aprDetailsVM = new List<APRDetailVM>();
-            foreach (var detail in aprDetails)
-            {
-                aprDetailsVM.Add(new APRDetailVM
-                {
-                    ItemFullName = detail.FKItemReference.ItemFullName,
-                    UnitReference = detail.FKUnitOfMeasureReference.Abbreviation,
-                    UnitPrice = detail.UnitPrice,
-                    Quantity = detail.Quantity,
-                    Amount = detail.Amount
-                });
-            }
-            var procurement = hrisDataAccess.GetDepartmentDetails(aprHeader.ProcurementDepartment);
-            var accounting = hrisDataAccess.GetDepartmentDetails(aprHeader.ChiefAccountantDepartment);
-            var agencyHead = hrisDataAccess.GetDepartmentDetails(aprHeader.AgencyHeadDepartment);
-
-            agencyProcurementRequest = new AgencyProcurementRequestVM
-            {
-                AgencyControlNo = aprHeader.AgencyControlNo,
-                CreatedAt = aprHeader.CreatedAt,
-                ProcurementHead = procurement.DepartmentHead,
-                ProcurementDepartment = procurement.Department,
-                ProcurementHeadDesignation = procurement.DepartmentHeadDesignation,
-                ChiefAccountant = accounting.DepartmentHead,
-                ChiefAccountantDepartment = accounting.Department,
-                ChiefAccountantDesignation = accounting.DepartmentHeadDesignation,
-                AgencyHead = agencyHead.DepartmentHead,
-                AgencyHeadDepartment = agencyHead.Department,
-                AgencyHeadDesignation = agencyHead.DepartmentHeadDesignation,
-                APRDetails = aprDetailsVM
-            };
-
-            return agencyProcurementRequest;
-        }
-        public List<PurchaseRequestVM> GetPurchaseRequests()
-        {
-            var purchaseRequestVM = new List<PurchaseRequestVM>();
-            var purchaseRequests = db.PurchaseRequestHeader.ToList();
-
-            foreach(var pr in purchaseRequests)
-            {
-                var purchaseRequestDetails = db.PurchaseRequestDetails.Where(d => d.FKPRHeaderReference.PRNumber == pr.PRNumber && d.FKItemReference.ProcurementSource == ProcurementSources.PS_DBM).ToList();
-                var prDetailsVM = new List<PurchaseRequestDetailsVM>();
-                foreach (var prDetails in purchaseRequestDetails)
-                {
-                    prDetailsVM.Add(new PurchaseRequestDetailsVM
-                    {
-                        ItemCode = prDetails.FKItemReference.ItemCode,
-                        ItemName = prDetails.FKItemReference.ItemFullName,
-                        UOM = prDetails.FKUnitReference.Abbreviation,
-                        Quantity = prDetails.Quantity,
-                        UnitCost = prDetails.UnitCost,
-                        TotalCost = prDetails.TotalCost
-                    });
-                }
-                if(purchaseRequestDetails.Where(d => d.FKPRHeaderReference.PRNumber.Contains(pr.PRNumber)).Count() == 1)
-                {
-                    purchaseRequestVM.Add(new PurchaseRequestVM
-                    {
-                        PRNumber = pr.PRNumber,
-                        Purpose = pr.Purpose,
-                        Department = hrisDataAccess.GetDepartmentDetails(pr.Department).Department,
-                        PRDetails = prDetailsVM,
-                    });
-                }
-            }
-            return purchaseRequestVM;
-        }
-        public List<PurchaseRequestDetailsVM> GetPurchaseRequestDetails()
-        {
-            var prDetailsVM = new List<PurchaseRequestDetailsVM>();
-            var aprItems = db.APRDetail.GroupBy(d => d.PRReference).Select(d => d.Key).ToList();
-            var prDetails = db.PurchaseRequestDetails
-                .Where(d => !aprItems.Contains(d.FKPRHeaderReference.ID) && d.FKPRHeaderReference.ReceivedAt != null)
-                .ToList();
-
-            foreach(var detail in prDetails)
-            {
-                prDetailsVM.Add(new PurchaseRequestDetailsVM
-                {
-                    References = detail.FKPRHeaderReference.PRNumber,
-                    ItemCode = detail.FKItemReference.ItemCode,
-                    ItemName = detail.FKItemReference.ItemFullName,
-                    UOM = detail.FKUnitReference.Abbreviation,
-                    Quantity = detail.Quantity,
-                    UnitCost = detail.UnitCost,
-                    TotalCost = detail.TotalCost
-                });
-            }
-
-            return prDetailsVM.OrderBy(d => d.ItemCode).ThenBy(d => d.References).ToList();
-        }
-        public bool PostToAgencyProcurementRequest(List<PurchaseRequestDetailsVM> PurchaseRequestDetails, string UserEmail)
+        public AgencyProcurementRequestVM A2AContractSetup(string ContractCode, string UserEmail)
         {
             var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
             var agencyDetails = db.AgencyDetails.FirstOrDefault();
-            var procurement = hrisDataAccess.GetDepartmentDetails(agencyDetails.ProcurementOfficeReference);
-            var accounting = hrisDataAccess.GetDepartmentDetails(agencyDetails.AccountingOfficeReference);
-            var hope = hrisDataAccess.GetDepartmentDetails(agencyDetails.HOPEReference);
-            var aprHeader = new AgencyProcurementRequest
+            var contract = db.ProcurementProjects.Where(d => d.ContractCode == ContractCode).FirstOrDefault();
+            var contractDetails = db.ProcurementProjectDetails.Where(d => d.FKProcurementProjectReference.ContractCode == ContractCode).ToList();
+            var articles = contractDetails.Select(d => d.ArticleReference).Distinct().ToList();
+            var aprDetails = contractDetails.Select(d => new APRDetailVM 
             {
-                AgencyControlNo = GenerateAgencyRefereceNo(),
-                CreatedAt = DateTime.Now,
-                CreatedBy = user.EmpCode,
-                ProcurementHead = procurement.DepartmentHead,
-                ProcurementDepartment = procurement.DepartmentCode,
-                ProcurementHeadDesignation = procurement.DepartmentHeadDesignation,
-                ChiefAccountant = accounting.DepartmentHead,
-                ChiefAccountantDepartment = accounting.DepartmentCode,
-                ChiefAccountantDesignation = accounting.DepartmentHeadDesignation,
-                AgencyHead = hope.DepartmentHead,
-                AgencyHeadDepartment = hope.DepartmentCode,
-                AgencyHeadDesignation = hope.DepartmentHeadDesignation,
+                ArticleReference = (int)d.ArticleReference,
+                ItemSequence = d.ItemSequence,
+                ItemFullName = d.ItemFullName,
+                ItemSpecifications = d.ItemSpecifications,
+                Quantity = d.Quantity,
+                UnitCost = d.EstimatedUnitCost,
+                TotalCost = d.ApprovedBudgetForItem,
+                UOMReference = d.UOMReference,
+                UnitOfMeasure = db.UOM.Find(d.UOMReference).UnitName
+            }).ToList();
+            var procurementReference = hris.GetDepartmentDetails(agencyDetails.ProcurementOfficeReference);
+            var accountingReference = hris.GetDepartmentDetails(agencyDetails.AccountingOfficeReference);
+            var hopeReference = hris.GetDepartmentDetails(agencyDetails.HOPEReference);
+            var aprVM = new AgencyProcurementRequestVM
+            {
+                AgencyControlNo = GenerateAgencyControlNo(contract.FiscalYear),
+                ContractCode = ContractCode,
+                FiscalYear = contract.FiscalYear,
+                ContractName = contract.ContractName,
+                ProcurementHead = procurementReference.DepartmentHead,
+                ProcurementDepartment = procurementReference.Department,
+                ProcurementDepartmentCode = procurementReference.DepartmentCode,
+                ProcurementHeadDesignation = procurementReference.DepartmentHeadDesignation,
+                ChiefAccountant = accountingReference.DepartmentHead,
+                ChiefAccountantDepartment = accountingReference.Department,
+                ChiefAccountantDepartmentCode = accountingReference.DepartmentCode,
+                ChiefAccountantDesignation = accountingReference.DepartmentHeadDesignation,
+                AgencyHead = hopeReference.SectorHead,
+                AgencyHeadDepartment = hopeReference.Sector,
+                AgencyHeadDepartmentCode = hopeReference.SectorCode,
+                AgencyHeadDesignation = hopeReference.SectorHeadDesignation,
+                APRDetails = aprDetails
             };
 
-            db.APRHeader.Add(aprHeader);
+            return aprVM;
+        }
+        public List<ProcurementProjectListVM> GetContracts(string UserEmail)
+        {
+            var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
+            var purchaseRequests = db.PurchaseRequestHeader.Where(d => d.PRStatus == PurchaseRequestStatus.PurchaseRequestReceived && d.FKProcurementProjectReference.ModeOfProcurementReference == 10 && d.FKProcurementProjectReference.ProcurementProjectStage != ProcurementProjectStages.ProcurementClosed).Select(d => d.FKProcurementProjectReference.ContractCode).ToList();
+            return db.ProcurementProjects.Where(d => d.ProjectCoordinator == user.EmpCode && purchaseRequests.Contains(d.ContractCode)).ToList().Select(d => new
+            {
+                ProcurementProjectType = d.ContractStrategy == ContractStrategies.LotBidding ? d.FKParentProjectReference.ProcurementProjectType : d.ProcurementProjectType,
+                ContractCode = d.ContractStrategy == ContractStrategies.LotBidding ? d.FKParentProjectReference.ContractCode : d.ContractCode,
+                ContractName = d.ContractStrategy == ContractStrategies.LotBidding ? d.FKParentProjectReference.ContractName : d.ContractName,
+                ModeOfProcurementReference = d.ContractStrategy == ContractStrategies.LotBidding ? d.FKParentProjectReference.ModeOfProcurementReference : d.ModeOfProcurementReference,
+                ModeOfProcurement = d.ContractStrategy == ContractStrategies.LotBidding ? d.FKParentProjectReference.FKModeOfProcurementReference.ModeOfProcurementName : d.FKModeOfProcurementReference.ModeOfProcurementName,
+                FiscalYear = d.ContractStrategy == ContractStrategies.LotBidding ? d.FKParentProjectReference.FiscalYear : d.FiscalYear,
+                ContractLocation = d.ContractStrategy == ContractStrategies.LotBidding ? d.FKParentProjectReference.ContractLocation : d.ContractLocation,
+                ContractStatus = d.ContractStrategy == ContractStrategies.LotBidding ? d.FKParentProjectReference.ContractStatus : d.ContractStatus,
+                ContractStrategy = d.ContractStrategy == ContractStrategies.LotBidding ? d.FKParentProjectReference.ContractStrategy : d.ContractStrategy,
+                ProcurementProjectStage = d.ContractStrategy == ContractStrategies.LotBidding ? d.FKParentProjectReference.ProcurementProjectStage : d.ProcurementProjectStage,
+                ApprovedBudgetForContract = d.ContractStrategy == ContractStrategies.LotBidding ? d.FKParentProjectReference.ApprovedBudgetForContract : d.ApprovedBudgetForContract
+            })
+            .GroupBy(d => d)
+            .Select(d => new ProcurementProjectListVM
+            {
+                ProcurementProjectType = d.Key.ProcurementProjectType,
+                ContractCode = d.Key.ContractCode,
+                ContractName = d.Key.ContractName,
+                ModeOfProcurementReference = d.Key.ModeOfProcurementReference,
+                ModeOfProcurement = d.Key.ModeOfProcurement,
+                FiscalYear = d.Key.FiscalYear,
+                ContractLocation = d.Key.ContractLocation,
+                ContractStatus = d.Key.ContractStatus,
+                ContractStrategy = d.Key.ContractStrategy,
+                ProcurementProjectStage = d.Key.ProcurementProjectStage,
+                ApprovedBudgetForContract = d.Key.ApprovedBudgetForContract
+            }).OrderBy(d => d.ProcurementProjectStage).ToList();
+        }
+        public List<AgencyProcurementRequest> GetAgencyProcurementRequests(int FiscalYear)
+        {
+            return db.APRHeader.Where(d => d.FiscalYear == FiscalYear).ToList();
+        }
+        public AgencyProcurementRequestVM GetAgencyProcurementRequestDetail(string  AgencyControlNo)
+        {
+            var aprHeader = db.APRHeader.Where(d => d.AgencyControlNo == AgencyControlNo).Select(d => new AgencyProcurementRequestVM 
+            {
+                FiscalYear = d.FiscalYear,
+                AgencyControlNo = d.AgencyControlNo,
+                CreatedAt = d.CreatedAt,
+                ProcurementHead = d.ProcurementHead,
+                ProcurementDepartment = d.ProcurementDepartment,
+                ProcurementHeadDesignation = d.ProcurementHeadDesignation,
+                ChiefAccountant = d.ChiefAccountant,
+                ChiefAccountantDepartment = d.ChiefAccountantDepartment,
+                ChiefAccountantDesignation = d.ChiefAccountantDesignation,
+                AgencyHead = d.AgencyHead,
+                AgencyHeadDepartment = d.AgencyHeadDepartment,
+                AgencyHeadDesignation = d.AgencyHeadDesignation,
+            }).FirstOrDefault();
+            var aprDetail = db.APRDetail.Where(d => d.FKAPRReference.AgencyControlNo == aprHeader.AgencyControlNo).Select(d => new APRDetailVM 
+            {
+                ArticleReference = (int)d.ArticleReference,
+                ItemSequence = d.ItemSequence,
+                ItemFullName = d.ItemFullName,
+                ItemSpecifications = d.ItemSpecifications,
+                Quantity = d.Quantity,
+                UnitCost = d.UnitCost,
+                TotalCost = d.TotalCost,
+                UnitOfMeasure = d.FKUOMReference.UnitName
+            }).ToList();
+            aprHeader.APRDetails = aprDetail;
+            return aprHeader;
+        }
+        public bool PostAgencyProcurementRequest(AgencyProcurementRequestVM AgencyProcurementRequestVM, string UserEmail)
+        {
+            var user = db.UserAccounts.Where(d => d.Email == UserEmail).FirstOrDefault();
+            var aprHeader = db.APRHeader.Add(new AgencyProcurementRequest 
+            {
+                FiscalYear = AgencyProcurementRequestVM.FiscalYear,
+                AgencyControlNo = AgencyProcurementRequestVM.AgencyControlNo,
+                CreatedAt = DateTime.Now,
+                CreatedBy = user.EmpCode,
+                ProcurementHead = AgencyProcurementRequestVM.ProcurementHead,
+                ProcurementDepartment = AgencyProcurementRequestVM.ProcurementDepartment,
+                ProcurementHeadDesignation = AgencyProcurementRequestVM.ProcurementHeadDesignation,
+                ChiefAccountant = AgencyProcurementRequestVM.ChiefAccountant,
+                ChiefAccountantDepartment = AgencyProcurementRequestVM.ChiefAccountantDepartment,
+                ChiefAccountantDesignation = AgencyProcurementRequestVM.ChiefAccountantDesignation,
+                AgencyHead = AgencyProcurementRequestVM.AgencyHead,
+                AgencyHeadDepartment = AgencyProcurementRequestVM.AgencyHeadDepartment,
+                AgencyHeadDesignation = AgencyProcurementRequestVM.AgencyHeadDesignation
+            });
+
             if(db.SaveChanges() == 0)
             {
                 return false;
             }
 
-            var aprDetails = new List<AgencyProcurementRequestDetails>();
-            var prDetailsSummary = PurchaseRequestDetails
-                .GroupBy(d => new { d.ItemCode, d.UnitCost, d.References })
-                .Select(d => new {
-                    PRNumber = d.Key.References,
-                    ItemCode = d.Key.ItemCode,
-                    UnitPrice = d.Key.UnitCost,
-                    Quantity = d.Sum(x => x.Quantity),
-                    Amount = d.Sum(x => x.TotalCost)
-                }).ToList();
-
-            foreach (var item in prDetailsSummary)
+            var aprDetails = db.APRDetail.AddRange(AgencyProcurementRequestVM.APRDetails.Select(d => new AgencyProcurementRequestDetails
             {
-                var itemDetails = db.Items.Where(d => d.ItemCode == item.ItemCode).FirstOrDefault();
-                var prID = db.PurchaseRequestHeader.Where(d => d.PRNumber == item.PRNumber).FirstOrDefault().ID;
-                aprDetails.Add(new AgencyProcurementRequestDetails
-                {
-                    APRHeaderReference = aprHeader.ID,
-                    ItemReference = itemDetails.ID,
-                    UnitReference = (int)itemDetails.IndividualUOMReference,
-                    Quantity = item.Quantity,
-                    UnitPrice = item.UnitPrice,
-                    Amount = item.Amount,
-                    PRReference = prID
-                });
-            }
+                ArticleReference = d.ArticleReference,
+                ItemSequence = d.ItemSequence,
+                ItemFullName = d.ItemFullName,
+                ItemSpecifications = d.ItemSpecifications,
+                Quantity = d.Quantity,
+                UnitCost = d.UnitCost,
+                TotalCost = d.TotalCost,
+                UOMReference = d.UOMReference,
+                APRReference = aprHeader.ID
+            }).ToList());
 
-            db.APRDetail.AddRange(aprDetails);
+            var contract = db.ProcurementProjects.Where(d => d.ContractCode == AgencyProcurementRequestVM.ContractCode).FirstOrDefault();
+            contract.ProcurementProjectStage = ProcurementProjectStages.ProcurementClosed;
+            contract.ContractStatus = ProcurementProjectStatus.ContractCreated;
+
+            var contractHeader = db.Contract.Add(new ContractHeader
+            {
+                ProcurementProjectReference = contract.ID,
+                ContractType = ContractTypes.AgencyProcurementRequest,
+                FiscalYear = contract.FiscalYear,
+                ReferenceNumber = GenerateContractReferenceNo(ContractTypes.AgencyProcurementRequest),
+                SupplierReference = 1,
+                CreatedAt = DateTime.Now,
+                CreatedBy = user.EmpCode,
+                ContractPrice = aprDetails.Sum(d => d.TotalCost),
+                PMOffice = AgencyProcurementRequestVM.ProcurementDepartmentCode,
+                PMOHead = AgencyProcurementRequestVM.ProcurementHead,
+                PMOHeadDesignation = AgencyProcurementRequestVM.ProcurementHeadDesignation,
+                AccountingOffice = AgencyProcurementRequestVM.ChiefAccountantDepartmentCode,
+                AccountingOfficeHead = AgencyProcurementRequestVM.ChiefAccountant,
+                AccountingOfficeHeadDesignation = AgencyProcurementRequestVM.ChiefAccountantDesignation,
+                HOPEOffice = AgencyProcurementRequestVM.AgencyHeadDepartmentCode,
+                HOPE = AgencyProcurementRequestVM.AgencyHeadDepartmentCode,
+                HOPEDesignation = AgencyProcurementRequestVM.AgencyHeadDesignation
+            });
+
+
             if (db.SaveChanges() == 0)
             {
                 return false;
             }
 
-            var prReferences = aprDetails.GroupBy(d => d.PRReference).Select(d => d.Key).ToList();
-            foreach(var prReference in prReferences)
+            db.ContractDetails.AddRange(aprDetails.Select(d => new ContractDetails
             {
-                var projectItems = db.ProjectPlanItems.Where(d => d.PRReference == prReference).ToList();
-                var projectServices = db.ProjectPlanServices.Where(d => d.PRReference == prReference).ToList();
-                if (projectItems.Count != 0)
-                {
-                    projectItems.ForEach(d => { d.APRReference = aprHeader.ID; d.Status = "Posted to APR"; });
-                    db.SaveChanges();
-                }
-                if (projectServices.Count != 0)
-                {
-                    projectServices.ForEach(d => { d.APPReference = aprHeader.ID; d.Status = "Posted to APR"; });
-                    db.SaveChanges();
-                }
+                ContractReference = contractHeader.ID,
+                ArticleReference = d.ArticleReference,
+                ItemSequence = d.ItemSequence,
+                ItemFullName = d.ItemFullName,
+                ItemSpecifications = d.ItemSpecifications,
+                UOMReference = d.UOMReference,
+                Quantity = d.Quantity,
+                ContractUnitPrice = d.UnitCost,
+                ContractTotalPrice = d.TotalCost,
+                Savings = d.TotalCost - d.TotalCost
+            }).ToList());
+
+            if (db.SaveChanges() == 0)
+            {
+                return false;
             }
 
             return true;
         }
-        private string GenerateAgencyRefereceNo()
+        private string GenerateAgencyControlNo(int FiscalYear)
         {
-            var referenceNo = string.Empty;
-            var count = (db.APRHeader.Count() + 1).ToString();
-            var series = count.Length == 1 ? "00" + count : count.Length == 2 ? "0" + count : count;
-            referenceNo = series + "-" + DateTime.Now.ToString("yy");
+            var controlNo = string.Empty;
+            var aprCount = (db.APRHeader.Where(d => d.FiscalYear == FiscalYear).Count() + 1).ToString();
+            controlNo = FiscalYear.ToString().Substring(1, 2) + "-" + (aprCount.Length == 3 ? aprCount : aprCount.Length == 2 ? "0" + aprCount : "00" + aprCount);
+            return controlNo;
+        }
+        private string GenerateContractReferenceNo(ContractTypes ContractType)
+        {
+            var series = (db.Contract.Where(d => d.ContractType == ContractType).Count() + 1).ToString();
+            var referenceNo = ContractType.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().ShortName + "-" + DateTime.Now.ToString("yy") + "-" + DateTime.Now.ToString("MM") + (series.Length == 1 ? "-000" + series : series.Length == 2 ? "-00" + series : series.Length == 3 ? "-0" + series : series);
             return referenceNo;
         }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
                 db.Dispose();
-                abdb.Dispose();
-                hrisDataAccess.Dispose();
+                hris.Dispose();
+                abis.Dispose();
+                systemBDL.Dispose();
             }
             base.Dispose(disposing);
         }

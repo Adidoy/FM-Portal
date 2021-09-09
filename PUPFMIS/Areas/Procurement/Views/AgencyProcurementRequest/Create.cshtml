@@ -1,107 +1,56 @@
-﻿@model List<PUPFMIS.Models.PurchaseRequestDetailsVM>
+﻿@model PUPFMIS.Models.AgencyProcurementRequestVM
 
 @{
-    ViewBag.Title = "Agency Procurement Request";
-    ViewBag.Description = "P/R Items";
-    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+    ViewBag.Title = "Agency Procurement Requests";
+    ViewBag.Description = "Create";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
 }
 
 @section BreadCrumb {
     <ol class="breadcrumb float-sm-right">
-        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
-        <li class="breadcrumb-item">@Html.ActionLink("Procurement Activities Home", "dashboard", "ProcurementPipelines", new { Area = "procurement" }, null)</li>
-        <li class="breadcrumb-item">Home</li>
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Agency Procurement Requests", "index", "AgencyProcruementRequest", new { Area = "procurement" }, null)</li>
+        <li class="breadcrumb-item">Create</li>
     </ol>
 }
 
 @section Header {
-    <h3 class="card-title"><i class="fa fa-bookmark"></i> Purchase Request Items List</h3>
+    <h3 class="card-title"><i class="fa fa-list"></i> Create New Agency Procurement Request</h3>
 }
 
-@using (Ajax.BeginForm("create", "AgemcyProcurementRequest", new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "details", Area = "procurement" }))
+@using (Ajax.BeginForm("create", "AgencyProcurementRequest", new { Area = "procurement", ContractCode = Model.ContractCode }, new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "projectDetails" }))
 {
+    @Html.AntiForgeryToken()
+    @Html.Partial("_Form")
+}
+
+@section FormFooter {
     <div class="row">
-        <div class="col-sm-12">
-            <div class="card-body table-responsive p-sm-0">
-                <table class="table table-striped table-hover" id="example2">
-                    <thead>
-                        <tr>
-                            <th style="text-align:center; vertical-align:middle;">@Html.DisplayNameFor(d => d.FirstOrDefault().References)</th>
-                            <th style="text-align:center; vertical-align:middle;">@Html.DisplayNameFor(d => d.FirstOrDefault().ItemCode)</th>
-                            <th style="text-align:center; vertical-align:middle;">@Html.DisplayNameFor(d => d.FirstOrDefault().ItemName)</th>
-                            <th style="text-align:center; vertical-align:middle;">@Html.DisplayNameFor(d => d.FirstOrDefault().UOM)</th>
-                            <th style="text-align:center; vertical-align:middle;">@Html.DisplayNameFor(d => d.FirstOrDefault().Quantity)</th>
-                            <th style="text-align:center; vertical-align:middle;">@Html.DisplayNameFor(d => d.FirstOrDefault().UnitCost)</th>
-                            <th style="text-align:center; vertical-align:middle;">@Html.DisplayNameFor(d => d.FirstOrDefault().TotalCost)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for(int item = 0; item < Model.Count(); item++)
-                        {
-                            <tr>
-                                <td style="text-align:center; vertical-align:middle;">
-                                    @Html.HiddenFor(d => Model[item].References)
-                                    @Html.DisplayFor(d => Model[item].References)
-                                </td>
-                                <td style="text-align:center; vertical-align:middle;">
-                                    @Html.HiddenFor(d => Model[item].ItemCode)
-                                    @Html.DisplayFor(d => Model[item].ItemCode)
-                                </td>
-                                <td style="text-align:left; vertical-align:middle;">
-                                    @Html.HiddenFor(d => Model[item].ItemName)
-                                    @Html.DisplayFor(d => Model[item].ItemName)
-                                </td>
-                                <td style="text-align:center; vertical-align:middle;">
-                                    @Html.HiddenFor(d => Model[item].UOM)
-                                    @Html.DisplayFor(d => Model[item].UOM)
-                                </td>
-                                <td style="text-align:center; vertical-align:middle;">
-                                    @Html.HiddenFor(d => Model[item].Quantity)
-                                    @Html.DisplayFor(d => Model[item].Quantity)
-                                </td>
-                                <td style="text-align:right; vertical-align:middle;">
-                                    @Html.HiddenFor(d => Model[item].UnitCost)
-                                    @( Model[item].UnitCost.ToString("C", new System.Globalization.CultureInfo("en-ph"))  )
-                                </td>
-                                <td style="text-align:right; vertical-align:middle;">
-                                    @Html.HiddenFor(d => Model[item].TotalCost)
-                                    @( Model[item].TotalCost.ToString("C", new System.Globalization.CultureInfo("en-ph"))  )
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+        <div class="col-sm-12 text-right">
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" onclick="PostToAPR()"><i class="fa fa-save"></i>&nbsp; Post to Agency Procurent Request</button>
+                <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("index", "AgemcyProcurementRequest", new { area = "procurement" })'"><i class="fa fa-arrow-alt-circle-left"></i>&nbsp; Back to List</button>
             </div>
         </div>
     </div>
 }
-<hr />
-<div class="row">
-    <div class="col-sm-12 text-right">
-        <div class="form-group">
-            <button type="button" class="btn btn-primary" onclick="PostToAPR()"><i class="fa fa-save"></i>&nbsp; Post to Agency Procurent Request</button>
-            <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("index", "AgemcyProcurementRequest", new { area = "procurement" })'"><i class="fa fa-arrow-alt-circle-left"></i>&nbsp; Back to List</button>
-        </div>
-    </div>
-</div>
-
 
 <script type="text/javascript">
     function PostToAPR() {
         swal.fire({
-            title: "Save record?",
-            text: "You are about to save this record, continue?",
-            type: "warning",
+            title: "Save Agency Procurement Request?",
+            text: "You are about to save this APR, continue?",
+            icon: "question",
             showCancelButton: true,
         }).then((result) => {
             if (result.value) {
-                $("#details").submit();
+                $("#projectDetails").submit();
             }
             else {
                 swal.fire({
                     title: "Cancelled!",
                     text: "You have cancelled saving the record.",
-                    type: "error"
+                    icon: "error"
                 })
             };
         })
@@ -110,11 +59,12 @@
         if (data.result == true) {
             swal.fire({
                 title: "Record Saved!",
-                text: "Procurement Program is successfully assigned.",
-                type: "success"
+                text: "Agency Procurement Request is successfully saved.",
+                icon: "success"
             }).then((result) => {
                 if (result.value) {
-                    window.location.href = "@Url.Action("index", "AgemcyProcurementRequest", new { Area = "procurement" })";
+                    var url = "@Url.Action("dashboard", "AgencyProcurementRequest", new { Area = "procurement" })";
+                    window.location.href = url;
                 }
             })
         }
@@ -122,10 +72,13 @@
             swal.fire({
                 title: "Record Not Saved!",
                 text: "Saving record failed.",
-                type: "error"
+                icon: "error"
             });
+        }
+        var vsummary = $("#ValidationSummary");
+        if (vsummary.val() != null) {
+            $("input").blur();
+            $(window).scrollTop(0,0);
         }
     }
 </script>
-
-

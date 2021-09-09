@@ -1,0 +1,231 @@
+﻿@model PUPFMIS.Models.InspectionDashboard
+
+@{
+    ViewBag.Title = "Inspections";
+    ViewBag.Description = "Home";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">Inspections</li>
+        <li class="breadcrumb-item">Home</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-list"></i> Inspection Dashboard</h3>
+}
+
+<h6><i class="fa fa-edit"></i> Inspection Activities</h6>
+<div class="row">
+    <div class="col-sm-2">
+        <div class="nav flex-column nav-tabs h-100" id="vert-tabs-tab" role="tablist" aria-orientation="vertical">
+            <a class="nav-link active" id="vert-tabs-supplies-tab" data-toggle="pill" href="#vert-tabs-supplies" role="tab" aria-controls="vert-tabs-supplies" aria-selected="true">Supply Deliveries</a>
+            <a class="nav-link" id="vert-tabs-ppe-tab" data-toggle="pill" href="#vert-tabs-ppe" role="tab" aria-controls="vert-tabs-ppe" aria-selected="true">PPE Deliveries</a>
+            @*<a class="nav-link" id="vert-tabs-home-tab" data-toggle="pill" href="#vert-tabs-home" role="tab" aria-controls="vert-tabs-home" aria-selected="true">Statistics</a>*@
+            <a class="nav-link" id="vert-tabs-profile-tab" data-toggle="pill" href="#vert-tabs-profile" role="tab" aria-controls="vert-tabs-profile" aria-selected="false">Reporting</a>
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <div class="tab-content" id="vert-tabs-tabContent">
+            <div class="tab-pane text-left fade show active" id="vert-tabs-supplies" role="tabpanel" aria-labelledby="vert-tabs-supplies-tab">
+                <div class="card card-info">
+                    <div class="card-header"><h3 class="card-title">Supply Deliveries for Inspection</h3></div>
+                    <div class="card-body">
+                        <div class="card-body table-responsive p-sm-0">
+                            <table class="table table-striped table-hover display">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: center; vertical-align: middle;" width="20%">
+                                            Delivery Receipt No.
+                                        </th>
+                                        <th style="text-align: center; vertical-align: middle;" width="25%">
+                                            Supplier
+                                        </th>
+                                        <th style="text-align: center; vertical-align: middle;" width="20%">
+                                            Reference Details
+                                        </th>
+                                        <th style="text-align: center; vertical-align: middle;" width="15%">
+                                            Delivery Details
+                                        </th>
+                                        <th style="text-align: center; vertical-align: middle;" width="20%">
+                                            Action
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.SupplyDeliveriesForInspection)
+                                    {
+                                        <tr>
+                                            <td style="text-align:left; vertical-align:top;">
+                                                <b>@Html.DisplayFor(modelItem => item.DeliveryAcceptanceNumber)</b>
+                                            </td>
+                                            <td style="text-align:left; vertical-align:top;">
+                                                <b>@Html.DisplayFor(modelItem => item.SupplierName)</b>
+                                            </td>
+                                            <td style="text-align:center; vertical-align:top;">
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <b>@Html.DisplayFor(modelItem => item.ReferenceNo)</b>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <i>@( item.ContractType.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</i>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td style="text-align:center; vertical-align:top;">
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <b>@Html.DisplayFor(modelItem => item.DRNumber)</b>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <i>@( item.DeliveryDate.ToString("dd MMMM yyyy") )</i>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td style="text-align:center; vertical-align:top;">
+                                                <button type="button" class="btn btn-sm btn-primary" onclick="window.location.href = '@Url.Action("details-supplies", "InspectionAndAcceptance", new { Area = "property-and-supplies", DRRNumber = item.DeliveryAcceptanceNumber })'"><i class="fa fa-eye"></i> View</button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane text-left fade" id="vert-tabs-ppe" role="tabpanel" aria-labelledby="vert-tabs-ppe-tab">
+                <div class="card card-info">
+                    <div class="card-header"><h3 class="card-title">PPE Deliveries for Inspection</h3></div>
+                    <div class="card-body">
+                        <div class="card-body table-responsive p-sm-0">
+                            <table class="table table-striped table-hover display">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: center; vertical-align: middle;" width="20%">
+                                            Delivery Receipt No.
+                                        </th>
+                                        <th style="text-align: center; vertical-align: middle;" width="25%">
+                                            Supplier
+                                        </th>
+                                        <th style="text-align: center; vertical-align: middle;" width="20%">
+                                            Reference Details
+                                        </th>
+                                        <th style="text-align: center; vertical-align: middle;" width="15%">
+                                            Delivery Details
+                                        </th>
+                                        <th style="text-align: center; vertical-align: middle;" width="20%">
+                                            Action
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.PPEDeliveriesForInspection)
+                                    {
+                                        <tr>
+                                            <td style="text-align:left; vertical-align:top;">
+                                                <b>@Html.DisplayFor(modelItem => item.DeliveryAcceptanceNumber)</b>
+                                            </td>
+                                            <td style="text-align:left; vertical-align:top;">
+                                                <b>@Html.DisplayFor(modelItem => item.SupplierName)</b>
+                                            </td>
+                                            <td style="text-align:center; vertical-align:top;">
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <b>@Html.DisplayFor(modelItem => item.ReferenceNo)</b>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <i>@( item.ContractType.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</i>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td style="text-align:center; vertical-align:top;">
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <b>@Html.DisplayFor(modelItem => item.DRNumber)</b>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <i>@( item.DeliveryDate.ToString("dd MMMM yyyy") )</i>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td style="text-align:center; vertical-align:top;">
+                                                <button type="button" class="btn btn-sm btn-primary" onclick="window.location.href = '@Url.Action("details", "InspectionAndAcceptance", new { Area = "property-and-supplies", DRRNumber = item.DeliveryAcceptanceNumber })'"><i class="fa fa-eye"></i> View</button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @*<div class="tab-pane text-left fade" id="vert-tabs-home" role="tabpanel" aria-labelledby="vert-tabs-home-tab">
+                    <div class="card card-info">
+                        <div class="card-header"><h3 class="card-title">Statistics</h3></div>
+                        <div class="card-body">
+
+                        </div>
+                    </div>
+                </div>*@
+            <div class="tab-pane fade" id="vert-tabs-profile" role="tabpanel" aria-labelledby="vert-tabs-profile-tab">
+                <div class="card card-info">
+                    <div class="card-header"><h3 class="card-title">Reporting</h3></div>
+                    <div class="card-body">
+                        <div class="card-body table-responsive p-sm-0">
+                            <table class="table table-striped table-hover display">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: center; vertical-align: middle;" width="50%">
+                                            Report Year
+                                        </th>
+                                        <th style="text-align: center; vertical-align: middle;" width="50%">
+                                            Action
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.ReportYears)
+                                    {
+                                        <tr>
+                                            <td style="text-align:center; vertical-align:middle;">
+                                                <b>@Html.DisplayFor(modelItem => item)</b>
+                                            </td>
+                                            <td style="text-align:center; vertical-align:middle;">
+                                                <button type="button" class="btn btn-sm btn-primary" onclick="window.location.href = '@Url.Action("index", "InspectionAndAcceptance", new { Area = "property-and-supplies", ReportYear = item })'"><i class="fa fa-eye"></i> View Reports</button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $('table.display').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": false,
+            "info": true,
+            "autoWidth": false,
+        });
+    });
+</script>

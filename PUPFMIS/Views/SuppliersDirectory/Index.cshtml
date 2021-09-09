@@ -1,0 +1,132 @@
+﻿@model IEnumerable<PUPFMIS.Models.SupplierVM>
+
+@{
+    ViewBag.Title = "Suppliers";
+    ViewBag.Description = "Directory";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">Suppliers Directory</li>
+        <li class="breadcrumb-item">Home</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-list"></i> Suppliers List</h3>
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="float-right">
+            <a class="btn btn-md btn-primary" href="@Url.Action("print", "SuppliersDirectory", new { Area = "" })" target="_blank"><i class="fa fa-print"></i> &nbsp; Print Suppliers Directory</a>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card-body table-responsive p-sm-0">
+            <table class="table table-striped table-hover" id="example2">
+                <thead>
+                    <tr>
+                        <th style="text-align:center;" width="80%">
+                            Supplier Name / Contact Details
+                        </th>
+                        <th style="text-align:center;" width="20%">
+                            Action
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ var i = 0; }
+                    @foreach (var item in Model)
+                    {
+                        i++;
+                        <tr>
+                            <td>
+                                <h5>@i<span>.&nbsp;</span>@Html.DisplayFor(modelItem => item.SupplierName)</h5>
+                                <hr />
+                                <b>CONTACT DETAILS:</b>
+                                <br />
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="row">
+                                            <div class="col-lg-3 col-md-3 col-sm-12">
+                                                <b>@Html.DisplayNameFor(model => model.ContactPerson)</b>
+                                            </div>
+                                            <div class="col-lg-9 col-md-9 col-sm-12">
+                                                : @Html.DisplayFor(modelItem => item.ContactPerson)
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-3 col-md-3 col-sm-12">
+                                                <b>@Html.DisplayNameFor(model => model.ContactNumber)</b>
+                                            </div>
+                                            <div class="col-lg-9 col-md-9 col-sm-12">
+                                                : @Html.DisplayFor(modelItem => item.ContactNumber)
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-3 col-md-3 col-sm-12">
+                                                <b>@Html.DisplayNameFor(model => model.Address)</b>
+                                            </div>
+                                            <div class="col-lg-9 col-md-9 col-sm-12">
+                                                : @Html.DisplayFor(modelItem => item.Address)
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="row">
+                                            <div class="col-lg-3 col-md-3 col-sm-12">
+                                                <b>@Html.DisplayNameFor(model => model.CategoryList)</b>
+                                            </div>
+                                            <div class="col-lg-9 col-md-9 col-sm-12">
+                                                @if (item.CategoryList.Count != 0)
+                                                {
+                                                    foreach (var category in item.CategoryList)
+                                                    {
+                                                        <span>@category.Category</span>
+                                                        <br />
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <i>Not Applicable</i>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-3 col-md-3 col-sm-12">
+                                                <b>@Html.DisplayNameFor(model => model.ItemTypesList)</b>
+                                            </div>
+                                            <div class="col-lg-9 col-md-9 col-sm-12">
+                                                @if (item.ItemTypesList.Count != 0)
+                                                {
+                                                    foreach (var itemType in item.ItemTypesList)
+                                                    {
+                                                        <span>@itemType.ItemType</span>
+                                                        <br />
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <i>Not Applicable</i>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td align="center">
+                                <button type="button" class="btn btn-sm btn-primary" data-toggle="tooltip" title="View Details" onclick="window.location = '@Url.Action("details","SuppliersDirectory", new { id = item.ID })'"><i class="fa fa-eye"></i> View Supplier Details</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

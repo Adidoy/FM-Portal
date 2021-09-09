@@ -1,0 +1,192 @@
+﻿@model PUPFMIS.Models.AgencyProcurementRequestVM
+
+<div class="card card-info">
+    <div class="card-header"><h3 class="card-title">Agency Details</h3></div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.AgencyControlNo, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-barcode"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.AgencyControlNo)
+                        @Html.HiddenFor(model => Model.FiscalYear)
+                        @Html.EditorFor(model => Model.AgencyControlNo, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.ContractCode, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-id-card"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.ContractCode)
+                        @Html.EditorFor(model => Model.ContractCode, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.ContractName, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-id-badge"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.ContractName)
+                        @Html.EditorFor(model => Model.ContractName, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.ProcurementHead, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-user"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.ProcurementHead)
+                        @Html.HiddenFor(model => Model.ProcurementHeadDesignation)
+                        @Html.EditorFor(model => Model.ProcurementHead, null, new { htmlAttributes = new { @class = "form-control form-control-sm", Value = Model.ProcurementHead + ", " + Model.ProcurementHeadDesignation, disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.ProcurementDepartmentCode, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-building"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.ProcurementDepartmentCode)
+                        @Html.HiddenFor(model => Model.ProcurementDepartment)
+                        @Html.EditorFor(model => Model.ProcurementDepartment, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.ChiefAccountant, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-user"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.ChiefAccountant)
+                        @Html.HiddenFor(model => Model.ChiefAccountantDesignation)
+                        @Html.EditorFor(model => Model.ChiefAccountant, null, new { htmlAttributes = new { @class = "form-control form-control-sm", Value = Model.ChiefAccountant + ", " + Model.ChiefAccountantDesignation, disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.ChiefAccountantDepartmentCode, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-building"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.ChiefAccountantDepartmentCode)
+                        @Html.HiddenFor(model => Model.ChiefAccountantDepartment)
+                        @Html.EditorFor(model => Model.ChiefAccountantDepartment, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.AgencyHead, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-user"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.AgencyHead)
+                        @Html.HiddenFor(model => Model.AgencyHeadDesignation)
+                        @Html.EditorFor(model => Model.AgencyHead, null, new { htmlAttributes = new { @class = "form-control form-control-sm", Value = Model.AgencyHead + ", " + Model.AgencyHeadDesignation, disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.AgencyHeadDepartmentCode, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-building"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.AgencyHeadDepartmentCode)
+                        @Html.HiddenFor(model => Model.AgencyHeadDepartment)
+                        @Html.EditorFor(model => Model.AgencyHeadDepartment, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card card-info">
+    <div class="card-header"><h3 class="card-title">Line Items</h3></div>
+    <div class="card-body">
+        <div class="card-body table-responsive p-sm-0">
+            <table class="table table-striped table-hover" id="items">
+                <thead>
+                    <tr>
+                        <th style="text-align:center; vertical-align:middle" width="5%">Item No.</th>
+                        <th style="text-align:center; vertical-align:middle" width="10%">Quantity</th>
+                        <th style="text-align:center; vertical-align:middle" width="10%">Unit</th>
+                        <th style="text-align:center; vertical-align:middle" width="40%">Item Description</th>
+                        <th style="text-align:center; vertical-align:middle" width="15%">Unit Cost</th>
+                        <th style="text-align:center; vertical-align:middle" width="20%">Total Cost</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.APRDetails.Count; i++)
+                    {
+                        <tr>
+                            <td style="text-align:center; vertical-align:middle;">@(i + 1)</td>
+                            <td style="text-align:center; vertical-align:middle;">
+                                @Html.HiddenFor(model => Model.APRDetails[i].Quantity)
+                                @Html.DisplayFor(model => Model.APRDetails[i].Quantity)
+                            </td>
+                            <td style="text-align:center; vertical-align:middle;">
+                                @Html.HiddenFor(model => Model.APRDetails[i].UOMReference)
+                                @Html.HiddenFor(model => Model.APRDetails[i].UnitOfMeasure)
+                                @Html.DisplayFor(model => Model.APRDetails[i].UnitOfMeasure)
+                            </td>
+                            <td style="text-align:left; vertical-align:middle;">
+                                @Html.HiddenFor(model => Model.APRDetails[i].ArticleReference)
+                                @Html.HiddenFor(model => Model.APRDetails[i].ItemSequence)
+                                @Html.HiddenFor(model => Model.APRDetails[i].ItemFullName)
+                                @Html.DisplayFor(model => Model.APRDetails[i].ItemFullName)
+                            </td>
+                            <td style="text-align:right; vertical-align:middle;">
+                                @Html.HiddenFor(model => Model.APRDetails[i].UnitCost)
+                                @( Model.APRDetails[i].UnitCost.ToString("N", new System.Globalization.CultureInfo("en-ph")) )
+                            </td>
+                            <td style="text-align:right; vertical-align:middle;">
+                                @Html.HiddenFor(model => Model.APRDetails[i].TotalCost)
+                                @( Model.APRDetails[i].TotalCost.ToString("N", new System.Globalization.CultureInfo("en-ph")) )
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="5" style="text-align:right; vertical-align:middle;">
+                            <h5>TOTAL AMOUNT:</h5>
+                        </td>
+                        <td style="text-align:right; vertical-align:middle;">
+                            <h5>@( Model.APRDetails.Sum(d => d.TotalCost).ToString("C", new System.Globalization.CultureInfo("en-ph")) )</h5>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>

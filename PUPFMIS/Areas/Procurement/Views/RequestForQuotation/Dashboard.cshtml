@@ -1,0 +1,213 @@
+﻿@model PUPFMIS.Models.RFQDashboardVM
+
+@{
+    ViewBag.Title = "Requests for Quotation";
+    ViewBag.Description = "Dashboard";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+<ol class="breadcrumb float-sm-right">
+    <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+    <li class="breadcrumb-item">Dashboard</li>
+</ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-list"></i> Dashboard</h3>
+}
+
+<h6><i class="fa fa-edit"></i> Request for Quotation Actions</h6>
+<hr />
+<div class="row">
+    <div class="col-sm-2">
+        <div class="nav flex-column nav-tabs h-100" id="vert-tabs-tab" role="tablist" aria-orientation="vertical">
+            <a class="nav-link active" id="vert-tabs-home-tab" data-toggle="pill" href="#vert-tabs-home" role="tab" aria-controls="vert-tabs-home" aria-selected="true">Prepare Request for Quotation</a>
+            <a class="nav-link" id="vert-tabs-profile-tab" data-toggle="pill" href="#vert-tabs-profile" role="tab" aria-controls="vert-tabs-profile" aria-selected="false">View Requests for Quotation</a>
+            <a class="nav-link" id="vert-tabs-messages-tab" data-toggle="pill" href="#vert-tabs-messages" role="tab" aria-controls="vert-tabs-messages" aria-selected="false">Prepare Abstract of Quotations</a>
+            <a class="nav-link" id="vert-tabs-settings-tab" data-toggle="pill" href="#vert-tabs-settings" role="tab" aria-controls="vert-tabs-settings" aria-selected="false">View Abstract of Quotations</a>
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <div class="tab-content" id="vert-tabs-tabContent">
+            <div class="tab-pane text-left fade show active" id="vert-tabs-home" role="tabpanel" aria-labelledby="vert-tabs-home-tab">
+                <div class="card card-info">
+                    <div class="card-header"><h3 class="card-title">Alternative Mode of Procurement Projects</h3></div>
+                    <div class="card-body">
+                        <div class="card-body table-responsive p-sm-0">
+                            <table class="table table-striped table-hover display">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: center; vertical-align: middle;" width="50%">
+                                            @Html.DisplayNameFor(model => model.AlternativeModeProjects.FirstOrDefault().ContractName)
+                                        </th>
+                                        <th style="text-align: center; vertical-align: middle;" width="15%">
+                                            @Html.DisplayNameFor(model => model.AlternativeModeProjects.FirstOrDefault().ModeOfProcurement)
+                                        </th>
+                                        <th style="text-align: center; vertical-align: middle;" width="15%">
+                                            @Html.DisplayNameFor(model => model.AlternativeModeProjects.FirstOrDefault().ABC)
+                                        </th>
+                                        <th style="text-align: center; vertical-align: middle;" width="20%">
+                                            Action
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.AlternativeModeProjects)
+                                    {
+                                        <tr>
+                                            <td style="text-align:left; vertical-align:middle;">
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <b>@Html.DisplayFor(modelItem => item.ContractName)</b>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <i>(@Html.DisplayFor(modelItem => item.ContractCode))</i>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td style="text-align:center; vertical-align:middle;">
+                                                @( item.ModeOfProcurement )
+                                            </td>
+                                            <td style="text-align:right; vertical-align:middle;">
+                                                @( item.ABC.ToString("C", new System.Globalization.CultureInfo("en-ph")) )
+                                            </td>
+                                            <td style="text-align:center; vertical-align:middle;">
+                                                <button type="button" class="btn btn-sm btn-primary" onclick="window.location.href = '@Url.Action("create", "RequestForQuotation", new { Area = "procurement", ContractCode = item.ContractCode })'"><i class="fa fa-plus"></i> Create RFQ</button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="2" style="text-align:right; font-size:14pt;"><b>Approved Budget:</b></td>
+                                        <td style="text-align:right; font-size:14pt;"><b>@( Model.AlternativeModeProjects.Sum(d => d.ABC).ToString("C", new System.Globalization.CultureInfo("en-ph")) )</b></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="vert-tabs-profile" role="tabpanel" aria-labelledby="vert-tabs-profile-tab">
+                <div class="card card-info">
+                    <div class="card-header"><h3 class="card-title">View Requests For Quotation</h3></div>
+                    <div class="card-body">
+                        <div class="card-body table-responsive p-sm-0">
+                            <table class="table table-striped table-hover display">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: center; vertical-align: middle;" width="50%">
+                                            Fiscal Year
+                                        </th>
+                                        <th style="text-align: center; vertical-align: middle;" width="50%">
+                                            Action
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.FiscalYears)
+                                    {
+                                        <tr>
+                                            <td style="text-align:center; vertical-align:middle;">
+                                                @Html.DisplayFor(modelItem => item)
+                                            </td>
+                                            <td style="text-align:center; vertical-align:middle;">
+                                                <button type="button" class="btn btn-sm btn-primary" onclick="window.location = '@Url.Action("index", "RequestForQuotation", new { Area = "procurement", FiscalYear = item })'"><i class="fa fa-eye"></i> View Request for Quotation</button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="vert-tabs-messages" role="tabpanel" aria-labelledby="vert-tabs-messages-tab">
+                <div class="card card-info">
+                    <div class="card-header"><h3 class="card-title">Create Abstract of Quotations</h3></div>
+                    <div class="card-body">
+                        <div class="card-body table-responsive p-sm-0">
+                            <table class="table table-striped table-hover display">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: center; vertical-align: middle;" width="50%">
+                                            Fiscal Year
+                                        </th>
+                                        <th style="text-align: center; vertical-align: middle;" width="50%">
+                                            Action
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.AbstractFiscalYears)
+                                    {
+                                        <tr>
+                                            <td style="text-align:center; vertical-align:middle;">
+                                                @Html.DisplayFor(modelItem => item)
+                                            </td>
+                                            <td style="text-align:center; vertical-align:middle;">
+                                                <button type="button" class="btn btn-sm btn-primary" onclick="window.location = '@Url.Action("closed-submissions", "RequestForQuotation", new { Area = "procurement", FiscalYear = item })'"><i class="fa fa-eye"></i> View Request for Quotation</button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="vert-tabs-settings" role="tabpanel" aria-labelledby="vert-tabs-settings-tab">
+                <div class="card card-info">
+                    <div class="card-header"><h3 class="card-title">View Abstract of Quotations</h3></div>
+                    <div class="card-body">
+                        <div class="card-body table-responsive p-sm-0">
+                            <table class="table table-striped table-hover display">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: center; vertical-align: middle;" width="50%">
+                                            Fiscal Year
+                                        </th>
+                                        <th style="text-align: center; vertical-align: middle;" width="50%">
+                                            Action
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.PreparedAbstractFiscalYears)
+                                    {
+                                        <tr>
+                                            <td style="text-align:center; vertical-align:middle;">
+                                                @Html.DisplayFor(modelItem => item)
+                                            </td>
+                                            <td style="text-align:center; vertical-align:middle;">
+                                                <button type="button" class="btn btn-sm btn-primary" onclick="window.location = '@Url.Action("view-abstracts", "RequestForQuotation", new { Area = "procurement", FiscalYear = item })'"><i class="fa fa-eye"></i> View Abstract of Quotations</button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $('table.display').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": false,
+            "info": true,
+            "autoWidth": false,
+        });
+    });
+</script>

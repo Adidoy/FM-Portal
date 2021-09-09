@@ -1,0 +1,38 @@
+﻿@model PUPFMIS.Models.InfrastructureRequirementsClassification
+
+<div class="modal-header">
+    <h4 class="modal-title">View Classification</h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div class="modal-body" id="form-body">
+    <h5>@Html.DisplayNameFor(m => m.ClassificationName): @Html.DisplayFor(m => m.ClassificationName).ToString().ToUpper()</h5>
+    <br />
+    <h6>Other Details:</h6>
+    <table class="table">
+        <tr>
+            <td width="30%"><strong>@Html.DisplayNameFor(model => model.PurgeFlag)</strong></td>
+            <td>@( Model.PurgeFlag == true ? "Yes" : "No" )</td>
+        </tr>
+        <tr>
+            <td width="30%"><strong>@Html.DisplayNameFor(model => model.CreatedAt)</strong></td>
+            <td>@DateTime.Parse(Html.DisplayFor(model => model.CreatedAt).ToString()).ToString("dd MMMM yyyy hh:mm tt")</td>
+        </tr>
+        <tr>
+            <td width="30%"><strong>@Html.DisplayNameFor(model => model.UpdatedAt)</strong></td>
+            <td>@( Model.UpdatedAt == null ? "Not Applicable Yet" : Model.UpdatedAt.Value.ToString("dd MMMM yyyy hh:mm tt") )</td>
+        </tr>
+        <tr>
+            <td width="30%"><strong>@Html.DisplayNameFor(model => model.DeletedAt)</strong></td>
+            <td>@( Model.DeletedAt == null ? "Not Applicable Yet" : Model.DeletedAt.Value.ToString("dd MMMM yyyy hh:mm tt") )</td>
+        </tr>
+    </table>
+</div>
+
+<div class="modal-footer">
+    <div class="form-group">
+        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i>&nbsp; Close</button>
+    </div>
+</div>

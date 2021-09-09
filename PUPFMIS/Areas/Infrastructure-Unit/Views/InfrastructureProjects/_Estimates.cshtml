@@ -1,0 +1,91 @@
+﻿@using HtmlHelpers.BeginCollectionItem
+@model PUPFMIS.Models.EstimatesLineItemVM
+
+@using (Html.BeginCollectionItem("Estimates"))
+{
+    <div class="estimatesRow">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.WorkClass, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-asterisk"></i></span>
+                                </div>
+                                @Html.DropDownList("WorkClass", new SelectList(ViewBag.WorkClass, "Value", "Text"), null, htmlAttributes: new { @class = "form-control form-control-sm", style = "font-size: 100%" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.WorkRequirement, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-hammer"></i></span>
+                                </div>
+                                @Html.DropDownList("WorkRequirement", new SelectList(ViewBag.WorkRequirement, "Value", "Text"), "--- NOT APPLICABLE ---", htmlAttributes: new { @class = "form-control form-control-sm", style = "font-size: 100%" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Material, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-thumbtack"></i></span>
+                                </div>
+                                @Html.DropDownList("Material", new SelectList(ViewBag.Material, "Value", "Text"), null, htmlAttributes: new { @class = "form-control form-control-sm", style = "font-size: 100%" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Quantity, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-coins"></i></span>
+                                </div>
+                                @Html.EditorFor(model => model.Quantity, null, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.ItemUnitCost, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-coins"></i></span>
+                                </div>
+                                @Html.EditorFor(model => model.ItemUnitCost, null, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.LaborUnitCost, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-coins"></i></span>
+                                </div>
+                                @Html.EditorFor(model => model.LaborUnitCost, null, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn btn-md btn-danger removeEstimate" style="position: absolute; right: 0;"><i class="fa fa-minus"></i> Remove Item</button>
+        <br /><br />
+        <hr />
+        <br /><br />
+    </div>
+}
+<script>
+    $(document).on('click', '.removeEstimate', function () {
+        $(this).parent().remove();
+    });
+</script>

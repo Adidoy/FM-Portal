@@ -1,0 +1,311 @@
+﻿@model PUPFMIS.Models.ProjectPlanInfrastructureVM
+
+@{
+    ViewBag.Title = "Project Planning";
+    ViewBag.Description = "Create Infrastructure Plan Request";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Dashboard", "dashboard", "Dashboard", new { area = "end-users" }, null)</li>
+        <li class="breadcrumb-item">Create Infra Plan Request</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-right">
+        <h1 class="card-title"><i class="fa fa-bookmark"></i> New Infrastruture Plan Request</h1>
+    </div>
+}
+
+@using (Ajax.BeginForm("create-infra-request", "ProjectPlans", new { Area = "end-users" }, new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "addItem" }))
+{
+    @Html.AntiForgeryToken()
+    <div id="form-container">
+        @if (!Html.ViewData.ModelState.IsValid)
+        {
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="alert alert-danger pl-2 pr-2 ml-2 mr-2 pb-0 pt-2">
+                        <p class="p-0 m-0">
+                            <h6><i class="icon fas fa-ban"></i> Alert!</h6>
+                            @Html.ValidationSummary(true, "", new { style = "font-size: 10pt;", id = "ValidationSummary" })
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <br />
+        }
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card card-info">
+                    <div class="card-header">
+                        <h3 class="card-title">Request Details</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-horizontal">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => Model.IsPartOfAnotherProject)
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    @Html.CheckBoxFor(model => Model.IsPartOfAnotherProject, htmlAttributes: new { id = "IsPartOfAnotherProject" })
+                                                </span>
+                                            </div>
+                                            @Html.Editor("Is Infrastructure part of another project?", null, new { htmlAttributes = new { @class = "form-control form-control-sm", Value = "This is part of another Project.", disabled = "disabled" } })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.Label("Program", htmlAttributes: new { @class = "control-label" })
+                                        @Html.DropDownList("PAPCode", null, htmlAttributes: new { @class = "form-control form-control-sm", style = "font-size: 100%" })
+                                        @Html.ValidationMessageFor(model => model.PAPCode, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.FiscalYear, htmlAttributes: new { @class = "control-label" })
+                                        @Html.DropDownList("FiscalYear", null, htmlAttributes: new { @class = "form-control form-control-sm", style = "font-size: 100%" })
+                                        @Html.ValidationMessageFor(model => model.FiscalYear, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.DeliveryMonth, htmlAttributes: new { @class = "control-label" })
+                                        @Html.DropDownList("DeliveryMonth", null, htmlAttributes: new { @class = "form-control form-control-sm", style = "font-size: 100%" })
+                                        @Html.ValidationMessageFor(model => model.DeliveryMonth, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Unit, htmlAttributes: new { @class = "control-label" })
+                                        @Html.DropDownList("Unit", null, htmlAttributes: new { @class = "form-control form-control-sm", style = "font-size: 100%" })
+                                        @Html.ValidationMessageFor(model => model.Unit, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.ProposedProject, htmlAttributes: new { @class = "control-label" })
+                                        @Html.EditorFor(model => model.ProposedProject, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", autocomplete = "off" } })
+                                        @Html.ValidationMessageFor(model => model.ProposedProject, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.BackgroundOfProject, htmlAttributes: new { @class = "control-label" })
+                                        @Html.EditorFor(model => model.BackgroundOfProject, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", rows = 3 } })
+                                        @Html.ValidationMessageFor(model => model.BackgroundOfProject, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-horizontal" id="partOfAProject" hidden>
+                    <div class="card card-info">
+                        <div class="card-header"><h3 class="card-title">Project Details</h3></div>
+                        <div class="card-body">
+                            @Html.HiddenFor(d => d.ProjectPlan.UnitCode, htmlAttributes: new { id = "Hidden_Unit_Code" })
+                            @Html.HiddenFor(d => d.ProjectPlan.DeliveryMonth, htmlAttributes: new { id = "Hidden_Delivery_Month" })
+                            @Html.HiddenFor(d => d.ProjectPlan.FiscalYear, htmlAttributes: new { id = "Hidden_Fiscal_Year" })
+                            @Html.HiddenFor(d => d.ProjectPlan.ProjectCode, htmlAttributes: new { id = "Hidden_Project_Code" })
+                            @Html.HiddenFor(d => d.ProjectPlan.PAPCode, htmlAttributes: new { id = "Hidden_PAP_Code" })
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.ProjectPlan.ProjectName, htmlAttributes: new { @class = "control-label" })
+                                        @Html.DropDownList("ProjectPlan_ProjectCode", null, htmlAttributes: new { @class = "form-control form-control-sm", style = "font-size: 100%", onchange = "GetProject()" })
+                                        @Html.ValidationMessageFor(model => model.ProjectPlan.ProjectCode, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.ProjectPlan.ProjectName, htmlAttributes: new { @class = "control-label" })
+                                        @Html.EditorFor(model => model.ProjectPlan.ProjectName, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled", placeholder = Html.DisplayNameFor(model => model.ProjectPlan.ProjectName) } })
+                                        @Html.ValidationMessageFor(model => model.ProjectPlan.ProjectName, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.ProjectPlan.PAPCode, htmlAttributes: new { @class = "control-label" })
+                                        @Html.EditorFor(model => model.ProjectPlan.PAPCode, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled", placeholder = Html.DisplayNameFor(model => model.ProjectPlan.PAPCode) } })
+                                        @Html.ValidationMessageFor(model => model.ProjectPlan.PAPCode, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.ProjectPlan.Program, htmlAttributes: new { @class = "control-label" })
+                                        @Html.EditorFor(model => model.ProjectPlan.Program, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled", placeholder = Html.DisplayNameFor(model => model.ProjectPlan.Program) } })
+                                        @Html.ValidationMessageFor(model => model.ProjectPlan.Program, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.ProjectPlan.Description, htmlAttributes: new { @class = "control-label" })
+                                        @Html.EditorFor(model => model.ProjectPlan.Description, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled", placeholder = Html.DisplayNameFor(model => model.ProjectPlan.Description) } })
+                                        @Html.ValidationMessageFor(model => model.ProjectPlan.Description, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.ProjectPlan.Unit, htmlAttributes: new { @class = "control-label" })
+                                        @Html.EditorFor(model => model.ProjectPlan.Unit, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled", placeholder = Html.DisplayNameFor(model => model.ProjectPlan.Unit) } })
+                                        @Html.ValidationMessageFor(model => model.ProjectPlan.Unit, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.ProjectPlan.ProjectStatus, htmlAttributes: new { @class = "control-label" })
+                                        @Html.EditorFor(model => model.ProjectPlan.ProjectStatus, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled", placeholder = Html.DisplayNameFor(model => model.ProjectPlan.ProjectStatus) } })
+                                        @Html.ValidationMessageFor(model => model.ProjectPlan.ProjectStatus, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.ProjectPlan.FiscalYear, htmlAttributes: new { @class = "control-label" })
+                                        @Html.EditorFor(model => model.ProjectPlan.FiscalYear, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled", placeholder = Html.DisplayNameFor(model => model.ProjectPlan.FiscalYear) } })
+                                        @Html.ValidationMessageFor(model => model.ProjectPlan.FiscalYear, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.ProjectPlan.DeliveryMonth, htmlAttributes: new { @class = "control-label" })
+                                        @Html.EditorFor(model => model.ProjectPlan.DeliveryMonth, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled", placeholder = Html.DisplayNameFor(model => model.ProjectPlan.Description) } })
+                                        @Html.ValidationMessageFor(model => model.ProjectPlan.DeliveryMonth, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section FormFooter {
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" onclick="SaveInfrastructureRequest()" id="btn-save"><i class="fa fa-save"></i>&nbsp; Save Infrastructure Plan Request</button>
+                <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("dashboard", "Dashboard", new { area = "end-users" })'"><i class="fa fa-arrow-alt-circle-left"></i>&nbsp; Back to Dashboard</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    function SaveInfrastructureRequest() {
+        swal.fire({
+            title: "Save Infrastructure Plan Request?",
+            text: "You are about to the Infrastructure Plan Request, continue?",
+            icon: "question",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#addItem").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    icon: "error"
+                })
+            };
+        })
+    }
+    function CreateResult(data) {
+        if (data.result == true) {
+            swal.fire({
+                title: "Record Saved!",
+                text: "Infrastructure Plan Request is successfully saved.",
+                icon: "success"
+            }).then((result) => {
+                if (result.value) {
+                    var url = "@Url.Action("infra-list", "ProjectPlans", new { Area = "end-users", FiscalYear = "yyyy" })";
+                    var isPartOfAnotherProject = document.getElementById('IsPartOfAnotherProject').value;
+                    if (isPartOfAnotherProject == "true")
+                    {
+                        url = url.replace("yyyy", '@Model.ProjectPlan.FiscalYear');
+                    }
+                    else
+                    {
+                        url = url.replace("yyyy", '@Model.FiscalYear');
+                    }
+                    window.location.href = url;
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                icon: "error"
+            });
+        }
+        var vsummary = $("#ValidationSummary");
+        if (vsummary.val() != null) {
+            $("input").blur();
+            $(window).scrollTop(0,0);
+        }
+    }
+    const checkbox = document.getElementById('IsPartOfAnotherProject');
+    checkbox.addEventListener('change', (event) => {
+        if (event.currentTarget.checked) {
+            document.getElementById('partOfAProject').hidden = false;
+            document.getElementById('PAPCode').disabled = true;
+            document.getElementById('FiscalYear').disabled = true;
+            document.getElementById('DeliveryMonth').disabled = true;
+            document.getElementById('Unit').disabled = true;
+        } else {
+            document.getElementById('partOfAProject').hidden = true;
+            document.getElementById('PAPCode').disabled = false;
+            document.getElementById('FiscalYear').disabled = false;
+            document.getElementById('DeliveryMonth').disabled = false;
+            document.getElementById('Unit').disabled = false;
+        }
+    })
+    function GetProject() {
+        var projectCode = $('#ProjectPlan_ProjectCode').val();
+        var url = '@Url.Action("get-project", "ProjectPlans", new { ProjectCode = "xxxx" })';
+        url = url.replace("xxxx", projectCode);
+        $.ajax({
+            url: url,
+            type: "GET",
+            success: function (data) {
+                document.getElementById('ProjectPlan_PAPCode').value = data.PAPCode;
+                document.getElementById('ProjectPlan_Program').value = data.Program;
+                document.getElementById('ProjectPlan_Description').value = data.Description;
+                document.getElementById('ProjectPlan_ProjectName').value = data.ProjectName;
+                document.getElementById('ProjectPlan_Unit').value = data.Unit;
+                document.getElementById('ProjectPlan_ProjectStatus').value = data.ProjectStatus;
+                document.getElementById('ProjectPlan_FiscalYear').value = data.FiscalYear;
+                document.getElementById('ProjectPlan_DeliveryMonth').value = data.DeliveryMonth;
+                document.getElementById('Hidden_Unit_Code').value = data.UnitCode;
+                document.getElementById('Hidden_Delivery_Month').value = data.DeliveryMonth;
+                document.getElementById('Hidden_Fiscal_Year').value = data.FiscalYear;
+                document.getElementById('Hidden_Project_Code').value = data.ProjectCode;
+                document.getElementById('Hidden_PAP_Code').value = data.PAPCode;
+            }
+        });
+    }
+</script>

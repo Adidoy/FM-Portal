@@ -1,0 +1,929 @@
+﻿@model PUPFMIS.Models.PreBidConferenceLotSetupVM
+
+@{
+    ViewBag.Title = "Procurement";
+    ViewBag.Description = "Contract Details";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Procurement Projects", "dashboard", "Dashboard", new { Area = "end-users" }, null)</li>
+        <li class="breadcrumb-item">Details</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title" style="font-size:15pt;"><i class="fa fa-bookmark"></i> @Model.ContractName <small>(@Model.ContractCode)</small></h3>
+}
+
+
+@using (Ajax.BeginForm(Model.ProcurementProjectStage.ToString(), "ContractLot", null, new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult", UpdateTargetId = "form-container" }, htmlAttributes: new { id = "projectDetails", Area = "procurement" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-sm-12 col-md-7 col-lg-7 order-2 order-md-2">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card card-primary card-outline">
+                        <div class="card-header"><h5 class="card-title text-primary"><i class="fas fa-file-contract"></i> <b>Other Details</b></h5></div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="info-box">
+                                        <span class="info-box-icon bg-info elevation-1"><i class="fas fa-coins"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text text-muted pb-1" style="font-size:11pt; font-weight:bold;">@Html.DisplayNameFor(model => model.ApprovedBudgetForContract)</span>
+                                            <span class="info-box-number text-primary mb-0" style="font-size:16pt;">@( Model.ApprovedBudgetForContract.ToString("C", new System.Globalization.CultureInfo("en-ph")) )</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="info-box">
+                                        <span class="info-box-icon bg-info elevation-1"><i class="fas fa-lightbulb"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text text-muted pb-1" style="font-size:11pt; font-weight:bold;">@Html.DisplayNameFor(model => model.ContractStatus)</span>
+                                            <span class="info-box-number text-primary mb-0" style="font-size:16pt;">@( Model.ContractStatus.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="info-box">
+                                        <span class="info-box-icon bg-info elevation-1"><i class="fas fa-comment"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text text-muted pb-1" style="font-size:11pt; font-weight:bold;">@Html.DisplayNameFor(model => model.ProcurementProjectStage)</span>
+                                            <span class="info-box-number text-primary mb-0" style="font-size:16pt;">@( Model.ProcurementProjectStage.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card card-primary card-outline">
+                        <div class="card-header"><h3 class="card-title text-primary"><i class="fa fa-file"></i> <b>Project Files</b></h3></div>
+                        <div class="card-body">
+                            <div class="row mb-2">
+                                <div class="col-sm-12">
+                                    @if (Model.ProcurementProjectStage >= PUPFMIS.Models.ProcurementProjectStages.PreProcurementConferenceSetup)
+                                    {
+                                        <a href="@Url.Action("print-preprocurement-memo", "ContractLot", new { Area = "procurement", ContractCode = Model.ContractCode })" target="_blank" class="btn-link text-primary" style="font-size:12pt; font-weight:bold"><i class="far fa-fw fa-file-pdf" style="font-size:14pt;"></i>&nbsp;Memorandum of Pre-Procurement Conference</a>
+                                    }
+                                    else
+                                    {
+                                        <b class="d-block text-gray" style="font-size:12pt;"><i class="far fa-fw fa-file-pdf" style="font-size:14pt;"></i>&nbsp;Memorandum of Pre-Procurement Conference</b>
+                                    }
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-12">
+                                    @if (Model.ProcurementProjectType == PUPFMIS.Models.ProcurementProjectTypes.CPB)
+                                    {
+                                        if (Model.ProcurementProjectStage >= PUPFMIS.Models.ProcurementProjectStages.PreBidConferenceSetup)
+                                        {
+                                            <a href="@Url.Action("print-invitation-to-bid", "ContractLot", new { Area = "procurement", ContractCode = Model.ContractCode })" target="_blank" class="btn-link text-primary" style="font-size:12pt; font-weight:bold"><i class="far fa-fw fa-file-pdf" style="font-size:14pt;"></i>&nbsp;Invitation To Bid</a>
+                                        }
+                                        else
+                                        {
+                                            <b class="d-block text-gray" style="font-size:12pt;"><i class="far fa-fw fa-file-pdf" style="font-size:14pt;"></i>&nbsp;Invitation To Bid</b>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (Model.ProcurementProjectStage >= PUPFMIS.Models.ProcurementProjectStages.PreBidConferenceSetup)
+                                        {
+                                            <a href="@Url.Action("print", "RequestForQuotation", new { Area = "procurement", ContractCode = Model.ContractCode })" target="_blank" class="btn-link text-primary" style="font-size:12pt; font-weight:bold"><i class="far fa-fw fa-file-pdf" style="font-size:14pt;"></i>>&nbsp;Request for Quotation</a>
+                                        }
+                                        else
+                                        {
+                                            <b class="d-block text-gray" style="font-size:12pt;"><i class="far fa-fw fa-file-pdf" style="font-size:14pt;"></i>&nbsp;Request for Quotation</b>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-12">
+                                    @if (Model.ProcurementProjectStage >= PUPFMIS.Models.ProcurementProjectStages.NoticeOfAwardSetup)
+                                    {
+                                        <a href="@Url.Action("print-notice-of-award", "ContractLot", new { Area = "procurement", ContractCode = Model.ContractCode })" target="_blank" class="btn-link text-primary" style="font-size:12pt; font-weight:bold"><i class="far fa-fw fa-file-pdf" style="font-size:14pt;"></i>&nbsp;Notice of Award</a>
+                                    }
+                                    else
+                                    {
+                                        <b class="d-block text-gray" style="font-size:12pt;"><i class="far fa-fw fa-file-pdf" style="font-size:14pt;"></i>&nbsp;Notice of Award</b>
+                                    }
+                                </div>
+                            </div>
+                            @if (Model.Classification.Contains("Goods"))
+                            {
+                                <div class="row mb-2">
+                                    <div class="col-sm-12">
+                                        @if (Model.ProcurementProjectStage >= PUPFMIS.Models.ProcurementProjectStages.NoticeOfAwardSetup)
+                                        {
+                                            <a href="@Url.Action("print-contract-agreement-form", "ContractLot", new { Area = "procurement", ContractCode = Model.ContractCode })" target="_blank" class="btn-link text-primary" style="font-size:12pt; font-weight:bold"><i class="far fa-fw fa-file-pdf" style="font-size:14pt;"></i>&nbsp;Contract Agreement Form</a>
+                                        }
+                                        else
+                                        {
+                                            <b class="d-block text-gray" style="font-size:12pt;"><i class="far fa-fw fa-file-pdf" style="font-size:14pt;"></i>&nbsp;Contract Agreement Form</b>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-sm-12">
+                                        @if (Model.ProcurementProjectStage >= PUPFMIS.Models.ProcurementProjectStages.NoticeOfAwardSetup)
+                                        {
+                                            <a href="@Url.Action("print-purchase-order", "ContractLot", new { Area = "procurement", ContractCode = Model.ContractCode })" target="_blank" class="btn-link text-primary" style="font-size:12pt; font-weight:bold"><i class="far fa-fw fa-file-pdf" style="font-size:14pt;"></i>&nbsp;Purchase Order</a>
+                                        }
+                                        else
+                                        {
+                                            <b class="d-block text-gray" style="font-size:12pt;"><i class="far fa-fw fa-file-pdf" style="font-size:14pt;"></i>&nbsp;Purchase Order</b>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            <div class="row mb-2">
+                                <div class="col-sm-12">
+                                    @if (Model.ProcurementProjectStage >= PUPFMIS.Models.ProcurementProjectStages.NoticeToProceedSetup)
+                                    {
+                                        <a href="@Url.Action("print-notice-to-proceed", "ContractLot", new { Area = "procurement", ContractCode = Model.ContractCode })" target="_blank" class="btn-link text-primary" style="font-size:12pt; font-weight:bold"><i class="far fa-fw fa-file-pdf" style="font-size:14pt;"></i>&nbsp;Notice To Proceed</a>
+                                    }
+                                    else
+                                    {
+                                        <b class="d-block text-gray" style="font-size:12pt;"><i class="far fa-fw fa-file-pdf" style="font-size:14pt;"></i>&nbsp;Notice To Proceed</b>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-5 col-lg-5 order-1 order-md-1">
+            <div class="card card-primary card-outline">
+                <div class="card-header"><h5 class="card-title text-primary"><i class="fas fa-file-contract"></i> <b>Contract Details</b></h5></div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="text-muted">
+                                <p class="text-sm">
+                                    @Html.HiddenFor(model => model.FiscalYear)
+                                    @Html.DisplayNameFor(model => model.FiscalYear)
+                                    <b class="d-block text-primary">@Html.DisplayFor(model => model.FiscalYear)</b>
+                                </p>
+                                <p class="text-sm">
+                                    @Html.HiddenFor(model => model.PAPCode)
+                                    @Html.DisplayNameFor(model => model.PAPCode)
+                                    <b class="d-block text-primary">@Html.DisplayFor(model => model.PAPCode)</b>
+                                </p>
+                                <p class="text-sm">
+                                    @Html.HiddenFor(model => model.ContractCode)
+                                    @Html.DisplayNameFor(model => model.ContractCode)
+                                    <b class="d-block text-primary">@Html.DisplayFor(model => model.ContractCode)</b>
+                                </p>
+                                <p class="text-sm">
+                                    @Html.HiddenFor(model => model.ContractName)
+                                    @Html.DisplayNameFor(model => model.ContractName)
+                                    <b class="d-block text-primary">@Html.DisplayFor(model => model.ContractName)</b>
+                                </p>
+                                <p class="text-sm">
+                                    @Html.HiddenFor(model => model.ProcurementProjectType)
+                                    @Html.DisplayNameFor(model => model.ProcurementProjectType)
+                                    <b class="d-block text-primary">@( Model.ProcurementProjectType.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</b>
+                                </p>
+                                <p class="text-sm">
+                                    @Html.HiddenFor(model => model.ContractStrategy)
+                                    @Html.DisplayNameFor(model => model.ContractStrategy)
+                                    <b class="d-block text-primary">@( Model.ContractStrategy.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</b>
+                                </p>
+                                <p class="text-sm">
+                                    @Html.HiddenFor(model => model.ModeOfProcurement)
+                                    @Html.HiddenFor(model => model.ModeOfProcurementReference)
+                                    @Html.DisplayNameFor(model => model.ModeOfProcurement)
+                                    <b class="d-block text-primary">@Html.DisplayFor(model => model.ModeOfProcurement)</b>
+                                </p>
+                                <p class="text-sm">
+                                    @Html.HiddenFor(model => model.Classification)
+                                    @Html.HiddenFor(model => model.ClassificationReference)
+                                    @Html.DisplayNameFor(model => model.Classification)
+                                    <b class="d-block text-primary">@Html.DisplayFor(model => model.Classification)</b>
+                                </p>
+                                <p class="text-sm">
+                                    @Html.HiddenFor(model => model.FundDescription)
+                                    @Html.HiddenFor(model => model.FundSource)
+                                    @Html.DisplayNameFor(model => model.FundSource)
+                                    <b class="d-block text-primary">@Html.DisplayFor(model => model.FundDescription)</b>
+                                </p>
+                                <p class="text-sm">
+                                    @Html.HiddenFor(model => model.ContractLocation)
+                                    @Html.DisplayNameFor(model => model.ContractLocation)
+                                    <b class="d-block text-primary">@Html.DisplayFor(model => model.ContractLocation)</b>
+                                </p>
+                                <p class="text-sm">
+                                    @Html.HiddenFor(model => model.ProjectCoordinator)
+                                    @Html.DisplayNameFor(model => model.ProjectCoordinator)
+                                    <b class="d-block text-primary">@Html.DisplayFor(model => model.ProjectCoordinator)</b>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card card-primary card-outline">
+        <div class="card-header"><h5 class="card-title text-primary"><i class="fas fa-folder"></i> &nbsp; <b>Lot Details</b></h5></div>
+        <div class="card-header d-flex p-0">
+            <ul class="nav nav-pills p-2">
+                @for (int i = 0; i < Model.Details.Count; i++)
+                {
+                    if (i == 0)
+                    {
+                        <li class="nav-item" style="font-size:12pt;"><a class="nav-link active" href="@( string.Concat("#", Model.Details[i].ContractCode) )" data-toggle="tab"><i class="fa fa-list"></i>&nbsp; Lot #@(i + 1): @Model.Details[i].ContractName</a></li>
+                    }
+                    else
+                    {
+                        <li class="nav-item" style="font-size:12pt;"><a class="nav-link" href="@( string.Concat("#", Model.Details[i].ContractCode) )" data-toggle="tab"><i class="fa fa-list"></i>&nbsp; Lot #@(i + 1): @Model.Details[i].ContractName</a></li>
+                    }
+                }
+            </ul>
+        </div>
+        <div class="tab-content">
+            @for (int i = 0; i < Model.Details.Count; i++)
+            {
+                if (i == 0)
+                {
+                    <div class="tab-pane active" id="@Model.Details[i].ContractCode">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="card card-primary card-outline">
+                                        <div class="card-header"><h3 class="card-title text-primary" style="font-size:14pt; font-weight:bold"><i class="fas fa-bookmark"></i> &nbsp; Lot #@(i + 1) @Model.Details[i].ContractName <small>(@Model.Details[i].ContractCode)</small></h3></div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                                    <p class="text-sm">
+                                                        @Html.HiddenFor(model => model.Details[i].ContractCode)
+                                                        @Html.DisplayNameFor(model => model.Details[i].ContractCode)
+                                                        <b class="d-block text-primary">@Html.DisplayFor(model => model.Details[i].ContractCode)</b>
+                                                    </p>
+                                                    <p class="text-sm">
+                                                        @Html.HiddenFor(model => model.Details[i].ContractName)
+                                                        @Html.DisplayNameFor(model => model.Details[i].ContractName)
+                                                        <b class="d-block text-primary">@Html.DisplayFor(model => model.Details[i].ContractName)</b>
+                                                    </p>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                                    <p class="text-sm">
+                                                        @Html.HiddenFor(model => model.Details[i].ApprovedBudgetForContract)
+                                                        @Html.DisplayNameFor(model => model.Details[i].ApprovedBudgetForContract)
+                                                        <b class="d-block text-primary">@( Model.Details[i].ApprovedBudgetForContract.ToString("C", new System.Globalization.CultureInfo("en-ph")) )</b>
+                                                    </p>
+                                                    <p class="text-sm">
+                                                        @Html.HiddenFor(model => model.Details[i].DeliveryPeriod)
+                                                        @Html.DisplayNameFor(model => model.Details[i].DeliveryPeriod)
+                                                        <b class="d-block text-primary">@Html.DisplayFor(model => model.Details[i].DeliveryPeriod) Calendar Days</b>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="card card-primary card-outline">
+                                        <div class="card-header"><h3 class="card-title text-primary" style="font-size:14pt; font-weight:bold"><i class="fas fa-pencil-ruler"></i> &nbsp; Project Items</h3></div>
+                                        <div class="card-body">
+                                            <div class="card-body table-responsive p-sm-0">
+                                                <table class="table table-striped table-hover display">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="text-align:center; vertical-align:middle" width="5%">Item No.</th>
+                                                            <th style="text-align:center; vertical-align:middle" width="10%">Quantity</th>
+                                                            <th style="text-align:center; vertical-align:middle" width="10%">Unit</th>
+                                                            <th style="text-align:center; vertical-align:middle" width="40%">Item Description</th>
+                                                            <th style="text-align:center; vertical-align:middle" width="15%">Unit Cost</th>
+                                                            <th style="text-align:center; vertical-align:middle" width="20%">Total Cost</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @for (int x = 0; x < Model.Details[i].ContractItems.Count; x++)
+                                                        {
+                                                            <tr>
+                                                                <td style="text-align:center; vertical-align:middle;">@( x + 1 )</td>
+                                                                <td style="text-align:center; vertical-align:middle;">
+                                                                    @Html.HiddenFor(model => Model.Details[i].ContractItems[x].Quantity)
+                                                                    @Html.DisplayFor(model => Model.Details[i].ContractItems[x].Quantity)
+                                                                </td>
+                                                                <td style="text-align:center; vertical-align:middle;">
+                                                                    @Html.HiddenFor(model => Model.Details[i].ContractItems[x].UOMReference)
+                                                                    @Html.HiddenFor(model => Model.Details[i].ContractItems[x].UnitOfMeasure)
+                                                                    @Html.DisplayFor(model => Model.Details[i].ContractItems[x].UnitOfMeasure)
+                                                                </td>
+                                                                <td style="text-align:left; vertical-align:middle;">
+                                                                    @Html.HiddenFor(model => Model.Details[i].ContractItems[x].ArticleReference)
+                                                                    @Html.HiddenFor(model => Model.Details[i].ContractItems[x].ItemSequence)
+                                                                    @Html.HiddenFor(model => Model.Details[i].ContractItems[x].ItemFullName)
+                                                                    @Html.DisplayFor(model => Model.Details[i].ContractItems[x].ItemFullName)
+                                                                </td>
+                                                                <td style="text-align:right; vertical-align:middle;">
+                                                                    @Html.HiddenFor(model => Model.Details[i].ContractItems[x].EstimatedUnitCost)
+                                                                    @( Model.Details[i].ContractItems[x].EstimatedUnitCost.ToString("N", new System.Globalization.CultureInfo("en-ph")) )
+                                                                </td>
+                                                                <td style="text-align:right; vertical-align:middle;">
+                                                                    @Html.HiddenFor(model => Model.Details[i].ContractItems[x].ApprovedBudgetForItem)
+                                                                    @( Model.Details[i].ContractItems[x].ApprovedBudgetForItem.ToString("N", new System.Globalization.CultureInfo("en-ph")) )
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="tab-pane" id="@Model.Details[i].ContractCode">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="card card-primary card-outline">
+                                        <div class="card-header"><h3 class="card-title text-primary" style="font-size:14pt; font-weight:bold"><i class="fas fa-bookmark"></i> &nbsp; Lot #@(i + 1) @Model.Details[i].ContractName <small>(@Model.Details[i].ContractCode)</small></h3></div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                                    <p class="text-sm">
+                                                        @Html.HiddenFor(model => model.Details[i].ContractCode)
+                                                        @Html.DisplayNameFor(model => model.Details[i].ContractCode)
+                                                        <b class="d-block text-primary">@Html.DisplayFor(model => model.Details[i].ContractCode)</b>
+                                                    </p>
+                                                    <p class="text-sm">
+                                                        @Html.HiddenFor(model => model.Details[i].ContractName)
+                                                        @Html.DisplayNameFor(model => model.Details[i].ContractName)
+                                                        <b class="d-block text-primary">@Html.DisplayFor(model => model.Details[i].ContractName)</b>
+                                                    </p>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                                    <p class="text-sm">
+                                                        @Html.HiddenFor(model => model.Details[i].ApprovedBudgetForContract)
+                                                        @Html.DisplayNameFor(model => model.Details[i].ApprovedBudgetForContract)
+                                                        <b class="d-block text-primary">@( Model.Details[i].ApprovedBudgetForContract.ToString("C", new System.Globalization.CultureInfo("en-ph")) )</b>
+                                                    </p>
+                                                    <p class="text-sm">
+                                                        @Html.HiddenFor(model => model.Details[i].DeliveryPeriod)
+                                                        @Html.DisplayNameFor(model => model.Details[i].DeliveryPeriod)
+                                                        <b class="d-block text-primary">@Html.DisplayFor(model => model.Details[i].DeliveryPeriod) Calendar Days</b>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="card card-primary card-outline">
+                                        <div class="card-header"><h3 class="card-title text-primary" style="font-size:14pt; font-weight:bold"><i class="fas fa-pencil-ruler"></i> &nbsp; Project Items</h3></div>
+                                        <div class="card-body">
+                                            <div class="card-body table-responsive p-sm-0">
+                                                <table class="table table-striped table-hover display">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="text-align:center; vertical-align:middle" width="5%">Item No.</th>
+                                                            <th style="text-align:center; vertical-align:middle" width="10%">Quantity</th>
+                                                            <th style="text-align:center; vertical-align:middle" width="10%">Unit</th>
+                                                            <th style="text-align:center; vertical-align:middle" width="40%">Item Description</th>
+                                                            <th style="text-align:center; vertical-align:middle" width="15%">Unit Cost</th>
+                                                            <th style="text-align:center; vertical-align:middle" width="20%">Total Cost</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @for (int x = 0; x < Model.Details[i].ContractItems.Count; x++)
+                                                        {
+                                                            <tr>
+                                                                <td style="text-align:center; vertical-align:middle;">@( x + 1 )</td>
+                                                                <td style="text-align:center; vertical-align:middle;">
+                                                                    @Html.HiddenFor(model => Model.Details[i].ContractItems[x].Quantity)
+                                                                    @Html.DisplayFor(model => Model.Details[i].ContractItems[x].Quantity)
+                                                                </td>
+                                                                <td style="text-align:center; vertical-align:middle;">
+                                                                    @Html.HiddenFor(model => Model.Details[i].ContractItems[x].UOMReference)
+                                                                    @Html.HiddenFor(model => Model.Details[i].ContractItems[x].UnitOfMeasure)
+                                                                    @Html.DisplayFor(model => Model.Details[i].ContractItems[x].UnitOfMeasure)
+                                                                </td>
+                                                                <td style="text-align:left; vertical-align:middle;">
+                                                                    @Html.HiddenFor(model => Model.Details[i].ContractItems[x].ArticleReference)
+                                                                    @Html.HiddenFor(model => Model.Details[i].ContractItems[x].ItemSequence)
+                                                                    @Html.HiddenFor(model => Model.Details[i].ContractItems[x].ItemFullName)
+                                                                    @Html.DisplayFor(model => Model.Details[i].ContractItems[x].ItemFullName)
+                                                                </td>
+                                                                <td style="text-align:right; vertical-align:middle;">
+                                                                    @Html.HiddenFor(model => Model.Details[i].ContractItems[x].EstimatedUnitCost)
+                                                                    @( Model.Details[i].ContractItems[x].EstimatedUnitCost.ToString("N", new System.Globalization.CultureInfo("en-ph")) )
+                                                                </td>
+                                                                <td style="text-align:right; vertical-align:middle;">
+                                                                    @Html.HiddenFor(model => Model.Details[i].ContractItems[x].ApprovedBudgetForItem)
+                                                                    @( Model.Details[i].ContractItems[x].ApprovedBudgetForItem.ToString("N", new System.Globalization.CultureInfo("en-ph")) )
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+    <div class="card card-primary card-outline">
+        <div class="card-header"><h5 class="card-title text-primary"><i class="fas fa-edit"></i>&nbsp; <b>Update Contract Progress</b></h5></div>
+        <div class="card-header d-flex p-0">
+            <ul class="nav nav-pills p-2">
+                @for (int i = 0; i < Model.Details.Count; i++)
+                {
+                    if (i == 0)
+                    {
+                        <li class="nav-item" style="font-size:12pt;"><a class="nav-link active" href="@( string.Concat("#", Model.Details[i].ContractCode, "_UpdateContractProgress") )" data-toggle="tab"><i class="fa fa-list"></i>&nbsp; Lot #@(i + 1): @Model.Details[i].ContractName</a></li>
+                    }
+                    else
+                    {
+                        <li class="nav-item" style="font-size:12pt;"><a class="nav-link" href="@( string.Concat("#", Model.Details[i].ContractCode, "_UpdateContractProgress") )" data-toggle="tab"><i class="fa fa-list"></i>&nbsp; Lot #@(i + 1): @Model.Details[i].ContractName</a></li>
+                    }
+                }
+            </ul>
+        </div>
+        <div class="tab-content">
+            @for (int i = 0; i < Model.Details.Count; i++)
+            {
+                if (i == 0)
+                {
+                    <div class="tab-pane active" id="@( string.Concat(Model.Details[i].ContractCode, "_UpdateContractProgress") )">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <h3 class="card-title"><b>@( Model.ProcurementProjectStage.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</b></h3>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => Model.Details[i].PreBidConference, htmlAttributes: new { @class = "control-label" }) @Html.Label("(Target Schedule)", htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                            </div>
+                                            @Html.HiddenFor(model => Model.Details[i].PreBidConference)
+                                            @Html.EditorFor(model => Model.Details[i].PreBidConference, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", Value = Model.Details[i].PreBidConference.Value.ToString("dd MMMM yyyy hh:mm tt") } })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => Model.Details[i].DeadlineOfSubmissionOfBids, htmlAttributes: new { @class = "control-label" }) @Html.Label("(Target Schedule)", htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                            </div>
+                                            @Html.HiddenFor(model => Model.Details[i].DeadlineOfSubmissionOfBids)
+                                            @Html.EditorFor(model => Model.Details[i].DeadlineOfSubmissionOfBids, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", Value = Model.Details[i].DeadlineOfSubmissionOfBids.Value.ToString("dd MMMM yyyy hh:mm tt") } })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => Model.Details[i].OpeningOfBids, htmlAttributes: new { @class = "control-label" }) @Html.Label("(Target Schedule)", htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                            </div>
+                                            @Html.HiddenFor(model => Model.Details[i].OpeningOfBids)
+                                            @Html.EditorFor(model => Model.Details[i].OpeningOfBids, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", Value = Model.Details[i].OpeningOfBids.Value.ToString("dd MMMM yyyy hh:mm tt") } })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => Model.Details[i].BidDocumentPrice, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-file"></i></span>
+                                            </div>
+                                            @Html.EditorFor(model => Model.Details[i].BidDocumentPrice, null, new { htmlAttributes = new { @class = "form-control form-control-sm", placeholder = Html.DisplayNameFor(model => model.Details[i].BidDocumentPrice), type = "number", step = "0.01", Value = "0.00", min = "0.00" } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => Model.Details[i].BidDocumentPrice, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => Model.Details[i].PreBidVideoConferencingOptions, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-camera"></i></span>
+                                            </div>
+                                            @Html.EnumDropDownListFor(model => model.Details[i].PreBidVideoConferencingOptions, htmlAttributes: new { @class = "form-control form-control-sm", id = string.Concat("Details[", i.ToString(), "]_PreBidVideoConferencingOptions"), onchange = "VideoConferencingChanged(" + i.ToString() + ")" })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => Model.Details[i].PreBidVideoConferencingOptions, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => Model.Details[i].PreBidVideoConferenceMode, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-video"></i></span>
+                                            </div>
+                                            @Html.EditorFor(model => Model.Details[i].PreBidVideoConferenceMode, null, new { htmlAttributes = new { @class = "form-control form-control-sm", id = string.Concat("Details[", i.ToString(), "]_PreBidVideoConferenceMode"), placeholder = Html.DisplayNameFor(model => model.Details[i].PreBidVideoConferenceMode), disabled = "disabled" } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => Model.Details[i].PreBidVideoConferenceMode, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => Model.Details[i].PreBidVideoConferenceAccessRequestEmail, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-at"></i></span>
+                                            </div>
+                                            @Html.EditorFor(model => Model.Details[i].PreBidVideoConferenceAccessRequestEmail, null, new { htmlAttributes = new { @class = "form-control form-control-sm", id = string.Concat("Details[", i.ToString(), "]_PreBidVideoConferenceAccessRequestEmail"), placeholder = Html.DisplayNameFor(model => model.Details[i].PreBidVideoConferenceAccessRequestEmail), disabled = "disabled" } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => Model.Details[i].PreBidVideoConferenceAccessRequestEmail, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => Model.Details[i].PreBidVideoConferenceAccessRequestContactNo, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-phone"></i></span>
+                                            </div>
+                                            @Html.EditorFor(model => Model.Details[i].PreBidVideoConferenceAccessRequestContactNo, null, new { htmlAttributes = new { @class = "form-control form-control-sm", id = string.Concat("Details[", i.ToString(), "]_PreBidVideoConferenceAccessRequestContactNo"), placeholder = Html.DisplayNameFor(model => model.Details[i].PreBidVideoConferenceAccessRequestContactNo), disabled = "disabled" } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => Model.Details[i].PreBidVideoConferenceAccessRequestContactNo, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => Model.Details[i].PreBidConferenceLocation, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-building"></i></span>
+                                            </div>
+                                            @Html.EditorFor(model => Model.Details[i].PreBidConferenceLocation, null, new { htmlAttributes = new { @class = "form-control form-control-sm", placeholder = Html.DisplayNameFor(model => model.Details[i].PreBidConferenceLocation) } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => Model.Details[i].PreBidConferenceLocation, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => Model.Details[i].OpeningOfBidsLocation, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-building"></i></span>
+                                            </div>
+                                            @Html.EditorFor(model => Model.Details[i].OpeningOfBidsLocation, null, new { htmlAttributes = new { @class = "form-control form-control-sm", placeholder = Html.DisplayNameFor(model => model.Details[i].OpeningOfBidsLocation) } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => Model.Details[i].OpeningOfBidsLocation, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => Model.Details[i].PreBidAdditionalInstructions, htmlAttributes: new { @class = "control-label" })
+                                        @Html.EditorFor(model => Model.Details[i].PreBidAdditionalInstructions, null, new { htmlAttributes = new { @class = "form-control form-control-sm", id = string.Concat("Details[", i.ToString(), "]_PreBidAdditionalInstructions"), placeholder = Html.DisplayNameFor(model => model.Details[i].PreBidAdditionalInstructions), rows = 3 } })
+                                        @Html.ValidationMessageFor(model => Model.Details[i].PreBidAdditionalInstructions, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="tab-pane" id="@( string.Concat(Model.Details[i].ContractCode, "_UpdateContractProgress") )">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <h3 class="card-title"><b>@( Model.ProcurementProjectStage.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</b></h3>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => Model.Details[i].PreBidConference, htmlAttributes: new { @class = "control-label" }) @Html.Label("(Target Schedule)", htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                            </div>
+                                            @Html.HiddenFor(model => Model.Details[i].PreBidConference)
+                                            @Html.EditorFor(model => Model.Details[i].PreBidConference, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", Value = Model.Details[i].PreBidConference.Value.ToString("dd MMMM yyyy hh:mm tt") } })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => Model.Details[i].DeadlineOfSubmissionOfBids, htmlAttributes: new { @class = "control-label" }) @Html.Label("(Target Schedule)", htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                            </div>
+                                            @Html.HiddenFor(model => Model.Details[i].DeadlineOfSubmissionOfBids)
+                                            @Html.EditorFor(model => Model.Details[i].DeadlineOfSubmissionOfBids, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", Value = Model.Details[i].DeadlineOfSubmissionOfBids.Value.ToString("dd MMMM yyyy hh:mm tt") } })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => Model.Details[i].OpeningOfBids, htmlAttributes: new { @class = "control-label" }) @Html.Label("(Target Schedule)", htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                            </div>
+                                            @Html.HiddenFor(model => Model.Details[i].OpeningOfBids)
+                                            @Html.EditorFor(model => Model.Details[i].OpeningOfBids, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", Value = Model.Details[i].OpeningOfBids.Value.ToString("dd MMMM yyyy hh:mm tt") } })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => Model.Details[i].BidDocumentPrice, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-file"></i></span>
+                                            </div>
+                                            @Html.EditorFor(model => Model.Details[i].BidDocumentPrice, null, new { htmlAttributes = new { @class = "form-control form-control-sm", placeholder = Html.DisplayNameFor(model => model.Details[i].BidDocumentPrice), type = "number", step = "0.01", Value = "0.00", min = "0.00" } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => Model.Details[i].BidDocumentPrice, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => Model.Details[i].PreBidVideoConferencingOptions, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-camera"></i></span>
+                                            </div>
+                                            @Html.EnumDropDownListFor(model => model.Details[i].PreBidVideoConferencingOptions, htmlAttributes: new { @class = "form-control form-control-sm", id = string.Concat("Details[", i.ToString(), "]_PreBidVideoConferencingOptions"), onchange = "VideoConferencingChanged(" + i.ToString() + ")" })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => Model.Details[i].PreBidVideoConferencingOptions, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => Model.Details[i].PreBidVideoConferenceMode, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-video"></i></span>
+                                            </div>
+                                            @Html.EditorFor(model => Model.Details[i].PreBidVideoConferenceMode, null, new { htmlAttributes = new { @class = "form-control form-control-sm", id = string.Concat("Details[", i.ToString(), "]_PreBidVideoConferenceMode"), placeholder = Html.DisplayNameFor(model => model.Details[i].PreBidVideoConferenceMode), disabled = "disabled" } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => Model.Details[i].PreBidVideoConferenceMode, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => Model.Details[i].PreBidVideoConferenceAccessRequestEmail, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-at"></i></span>
+                                            </div>
+                                            @Html.EditorFor(model => Model.Details[i].PreBidVideoConferenceAccessRequestEmail, null, new { htmlAttributes = new { @class = "form-control form-control-sm", id = string.Concat("Details[", i.ToString(), "]_PreBidVideoConferenceAccessRequestEmail"), placeholder = Html.DisplayNameFor(model => model.Details[i].PreBidVideoConferenceAccessRequestEmail), disabled = "disabled" } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => Model.Details[i].PreBidVideoConferenceAccessRequestEmail, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => Model.Details[i].PreBidVideoConferenceAccessRequestContactNo, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-phone"></i></span>
+                                            </div>
+                                            @Html.EditorFor(model => Model.Details[i].PreBidVideoConferenceAccessRequestContactNo, null, new { htmlAttributes = new { @class = "form-control form-control-sm", id = string.Concat("Details[", i.ToString(), "]_PreBidVideoConferenceAccessRequestContactNo"), placeholder = Html.DisplayNameFor(model => model.Details[i].PreBidVideoConferenceAccessRequestContactNo), disabled = "disabled" } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => Model.Details[i].PreBidVideoConferenceAccessRequestContactNo, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => Model.Details[i].PreBidConferenceLocation, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-building"></i></span>
+                                            </div>
+                                            @Html.EditorFor(model => Model.Details[i].PreBidConferenceLocation, null, new { htmlAttributes = new { @class = "form-control form-control-sm", placeholder = Html.DisplayNameFor(model => model.Details[i].PreBidConferenceLocation) } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => Model.Details[i].PreBidConferenceLocation, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => Model.Details[i].OpeningOfBidsLocation, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-building"></i></span>
+                                            </div>
+                                            @Html.EditorFor(model => Model.Details[i].OpeningOfBidsLocation, null, new { htmlAttributes = new { @class = "form-control form-control-sm", placeholder = Html.DisplayNameFor(model => model.Details[i].OpeningOfBidsLocation) } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => Model.Details[i].OpeningOfBidsLocation, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => Model.Details[i].PreBidAdditionalInstructions, htmlAttributes: new { @class = "control-label" })
+                                        @Html.EditorFor(model => Model.Details[i].PreBidAdditionalInstructions, null, new { htmlAttributes = new { @class = "form-control form-control-sm", id = string.Concat("Details[", i.ToString(), "]_PreBidAdditionalInstructions"), placeholder = Html.DisplayNameFor(model => model.Details[i].PreBidAdditionalInstructions), rows = 3 } })
+                                        @Html.ValidationMessageFor(model => Model.Details[i].PreBidAdditionalInstructions, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-primary card-outline">
+                <div class="card-header"><h3 class="card-title text-primary" style="font-size:14pt; font-weight:bold"><i class="fas fa-list-alt"></i> &nbsp;Contract Updates</h3></div>
+                <div class="card-body">
+                    <div class="card-body table-responsive p-sm-0">
+                        <table class="table table-striped table-hover display">
+                            <thead>
+                                <tr>
+                                    <th style="text-align:center; vertical-align:middle" width="25%">Date Updated</th>
+                                    <th style="text-align:center; vertical-align:middle" width="20%">Updated By</th>
+                                    <th style="text-align:center; vertical-align:middle" width="25%">Contract Stage</th>
+                                    <th style="text-align:center; vertical-align:middle" width="35%">Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < Model.Updates.Count; i++)
+                                {
+                                    <tr>
+                                        <td style="text-align:left; vertical-align:middle;">
+                                            @Html.HiddenFor(model => Model.Updates[i].UpdatedAt)
+                                            <b>@( Model.Updates[i].UpdatedAt.Value.ToString("dd MMMM yyyy hh:mm tt") )</b>
+                                        </td>
+                                        <td style="text-align:left; vertical-align:middle;">
+                                            @Html.HiddenFor(model => Model.Updates[i].UpdatedBy)
+                                            @Html.DisplayFor(model => Model.Updates[i].UpdatedBy)
+                                        </td>
+                                        <td style="text-align:center; vertical-align:middle;">
+                                            @Html.HiddenFor(model => Model.Updates[i].ProcurementProjectStage)
+                                            @( Model.Updates[i].ProcurementProjectStage.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )
+                                        </td>
+                                        <td style="text-align:left; vertical-align:middle;">
+                                            @Html.HiddenFor(model => Model.Updates[i].Remarks)
+                                            @Html.DisplayFor(model => Model.Updates[i].Remarks)
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section FormFooter{
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" onclick="SaveUpdates()"><i class="fa fa-save"></i>&nbsp; Update Contract</button>
+                <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("list", "ProcurementProjects", new { Area = "procurement" })'"><i class="fa fa-arrow-alt-circle-left"></i>&nbsp; Back to Dashboard</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('table.display').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": false,
+            "info": true,
+            "autoWidth": false,
+            "pageLength": 5
+        });
+    });
+
+    $(function () {
+        $('#AccomplishedAt1').datetimepicker({
+            useCurrent: true,
+            defaultDate: '@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")',
+            format: 'DD MMMM YYYY hh:mm A'
+        });
+    });
+
+    function SaveUpdates() {
+        swal.fire({
+            title: "Save Contract Updates?",
+            text: "You are about to save this updates for this contract, continue?",
+            icon: "question",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#projectDetails").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    icon: "error"
+                })
+            };
+        })
+    }
+
+    function CreateResult(data) {
+        if (data.result == true) {
+            swal.fire({
+                title: "Contract Updated!",
+                text: "Contract is successfully updated.",
+                icon: "success"
+            }).then((result) => {
+                if (result.value) {
+                    var url = '@Url.Action("list", "ProcurementProjects", new { Area = "procurement" })';
+                    window.location.href = url;
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                icon: "error"
+            });
+        }
+        var vsummary = $("#ValidationSummary");
+        if (vsummary.val() != null) {
+            $("input").blur();
+            $(window).scrollTop(0,0);
+        }
+    }
+
+    function VideoConferencingChanged(index) {
+        var PreBidVideoConferencingOptions = 'Details[' + index + ']_PreBidVideoConferencingOptions';
+        var PreBidVideoConferenceMode = 'Details[' + index + ']_PreBidVideoConferenceMode';
+        var PreBidVideoConferenceAccessRequestEmail = 'Details[' + index + ']_PreBidVideoConferenceAccessRequestEmail';
+        var PreBidVideoConferenceAccessRequestContactNo = 'Details[' + index + ']_PreBidVideoConferenceAccessRequestContactNo';
+        var option = document.getElementById(PreBidVideoConferencingOptions).value;
+
+        if (option == 0) {
+            document.getElementById(PreBidVideoConferenceMode).disabled = true;
+            document.getElementById(PreBidVideoConferenceAccessRequestEmail).disabled = true;
+            document.getElementById(PreBidVideoConferenceAccessRequestContactNo).disabled = true;
+        }
+        else {
+            document.getElementById(PreBidVideoConferenceMode).disabled = false;
+            document.getElementById(PreBidVideoConferenceAccessRequestEmail).disabled = false;
+            document.getElementById(PreBidVideoConferenceAccessRequestContactNo).disabled = false;
+        }
+    }
+</script>

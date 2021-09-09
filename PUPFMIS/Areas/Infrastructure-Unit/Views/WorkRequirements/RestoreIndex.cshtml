@@ -1,0 +1,95 @@
+﻿@model IEnumerable<PUPFMIS.Models.InfrastructureRequirements>
+
+@{
+    ViewBag.Title = "Work Requirements";
+    ViewBag.Description = "Master";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Work Requirements", "list")</li>
+        <li class="breadcrumb-item">Restore Deleted Records</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-list"></i> Purged Work Requirements</h3>
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card-body table-responsive p-sm-0">
+            <table class="table table-striped table-hover" id="example2">
+                <thead>
+                    <tr>
+                        <th style="text-align:center;">
+                            Classification
+                        </th>
+                        <th style="text-align:center;">
+                            @Html.DisplayNameFor(model => model.Requirement)
+                        </th>
+                        <th style="text-align:center;">
+                            @Html.DisplayNameFor(model => model.DeletedAt)
+                        </th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                @foreach (var item in Model)
+                {
+                    <tbody>
+
+                        <tr>
+                            <td style="text-align:left; vertical-align:middle;">
+                                @Html.DisplayFor(modelItem => item.FKRequirementClassReference.ClassificationName)
+                            </td>
+                            <td style="text-align:left; vertical-align:middle;">
+                                @Html.DisplayFor(modelItem => item.Requirement)
+                            </td>
+                            <td style="text-align:center; vertical-align:middle;">
+                                @Html.DisplayFor(modelItem => item.DeletedAt)
+                            </td>
+                            <td style="text-align:center; vertical-align:middle;">
+                                <button type="button" class="btn btn-sm btn-primary" data-toggle="tooltip" title="View Details" onclick="loadModal('@Url.Action("restore","WorkRequirements", new { id = item.ID })')"><i class="fa fa-eye"></i> View Details</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                }
+
+            </table>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-sm-12">
+        <div class="form-group float-right">
+            <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("list", "WorkRequirements", new { Area = "infrastructure-unit" })'"><i class="fa fa-arrow-circle-left"></i> Back to List</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="modal-default">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" id="modal-container">
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var options = { "backdrop": "static", keyboard: true };
+    function loadModal(url) {
+        $.ajax({
+            type: "GET",
+            url: url,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#modal-container').html(data);
+                $('#modal-default').modal(options);
+                $('#modal-default').modal('show');
+            }
+        });
+    };
+</script>

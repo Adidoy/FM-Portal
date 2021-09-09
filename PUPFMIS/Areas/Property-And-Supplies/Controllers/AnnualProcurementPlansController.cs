@@ -1,6 +1,7 @@
 ﻿using PUPFMIS.BusinessAndDataLogic;
 using PUPFMIS.Models;
 using System.Web.Mvc;
+using System.Linq;
 
 namespace PUPFMIS.Areas.Property.Controllers
 {
@@ -17,7 +18,9 @@ namespace PUPFMIS.Areas.Property.Controllers
         [Route("{FiscalYear}/create")]
         public ActionResult CreateCSE(int FiscalYear)
         {
+            FMISDbContext db = new FMISDbContext();
             AnnualProcurementPlanCSEVM appcse = appcseDAL.GetAPPCSE(FiscalYear);
+            ViewBag.UserRole = db.UserAccounts.Where(d => d.Email == User.Identity.Name).FirstOrDefault().FKRoleReference.Role;
             return View("CreateCSE", appcse);
         }
 
@@ -44,22 +47,7 @@ namespace PUPFMIS.Areas.Property.Controllers
         [Route("{FiscalYear}/create")]
         public ActionResult CreateCSE(AnnualProcurementPlanCSEVM APPCSEViewModel)
         {
-            if(appcseDAL.PostAPPCSE(APPCSEViewModel, User.Identity.Name))
-            {
-                if(User.IsInRole(SystemRoles.ProcurementAdministrator) || User.IsInRole(SystemRoles.ProcurementPlanningChief))
-                {
-                    return RedirectToAction("dashboard", "AnnualProcurementPlans", new { Area = "procurement" });
-                }
-                if (User.IsInRole(SystemRoles.PropertyDirector) || User.IsInRole(SystemRoles.SuppliesChief))
-                {
-                    return RedirectToAction("dashboard", "APPCSEDashboard", new { Area = "property-and-supplies" });
-                }
-                else
-                {
-                    return RedirectToAction("dashboard", "AnnualProcurementPlans", new { Area = "procurement" });
-                }
-            }
-            return RedirectToAction("dashboard", "APPCSEDashboard", new { Area = "property-and-supplies" });
+            return Json(new { result = appcseDAL.PostAPPCSE(APPCSEViewModel, User.Identity.Name) });
         }
 
         [ActionName("print-app-cse")]
@@ -85,7 +73,7 @@ namespace PUPFMIS.Areas.Property.Controllers
             if (disposing)
             {
                 appcseDAL.Dispose();
-                appcseBL.Dispose();
+                //appcseBL.Dispose();
             }
             base.Dispose(disposing);
         }

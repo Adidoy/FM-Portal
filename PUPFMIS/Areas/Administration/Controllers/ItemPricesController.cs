@@ -7,22 +7,24 @@ namespace PUPFMIS.Controllers
 {
     [Route("{action}")]
     [RouteArea("administration")]
-    [RoutePrefix("item-prices")]
-    [Authorize(Roles = SystemRoles.SuperUser + ", " + SystemRoles.SystemAdmin)]
+    [RoutePrefix("items/prices")]
+    [UserAuthorization(Roles = SystemRoles.SuperUser + ", " + SystemRoles.SystemAdmin)]
     public class ItemPricesController : Controller
     {
         private ItemPricesBL itemPricesBL = new ItemPricesBL();
 
+        [Route("")]
+        [ActionName("list")]
         public ActionResult Index()
         {
-            return View(itemPricesBL.GetPrevailingPrices());
+            return View("Index", itemPricesBL.GetPrevailingPrices());
         }
 
         [Route("{ItemCode}/history")]
         [ActionName("IndexPriceHistory")]
         public ActionResult IndexPriceHistory(string ItemCode)
         {
-            if(ItemCode == null)
+            if (ItemCode == null)
             {
                 return HttpNotFound();
             }
@@ -44,7 +46,7 @@ namespace PUPFMIS.Controllers
             }
             return PartialView(itemPrice);
         }
-        
+
         [HttpPost]
         [Route("{ID}/update")]
         [ValidateAntiForgeryToken]

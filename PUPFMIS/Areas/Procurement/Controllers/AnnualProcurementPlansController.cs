@@ -58,7 +58,7 @@ namespace PUPFMIS.Areas.Procurement.Controllers
         [ActionName("create-app")]
         public ActionResult Create(int FiscalYear)
         {
-            var IsCSEAvailable = db.APPHeader.Where(d => d.FiscalYear == FiscalYear && d.APPType == "CSE").Count() == 0 ? false : true;
+            var IsCSEAvailable = db.APPHeader.Where(d => d.FiscalYear == FiscalYear && d.APPType == APPTypes.APPCSE).Count() == 0 ? false : true;
             var AnnualProcurementPlan = appDAL.ConsolidateAPP(FiscalYear);
             ViewBag.FiscalYear = FiscalYear;
             ViewBag.ModesOfProcurement = appDAL.GetModesOfProcurement();
@@ -71,30 +71,7 @@ namespace PUPFMIS.Areas.Procurement.Controllers
         [ActionName("create-app")]
         public ActionResult Create(List<APPLineItemVM> APPLineItems, int FiscalYear)
         {
-            if(ModelState.IsValid)
-            {
-                foreach(var lineItem in APPLineItems)
-                {
-                    for (int i = 0; i < lineItem.ApprovedItems.Count; i++)
-                    {
-                        if (lineItem.ApprovedItems[i].ModeOfProcurement == null)
-                        {
-                            ModelState.AddModelError("[" + i.ToString() + "].ModeOfProcurement", "Please specify Mode of Procurement");
-                        }
-                    }
-                }
-     
-                if (!ModelState.IsValid)
-                {
-                    ViewBag.FiscalYear = new SelectList(appDAL.GetPPMPFiscalYears());
-                    ViewBag.ModesOfProcurement = appDAL.GetModesOfProcurement();
-                    return PartialView("_Create", APPLineItems);
-                }
-                return Json(new { result = appDAL.PostAPP(APPLineItems, FiscalYear, User.Identity.Name) });
-            }
-            ViewBag.FiscalYear = new SelectList(appDAL.GetPPMPFiscalYears());
-            ViewBag.ModesOfProcurement = appDAL.GetModesOfProcurement();
-            return PartialView("_Create", APPLineItems);
+            return Json(new { result = appDAL.PostAPP(APPLineItems, FiscalYear, User.Identity.Name) });
         }
 
         [ActionName("print-app")]

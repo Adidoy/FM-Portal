@@ -1,62 +1,114 @@
-﻿@model IEnumerable<PUPFMIS.Models.AgencyProcurementRequestVM>
+﻿@model IEnumerable<PUPFMIS.Models.AgencyProcurementRequest>
 
 @{
-    ViewBag.Title = "Agency Procurement Request";
+    ViewBag.Title = "Agency Procurement Requests";
     ViewBag.Description = "List";
     Layout = "~/Views/Shared/_IndexLayout.cshtml";
 }
 
 @section BreadCrumb {
     <ol class="breadcrumb float-sm-right">
-        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
-        <li class="breadcrumb-item">@Html.ActionLink("Procurement Activities Home", "dashboard", "ProcurementPipelines", new { Area = "procurement" }, null)</li>
-        <li class="breadcrumb-item">Home</li>
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">Agency Procurement Requests</li>
     </ol>
 }
 
 @section Header {
-    <h3 class="card-title"><i class="fa fa-bookmark"></i> Agency Procurement Request List</h3>
+    <h3 class="card-title"><i class="fa fa-list"></i> Agency Procurement Requests</h3>
 }
 
-<div class="row">
-    <div class="col-sm-12">
-        <div class="text-right">
-            <button style="text-align:left;" class="btn btn-info btn-md" onclick="window.location = '@Url.Action("create","AgemcyProcurementRequest", new { Area = "procurement" })'"><i class="fa fa-plus"></i> Create Agency Procurement Request</button>
-        </div>
-    </div>
+<div class="card-body table-responsive p-sm-0">
+    <table class="table table-striped table-hover" id="example2">
+        <thead>
+            <tr>
+                <th style="text-align: center; vertical-align: middle;" width="16%">
+                    @Html.DisplayNameFor(model => model.AgencyControlNo)
+                </th>
+                <th style="text-align: center; vertical-align: middle;" width="16%">
+                    Agency Head
+                </th>
+                <th style="text-align: center; vertical-align: middle;" width="16%">
+                    Procurement Head
+                </th>
+                <th style="text-align: center; vertical-align: middle;" width="16%">
+                    Chief Accountant
+                </th>
+                <th style="text-align: center; vertical-align: middle;" width="16%">
+                    Created By
+                </th>
+                <th style="text-align: center; vertical-align: middle;" width="20%">
+                    Action
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td style="text-align:left; vertical-align:middle;">
+                        <b>@Html.DisplayFor(modelItem => item.AgencyControlNo)</b>
+                    </td>
+                    <td style="text-align:left; vertical-align:middle;">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <b>@Html.DisplayFor(modelItem => item.AgencyHead)</b>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <i>@Html.DisplayFor(modelItem => item.AgencyHeadDesignation)</i>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="text-align:left; vertical-align:middle;">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <b>@Html.DisplayFor(modelItem => item.ProcurementHead)</b>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <i>@Html.DisplayFor(modelItem => item.ProcurementHeadDesignation), @Html.DisplayFor(modelItem => item.ProcurementDepartment)</i>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="text-align:left; vertical-align:middle;">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <b>@Html.DisplayFor(modelItem => item.ChiefAccountant)</b>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <i>@Html.DisplayFor(modelItem => item.ChiefAccountantDesignation), @Html.DisplayFor(modelItem => item.ChiefAccountantDepartment)</i>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="text-align:left; vertical-align:middle;">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <b>@Html.DisplayFor(modelItem => item.CreatedBy)</b>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <i>@( item.CreatedAt.ToString("dd MMMM yyyy hh:mm tt") )</i>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="text-align:center; vertical-align:middle;">
+                        <a class="btn btn-sm btn-primary" style="width:193px;" href="@Url.Action("print", "AgencyProcurementRequest", new { Area = "procurement", AgencyControlNo = item.AgencyControlNo })" target="_blank"><i class="fa fa-print"></i> Print APR</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
 <hr />
 <div class="row">
-    <div class="col-sm-12">
-        <div class="card-body table-responsive p-sm-0">
-            <table class="table table-striped table-hover" id="example2">
-                <thead>
-                    <tr>
-                        <th style="text-align:center; vertical-align:middle;">@Html.DisplayNameFor(d => d.AgencyControlNo)</th>
-                        <th style="text-align:center; vertical-align:middle;">@Html.DisplayNameFor(d => d.CreatedAt)</th>
-                        <th style="text-align:center; vertical-align:middle;">@Html.DisplayNameFor(d => d.ProcurementHead)</th>
-                        <th style="text-align:center; vertical-align:middle;">@Html.DisplayNameFor(d => d.ChiefAccountant)</th>
-                        <th style="text-align:center; vertical-align:middle;">@Html.DisplayNameFor(d => d.AgencyHead)</th>
-                        <th style="text-align:center; vertical-align:middle;">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td style="text-align:center; vertical-align:middle;">@Html.DisplayFor(d => item.AgencyControlNo)</td>
-                            <td style="text-align:center; vertical-align:middle;">@( item.CreatedAt.ToString("dd MMM yyyy") )</td>
-                            <td style="text-align:center; vertical-align:middle;">@Html.DisplayFor(d => item.ProcurementHead)<br /><i>@Html.DisplayFor(d => item.ProcurementHeadDesignation)</i></td>
-                            <td style="text-align:center; vertical-align:middle;">@Html.DisplayFor(d => item.ChiefAccountant)<br /><i>@Html.DisplayFor(d => item.ChiefAccountantDesignation)</i></td>
-                            <td style="text-align:center; vertical-align:middle;">@Html.DisplayFor(d => item.AgencyHead)<br /><i>@Html.DisplayFor(d => item.AgencyHeadDesignation)</i></td>
-                            <td style="text-align:center; vertical-align:middle;">
-                                <a class="btn btn-sm btn-primary" href="@Url.Action("print", "AgemcyProcurementRequest", new { Area = "procurement", AgencyControlNo = item.AgencyControlNo })" target="_blank"><i class="fa fa-print"></i> Print Agency Procurement Request</a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+    <div class="col-sm-12 text-right">
+        <div class="form-group">
+            <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("dashboard", "AgencyProcurementRequest", new { Area = "procurement" })'"><i class="fa fa-arrow-alt-circle-left"></i>&nbsp; Back to Dashboard</button>
         </div>
     </div>
 </div>
-

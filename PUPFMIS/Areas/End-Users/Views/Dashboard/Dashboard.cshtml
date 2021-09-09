@@ -8,7 +8,7 @@
 
 @section BreadCrumb {
     <ol class="breadcrumb float-sm-right">
-        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
         <li class="breadcrumb-item">Project Plans</li>
         <li class="breadcrumb-item">Home</li>
     </ol>
@@ -23,7 +23,7 @@
         <div class="card card-primary card-outline">
             <div class="card-header d-flex p-0">
                 <ul class="nav nav-pills p-2">
-                    <li class="nav-item" style="font-size:12pt;"><a class="nav-link active" href="#dashboard" data-toggle="tab"><i class="fa fa-dashboard"></i>&nbsp; Dashboard</a></li>
+                    <li class="nav-item" style="font-size:12pt;"><a class="nav-link active" href="#dashboard" data-toggle="tab"><i class="fa fa-tachometer-alt"></i>&nbsp; Dashboard</a></li>
                     <li class="nav-item" style="font-size:12pt;"><a class="nav-link" href="#switchBoard" data-toggle="tab"><i class="fa fa-envelope"></i>&nbsp; Switchboard</a></li>
                 </ul>
             </div>
@@ -36,16 +36,14 @@
                             </div>
                         </div>
                         <hr />
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div class="bg-info">
-                                    <h5 class="p-2">Statistics</h5>
-                                </div>
+                        <div class="card card-info">
+                            <div class="card-header"><h3 class="card-title">Statistics</h3></div>
+                            <div class="card-body">
                                 <div class="row">
-                                    <div class="col-lg-3 col-md-3 col-sm-12">
+                                    <div class="col-lg-4 col-md-4 col-sm-12">
                                         <div class="small-box bg-primary">
                                             <div class="inner">
-                                                <h3>@Model.NumberOfProjects</h3>
+                                                <h3>@Model.TotalNumberOfProjects</h3>
                                                 <p>Total Projects Created</p>
                                             </div>
                                             <div class="icon">
@@ -53,186 +51,126 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-3 col-md-3 col-sm-12">
+                                    <div class="col-lg-4 col-md-4 col-sm-12">
                                         <div class="small-box bg-danger">
                                             <div class="inner">
-                                                <h3>@Model.NumberOfProjectsPostedToPPMP</h3>
-                                                <p>Projects Posted to PPMP</p>
+                                                <h3>@Model.TotalProjectsForwardedResponsibilityCenter</h3>
+                                                <p>Forwarded to Responsibility Centers</p>
                                             </div>
                                             <div class="icon">
                                                 <i class="fa fa-file-export"></i>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-3 col-md-3 col-sm-12">
+                                    <div class="col-lg-4 col-md-4 col-sm-12">
                                         <div class="small-box bg-warning">
                                             <div class="inner">
-                                                <h3>@Model.NumberOfPPMPSubmitted</h3>
-                                                <p>PPMPs Submitted</p>
+                                                <h3>@Model.TotalProjectsEvaluatedResponsibilityCenter</h3>
+                                                <p>Evaluated by Responsibility Centers</p>
                                             </div>
                                             <div class="icon">
                                                 <i class="fa fa-share"></i>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-3 col-md-3 col-sm-12">
-                                        <div class="small-box bg-success">
-                                            <div class="inner">
-                                                <h3>@Model.NumberOfApprovedPPMPs</h3>
-                                                <p>Evaluated PPMPs</p>
-                                            </div>
-                                            <div class="icon">
-                                                <i class="fa fa-thumbs-up"></i>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <hr />
                         <div class="row">
-                            <div class="col-sm-6">
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="bg-info">
-                                            <h5 class="p-2">Project Plan Progress</h5>
-                                        </div>
+                            <div class="col-lg-6 col-md-6 col-sm-12">
+                                <div class="card card-info">
+                                    <div class="card-header"><h3 class="card-title">View Projects</h3></div>
+                                    <div class="card-body">
+                                        <table class="table table-hover table-striped" id="projectList">
+                                            <thead>
+                                                <tr>
+                                                    <th style="text-align:center; vertical-align:middle" width="30%">Fiscal Year</th>
+                                                    <th style="text-align:center; vertical-align:middle" width="70%">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in Model.ProjectFiscalYears)
+                                                {
+                                                    <tr>
+                                                        <td style="text-align:center; vertical-align:middle">@Html.DisplayFor(modelItem => item)</td>
+                                                        <td style="text-align:center; vertical-align:middle"><button class="btn btn-primary btn-sm" onclick="window.location = '@Url.Action("list", "ProjectPlans", new { Area = "end-users", FiscalYear = item })'"><i class="fa fa-eye"></i> View Projects</button></td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                @*<div class="card card-info">
+                                    <div class="card-header"><h3 class="card-title">View Infrastructure Plan Requests</h3></div>
+                                    <div class="card-body">
+                                        <table class="table table-hover table-striped" id="infraRequestList">
+                                            <thead>
+                                                <tr>
+                                                    <th style="text-align:center; vertical-align:middle" width="30%">Fiscal Year</th>
+                                                    <th style="text-align:center; vertical-align:middle" width="70%">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in Model.ProjectInfraFiscalYears)
+                                                {
+                                                    <tr>
+                                                        <td style="text-align:center; vertical-align:middle">@Html.DisplayFor(modelItem => item)</td>
+                                                        <td style="text-align:center; vertical-align:middle"><button class="btn btn-primary btn-sm" onclick="window.location = '@Url.Action("infra-list", "ProjectPlans", new { Area = "end-users", FiscalYear = item })'"><i class="fa fa-eye"></i> View Requests</button></td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>*@
+                                <div class="card card-info">
+                                    <div class="card-header"><h3 class="card-title">Project Plan Progress</h3></div>
+                                    <div class="card-body">
                                         <div class="progress-group">
-                                            Projects Posted
-                                            <span class="float-right"><b>@Model.NumberOfProjectsPostedToPPMP</b>/@Model.NumberOfProjects (@Model.PercentageOfPosting)</span>
+                                            Projects Forwarded to Responsibility Center
+                                            <span class="float-right"><b>@Model.TotalProjectsForwardedResponsibilityCenter</b>/@Model.TotalNumberOfProjects (@Model.PercentageOfPosting)</span>
                                             <div class="progress progress-sm">
                                                 <div class="progress-bar bg-primary" style="width: @Model.PercentageOfPosting"></div>
                                             </div>
                                         </div>
                                         <div class="progress-group">
-                                            PPMP Submitted
-                                            <span class="float-right"><b>@Model.NumberOfPPMPSubmitted</b>/@Model.NumberOfPPMPs (@Model.PercentageOfSubmission)</span>
+                                            Projects Evaluated by Responsibility Center
+                                            <span class="float-right"><b>@Model.TotalProjectsEvaluatedResponsibilityCenter</b>/@Model.TotalNumberOfProjects (@Model.PercentageOfSubmission)</span>
                                             <div class="progress progress-sm">
                                                 <div class="progress-bar bg-danger" style="width: @Model.PercentageOfSubmission"></div>
-                                            </div>
-                                        </div>
-                                        <div class="progress-group">
-                                            <span class="progress-text">PPMP Evaluation</span>
-                                            <span class="float-right"><b>@Model.NumberOfApprovedPPMPs</b>/@Model.NumberOfPPMPs (@Model.PercentageOfApproval)</span>
-                                            <div class="progress progress-sm">
-                                                <div class="progress-bar bg-success" style="width: @Model.PercentageOfApproval"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr />
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="bg-info">
-                                            <h5 class="p-2">Budget Information</h5>
-                                        </div>
-                                        <div class="info-box">
-                                            <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-cog"></i></span>
-                                            <div class="info-box-content">
-                                                <span class="info-box-text" style="font-size:12pt;">On-going Procurement Budget</span>
-                                                <span class="info-box-number" style="font-size:16pt;">
-                                                    @Model.OngoingBudget
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="info-box">
-                                            <span class="info-box-icon bg-info elevation-1"><i class="fas fa-coins"></i></span>
-                                            <div class="info-box-content">
-                                                <span class="info-box-text" style="font-size:12pt;">New Spending Proposal</span>
-                                                <span class="info-box-number" style="font-size:16pt;">
-                                                    @Model.ProposedBudget
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="info-box">
-                                            <span class="info-box-icon bg-success elevation-1"><i class="fas fa-thumbs-up"></i></span>
-                                            <div class="info-box-content">
-                                                <span class="info-box-text" style="font-size:12pt;">Approved Budget</span>
-                                                <span class="info-box-number" style="font-size:16pt;">
-                                                    @Model.ApprovedBudget
-                                                </span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-6">
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="bg-info">
-                                            <h5 class="p-2">Project Plan Actions</h5>
-                                        </div>
-                                        <div class="info-box">
-                                            <span class="info-box-icon bg-secondary"><i class="fa fa-plus"></i></span>
-                                            <div class="info-box-content">
-                                                <span class="info-box-text" style="font-size:12pt; font-weight:bold;"> @Html.ActionLink("Create Common Supplies Plan", "create-common-supplies", "ProjectPlans", new { area = "end-users" }, null)</span>
-                                                <span class="info-box-number" style="font-size:8pt;">
-                                                    Create plan for your Office's common-use supplies.
-                                                </span>
+                            <div class="col-lg-6 col-md-6 col-sm-12">
+                                <div class="card card-info">
+                                    <div class="card-header"><h3 class="card-title">Project Plan Actions</h3></div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="info-box">
+                                                    <span class="info-box-icon bg-primary"><i class="fa fa-plus"></i></span>
+                                                    <div class="info-box-content">
+                                                        <span class="info-box-text" style="font-size:10pt; font-weight:bold;"> @Html.ActionLink("Create Common Supplies Plan", "create-common-supplies", "ProjectPlans", new { area = "end-users" }, null)</span>
+                                                        <span class="info-box-number" style="font-size:8pt;">
+                                                            Create plan for your Office's common-use supplies.
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="info-box">
-                                            <span class="info-box-icon bg-warning"><i class="fa fa-plus"></i></span>
-                                            <div class="info-box-content">
-                                                <span class="info-box-text" style="font-size:12pt; font-weight:bold;"> @Html.ActionLink("Create Project Plan", "create-project-plan", "ProjectPlans", new { area = "end-users" }, null)</span>
-                                                <span class="info-box-number" style="font-size:8pt;">
-                                                    Create procurement plan for your Office's programs/activities/projects.
-                                                </span>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="info-box">
+                                                    <span class="info-box-icon bg-warning"><i class="fa fa-plus"></i></span>
+                                                    <div class="info-box-content">
+                                                        <span class="info-box-text" style="font-size:10pt; font-weight:bold;"> @Html.ActionLink("Create Project Plan", "create-project-plan", "ProjectPlans", new { area = "end-users" }, null)</span>
+                                                        <span class="info-box-number" style="font-size:8pt;">
+                                                            Create procurement plan for your Office's programs/activities/projects.
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr />
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="bg-info">
-                                            <h5 class="p-2">View Projects</h5>
-                                        </div>
-                                        <div class="card-body table-responsive p-sm-0">
-                                            <table class="table table-hover table-striped" id="projectList">
-                                                <thead>
-                                                    <tr>
-                                                        <th style="text-align:center; vertical-align:middle" width="30%">Fiscal Year</th>
-                                                        <th style="text-align:center; vertical-align:middle" width="70%">Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach (var item in Model.ProjectFiscalYears)
-                                                    {
-                                                        <tr>
-                                                            <td style="text-align:center; vertical-align:middle">@Html.DisplayFor(modelItem => item)</td>
-                                                            <td style="text-align:center; vertical-align:middle"><button class="btn btn-primary btn-sm" onclick="window.location = '@Url.Action("list", "ProjectPlans", new { Area = "end-users", FiscalYear = item })'"><i class="fa fa-eye"></i> View Projects</button></td>
-                                                        </tr>
-                                                    }
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr />
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="bg-info">
-                                            <h5 class="p-2">View Budget Proposals</h5>
-                                        </div>
-                                        <div class="card-body table-responsive p-sm-0">
-                                            <table class="table table-hover table-striped" id="ppmpList">
-                                                <thead>
-                                                    <tr>
-                                                        <th style="text-align:center; vertical-align:middle" width="30%">Fiscal Year</th>
-                                                        <th style="text-align:center; vertical-align:middle" width="70%">Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach (var item in Model.PPMPFiscalYears)
-                                                    {
-                                                        <tr>
-                                                            <td style="text-align:center; vertical-align:middle">@Html.DisplayFor(modelItem => item)</td>
-                                                            <td style="text-align:center; vertical-align:middle"><button class="btn btn-primary btn-sm" onclick="window.location = '@Url.Action("list", "ProjectProcurementManagementPlans", new { Area = "end-users", FiscalYear = item })'"><i class="fa fa-eye"></i> View Budget Proposals</button></td>
-                                                        </tr>
-                                                    }
-                                                </tbody>
-                                            </table>
                                         </div>
                                     </div>
                                 </div>
@@ -287,6 +225,17 @@
 <script type="text/javascript">
         $(function () {
             $('#projectList').DataTable({
+                "paging": false,
+                "pageLength": 3,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": false,
+                "info": false,
+                "autoWidth": false,
+            });
+        });
+        $(function () {
+            $('#infraRequestList').DataTable({
                 "paging": false,
                 "pageLength": 3,
                 "lengthChange": false,

@@ -1,0 +1,85 @@
+﻿@{
+    ViewBag.Title = "Requests for Quotation";
+    ViewBag.Description = "Abstract";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Request for Quotation", "dashboard", "RequestForQuotation", new { Area = "procurement" }, null)</li>
+        <li class="breadcrumb-item">Abstract</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-list"></i> Abstract of Quotation</h3>
+}
+
+@using (Ajax.BeginForm("abstract", "RequestForQuotation", new AjaxOptions() { HttpMethod = "POST", UpdateTargetId = "form-container", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "projectDetails", Area = "procurement" }))
+{
+    @Html.AntiForgeryToken()
+    <div id="form-container">
+        @Html.Partial("_Evaluation")
+    </div>
+}
+
+@section FormFooter {
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" onclick="PostAbstract()" ><i class="fa fa-save"></i>&nbsp; Post Abstact of Quotation</button>
+                <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("details", "RequestForQuotation", new { area = "procurement", SolicitationNo = ViewBag.SolicitationNo })'"><i class="fa fa-arrow-alt-circle-left"></i>&nbsp; Back to Details</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    function PostAbstract() {
+        swal.fire({
+            title: "Save Abstract of Quotations?",
+            text: "You are about to save this Abstract of Quotations, continue?",
+            icon: "question",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#projectDetails").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    icon: "error"
+                })
+            };
+        })
+    }
+    function CreateResult(data) {
+        if (data.result == true) {
+            swal.fire({
+                title: "Record Saved!",
+                text: "Abstract of Quotations is successfully saved.",
+                icon: "success"
+            }).then((result) => {
+                if (result.value) {
+                    var url = "@Url.Action("closed-submissions", "RequestForQuotation", new { Area = "procurement", FiscalYear = ViewBag.FiscalYear })";
+                    window.location.href = url;
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                icon: "error"
+            });
+        }
+    }
+    $(function () {
+        $('#OpenedAt1').datetimepicker({
+            defaultDate: '@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")',
+            format: 'DD MMMM YYYY hh:mm A'
+        });
+    });
+</script>

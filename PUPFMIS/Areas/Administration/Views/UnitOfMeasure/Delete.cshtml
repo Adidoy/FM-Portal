@@ -44,7 +44,7 @@
         swal.fire({
             title: "Delete record?",
             text: "You are about to delete this record, continue?",
-            type: "warning",
+            icon: "question",
             showCancelButton: true,
         }).then((result) =>
         {
@@ -55,10 +55,26 @@
         })
     });
     function CloseModal(data) {
-        if (data.status === "success") {
+        if (data.result === true) {
             $('#modal-default').modal('hide');
-            toastr.success('Unit of measure is deleted!', 'Delete', { timeOut: 10000, preventDuplicates: false });
-            window.location.href = "@Url.Action("index", "UnitOfMeasure")";
+            if (data.result == true) {
+                swal.fire({
+                    title: "Record Deleted!",
+                    text: "Record is successfully deleted.",
+                    icon: "success"
+                }).then((result) => {
+                    if (result.value) {
+                        window.location.href = "@Url.Action("list", "UnitOfMeasure", new { Area = "administration" })";
+                    }
+                })
+            }
+            else {
+                swal.fire({
+                    title: "Record Not Saved!",
+                    text: "Saving record failed.",
+                    icon: "error"
+                })
+            }
         }
     };
 </script>

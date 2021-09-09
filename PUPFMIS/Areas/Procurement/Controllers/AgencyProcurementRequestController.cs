@@ -3,37 +3,53 @@ using PUPFMIS.Models;
 using System.Collections.Generic;
 using System.Web.Mvc;
 
-namespace PUPFMIS.Areas.Procurement.Controllers
+namespace PUPFMIS.Controllers
 {
     [Route("{action}")]
     [RouteArea("procurement")]
     [RoutePrefix("agency-procurement-request")]
-    [Authorize(Roles = SystemRoles.SuperUser + ", " + SystemRoles.SystemAdmin + ", " + SystemRoles.ProcurementAdministrator + ", " + SystemRoles.ProcurementPlanningChief + ", " + SystemRoles.ProcurementStaff)]
+    [UserAuthorization(Roles = SystemRoles.SuperUser + ", " + SystemRoles.SystemAdmin + ", " + SystemRoles.ProcurementAdministrator + ", " + SystemRoles.ProcurementPlanningChief + ", " + SystemRoles.ProcurementStaff + ", " + SystemRoles.ProjectCoordinator)]
     public class AgencyProcurementRequestController : Controller
     {
         private AgencyProcurementRequestDAL aprDAL = new AgencyProcurementRequestDAL();
         private AgencyProcurementRequestBL aprBL = new AgencyProcurementRequestBL();
 
         [Route("")]
-        [ActionName("index")]
-        public ActionResult Index()
+        [ActionName("dashboard")]
+        public ActionResult Dashboard()
         {
-            return View(aprDAL.GetAPR());
+            var dashboard = new APRDashboardVM();
+            dashboard.FiscalYears = aprDAL.GetFiscalYears();
+            dashboard.NewProjects = aprDAL.GetContracts(User.Identity.Name);
+            return View("Dashboard", dashboard);
         }
 
-        [Route("create")]
-        [ActionName("create")]
-        public ActionResult Create()
+        [Route("{FiscalYear}")]
+        [ActionName("index")]
+        public ActionResult Index(int FiscalYear)
         {
-            return View(aprDAL.GetPurchaseRequestDetails());
+            return View(aprDAL.GetAgencyProcurementRequests(FiscalYear));
+        }
+
+        [Route("{ContractCode}/create")]
+        [ActionName("create")]
+        public ActionResult Create(string ContractCode)
+        {
+            var aprVM = aprDAL.A2AContractSetup(ContractCode, User.Identity.Name);
+            return View("Create", aprVM);
         }
 
         [HttpPost]
-        [Route("create")]
+        [ValidateAntiForgeryToken]
+        [Route("{ContractCode}/create")]
         [ActionName("create")]
-        public ActionResult Create(List<PurchaseRequestDetailsVM> PRDetails)
+        public ActionResult Create(AgencyProcurementRequestVM AgencyProcurementRequestVM)
         {
-            return Json(new { result = aprDAL.PostToAgencyProcurementRequest(PRDetails, User.Identity.Name) });
+            if (ModelState.IsValid)
+            {
+                return Json(new { result = aprDAL.PostAgencyProcurementRequest(AgencyProcurementRequestVM, User.Identity.Name) });
+            }
+            return View("Create", AgencyProcurementRequestVM);
         }
 
         [ActionName("print")]

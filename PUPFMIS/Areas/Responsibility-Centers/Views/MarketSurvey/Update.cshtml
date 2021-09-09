@@ -1,0 +1,466 @@
+﻿@model PUPFMIS.Models.MarketSurveyVM
+
+@{
+    ViewBag.Title = "Market Survey";
+    ViewBag.Description = "Update";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Market Survey", "dashboard")</li>
+        <li class="breadcrumb-item">Update</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-list"></i> Update Market Survey</h3>
+}
+
+@using (Ajax.BeginForm("update", "MarketSurvey", new AjaxOptions() { HttpMethod = "POST", UpdateTargetId = "form-body", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "marketSurvey", Area = "responsibility-centers" }))
+{
+    @Html.AntiForgeryToken()
+    if (!Html.ViewData.ModelState.IsValid)
+    {
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="alert alert-danger pl-2 pr-2 ml-2 mr-2 pb-0 pt-2">
+                    <p class="p-0 m-0">
+                        <h6><i class="icon fas fa-ban"></i> Alert!</h6>
+                        @Html.ValidationSummary(true, "", new { style = "font-size: 10pt;" })
+                    </p>
+                </div>
+            </div>
+        </div>
+        <br />
+    }
+
+    <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-12">
+            <div class="form-group-sm">
+                <div style="text-align:center;" id="itemImageHolder">
+                    @Html.HiddenFor(model => model.ItemImage)
+                    @if (Model.ItemImage != null)
+                    {
+                        var base64 = Convert.ToBase64String(Model.ItemImage);
+                        var imgsrc = string.Format("data:image/jpg;base64,{0}", base64);
+                        <img src='@imgsrc' style="max-width:85%; max-height:85%; position:absolute; left:50%; top:50%; transform:translate(-50%, -50%);" />
+                    }
+                    else
+                    {
+                        <img src="@Url.Content("~/Content/imgs/PUPLogo.png")" style="max-width:85%; max-height:85%; position:absolute; left:50%; top:50%; transform:translate(-50%, -50%);" />
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8 col-md-8 col-sm-12">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="bg-info">
+                        <h5 class="p-2">@Model.ItemName <small>(@Model.ItemCode)</small></h5>
+                    </div>
+                </div>
+            </div>
+            <h6>ITEM DETAILS:</h6>
+            <div class="row">
+                <div class="col-sm-3"><b>Item Type</b></div>
+                @Html.HiddenFor(modelItem => modelItem.ItemType)
+                <div class="col-sm-1">:</div>
+                <div class="col-sm-8"><i>@Html.DisplayFor(modelItem => modelItem.ItemType)</i></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3"><b>Category</b></div>
+                @Html.HiddenFor(modelItem => modelItem.Category)
+                <div class="col-sm-1">:</div>
+                <div class="col-sm-8"><i>@Html.DisplayFor(modelItem => modelItem.Category)</i></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3"><b>Procurement Source</b></div>
+                <div class="col-sm-1">:</div>
+                @Html.HiddenFor(modelItem => modelItem.ProcurementSource)
+                <div class="col-sm-8"><i>@Html.DisplayFor(modelItem => modelItem.ProcurementSource)</i></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3"><b>Unit of Measure</b></div>
+                <div class="col-sm-1">:</div>
+                @Html.HiddenFor(modelItem => modelItem.IndividualUOMReference)
+                <div class="col-sm-8"><i>@Html.DisplayFor(modelItem => modelItem.IndividualUOMReference)</i></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3"><b>Minimum Issuance Qty</b></div>
+                <div class="col-sm-1">:</div>
+                @Html.HiddenFor(modelItem => modelItem.MinimumIssuanceQty)
+                <div class="col-sm-8"><i>@Html.DisplayFor(modelItem => modelItem.MinimumIssuanceQty)<span>&nbsp;</span>@Html.DisplayFor(modelItem => modelItem.IndividualUOMReference)</i></div>
+            </div>
+        </div>
+    </div>
+    <br /><br />
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="bg-info">
+                <h5 class="p-2">ITEM SPECIFICATIONS</h5>
+            </div>
+            <br />
+            <div class="ml-5 mr-5">
+                <p style="text-align:justify; font-size:10pt;">@Html.DisplayFor(modelItem => modelItem.ItemSpecifications)</p>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <h4>Supplier Information</h4>
+    <hr />
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="alert alert-info pl-2 pr-2 ml-2 mr-2 pb-0 pt-2">
+                <p class="p-0 m-0">
+                    <h6><i class="icon fas fa-exclamation-circle"></i> Notes:</h6>
+                    <ul>
+                        <li>
+                            <i>Please provide, as much as possible, three (3) Supplier Information with their corresponding quouted price.</i>
+                        </li>
+                        <li>
+                            <i>Provide all necessary documents such as quotations, market prices, etc. upon submission of PPMP.</i>
+                        </li>
+                        <li>
+                            <i>If details for Supplier 2 and Supplier 3 are left blank, this means that the item requirement has a <b>single distributor</b> and necessary additional supporting documents must be submitted together with the PPMP.</i>
+                        </li>
+                    </ul>
+                </p>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-info card-outline">
+                <div class="card-header">
+                    <h3 class="card-title">SUPPLIER INFORMATION:</h3>
+                </div>
+                <div class="card-header d-flex p-0">
+                    <ul class="nav nav-pills p-2">
+                        <li class="nav-item"><a class="nav-link active" href="#supplier1" data-toggle="tab"><i class="fa fa-truck"></i>&nbsp; Supplier 1</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#supplier2" data-toggle="tab"><i class="fa fa-truck"></i>&nbsp; Supplier 2</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#supplier3" data-toggle="tab"><i class="fa fa-truck"></i>&nbsp; Supplier 3</a></li>
+                    </ul>
+                </div>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="supplier1">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group-sm">
+                                        @Html.LabelFor(model => model.Supplier1Name, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group input-group-sm mb-3">
+                                            <div class="input-group-prepend">
+                                                <button type="button" class="btn btn-sm btn-primary" onclick="loadSupplier('@Url.Action("view-suppliers", "Catalogue", new { Area = "end-users", SupplierNo = 1, Supplier1ID = "SupplierID1", Supplier2ID = "SupplierID2", Supplier3ID = "SupplierID3", ItemCode = Model.ItemCode })')"><i class="fa fa-search"></i></button>
+                                            </div>
+                                            @Html.HiddenFor(m => m.Supplier1ID, htmlAttributes: new { id = "supplierID", Value = Model.Supplier1ID })
+                                            @Html.EditorFor(m => m.Supplier1Name, new { htmlAttributes = new { id = "supplierName", @class = "form-control form-control-sm", style = "font-size: 9pt;", disabled = "disabled", Value = Model.Supplier1Name == null ? null : Model.Supplier1Name, placeholder = Html.DisplayNameFor(modelItem => modelItem.Supplier1Name) } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.Supplier1Name, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group-sm">
+                                        @Html.LabelFor(model => model.Supplier1Address, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group input-group-sm mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-building"></i></span>
+                                            </div>
+                                            @Html.EditorFor(m => m.Supplier1Address, new { htmlAttributes = new { id = "supplierAddress", @class = "form-control form-control-sm", style = "font-size: 9pt;", disabled = "disabled", Value = Model.Supplier1Address, placeholder = Html.DisplayNameFor(modelItem => modelItem.Supplier1Address) } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.Supplier1Address, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group-sm">
+                                        @Html.LabelFor(model => model.Supplier1ContactNo, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group input-group-sm mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-phone"></i></span>
+                                            </div>
+                                            @Html.EditorFor(m => m.Supplier1ContactNo, new { htmlAttributes = new { id = "supplierContact", @class = "form-control form-control-sm", style = "font-size: 9pt;", disabled = "disabled", Value = Model.Supplier1ContactNo, placeholder = Html.DisplayNameFor(modelItem => modelItem.Supplier1ContactNo) } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.Supplier1ContactNo, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group-sm">
+                                        @Html.LabelFor(model => model.Supplier1EmailAddress, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group input-group-sm mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-at"></i></span>
+                                            </div>
+                                            @Html.EditorFor(m => m.Supplier1EmailAddress, new { htmlAttributes = new { id = "supplierEmail", @class = "form-control form-control-sm", style = "font-size: 9pt;", disabled = "disabled", Value = (Model.Supplier1EmailAddress == null || Model.Supplier1EmailAddress == String.Empty) ? "Not Provided" : Model.Supplier1EmailAddress, placeholder = Html.DisplayNameFor(modelItem => modelItem.Supplier1EmailAddress) } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.Supplier1EmailAddress, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group-sm">
+                                        @Html.LabelFor(model => model.Supplier1UnitCost, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group input-group-sm mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-coins"></i></span>
+                                            </div>
+                                            @Html.EditorFor(m => m.Supplier1UnitCost, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "text-align:right; font-size: 9pt;", type = "number", step = "0.01", min = "0.00", Value = (Model.Supplier1UnitCost.ToString() == "0" || Model.Supplier1UnitCost == null) ? "0.00" : Model.Supplier1UnitCost.ToString() } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.Supplier1UnitCost, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group-sm">
+                                        <br />
+                                        <div class="float-right">
+                                            <button type="button" class="btn btn-secondary btn-sm" onclick='clearSupplierData(1)'><i class="fa fa-times"></i> Clear Supplier Data</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="supplier2">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group-sm">
+                                        @Html.LabelFor(model => model.Supplier2Name, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group input-group-sm mb-3">
+                                            <div class="input-group-prepend">
+                                                <button type="button" class="btn btn-sm btn-primary" onclick="loadSupplier('@Url.Action("view-suppliers","Catalogue", new { Area = "end-users", SupplierNo = 2, Supplier1ID = "SupplierID1", Supplier2ID = "SupplierID2", Supplier3ID = "SupplierID3", ItemCode = Model.ItemCode })')"><i class="fa fa-search"></i></button>
+                                            </div>
+                                            @Html.HiddenFor(m => m.Supplier2ID, htmlAttributes: new { id = "supplier2ID", Value = Model.Supplier2ID })
+                                            @Html.EditorFor(m => m.Supplier2Name, new { htmlAttributes = new { id = "supplier2Name", @class = "form-control form-control-sm", style = "font-size: 9pt;", disabled = "disabled", Value = Model.Supplier2Name, placeholder = Html.DisplayNameFor(modelItem => modelItem.Supplier2Name) } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.Supplier2Name, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group-sm">
+                                        @Html.LabelFor(model => model.Supplier2Address, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group input-group-sm mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-building"></i></span>
+                                            </div>
+                                            @Html.EditorFor(m => m.Supplier2Address, new { htmlAttributes = new { id = "supplier2Address", @class = "form-control form-control-sm", style = "font-size: 9pt;", disabled = "disabled", Value = Model.Supplier2Address, placeholder = Html.DisplayNameFor(modelItem => modelItem.Supplier2Address) } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.Supplier2Address, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group-sm">
+                                        @Html.LabelFor(model => model.Supplier2ContactNo, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group input-group-sm mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-phone"></i></span>
+                                            </div>
+                                            @Html.EditorFor(m => m.Supplier2ContactNo, new { htmlAttributes = new { id = "supplier2Contact", @class = "form-control form-control-sm", style = "font-size: 9pt;", disabled = "disabled", Value = Model.Supplier2ContactNo, placeholder = Html.DisplayNameFor(modelItem => modelItem.Supplier2ContactNo) } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.Supplier2ContactNo, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group-sm">
+                                        @Html.LabelFor(model => model.Supplier2EmailAddress, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group input-group-sm mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-at"></i></span>
+                                            </div>
+                                            @Html.EditorFor(m => m.Supplier2EmailAddress, new { htmlAttributes = new { id = "supplier2Email", @class = "form-control form-control-sm", style = "font-size: 9pt;", disabled = "disabled", Value = (Model.Supplier2EmailAddress == null || Model.Supplier2EmailAddress == String.Empty) ? "Not Provided" : Model.Supplier2EmailAddress, placeholder = Html.DisplayNameFor(modelItem => modelItem.Supplier2EmailAddress) } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.Supplier2EmailAddress, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group-sm">
+                                        @Html.LabelFor(model => model.Supplier2UnitCost, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group input-group-sm mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-coins"></i></span>
+                                            </div>
+                                            @Html.EditorFor(m => m.Supplier2UnitCost, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "text-align:right; font-size: 9pt;", type = "number", step = "0.01", min = "0.00", Value = (Model.Supplier2UnitCost.ToString() == "0" || Model.Supplier2UnitCost == null) ? "0.00" : Model.Supplier2UnitCost.ToString() } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.Supplier2UnitCost, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group-sm">
+                                        <br />
+                                        <div class="float-right">
+                                            <button type="button" class="btn btn-secondary btn-sm" onclick='clearSupplierData(2)'><i class="fa fa-times"></i> Clear Supplier Data</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="supplier3">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group-sm">
+                                        @Html.LabelFor(model => model.Supplier3Name, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group input-group-sm mb-3">
+                                            <div class="input-group-prepend">
+                                                <button type="button" class="btn btn-sm btn-primary" onclick="loadSupplier('@Url.Action("view-suppliers","Catalogue", new { Area = "end-users", SupplierNo = 3, Supplier1ID = "SupplierID1", Supplier2ID = "SupplierID2", Supplier3ID = "SupplierID3", ItemCode = Model.ItemCode })')"><i class="fa fa-search"></i></button>
+                                            </div>
+                                            @Html.HiddenFor(m => m.Supplier3ID, htmlAttributes: new { id = "supplier3ID", Value = Model.Supplier3ID })
+                                            @Html.EditorFor(m => m.Supplier3Name, new { htmlAttributes = new { id = "supplier3Name", @class = "form-control form-control-sm", style = "font-size: 9pt;", disabled = "disabled", Value = Model.Supplier3Name, placeholder = Html.DisplayNameFor(modelItem => modelItem.Supplier3Name) } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.Supplier3Name, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group-sm">
+                                        @Html.LabelFor(model => model.Supplier3Address, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group input-group-sm mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-building"></i></span>
+                                            </div>
+                                            @Html.EditorFor(m => m.Supplier3Address, new { htmlAttributes = new { id = "supplier3Address", @class = "form-control form-control-sm", style = "font-size: 9pt", disabled = "disabled", Value = Model.Supplier3Address, placeholder = Html.DisplayNameFor(modelItem => modelItem.Supplier3Address) } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.Supplier3Address, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group-sm">
+                                        @Html.LabelFor(model => model.Supplier3ContactNo, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group input-group-sm mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-phone"></i></span>
+                                            </div>
+                                            @Html.EditorFor(m => m.Supplier3ContactNo, new { htmlAttributes = new { id = "supplier3Contact", @class = "form-control form-control-sm", style = "font-size: 9pt;", disabled = "disabled", Value = Model.Supplier3ContactNo, placeholder = Html.DisplayNameFor(modelItem => modelItem.Supplier3ContactNo) } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.Supplier3ContactNo, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group-sm">
+                                        @Html.LabelFor(model => model.Supplier3EmailAddress, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group input-group-sm mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-at"></i></span>
+                                            </div>
+                                            @Html.EditorFor(m => m.Supplier3EmailAddress, new { htmlAttributes = new { id = "supplier3Email", @class = "form-control form-control-sm", style = "font-size: 9pt;", disabled = "disabled", Value = (Model.Supplier3EmailAddress == null || Model.Supplier3EmailAddress == String.Empty) ? "Not Provided" : Model.Supplier3EmailAddress, placeholder = Html.DisplayNameFor(modelItem => modelItem.Supplier3EmailAddress) } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.Supplier3EmailAddress, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group-sm">
+                                        @Html.LabelFor(model => model.Supplier3UnitCost, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group input-group-sm mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-coins"></i></span>
+                                            </div>
+                                            @Html.EditorFor(m => m.Supplier3UnitCost, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "text-align:right; font-size: 9pt;", type = "number", step = "0.01", min = "0.00", Value = (Model.Supplier3UnitCost.ToString() == "0" || Model.Supplier3UnitCost == null) ? "0.00" : Model.Supplier3UnitCost.ToString() } })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.Supplier3UnitCost, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group-sm">
+                                        <br />
+                                        <div class="float-right">
+                                            <button type="button" class="btn btn-secondary btn-sm" onclick='clearSupplierData(3)'><i class="fa fa-times"></i> Clear Supplier Data</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="float-right">
+                        @Html.CheckBoxFor(d => d.IsObsolete)
+                        @Html.LabelFor(d => d.IsObsolete, new { style = "font-size: 13pt; color:red;" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section FormFooter{
+    <div class="row">
+        <div class="col-sm-12">
+            <div style="text-align: right;">
+                <button type="button" class="btn btn-md btn-primary" onclick="SaveMarketSurvey()"> <i class="fa fa-save"></i> Update Market Survey</button>
+                <button type="button" class="btn btn-md btn-danger" onclick="window.location = '@Url.Action("items", "MarketSurvey", new { Area = "responsibility-centers" })'"> <i class="fa fa-arrow-circle-left"></i> Back to Item List</button>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="modal" id="modal-default">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content" id="modal-container">
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var options = { "backdrop": "static", keyboard: true };
+    function loadSupplier(url) {
+        var supplier1 = $('#supplierID').val();
+        var supplier2 = $('#supplier2ID').val();
+        var supplier3 = $('#supplier3ID').val();
+        url = url.replace("SupplierID1", supplier1 == "" ? 0 : supplier1);
+        url = url.replace("SupplierID2", supplier2 == "" ? 0 : supplier2);
+        url = url.replace("SupplierID3", supplier3 == "" ? 0 : supplier3);
+        $.ajax({
+            type: "GET",
+            url: url,
+            contentType: "application/json; charset=utf-8",
+            datatype: "json",
+            success: function (data) {
+                $('#modal-container').html(data);
+                $('#modal-default').modal(options);
+                $('#modal-default').modal('show');
+            }
+        });
+    };
+    function clearSupplierData(supplierNo) {
+        if (supplierNo == 1) {
+            $('#supplierID').val("");
+            $('#supplierName').val("");
+            $('#supplierAddress').val("");
+            $('#supplierContact').val("");
+            $('#supplierEmail').val("");
+            $('#Supplier1UnitCost').val("0.00");
+        }
+        if (supplierNo == 2) {
+            $('#supplier2ID').val("");
+            $('#supplier2Name').val("");
+            $('#supplier2Address').val("");
+            $('#supplier2Contact').val("");
+            $('#supplier2Email').val("");
+            $('#Supplier2UnitCost').val("0.00");
+        }
+        if (supplierNo == 3) {
+            $('#supplier3ID').val("");
+            $('#supplier3Name').val("");
+            $('#supplier3Address').val("");
+            $('#supplier3Contact').val("");
+            $('#supplier3Email').val("");
+            $('#Supplier3UnitCost').val("0.00");
+        }
+    };
+    function SaveMarketSurvey() {
+        swal.fire({
+            title: "Save Market SUrvey?",
+            text: "You are about to update this Market Survey, continue?",
+            icon: "question",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#marketSurvey").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    icon: "error"
+                })
+            };
+        })
+    }
+    function CreateResult(data) {
+        if (data.result == true) {
+            swal.fire({
+                title: "Market Survey Saved!",
+                text: "Market Survey is successfully saved.",
+                icon: "success"
+            }).then((result) => {
+                if (result.value) {
+                    var url = "@Url.Action("items", "MarketSUrvey", new { Area = "responsibility-centers" })";
+                    window.location.href = url;
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Market Survey Not Saved!",
+                text: "Saving this Market Survey failed.",
+                icon: "error"
+            });
+        }
+    }
+</script>

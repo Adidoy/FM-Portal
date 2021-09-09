@@ -8,7 +8,7 @@
     <ol class="breadcrumb float-sm-right">
         <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
         <li class="breadcrumb-item">@Html.ActionLink("Items Master", "list", "Items", new { Area = "administration" }, null)</li>
-        <li class="breadcrumb-item">Edit Record</li>
+        <li class="breadcrumb-item">Edit</li>
     </ol>
 }
 
@@ -20,7 +20,6 @@
 
 @using (Ajax.BeginForm("update-item", "Items", new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "addItem", Area = "administration", enctype = "multipart/form-data" }))
 {
-    @Html.AntiForgeryToken()
     @Html.Partial("_Form")
 
 }
@@ -37,7 +36,7 @@
         swal.fire({
             title: "Save record?",
             text: "You are about to save this record, continue?",
-            type: "warning",
+            icon: "question",
             showCancelButton: true,
         }).then((result) => {
             if (result.value) {
@@ -47,7 +46,7 @@
                 swal.fire({
                     title: "Cancelled!",
                     text: "You have cancelled saving the record.",
-                    type: "error"
+                    icon: "error"
                 })
             };
         })
@@ -57,7 +56,7 @@
             swal.fire({
                 title: "Record Saved!",
                 text: "Record is successfully saved.",
-                type: "success"
+                icon: "success"
             }).then((result) => {
                 if (result.value) {
                     window.location.href = "@Url.Action("list", "Items", new { Area = "administration" })";
@@ -68,9 +67,8 @@
             swal.fire({
                 title: "Record Not Saved!",
                 text: "Saving record failed.",
-                type: "error"
+                icon: "error"
             });
-            $.validator.unobtrusive.parse
         }
     }
 </script>

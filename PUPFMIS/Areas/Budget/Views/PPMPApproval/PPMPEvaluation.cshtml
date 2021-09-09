@@ -1,0 +1,470 @@
+﻿@model PUPFMIS.Models.PPMPEvaluationVM
+
+@{
+    ViewBag.Title = "Budget Proposals";
+    ViewBag.Description = "Items Evaluation";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("PPMP Approval", "index")</li>
+        <li class="breadcrumb-item">Items Evaluation</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-list"></i> @Model.ReferenceNo - @Model.PPMPType</h3>
+}
+@using (Ajax.BeginForm("evaluate", "PPMPApproval", new { Area = "budget" }, new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "addItem" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-info">
+                <div class="card-header">
+                    <h3 class="card-title">PPMP Details</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                @Html.HiddenFor(d => d.FiscalYear)
+                                @Html.LabelFor(model => model.FiscalYear, htmlAttributes: new { @class = "control-label" })
+                                @Html.EditorFor(model => model.FiscalYear, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled", Value = Model.FiscalYear } })
+                                @Html.ValidationMessageFor(model => model.FiscalYear, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                @Html.HiddenFor(d => d.PPMPType)
+                                @Html.LabelFor(model => model.PPMPType, htmlAttributes: new { @class = "control-label" })
+                                @Html.EditorFor(model => model.PPMPType, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled", Value = Model.PPMPType } })
+                                @Html.ValidationMessageFor(model => model.PPMPType, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                @Html.HiddenFor(d => d.Sector)
+                                @Html.LabelFor(model => model.Sector, htmlAttributes: new { @class = "control-label" })
+                                @Html.EditorFor(model => model.Sector, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled", Value = Model.Sector } })
+                                @Html.ValidationMessageFor(model => model.Sector, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                @Html.HiddenFor(d => d.Department)
+                                @Html.LabelFor(model => model.Department, htmlAttributes: new { @class = "control-label" })
+                                @Html.EditorFor(model => model.Department, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled", Value = Model.Department } })
+                                @Html.ValidationMessageFor(model => model.Department, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                @Html.HiddenFor(d => d.UACS)
+                                @Html.LabelFor(model => model.UACS, htmlAttributes: new { @class = "control-label" })
+                                @Html.EditorFor(model => model.UACS, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled", Value = Model.UACS } })
+                                @Html.ValidationMessageFor(model => model.UACS, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                @Html.HiddenFor(d => d.AccountTitle)
+                                @Html.LabelFor(model => model.AccountTitle, htmlAttributes: new { @class = "control-label" })
+                                @Html.EditorFor(model => model.AccountTitle, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled", Value = Model.AccountTitle } })
+                                @Html.ValidationMessageFor(model => model.AccountTitle, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-info">
+                <div class="card-header">
+                    <h3 class="card-title">Procurement Projects</h3>
+                </div>
+                <div class="card-body">
+                    <div class="card card-primary card-outline">
+                        <div class="card-header d-flex p-0">
+                            <ul class="nav nav-pills p-2">
+                                @for (int i = 0; i < Model.Projects.Count; i++)
+                                {
+                                    if (i == 0)
+                                    {
+                                        <li class="nav-item" style="font-size:12pt;"><a class="nav-link active" href="#@Model.Projects[i].ProjectCode" data-toggle="tab"><i class="fa fa-list"></i>&nbsp; @Model.Projects[i].ProjectCode</a></li>
+                                    }
+                                    else
+                                    {
+                                        <li class="nav-item" style="font-size:12pt;"><a class="nav-link" href="#@Model.Projects[i].ProjectCode" data-toggle="tab"><i class="fa fa-list"></i>&nbsp; @Model.Projects[i].ProjectCode</a></li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                        <div class="tab-content">
+                            @for (int i = 0; i < Model.Projects.Count; i++)
+                            {
+                                if (i == 0)
+                                {
+                                    <div class="tab-pane active" id="@Model.Projects[i].ProjectCode">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-lg-2 col-md-2 col-sm-12">
+                                                    <b>@Html.DisplayNameFor(model => Model.Projects[i].UnitName)</b>
+                                                </div>
+                                                <div class="col-lg-10 col-md-10 col-sm-12">
+                                                    @Html.HiddenFor(d => Model.Projects[i].DepatmentCode)
+                                                    @Html.HiddenFor(d => Model.Projects[i].UnitName)
+                                                    <span>:&nbsp;</span><b>@Html.DisplayFor(model => Model.Projects[i].UnitName).ToString().ToUpper()</b>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-2 col-md-2 col-sm-12">
+                                                    <b>@Html.DisplayNameFor(model => Model.Projects[i].Program)</b>
+                                                </div>
+                                                <div class="col-lg-10 col-md-10 col-sm-12">
+                                                    @Html.HiddenFor(d => Model.Projects[i].PAPCode)
+                                                    @Html.HiddenFor(d => Model.Projects[i].Program)
+                                                    <span>:&nbsp;</span>@Html.DisplayFor(model => Model.Projects[i].Program) (@Html.DisplayFor(model => Model.Projects[i].PAPCode))
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-2 col-md-2 col-sm-12">
+                                                    <b>@Html.DisplayNameFor(model => Model.Projects[i].ProjectName)</b>
+                                                </div>
+                                                <div class="col-lg-10 col-md-10 col-sm-12">
+                                                    @Html.HiddenFor(d => Model.Projects[i].ProjectCode)
+                                                    @Html.HiddenFor(d => Model.Projects[i].ProjectName)
+                                                    <span>:&nbsp;</span>@Html.DisplayFor(model => Model.Projects[i].ProjectName) (@Html.DisplayFor(model => Model.Projects[i].ProjectCode))
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-2 col-md-2 col-sm-12">
+                                                    <b>@Html.DisplayNameFor(model => Model.Projects[i].Description)</b>
+                                                </div>
+                                                <div class="col-lg-10 col-md-10 col-sm-12">
+                                                    @Html.HiddenFor(d => Model.Projects[i].Description)
+                                                    <span>:&nbsp;</span>@Html.DisplayFor(model => Model.Projects[i].Description)
+                                                </div>
+                                            </div>
+                                            <hr />
+                                            <h5>Project Items</h5>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <table class="table table-striped table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th style="text-align:center;" width="40%">
+                                                                    Item Details
+                                                                </th>
+                                                                <th colspan="2" style="text-align:center;" width="60%">
+                                                                    Action
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @for (int j = 0; j < Model.Projects[i].Details.Count; j++)
+                                                            {
+                                                                @Html.HiddenFor(d => Model.Projects[i].Details[j].ItemCode)
+                                                                @Html.HiddenFor(d => Model.Projects[i].Details[j].PPMPDetailID)
+                                                                <tr>
+                                                                    <td style="text-align:left">
+                                                                        <b>@Html.DisplayFor(modelItem => Model.Projects[i].Details[j].ItemFullName)</b> (@Html.DisplayFor(modelItem => Model.Projects[i].Details[j].ItemCode))<br /><small>@Html.ActionLink("View Item Specifications", "", new { })</small>
+                                                                        <div class="row">
+                                                                            <div class="col-sm-4">
+                                                                                <b>@Html.DisplayNameFor(modelItem => Model.Projects[i].Details[j].Justification)</b>
+                                                                            </div>
+                                                                            <div class="col-sm-8">
+                                                                                <span>:&nbsp;</span>@Html.DisplayFor(modelItem => Model.Projects[i].Details[j].Justification)
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-sm-4">
+                                                                                <b>@Html.DisplayNameFor(modelItem => Model.Projects[i].Details[j].TotalQty)</b>
+                                                                            </div>
+                                                                            <div class="col-sm-8">
+                                                                                <span>:&nbsp;</span>@Html.DisplayFor(modelItem => Model.Projects[i].Details[j].TotalQty)
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td width="25%" align="justify" valign="top">
+                                                                        <div class="row">
+                                                                            <div class="col-sm-12">
+                                                                                <div class="form-group">
+                                                                                    @Html.LabelFor(model => Model.Projects[i].Details[j].BudgetOfficeAction, htmlAttributes: new { @class = "control-label" })
+                                                                                    <div class="input-group mb-3">
+                                                                                        <div class="input-group-prepend">
+                                                                                            <span class="input-group-text"><i class="fa fa-thumbs-up"></i></span>
+                                                                                        </div>
+                                                                                        @Html.EnumDropDownListFor(model => Model.Projects[i].Details[j].BudgetOfficeAction, htmlAttributes: new { @class = "form-control form-control-sm", style = "font-size:9pt;", onchange = string.Concat("ShowReasons(", i, ", ", j, ")") })
+                                                                                    </div>
+                                                                                    @Html.ValidationMessageFor(model => Model.Projects[i].Details[j].BudgetOfficeAction, "", new { @class = "text-danger" })
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td width="35%" align="justify" valign="top">
+                                                                        <div class="row">
+                                                                            <div class="col-sm-12">
+                                                                                <div id=@( string.Concat("Projects[",i,"].Details[",j,"].FundSource_FormGroup") )>
+                                                                                    <div class="form-group">
+                                                                                        @Html.LabelFor(model => Model.Projects[i].Details[j].FundSource, htmlAttributes: new { @class = "control-label" })
+                                                                                        <div class="input-group mb-3">
+                                                                                            <div class="input-group-prepend">
+                                                                                                <span class="input-group-text"><i class="fa fa-book"></i></span>
+                                                                                            </div>
+                                                                                            @Html.DropDownListFor(model => Model.Projects[i].Details[j].FundSource, ViewBag.FundSources as SelectList, htmlAttributes: new { @class = "form-control form-control-sm", style = "font-size:9pt;" })
+                                                                                        </div>
+                                                                                        @Html.ValidationMessageFor(model => Model.Projects[i].Details[j].FundSource, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div hidden id=@( string.Concat("Projects[",i,"].Details[",j,"].ReasonForNonAcceptance_FormGroup") )>
+                                                                                    <div class="form-group">
+                                                                                        @Html.LabelFor(model => Model.Projects[i].Details[j].ReasonForNonAcceptance, htmlAttributes: new { @class = "control-label" })
+                                                                                        <div class="input-group mb-3">
+                                                                                            <div class="input-group-prepend">
+                                                                                                <span class="input-group-text"><i class="fa fa-times"></i></span>
+                                                                                            </div>
+                                                                                            @Html.EnumDropDownListFor(model => Model.Projects[i].Details[j].ReasonForNonAcceptance, htmlAttributes: new { @class = "form-control form-control-sm", style = "font-size:9pt;" })
+                                                                                        </div>
+                                                                                        @Html.ValidationMessageFor(model => Model.Projects[i].Details[j].ReasonForNonAcceptance, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="tab-pane" id="@Model.Projects[i].ProjectCode">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-lg-2 col-md-2 col-sm-12">
+                                                    <b>@Html.DisplayNameFor(model => Model.Projects[i].UnitName)</b>
+                                                </div>
+                                                <div class="col-lg-10 col-md-10 col-sm-12">
+                                                    @Html.HiddenFor(d => Model.Projects[i].DepatmentCode)
+                                                    @Html.HiddenFor(d => Model.Projects[i].UnitName)
+                                                    <span>:&nbsp;</span><b>@Html.DisplayFor(model => Model.Projects[i].UnitName).ToString().ToUpper()</b>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-2 col-md-2 col-sm-12">
+                                                    <b>@Html.DisplayNameFor(model => Model.Projects[i].Program)</b>
+                                                </div>
+                                                <div class="col-lg-10 col-md-10 col-sm-12">
+                                                    @Html.HiddenFor(d => Model.Projects[i].PAPCode)
+                                                    @Html.HiddenFor(d => Model.Projects[i].Program)
+                                                    <span>:&nbsp;</span>@Html.DisplayFor(model => Model.Projects[i].Program) (@Html.DisplayFor(model => Model.Projects[i].PAPCode))
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-2 col-md-2 col-sm-12">
+                                                    <b>@Html.DisplayNameFor(model => Model.Projects[i].ProjectName)</b>
+                                                </div>
+                                                <div class="col-lg-10 col-md-10 col-sm-12">
+                                                    @Html.HiddenFor(d => Model.Projects[i].ProjectCode)
+                                                    @Html.HiddenFor(d => Model.Projects[i].ProjectName)
+                                                    <span>:&nbsp;</span>@Html.DisplayFor(model => Model.Projects[i].ProjectName) (@Html.DisplayFor(model => Model.Projects[i].ProjectCode))
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-2 col-md-2 col-sm-12">
+                                                    <b>@Html.DisplayNameFor(model => Model.Projects[i].Description)</b>
+                                                </div>
+                                                <div class="col-lg-10 col-md-10 col-sm-12">
+                                                    @Html.HiddenFor(d => Model.Projects[i].Description)
+                                                    <span>:&nbsp;</span>@Html.DisplayFor(model => Model.Projects[i].Description)
+                                                </div>
+                                            </div>
+                                            <hr />
+                                            <h5>Project Items</h5>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <table class="table table-striped table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th style="text-align:center;" width="40%">
+                                                                    Item Details
+                                                                </th>
+                                                                <th colspan="2" style="text-align:center;" width="60%">
+                                                                    Action
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @for (int j = 0; j < Model.Projects[i].Details.Count; j++)
+                                                            {
+                                                                @Html.HiddenFor(d => Model.Projects[i].Details[j].ItemCode)
+                                                                @Html.HiddenFor(d => Model.Projects[i].Details[j].PPMPDetailID)
+                                                                <tr>
+                                                                    <td style="text-align:left">
+                                                                        <b>@Html.DisplayFor(modelItem => Model.Projects[i].Details[j].ItemFullName)</b><br /><small>@Html.ActionLink("View Item Specifications", "", new { })</small>
+                                                                        <div class="row">
+                                                                            <div class="col-sm-4">
+                                                                                <b>@Html.DisplayNameFor(modelItem => Model.Projects[i].Details[j].Justification)</b>
+                                                                            </div>
+                                                                            <div class="col-sm-8">
+                                                                                <span>:&nbsp;</span>@Html.DisplayFor(modelItem => Model.Projects[i].Details[j].Justification)
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-sm-4">
+                                                                                <b>@Html.DisplayNameFor(modelItem => Model.Projects[i].Details[j].TotalQty)</b>
+                                                                            </div>
+                                                                            <div class="col-sm-8">
+                                                                                <span>:&nbsp;</span>@Html.DisplayFor(modelItem => Model.Projects[i].Details[j].TotalQty)
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td width="25%" align="justify" valign="top">
+                                                                        <div class="row">
+                                                                            <div class="col-sm-12">
+                                                                                <div class="form-group">
+                                                                                    @Html.LabelFor(model => Model.Projects[i].Details[j].BudgetOfficeAction, htmlAttributes: new { @class = "control-label" })
+                                                                                    <div class="input-group mb-3">
+                                                                                        <div class="input-group-prepend">
+                                                                                            <span class="input-group-text"><i class="fa fa-thumbs-up"></i></span>
+                                                                                        </div>
+                                                                                        @Html.EnumDropDownListFor(model => Model.Projects[i].Details[j].BudgetOfficeAction, htmlAttributes: new { @class = "form-control form-control-sm", style = "font-size:9pt;", onchange = string.Concat("ShowReasons(", i, ", ", j, ")") })
+                                                                                    </div>
+                                                                                    @Html.ValidationMessageFor(model => Model.Projects[i].Details[j].BudgetOfficeAction, "", new { @class = "text-danger" })
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td width="35%" align="justify" valign="top">
+                                                                        <div class="row">
+                                                                            <div class="col-sm-12">
+                                                                                <div id=@( string.Concat("Projects[",i,"].Details[",j,"].FundSource_FormGroup") )>
+                                                                                    <div class="form-group">
+                                                                                        @Html.LabelFor(model => Model.Projects[i].Details[j].FundSource, htmlAttributes: new { @class = "control-label" })
+                                                                                        <div class="input-group mb-3">
+                                                                                            <div class="input-group-prepend">
+                                                                                                <span class="input-group-text"><i class="fa fa-book"></i></span>
+                                                                                            </div>
+                                                                                            @Html.DropDownListFor(model => Model.Projects[i].Details[j].FundSource, ViewBag.FundSources as SelectList, htmlAttributes: new { @class = "form-control form-control-sm", style = "font-size:9pt;" })
+                                                                                        </div>
+                                                                                        @Html.ValidationMessageFor(model => Model.Projects[i].Details[j].FundSource, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div hidden id=@( string.Concat("Projects[",i,"].Details[",j,"].ReasonForNonAcceptance_FormGroup") )>
+                                                                                    <div class="form-group">
+                                                                                        @Html.LabelFor(model => Model.Projects[i].Details[j].ReasonForNonAcceptance, htmlAttributes: new { @class = "control-label" })
+                                                                                        <div class="input-group mb-3">
+                                                                                            <div class="input-group-prepend">
+                                                                                                <span class="input-group-text"><i class="fa fa-times"></i></span>
+                                                                                            </div>
+                                                                                            @Html.EnumDropDownListFor(model => Model.Projects[i].Details[j].ReasonForNonAcceptance, htmlAttributes: new { @class = "form-control form-control-sm", style = "font-size:9pt;" })
+                                                                                        </div>
+                                                                                        @Html.ValidationMessageFor(model => Model.Projects[i].Details[j].ReasonForNonAcceptance, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@section FormFooter {
+    <div class="card-footer">
+        <div class="row">
+            <div class="col-sm-12">
+                <div style="text-align: right;">
+                    <button type="button" class="btn btn-md btn-primary" onclick="SaveChanges()"><i class="fa fa-plus-circle"></i> Save Changes</button>
+                    <button type="button" class="btn btn-md btn-danger" onclick="window.location = '@Url.Action("ppmp-list", "PPMPApproval", new { Area = "budget", FiscalYear = Model.FiscalYear, Department = Model.DepartmentCode })'"><i class="fa fa-arrow-circle-left"></i> Back to Accounts List</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    function ShowReasons(project, details) {
+        var approval = document.getElementsByName('Projects[' + project + '].Details[' + details + '].BudgetOfficeAction')[0].value;
+        if (approval == 0) {
+            document.getElementById('Projects[' + project + '].Details[' + details + '].ReasonForNonAcceptance_FormGroup').hidden = true;
+            document.getElementById('Projects[' + project + '].Details[' + details + '].FundSource_FormGroup').hidden = false;
+        }
+        else {
+            document.getElementById('Projects[' + project + '].Details[' + details + '].ReasonForNonAcceptance_FormGroup').hidden = false;
+            document.getElementById('Projects[' + project + '].Details[' + details + '].FundSource_FormGroup').hidden = true;
+        }
+    }
+    function disableElements(item) {
+        document.getElementsByName('NewSpendingItems[' + item + '].ReducedQuantity')[0].disabled = true;
+        document.getElementsByName('NewSpendingItems[' + item + '].FundSource')[0].disabled = true;
+    };
+    function enableElements(item) {
+        document.getElementsByName('NewSpendingItems[' + item + '].ReducedQuantity')[0].disabled = false;
+        document.getElementsByName('NewSpendingItems[' + item + '].FundSource')[0].disabled = false;
+    };
+    $("#updateList").on('click', function (e) {
+        e.preventDefault();
+        $("#addUnit").submit();
+    });
+    function SaveChanges() {
+        swal.fire({
+            title: "Save Changes?",
+            html: "<p>You are about to save changes, continue?</p>",
+            icon: "question",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#addItem").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    icon: "error"
+                })
+            };
+        })
+    }
+    function CreateResult(data) {
+        if (data.result == true) {
+            swal.fire({
+                title: "Record Saved!",
+                text: "@Model.ReferenceNo" + " items are successfuly evaluated.",
+                icon: "success"
+            }).then((result) => {
+                if (result.value) {
+                    window.location.href = '@Url.Action("ppmp-list", "PPMPApproval", new { Area = "budget", FiscalYear = Model.FiscalYear, Department = Model.DepartmentCode })';
+                }
+            })
+        }
+    }
+</script>

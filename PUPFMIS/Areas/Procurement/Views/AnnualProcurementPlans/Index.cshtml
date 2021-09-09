@@ -62,7 +62,7 @@
                             @Html.DisplayFor(modelItem => item.ApprovedAt)
                         </td>
                         <td style="text-align:center; vertical-align:middle;">
-                            @if (item.APPType == "CSE")
+                            @if (item.APPType == "Common-use Supplies and Equipment")
                             {
                                 <a class="btn btn-sm btn-primary mb-1" style="width: 140px;" href="@Url.Action("print-app-cse", "APP_CSE", new { Area = "property-and-supplies", ReferenceNo = item.ReferenceNo })" target="_blank"><i class="fa fa-print"></i> Print APP-CSE</a>
                                 <br />

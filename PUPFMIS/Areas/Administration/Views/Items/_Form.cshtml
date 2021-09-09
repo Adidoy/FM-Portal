@@ -9,26 +9,36 @@
         </div>
     </div>
     <br />
+    @Html.AntiForgeryToken()
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @if (ViewBag.Description == "Edit Record")
+    {
+        @Html.HiddenFor(model => model.ID)
+    }
     <div class="form-horizontal">
         <div class="row">
-            <div class="col-sm-12">
+            <div class="col-lg-6 col-md-6 col-sm-12">
                 <div class="form-group">
-                    @Html.LabelFor(model => model.ItemType, htmlAttributes: new { @class = "control-label" })
+                    @Html.LabelFor(model => model.Article, htmlAttributes: new { @class = "control-label" })
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-id-badge"></i></span>
                         </div>
-                        @if (ViewBag.Action == "Edit")
-                        {
-                            @Html.DropDownList("ItemType", null, "Please Select Item Type", htmlAttributes: new { @class = "form-control form-control-sm select2", onchange = "GetItemTypeDetails()", disabled = "disabled" })
-                        }
-                        else
-                        {
-                            @Html.DropDownList("ItemType", null, "Please Select Item Type", htmlAttributes: new { @class = "form-control form-control-sm select2", onchange = "GetItemTypeDetails()" })
-                        }
+                        @Html.DropDownList("Article", null, "Please Select Article", htmlAttributes: new { @class = "form-control form-control-sm select2", placeholder = Html.DisplayNameFor(model => model.Article), onchange = "GetArticleDetails()", style = "font-size:9pt;" })
                     </div>
-                    @Html.ValidationMessageFor(model => model.ItemType, "", new { @class = "text-danger" })
+                    @Html.ValidationMessageFor(model => model.Article, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Classification, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-asterisk"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.Classification, new { htmlAttributes = new { @class = "form-control form-control-sm", placeholder = Html.DisplayNameFor(model => model.Classification), autocomplete = "off", style = "font-size:9pt;", disabled = "disabled" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Classification, "", new { @class = "text-danger" })
                 </div>
             </div>
         </div>
@@ -40,35 +50,101 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-bookmark"></i></span>
                         </div>
-                        @Html.EditorFor(model => model.AccountClass, new { htmlAttributes = new { @class = "form-control form-control-sm", placeholder = Html.DisplayNameFor(d => d.AccountClass), disabled = "disabled" } })
+                        @Html.EditorFor(model => model.AccountClass, new { htmlAttributes = new { @class = "form-control form-control-sm", placeholder = Html.DisplayNameFor(d => d.AccountClass), disabled = "disabled", style = "font-size:9pt;" } })
                     </div>
                     @Html.ValidationMessageFor(model => model.AccountClass, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-12">
                 <div class="form-group">
-                    @Html.LabelFor(model => model.InventoryType, htmlAttributes: new { @class = "control-label" })
+                    @Html.LabelFor(model => model.ItemType, htmlAttributes: new { @class = "control-label" })
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-book"></i></span>
                         </div>
-                        @Html.EditorFor(model => model.InventoryType, new { htmlAttributes = new { @class = "form-control form-control-sm", placeholder = Html.DisplayNameFor(d => d.InventoryType), disabled = "disabled" } })
+                        @Html.EditorFor(model => model.ItemType, new { htmlAttributes = new { @class = "form-control form-control-sm", placeholder = Html.DisplayNameFor(d => d.ItemType), disabled = "disabled", style = "font-size:9pt;" } })
                     </div>
-                    @Html.ValidationMessageFor(model => model.InventoryType, "", new { @class = "text-danger" })
+                    @Html.ValidationMessageFor(model => model.ItemType, "", new { @class = "text-danger" })
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-lg-6 col-md-6 col-sm-12">
                 <div class="form-group">
-                    @Html.LabelFor(model => model.IsTangible, htmlAttributes: new { @class = "control-label" })
+                    @Html.LabelFor(model => model.ResponsibilityCenter, htmlAttributes: new { @class = "control-label" })
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-question"></i></span>
+                            <span class="input-group-text"><i class="fa fa-building"></i></span>
                         </div>
-                        @Html.EditorFor(model => model.IsTangible, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", placeholder = "Is Tangible?" } })
+                        @Html.EditorFor(model => model.ResponsibilityCenter, new { htmlAttributes = new { @class = "form-control form-control-sm", placeholder = Html.DisplayNameFor(model => model.ResponsibilityCenter), autocomplete = "off", style = "font-size:9pt;", disabled = "disabled" } })
                     </div>
-                    @Html.ValidationMessageFor(model => model.IsTangible, "", new { @class = "text-danger" })
+                    @Html.ValidationMessageFor(model => model.ResponsibilityCenter, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PurchaseRequestOffice, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-file"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.PurchaseRequestOffice, new { htmlAttributes = new { @class = "form-control form-control-sm", placeholder = Html.DisplayNameFor(model => model.PurchaseRequestOffice), autocomplete = "off", style = "font-size:9pt;", disabled = "disabled" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PurchaseRequestOffice, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ItemShortSpecifications, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-id-card"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.ItemShortSpecifications, new { htmlAttributes = new { @class = "form-control form-control-sm", placeholder = Html.DisplayNameFor(model => model.ItemShortSpecifications), autocomplete = "off", style = "font-size:9pt; text-transform:uppercase;" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ItemShortSpecifications, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsSpecsUserDefined, htmlAttributes: new { @class = "control-label" })
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <div class="custom-control custom-radio">
+                                @Html.RadioButtonFor(modelItem => Model.IsSpecsUserDefined, "false", htmlAttributes: new { @class = "custom-control-input", id = "NO", @checked = "checked" })
+                                @Html.Label("No", htmlAttributes: new { @class = "custom-control-label", @for = "NO", style = "font-size:10pt" })
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="custom-control custom-radio">
+                                @Html.RadioButtonFor(modelItem => Model.IsSpecsUserDefined, "true", htmlAttributes: new { @class = "custom-control-input", id = "YES" })
+                                @Html.Label("Yes", htmlAttributes: new { @class = "custom-control-label", @for = "YES", style = "font-size:10pt" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                @Html.LabelFor(model => model.ItemSpecifications, htmlAttributes: new { @class = "control-label" })
+                <div class="form-group">
+                    @Html.EditorFor(model => model.ItemSpecifications, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "resize:none", rows = 4 } })
+                    @Html.ValidationMessageFor(model => model.ItemSpecifications, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ItemImage, htmlAttributes: new { @class = "control-label" })
+                    <div class="form-group mb-3">
+                        <input type="file" id="Avatar" name="upload" />
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ItemImage, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-12">
@@ -87,71 +163,14 @@
         <div class="row">
             <div class="col-lg-6 col-md-6 col-sm-12">
                 <div class="form-group">
-                    @Html.LabelFor(model => model.ResponsibilityCenter, htmlAttributes: new { @class = "control-label" })
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-building"></i></span>
-                        </div>
-                        @Html.DropDownList("ResponsibilityCenter", null, htmlAttributes: new { @class = "form-control form-control-sm select2", style = "font-size:100%;" })
-                    </div>
-                    @Html.ValidationMessageFor(model => model.ResponsibilityCenter, "", new { @class = "text-danger" })
-                </div>
-            </div>
-            <div class="col-lg-6 col-md-6 col-sm-12">
-                <div class="form-group">
-                    @Html.LabelFor(model => model.PurchaseRequestOffice, htmlAttributes: new { @class = "control-label" })
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-building"></i></span>
-                        </div>
-                        @Html.DropDownList("PurchaseRequestOffice", null, htmlAttributes: new { @class = "form-control form-control-sm select2", style = "font-size:100%;" })
-                    </div>
-                    @Html.ValidationMessageFor(model => model.PurchaseRequestOffice, "", new { @class = "text-danger" })
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-6 col-md-6 col-sm-12">
-                <div class="form-group">
                     @Html.LabelFor(model => model.ProcurementSource, htmlAttributes: new { @class = "control-label" })
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-building"></i></span>
                         </div>
-                        @Html.EnumDropDownListFor(model => model.ProcurementSource, htmlAttributes: new { @class = "form-control form-control-sm" })
+                        @Html.EnumDropDownListFor(model => model.ProcurementSource, htmlAttributes: new { @class = "form-control form-control-sm", style = "font-size:9pt;" })
                     </div>
                     @Html.ValidationMessageFor(model => model.ProcurementSource, "", new { @class = "text-danger" })
-                </div>
-            </div>
-            <div class="col-lg-6 col-md-6 col-sm-12">
-                <div class="form-group">
-                    @Html.LabelFor(model => model.ItemShortSpecifications, htmlAttributes: new { @class = "control-label" })
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-id-card"></i></span>
-                        </div>
-                        @Html.EditorFor(model => model.ItemShortSpecifications, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
-                    </div>
-                    @Html.ValidationMessageFor(model => model.ItemShortSpecifications, "", new { @class = "text-danger" })
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-12">
-                @Html.LabelFor(model => model.ItemSpecifications, htmlAttributes: new { @class = "control-label" })
-                <div class="form-group">
-                    @Html.EditorFor(model => model.ItemSpecifications, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "resize:none", rows = 4 } })
-                    @Html.ValidationMessageFor(model => model.ItemSpecifications, "", new { @class = "text-danger" })
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-6 col-md-6 col-sm-12">
-                <div class="form-group">
-                    <div class="form-group mb-3">
-                        <input type="file" id="Avatar" name="upload" />
-                    </div>
-                    @Html.ValidationMessageFor(model => model.ItemImage, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-12">
@@ -161,14 +180,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-id-card"></i></span>
                         </div>
-                        @if (ViewBag.Action == "Edit" && Model.IsTangible == "No")
-                        {
-                            @Html.EditorFor(model => model.UnitPrice, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "text-align:right;", type = "number", step = "0.01", min = "0.00", disabled = "disabled" } })
-                        }
-                        else
-                        {
-                            @Html.EditorFor(model => model.UnitPrice, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "text-align:right;", type = "number", step = "0.01", min = "0.00" } })
-                        }
+                        @Html.EditorFor(model => model.UnitPrice, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "text-align:right;", type = "number", step = "0.01", min = "0.00", Value = Model == null ? "0.00" : Model.UnitPrice.ToString(), autocomplete = "off" } })
                     </div>
                     @Html.ValidationMessageFor(model => model.ItemShortSpecifications, "", new { @class = "text-danger" })
                 </div>
@@ -182,14 +194,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-bookmark"></i></span>
                         </div>
-                        @if (ViewBag.Action == "Edit" && Model.IsTangible == "No")
-                        {
-                            @Html.DropDownList("PackagingUOMReference", null, htmlAttributes: new { @class = "form-control form-control-sm select2", disabled = "disabled" })
-                        }
-                        else
-                        {
-                            @Html.DropDownList("PackagingUOMReference", null, htmlAttributes: new { @class = "form-control form-control-sm select2" })
-                        }
+                        @Html.DropDownList("PackagingUOMReference", null, htmlAttributes: new { @class = "form-control form-control-sm select2" })
                     </div>
                     @Html.ValidationMessageFor(model => model.PackagingUOMReference, "", new { @class = "text-danger" })
                 </div>
@@ -201,14 +206,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-hashtag"></i></span>
                         </div>
-                        @if (ViewBag.Action == "Edit" && Model.IsTangible == "No")
-                        {
-                            @Html.EditorFor(model => model.QuantityPerPackage, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
-                        }
-                        else
-                        {
-                            @Html.EditorFor(model => model.QuantityPerPackage, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
-                        }
+                        @Html.EditorFor(model => model.QuantityPerPackage, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
                     </div>
                     @Html.ValidationMessageFor(model => model.QuantityPerPackage, "", new { @class = "text-danger" })
                 </div>
@@ -222,14 +220,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-bookmark"></i></span>
                         </div>
-                        @if (ViewBag.Action == "Edit" && Model.IsTangible == "No")
-                        {
-                            @Html.DropDownList("IndividualUOMReference", null, htmlAttributes: new { @class = "form-control select2", disabled = "disabled" })
-                        }
-                        else
-                        {
-                            @Html.DropDownList("IndividualUOMReference", null, htmlAttributes: new { @class = "form-control select2" })
-                        }
+                        @Html.DropDownList("IndividualUOMReference", null, htmlAttributes: new { @class = "form-control form-control-sm select2" })
                     </div>
                     @Html.ValidationMessageFor(model => model.IndividualUOMReference, "", new { @class = "text-danger" })
                 </div>
@@ -241,14 +232,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-question"></i></span>
                         </div>
-                        @if (ViewBag.Action == "Edit" && Model.IsTangible == "No")
-                        {
-                            @Html.EditorFor(model => model.MinimumIssuanceQty, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
-                        }
-                        else
-                        {
-                            @Html.EditorFor(model => model.MinimumIssuanceQty, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
-                        }
+                        @Html.EditorFor(model => model.MinimumIssuanceQty, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
                     </div>
                     @Html.ValidationMessageFor(model => model.MinimumIssuanceQty, "", new { @class = "text-danger" })
                 </div>
@@ -267,39 +251,49 @@
 </div>
 
 <script type="text/javascript">
-    function GetItemTypeDetails() {
-        var Id = $('#ItemType').val();
-        var url = '@Url.Action("GetItemTypeDetails", "Items")';
+    $('document').ready(function () {
+        if($("#NO").attr("checked", "checked"))
+        {
+            $("#ItemSpecifications").prop("disabled", false);
+        }
+        if($("#ProcurementSource").val() == 1)
+        {
+            $("#UnitPrice").prop("disabled", true);
+            $("#UnitPrice").val("");
+        }
+    });
+    $('#NO').click(function () {
+        $("#ItemSpecifications").prop("disabled", false);
+    });
+    $('#YES').click(function () {
+        $("#ItemSpecifications").prop("disabled", true);
+    });
+    function GetArticleDetails() {
+        var ID = $('#Article').val();
+        var url = '@Url.Action("get-article-details", "Items", new { ArticleID = "xxxx" })';
+        url = url.replace("xxxx", ID);
         $.ajax({
             url: url,
-            data: { ItemTypeCode: Id },
             type: "GET",
             success: function (data) {
-                $('#InventoryType').val(data.InventoryTypeName);
-                $('#AccountClass').val(data.AccountClass);
-                $('#ResponsibilityCenter').val(data.ResponsibilityCenter).change();
-                $('#IsTangible').val(data.IsTangible);
-                if(data.IsTangible == "Yes")
-                {
-                    $("#ItemSpecifications").removeAttr("disabled", "disabled");
-                    $("#Avatar").removeAttr("disabled", "disabled");
-                    $("#UnitPrice").removeAttr("disabled", "disabled");
-                    $("#PackagingUOMReference").removeAttr("disabled", "disabled");
-                    $("#QuantityPerPackage").removeAttr("disabled", "disabled");
-                    $("#IndividualUOMReference").removeAttr("disabled", "disabled");
-                    $("#MinimumIssuanceQty").removeAttr("disabled", "disabled");
-                }
-                else
-                {
-                    $("#ItemSpecifications").attr("disabled", "disabled");
-                    $("#Avatar").attr("disabled", "disabled");
-                    $("#UnitPrice").attr("disabled", "disabled");
-                    $("#PackagingUOMReference").attr("disabled", "disabled");
-                    $("#QuantityPerPackage").attr("disabled", "disabled");
-                    $("#IndividualUOMReference").attr("disabled", "disabled");
-                    $("#MinimumIssuanceQty").attr("disabled", "disabled");
-                }
+                $('#ItemType').val(data.FKItemTypeReference.ItemType);
+                $('#AccountClass').val(data.UACSObjectClass);
+                $('#ResponsibilityCenter').val(data.FKItemTypeReference.ResponsibilityCenter);
+                $('#PurchaseRequestOffice').val(data.FKItemTypeReference.PurchaseRequestCenter);
+                $('#Classification').val(data.FKItemTypeReference.FKItemClassificationReference.Classification);
             }
         });
     };
+    $('#ProcurementSource').on('change', function () {
+        if(this.value == 0)
+        {
+            $("#UnitPrice").prop("disabled", false);
+            $("#UnitPrice").val("0.00");
+        }
+        else
+        {
+            $("#UnitPrice").prop("disabled", true);
+            $("#UnitPrice").val("");
+        }
+    });
 </script>

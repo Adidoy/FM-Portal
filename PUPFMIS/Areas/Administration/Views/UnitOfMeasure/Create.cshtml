@@ -15,13 +15,13 @@
         
         <div class="form-group">
             @Html.LabelFor(model => model.UnitName, htmlAttributes: new { @class = "control-label" })
-            @Html.EditorFor(model => model.UnitName, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.UnitName) } })
+            @Html.EditorFor(model => model.UnitName, new { htmlAttributes = new { @class = "form-control", style = "font-size:100%; text-transform:uppercase;", @autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.UnitName) } })
             @Html.ValidationMessageFor(model => model.UnitName, "", new { @class = "text-danger" })
         </div>
 
         <div class="form-group">
             @Html.LabelFor(model => model.Abbreviation, htmlAttributes: new { @class = "control-label" })
-            @Html.EditorFor(model => model.Abbreviation, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.Abbreviation) } })
+            @Html.EditorFor(model => model.Abbreviation, new { htmlAttributes = new { @class = "form-control", style = "font-size:100%; text-transform:uppercase;", @autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.Abbreviation) } })
             @Html.ValidationMessageFor(model => model.Abbreviation, "", new { @class = "text-danger" })
         </div>
     </div>
@@ -40,7 +40,7 @@
         swal.fire({
             title: "Save record?",
             text: "You are about to save this record, continue?",
-            type: "warning",
+            icon: "question",
             showCancelButton: true,
         }).then((result) => {
             if (result.value) {
@@ -49,10 +49,26 @@
         })
     });
     function CloseModal(data) {
-        if (data.status === "success") {
+        if (data.result === true) {
             $('#modal-default').modal('hide');
-            toastr.success('Unit of measure is saved!', 'Save', { timeOut: 10000, preventDuplicates: false });
-            window.location.href = "@Url.Action("index", "UnitOfMeasure")";
+            if (data.result == true) {
+                swal.fire({
+                    title: "Record Saved!",
+                    text: "Record is successfully saved.",
+                    icon: "success"
+                }).then((result) => {
+                    if (result.value) {
+                        window.location.href = "@Url.Action("list", "UnitOfMeasure", new { Area = "administration" })";
+                    }
+                })
+            }
+            else {
+                swal.fire({
+                    title: "Record Not Saved!",
+                    text: "Saving record failed.",
+                    icon: "error"
+                })
+            }
         }
     };
 </script>

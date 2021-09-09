@@ -1,8 +1,8 @@
-﻿@model IEnumerable<PUPFMIS.Models.ItemTypeVM>
+﻿@model IEnumerable<PUPFMIS.Models.ItemTypes>
 
 @{
     ViewBag.Title = "Item Types";
-    ViewBag.Description = "Restore Purged Records";
+    ViewBag.Description = "Restore Record";
     Layout = "~/Views/Shared/_IndexLayout.cshtml";
 }
 
@@ -24,13 +24,16 @@
             <table class="table table-striped table-hover" id="example2">
                 <thead>
                     <tr>
-                        <th style="text-align:center; vertical-align:middle" width="40%">
-                            @Html.DisplayNameFor(model => model.ItemTypeName)
+                        <th style="text-align:center; vertical-align:middle" width="20%">
+                            @Html.DisplayNameFor(model => model.ItemTypeCode)
                         </th>
-                        <th style="text-align:center; vertical-align:middle" width="35%">
-                            @Html.DisplayNameFor(model => model.DeletedAt)
+                        <th style="text-align:center; vertical-align:middle" width="40%">
+                            @Html.DisplayNameFor(model => model.ItemType)
                         </th>
                         <th style="text-align:center; vertical-align:middle" width="25%">
+                            @Html.DisplayNameFor(model => model.FKItemClassificationReference.Classification)
+                        </th>
+                        <th style="text-align:center; vertical-align:middle" width="15%">
                             Action
                         </th>
                     </tr>
@@ -39,14 +42,17 @@
                     @foreach (var item in Model)
                     {
                         <tr>
-                            <td style="text-align:left; vertical-align:middle;">
-                                <b>@Html.DisplayFor(modelItem => item.ItemTypeName)</b> (@Html.DisplayFor(modelItem => item.ItemTypeCode))
-                            </td>
                             <td style="text-align:center; vertical-align:middle;">
-                                @Html.DisplayFor(modelItem => item.DeletedAt)
+                                <b>@Html.DisplayFor(modelItem => item.ItemTypeCode)</b>
+                            </td>
+                            <td style="text-align:left; vertical-align:middle;">
+                                @Html.DisplayFor(modelItem => item.ItemType)
+                            </td>
+                            <td style="text-align:left; vertical-align:middle;">
+                                @Html.DisplayFor(modelItem => item.FKItemClassificationReference.Classification)
                             </td>
                             <td  style="text-align:center; vertical-align:middle;">
-                                <button type="button" class="btn btn-sm btn-primary" data-toggle="tooltip" title="View Details" onclick="window.location = '@Url.Action("restore", "ItemTypes", new { Area = "administration", ItemTypeCode = item.ItemTypeCode })'"><i class="fa fa-eye"></i></button>
+                                <button type="button" class="btn btn-sm btn-primary" data-toggle="tooltip" title="View Details" onclick="window.location = '@Url.Action("restore", "ItemTypes", new { Area = "administration", ItemTypeCode = item.ItemTypeCode })'"><i class="fa fa-eye"></i> View</button>
                             </td>
                         </tr>
                     }

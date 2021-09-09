@@ -1,0 +1,142 @@
+﻿@model IEnumerable<PUPFMIS.Models.InfrastructureRequestVM>
+
+@{
+    ViewBag.Title = "Project Planning";
+    ViewBag.Description = "Infrastructure Plan Request";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Dashboard", "dashboard", "Dashboard", new { area = "end-users" }, null)</li>
+        <li class="breadcrumb-item">Infra Plan Request List</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-list"></i> Infrastructure Plan Request List</h3>
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card-body table-responsive p-sm-0">
+            <table class="table table-striped table-hover" id="example2">
+                <thead>
+                    <tr>
+                        <th style="text-align: center; vertical-align: middle;" width="60%">
+                            Request Details
+                        </th>
+                        <th style="text-align: center; vertical-align: middle;" width="30%">
+                            @Html.DisplayNameFor(model => model.BackgroundOfProject)
+                        </th>
+                        <th style="text-align: center; vertical-align: middle;" width="10%">
+                            @Html.DisplayNameFor(model => model.Status)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td style="text-align:left; vertical-align:middle;">
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        <b>@Html.LabelFor(modelItem => item.Program, htmlAttributes: new { @class = "p-0 m-0" })</b>
+                                    </div>
+                                    <div class="col-sm-10">
+                                        <span>:&nbsp;</span>@Html.DisplayFor(modelItem => item.Program, new { @class = "p-0 m-0" }) <small>(@Html.DisplayFor(modelItem => item.PAPCode, new { @class = "p-0 m-0" }))</small>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        <b>@Html.Label("Project", htmlAttributes: new { @class = "p-0 m-0" })</b>
+                                    </div>
+                                    <div class="col-sm-10">
+                                        <span>:&nbsp;</span>@Html.DisplayFor(modelItem => item.ProposedProject, new { @class = "p-0 m-0" }) <small>(@Html.DisplayFor(modelItem => item.ProjectCode, new { @class = "p-0 m-0" }))</small>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        <b>@Html.LabelFor(modelItem => item.Unit, htmlAttributes: new { @class = "p-0 m-0" })</b>
+                                    </div>
+                                    <div class="col-sm-10">
+                                        <span>:&nbsp;</span>@Html.DisplayFor(modelItem => item.Unit, new { @class = "p-0 m-0" })
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="text-align:left; vertical-align:middle;">
+                                @Html.DisplayFor(modelItem => item.BackgroundOfProject)
+                            </td>
+                            <td style="text-align:left; vertical-align:middle;">
+                                @Html.DisplayFor(modelItem => item.Status)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-sm-12">
+        <div class="float-right">
+            @if (Model.Where(d => d.Status == PUPFMIS.Models.InfrastructurePlanRequestStatus.RequestCreated.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name).Count() >= 1)
+            {
+                using (Ajax.BeginForm("forward-to-implementing-unit", "ProjectPlans", new { Area = "end-users", FiscalYear = ViewBag.FiscalYear }, new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "addItem" }))
+                { @Html.AntiForgeryToken() }
+                <button style="text-align:left;" class="btn btn-primary btn-md" onclick="ForwardToImplementingUnit()"><i class="fa fa-share"></i> Forward Requests to Implementing Unit</button>
+            }
+            <button style="text-align:left;" class="btn btn-danger btn-md" onclick="window.location = '@Url.Action("dashboard", "Dashboard")'"><i class="fa fa-arrow-circle-left"></i> Back to Dashboard</button>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function ForwardToImplementingUnit() {
+        swal.fire({
+            title: "Forward Infrastructure Plan Requests?",
+            text: "You are about forward your Infrastructure Plan Requests to Implementing Unit, continue?",
+            icon: "question",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#addItem").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    icon: "error"
+                })
+            };
+        })
+    }
+    function CreateResult(data) {
+        if (data.result == true) {
+            swal.fire({
+                title: "Infrastructure Plan Requests Forwarded!",
+                text: "Infrastructure Plan Requests are successfully forwarded to Implementing Unit.",
+                icon: "success"
+            }).then((result) => {
+                if (result.value) {
+                    var url = "@Url.Action("infra-list", "ProjectPlans", new { Area = "end-users", FiscalYear = ViewBag.FiscalYear })";
+                    window.location.href = url;
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                icon: "error"
+            });
+        }
+        var vsummary = $("#ValidationSummary");
+        if (vsummary.val() != null) {
+            $("input").blur();
+            $(window).scrollTop(0,0);
+        }
+    }
+</script>

@@ -14,39 +14,17 @@
         <h6>Other Details:</h6>
         <table class="table">
             <tr>
-                <td width="20%"><strong>Type</strong></td>
-                <td width="80%">: @( Model.IsTangible == "Yes" ? "Item" : "Service")</td>
+                <td width="20%"><strong>@Html.DisplayNameFor(model => model.ArticleInformation.ArticleName)</strong></td>
+                <td width="80%">: @Html.DisplayFor(model => model.ArticleInformation.ArticleName)</td>
             </tr>
             <tr>
-                <td width="20%"><strong>@Html.DisplayNameFor(model => model.ItemCode)</strong></td>
-                <td width="80%">: @Html.DisplayFor(model => model.ItemCode)</td>
+                <td width="20%"><strong>@Html.DisplayNameFor(model => model.ArticleInformation.FKItemTypeReference.FKItemClassificationReference.Classification)</strong></td>
+                <td width="80%">: @Html.DisplayFor(model => model.ArticleInformation.FKItemTypeReference.FKItemClassificationReference.Classification)</td>
             </tr>
             <tr>
-                <td width="20%"><strong>@Html.DisplayNameFor(model => model.ItemShortSpecifications)</strong></td>
-                <td width="80%">: @Html.DisplayFor(model => model.ItemShortSpecifications)</td>
+                <td width="20%"><strong>@Html.DisplayNameFor(model => model.ArticleInformation.FKItemTypeReference.ItemType)</strong></td>
+                <td width="80%">: @Html.DisplayFor(model => model.ArticleInformation.FKItemTypeReference.ItemType)</td>
             </tr>
-            @if (Model.IsTangible == "Yes")
-            {
-                <tr>
-                    <td width="20%"><strong>@Html.DisplayNameFor(model => model.ItemSpecifications)</strong></td>
-                    <td width="80%">: @Html.DisplayFor(model => model.ItemSpecifications)</td>
-                </tr>
-            }
-            <tr>
-                <td width="20%"><strong>@Html.DisplayNameFor(model => model.Category)</strong></td>
-                <td width="80%">: @Html.DisplayFor(model => model.Category)</td>
-            </tr>
-            <tr>
-                <td width="20%"><strong>@Html.DisplayNameFor(model => model.InventoryType)</strong></td>
-                <td width="80%">: @Html.DisplayFor(model => model.InventoryType)</td>
-            </tr>
-            @if (Model.IsTangible == "Yes")
-            {
-                <tr>
-                    <td width="20%"><strong>@Html.DisplayNameFor(model => model.UnitPrice)</strong></td>
-                    <td width="80%">: @( Model.UnitPrice == null ? null : String.Format("{0:C}", Model.UnitPrice) )</td>
-                </tr>
-            }
             <tr>
                 <td width="20%"><strong>@Html.DisplayNameFor(model => model.ResponsibilityCenter)</strong></td>
                 <td width="80%">: @Html.DisplayFor(model => model.ResponsibilityCenter)</td>
@@ -54,6 +32,50 @@
             <tr>
                 <td width="20%"><strong>@Html.DisplayNameFor(model => model.PurchaseRequestOffice)</strong></td>
                 <td width="80%">: @Html.DisplayFor(model => model.PurchaseRequestOffice)</td>
+            </tr>
+            <tr>
+                <td width="20%"><strong>@Html.DisplayNameFor(model => model.ItemShortSpecifications)</strong></td>
+                <td width="80%">: @Html.DisplayFor(model => model.ItemShortSpecifications)</td>
+            </tr>
+            <tr>
+                <td width="20%"><strong>@Html.DisplayNameFor(model => model.IsSpecsUserDefined)</strong></td>
+                <td width="80%">: @( Model.IsSpecsUserDefined == true ? "Yes" : "No" )</td>
+            </tr>
+            <tr>
+                <td width="20%"><strong>@Html.DisplayNameFor(model => model.ItemSpecifications)</strong></td>
+                <td width="80%"> : 
+                    <i>
+                        <span style="white-space:pre-line">@Html.DisplayFor(modelItem => modelItem.ItemSpecifications)</span>
+                    </i>
+                </td>
+            </tr>
+            <tr>
+                <td width="20%"><strong>@Html.DisplayNameFor(model => model.Category)</strong></td>
+                <td width="80%">: @Html.DisplayFor(model => model.CategoryInfomation.ItemCategoryName)</td>
+            </tr>
+            <tr>
+                <td width="20%"><strong>@Html.DisplayNameFor(model => model.ProcurementSource)</strong></td>
+                <td width="80%">: @( Model.ProcurementSource == PUPFMIS.Models.ProcurementSources.AgencyToAgency ? "Department of Budget and Management - Procurement Service" : "External Suppliers" )</td>
+            </tr>
+            <tr>
+                <td width="20%"><strong>@Html.DisplayNameFor(model => model.QuantityPerPackage)</strong></td>
+                <td width="80%">: @Html.DisplayFor(model => model.QuantityPerPackage) @Html.DisplayFor(model => model.IndividualUnitInformation.UnitName) / @Html.DisplayFor(model => model.PackagingUnitInformation.UnitName)</td>
+            </tr>
+            <tr>
+                <td width="20%"><strong>@Html.DisplayNameFor(model => model.MinimumIssuanceQty)</strong></td>
+                <td width="80%">: @Html.DisplayFor(model => model.MinimumIssuanceQty) @Html.DisplayFor(model => model.IndividualUnitInformation.UnitName)</td>
+            </tr>
+            <tr>
+                <td width="20%"><strong>@Html.DisplayNameFor(model => model.IndividualUOMReference)</strong></td>
+                <td width="80%">: @Html.DisplayFor(model => model.IndividualUnitInformation.UnitName)</td>
+            </tr>
+            <tr>
+                <td width="20%"><strong>@Html.DisplayNameFor(model => model.PackagingUOMReference)</strong></td>
+                <td width="80%">: @Html.DisplayFor(model => model.PackagingUnitInformation.UnitName)</td>
+            </tr>
+            <tr>
+                <td width="20%"><strong>@Html.DisplayNameFor(model => model.UnitPrice)</strong></td>
+                <td width="80%">: @( Model.UnitPrice == null ? "Not Applicable" : ((decimal)Model.UnitPrice).ToString("C", new System.Globalization.CultureInfo("en-ph")) )</td>
             </tr>
             <tr>
                 <td width="20%"><strong>@Html.DisplayNameFor(model => model.PurgeFlag)</strong></td>

@@ -1,0 +1,65 @@
+﻿@model IEnumerable<PUPFMIS.Models.Item>
+
+@{
+    ViewBag.Title = "Market Survey";
+    ViewBag.Description = "New Items";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Market Survey", "dashboard")</li>
+        <li class="breadcrumb-item">New Items List</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-list"></i> New Items</h3>
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card-body table-responsive p-sm-0">
+            <table class="table table-striped table-hover" id="example2">
+                <thead>
+                    <tr>
+                        <th style="text-align:center;" width="20%">
+                            @Html.DisplayNameFor(model => model.ItemCode)
+                        </th>
+                        <th style="text-align:center;" width="50%">
+                            @Html.DisplayNameFor(model => model.ItemFullName)
+                        </th>
+                        <th style="text-align:center;" width="30%">
+                            Action
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td style="text-align:center; vertical-align:middle;">
+                                <b>@Html.DisplayFor(modelItem => item.ItemCode)</b>
+                            </td>
+                            <td style="text-align:left; vertical-align:middle;">
+                                @Html.DisplayFor(modelItem => item.ItemFullName)
+                            </td>
+                            <td style="text-align:center; vertical-align:top;">
+                                <button style="text-align:left;" class="btn btn-primary btn-sm" onclick="window.location = '@Url.Action("create", "MarketSurvey", new { ItemCode = item.ItemCode })'"><i class="fa fa-plus"></i> Create Market Survey for this Item</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-sm-12">
+        <div class="text-right">
+            <button style="text-align:left;" class="btn btn-danger btn-md" onclick="window.location = '@Url.Action("dashboard", "MarketSurvey")'"><i class="fa fa-arrow-circle-left"></i> Back to Dashboard</button>
+        </div>
+    </div>
+</div>

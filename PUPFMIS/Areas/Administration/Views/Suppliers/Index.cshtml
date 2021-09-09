@@ -2,14 +2,14 @@
 
 @{
     ViewBag.Title = "Suppliers";
-    ViewBag.Description = "Master";
+    ViewBag.Description = "List";
     Layout = "~/Views/Shared/_IndexLayout.cshtml";
 }
 
 @section BreadCrumb {
     <ol class="breadcrumb float-sm-right">
         <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
-        <li class="breadcrumb-item">@Html.ActionLink("Suppliers", "index")</li>
+        <li class="breadcrumb-item">@Html.ActionLink("Suppliers", "list")</li>
         <li class="breadcrumb-item">Home</li>
     </ol>
 }
@@ -21,7 +21,7 @@
 <div class="row">
     <div class="col-sm-12">
         <div class="text-right">
-            <button style="text-align:left;" class="btn btn-info btn-md" onclick="loadModal('@Url.Action("create","Suppliers")')"><i class="fa fa-plus"></i> Add New Supplier</button>
+            <button style="text-align:left;" class="btn btn-info btn-md" onclick="window.location = '@Url.Action("create","Suppliers")'"><i class="fa fa-plus"></i> Add New Supplier</button>
             <button style="text-align:left;" class="btn btn-secondary btn-md" onclick="window.location = '@Url.Action("restoreindex","Suppliers")'"><i class="fa fa-trash-restore"></i> Restore Deleted Suppliers</button>
         </div>
     </div>
@@ -59,21 +59,17 @@
                                 @Html.LabelFor(modelItem => item.Address) : @Html.DisplayFor(modelItem => item.Address)
                             </td>
                             <td align="center">
-                                <button type="button" class="btn btn-sm btn-primary" data-toggle="tooltip" title="View Details" onclick="loadModal('@Url.Action("details","Suppliers", new { id = item.ID })')"><i class="fa fa-eye"></i></button>
-                                <button type="button" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Edit Record" onclick="loadModal('@Url.Action("edit","Suppliers", new { id = item.ID })')"><i class="fa fa-edit"></i></button>
-                                <button type="button" class="btn btn-sm btn-danger" data-toggle="tooltip" title="Purge Record" onclick="loadModal('@Url.Action("delete","Suppliers", new { id = item.ID })')"><i class="fa fa-trash"></i></button>
+                                <button type="button" class="btn btn-sm btn-primary" data-toggle="tooltip" title="View Details" onclick="window.location = '@Url.Action("details","Suppliers", new { id = item.ID })'"><i class="fa fa-eye"></i></button>
+                                <button type="button" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Edit Record" onclick="window.location = '@Url.Action("edit","Suppliers", new { id = item.ID })'"><i class="fa fa-edit"></i></button>
+                                @if (item.ID != 1)
+                                {
+                                    <button type="button" class="btn btn-sm btn-danger" data-toggle="tooltip" title="Purge Record" onclick="window.location = '@Url.Action("delete","Suppliers", new { id = item.ID })'"><i class="fa fa-trash"></i></button>
+                                }
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
-        </div>
-    </div>
-</div>
-
-<div class="modal" id="modal-default">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content" id="modal-container">
         </div>
     </div>
 </div>

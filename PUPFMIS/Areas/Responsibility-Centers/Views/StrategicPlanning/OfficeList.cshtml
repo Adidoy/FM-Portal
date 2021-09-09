@@ -1,0 +1,88 @@
+﻿@model IEnumerable<PUPFMIS.Models.HRIS.HRISDepartmentDetailsVM>
+
+@{
+    ViewBag.Title = "Institutional Procurement Plan";
+    ViewBag.Description = "Office List";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Institutional Procurement Planning", "list")</li>
+        <li class="breadcrumb-item">Office List</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-right">
+        <h1 class="card-title"><i class="fa fa-bookmark"></i> Office List</h1>
+    </div>
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card-body table-responsive p-sm-0">
+            <table class="table table-striped table-hover" id="example2">
+                <thead>
+                    <tr>
+                        <th style="text-align:center;" width="15%">
+                            @Html.DisplayNameFor(model => model.DepartmentCode)
+                        </th>
+                        <th style="text-align:center;" width="20%">
+                            @Html.DisplayNameFor(model => model.Sector)
+                        </th>
+                        <th style="text-align:center;" width="25%">
+                            @Html.DisplayNameFor(model => model.Department)
+                        </th>
+                        <th style="text-align:center;" width="20%">
+                            Requestor
+                        </th>
+                        <th style="text-align:center;" width="20%">
+                            Action
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                    <tr>
+                        <td style="text-align:center; vertical-align:middle;">
+                            <b>@Html.DisplayFor(modelItem => item.DepartmentCode)</b>
+                        </td>
+                        <td style="text-align:left; vertical-align:middle;">
+                            @Html.DisplayFor(modelItem => item.Sector)
+                        </td>
+                        <td style="text-align:left; vertical-align:middle;">
+                            @Html.DisplayFor(modelItem => item.Department)
+                        </td>
+                        <td style="text-align:left; vertical-align:middle;">
+                            @Html.DisplayFor(modelItem => item.DepartmentHead)
+                        </td>
+                        @if (User.IsInRole(PUPFMIS.Models.SystemRoles.InfrastructureImplementingUnit))
+                        {
+                            <td style="text-align:center; vertical-align:middle;">
+                                <button style="text-align:left;" class="btn btn-primary btn-sm" onclick="window.location = '@Url.Action("infra-list", "StrategicPlanning", new { Area = "responsibility-centers", DepartmentCode = item.DepartmentCode })'"><i class="fa fa-eye"></i> View Projects</button>
+                            </td>
+                        }
+                        else
+                        {
+                            <td style="text-align:center; vertical-align:middle;">
+                                <button style="text-align:left;" class="btn btn-primary btn-sm" onclick="window.location = '@Url.Action("item-list", "StrategicPlanning", new { Area = "responsibility-centers", DepartmentCode = item.DepartmentCode })'"><i class="fa fa-eye"></i> View Projects</button>
+                            </td>
+                        }
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-sm-12">
+        <div style="text-align: right;">
+            <button type="button" class="btn btn-md btn-danger" onclick="window.location = '@Url.Action("dashboard", "StrategicPlanning", new { Area = "responsibility-centers" })'"><i class="fa fa-arrow-circle-left"></i> Back to Dashboard</button>
+        </div>
+    </div>
+</div>

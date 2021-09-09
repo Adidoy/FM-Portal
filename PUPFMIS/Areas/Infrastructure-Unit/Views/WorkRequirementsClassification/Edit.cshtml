@@ -1,0 +1,67 @@
+﻿@model PUPFMIS.Models.InfrastructureRequirementsClassification
+
+<div class="modal-header">
+    <h4 class="modal-title">Edit Classification Record</h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+@using (Ajax.BeginForm("edit", "WorkRequirementsClassification", new AjaxOptions() { HttpMethod = "POST", UpdateTargetId = "modal-container", OnSuccess = "CloseModal" }, htmlAttributes: new { id = "editUnit" }))
+{
+    <div class="modal-body" id="form-body">
+        @Html.AntiForgeryToken() 
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.ID)
+        <div class="form-group">
+            @Html.LabelFor(model => model.ClassificationName, htmlAttributes: new { @class = "control-label" })
+            @Html.EditorFor(model => model.ClassificationName, new { htmlAttributes = new { @class = "form-control", style = "font-size:100%; text-transform:uppercase;", @autocomplete = "off", placeholder = Html.DisplayNameFor(d => d.ClassificationName) } })
+            @Html.ValidationMessageFor(model => model.ClassificationName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+}
+<div class="modal-footer">
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary" id="save-btn"><i class="fa fa-save"></i>&nbsp; Save changes</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i>&nbsp; Close</button>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $("#save-btn").on('click', function (e) {
+        e.preventDefault();
+        swal.fire({
+            title: "Save changes?",
+            text: "You are about to update this record, continue?",
+            icon: "question",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#editUnit").submit();
+            }
+        })
+    });
+    function CloseModal(data) {
+        if (data.result === true) {
+            $('#modal-default').modal('hide');
+            if (data.result == true) {
+                swal.fire({
+                    title: "Record Saved!",
+                    text: "Record is successfully saved.",
+                    icon: "success"
+                }).then((result) => {
+                    if (result.value) {
+                        window.location.href = "@Url.Action("list", "WorkRequirementsClassification", new { Area = "infrastructure-unit" })";
+                    }
+                })
+            }
+            else {
+                swal.fire({
+                    title: "Record Not Saved!",
+                    text: "Saving record failed.",
+                    icon: "error"
+                })
+            }
+        }
+    };
+</script>

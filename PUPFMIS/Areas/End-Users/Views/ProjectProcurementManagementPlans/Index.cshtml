@@ -15,299 +15,303 @@
 }
 
 @section Header {
-    <h3 class="card-title"><i class="fa fa-list"></i> Budget Proposal - @Model.OfficeName</h3>
+    <h3 class="card-title"><i class="fa fa-list"></i> Budget Proposals</h3>
 }
-<h4>Summary</h4>
 
-<hr />
 <div class="row">
-    <div class="col-sm-12 pl-0 pr-0 ml-0 mr-0">
+    <div class="col-sm-12">
         <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title">PPMP List</h3>
+            </div>
             <div class="card-header d-flex p-0">
                 <ul class="nav nav-pills p-2">
-                    <li class="nav-item" style="font-size:12pt;"><a class="nav-link active" href="#mooe" data-toggle="tab"><i class="fa fa-list"></i>&nbsp; Maintenance and Other Operating Expenses</a></li>
-                    <li class="nav-item" style="font-size:12pt;"><a class="nav-link" href="#capitalOutlay" data-toggle="tab"><i class="fa fa-list"></i>&nbsp; Capital Outlay</a></li>
+                    <li class="nav-item" style="font-size:12pt;"><a class="nav-link active" href="#original" data-toggle="tab"><i class="fa fa-list"></i>&nbsp; Original</a></li>
+                    <li class="nav-item" style="font-size:12pt;"><a class="nav-link" href="#supplemental" data-toggle="tab"><i class="fa fa-list"></i>&nbsp; Supplemental</a></li>
+                    <li class="nav-item" style="font-size:12pt;"><a class="nav-link" href="#amendatory" data-toggle="tab"><i class="fa fa-list"></i>&nbsp; Amendatory</a></li>
                 </ul>
             </div>
             <div class="tab-content">
-                <div class="tab-pane active" id="mooe">
+                <div class="tab-pane active" id="original">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-sm-12">
-                                <div class="card card-info">
-                                    <div class="card-header"><h3 class="card-title">Summary of Proposed Maintenance and Other Operating Expenses (MOOE)</h3></div>
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <div class="card-body table-responsive p-sm-0">
-                                                    <table class="table table-striped table-hover" id="example2">
-                                                        <thead>
-                                                            <tr>
-                                                                <th style="text-align:center; vertical-align:middle" width="10%">
-                                                                    @Html.DisplayNameFor(model => model.MOOE.FirstOrDefault().UACS)
-                                                                </th>
-                                                                <th style="text-align:center; vertical-align:middle" width="45%">
-                                                                    @Html.DisplayNameFor(model => model.MOOE.FirstOrDefault().ObjectClassification)
-                                                                </th>
-                                                                <th style="text-align:center; vertical-align:middle" width="15%">
-                                                                    @Html.DisplayNameFor(model => model.MOOE.FirstOrDefault().Tier1)
-                                                                </th>
-                                                                <th style="text-align:center; vertical-align:middle" width="15%">
-                                                                    @Html.DisplayNameFor(model => model.MOOE.FirstOrDefault().Tier2)
-                                                                </th>
-                                                                <th style="text-align:center; vertical-align:middle" width="15%">
-                                                                    @Html.DisplayNameFor(model => model.MOOE.FirstOrDefault().TotalProposedProgram)
-                                                                </th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            @foreach(var item in Model.MOOE)
-                                                            {
-                                                                <tr>
-                                                                    <td style="text-align:center;">@Html.DisplayFor(modelItem => item.UACS)</td>
-                                                                    <td style="text-align:left;"><b>@Html.DisplayFor(modelItem => item.ObjectClassification)</b></td>
-                                                                    <td style="text-align:right">@( String.Format("{0:C}", item.Tier1) )</td>
-                                                                    <td style="text-align:right">@( String.Format("{0:C}", item.Tier2) )</td>
-                                                                    <td style="text-align:right">@( String.Format("{0:C}", item.TotalProposedProgram) )</td>
-                                                                </tr>
-                                                            }
-                                                        </tbody>
-                                                        <tfoot>
-                                                            <tr>
-                                                                <td style="text-align:right;" colspan="2"><h6>TOTAL:</h6></td>
-                                                                <td style="text-align:right;"><h6>@( String.Format("{0:C}", Model.MOOE.Sum(d => d.Tier1)) )</h6></td>
-                                                                <td style="text-align:right;"><h6>@( String.Format("{0:C}", Model.MOOE.Sum(d => d.Tier2)) )</h6></td>
-                                                                <td style="text-align:right;"><h6>@( String.Format("{0:C}", Model.MOOE.Sum(d => d.TotalProposedProgram)) )</h6></td>
-                                                            </tr>
-                                                        </tfoot>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane" id="capitalOutlay">
-                    <div class="card-body">
-                        <div class="card card-info">
-                            <div class="card-header"><h3 class="card-title">Summary of Proposed Capital Outlays</h3></div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="card-body table-responsive p-sm-0">
-                                            <table class="table table-striped table-hover" id="workflowItems">
-                                                <thead>
-                                                    <tr>
-                                                        <th style="text-align:center; vertical-align:middle" width="10%">
-                                                            @Html.DisplayNameFor(model => model.CaptialOutlay.FirstOrDefault().UACS)
-                                                        </th>
-                                                        <th style="text-align:center; vertical-align:middle" width="45%">
-                                                            @Html.DisplayNameFor(model => model.CaptialOutlay.FirstOrDefault().ObjectClassification)
-                                                        </th>
-                                                        <th style="text-align:center; vertical-align:middle" width="15%">
-                                                            @Html.DisplayNameFor(model => model.CaptialOutlay.FirstOrDefault().Tier1)
-                                                        </th>
-                                                        <th style="text-align:center; vertical-align:middle" width="15%">
-                                                            @Html.DisplayNameFor(model => model.CaptialOutlay.FirstOrDefault().Tier2)
-                                                        </th>
-                                                        <th style="text-align:center; vertical-align:middle" width="15%">
-                                                            @Html.DisplayNameFor(model => model.CaptialOutlay.FirstOrDefault().TotalProposedProgram)
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach (var item in Model.CaptialOutlay)
+                                <table class="table table-striped table-hover" id="ppmpListOriginal">
+                                    <thead>
+                                        <tr>
+                                            <th width="25%" style="text-align:center; vertical-align:middle">Reference No</th>
+                                            <th width="40%" style="text-align:center; vertical-align:middle">Classification</th>
+                                            <th width="20%" style="text-align:center; vertical-align:middle">Estimated Budget</th>
+                                            <th width="15%" style="text-align:center; vertical-align:middle">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.PPMPList.Where(d => d.PPMPType == PUPFMIS.Models.PPMPTypes.CommonUse || d.PPMPType == PUPFMIS.Models.PPMPTypes.Original).OrderBy(d => d.ReferenceNo).ToList())
+                                        {
+                                            <tr>
+                                                <td align="left">@Html.DisplayFor(d => item.ReferenceNo)</td>
+                                                <td align="left">
+                                                    @Html.DisplayFor(d => item.Classification)
+                                                    <br />
+                                                    @if (item.Status == PUPFMIS.Models.PPMPStatus.NewPPMP)
                                                     {
-                                                        <tr>
-                                                            <td style="text-align:center;">@Html.DisplayFor(modelItem => item.UACS)</td>
-                                                            <td style="text-align:left;"><b>@Html.DisplayFor(modelItem => item.ObjectClassification)</b></td>
-                                                            <td style="text-align:right">@( String.Format("{0:C}", item.Tier1) )</td>
-                                                            <td style="text-align:right">@( String.Format("{0:C}", item.Tier2) )</td>
-                                                            <td style="text-align:right">@( String.Format("{0:C}", item.TotalProposedProgram) )</td>
-                                                        </tr>
+                                                        <span class="badge bg-primary p-1" style="font-size:100%;">@( item.Status.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</span>
                                                     }
-                                                </tbody>
-                                                <tfoot>
-                                                    <tr>
-                                                        <td style="text-align:right;" colspan="2"><h6>TOTAL:</h6></td>
-                                                        <td style="text-align:right;"><h6>@( String.Format("{0:C}", Model.CaptialOutlay.Sum(d => d.Tier1)) )</h6></td>
-                                                        <td style="text-align:right;"><h6>@( String.Format("{0:C}", Model.CaptialOutlay.Sum(d => d.Tier2)) )</h6></td>
-                                                        <td style="text-align:right;"><h6>@( String.Format("{0:C}", Model.CaptialOutlay.Sum(d => d.TotalProposedProgram)) )</h6></td>
-                                                    </tr>
-                                                </tfoot>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
+                                                    @if (item.Status == PUPFMIS.Models.PPMPStatus.ForwardedToBudgetOffice || item.Status == PUPFMIS.Models.PPMPStatus.ReturnedForRevision)
+                                                    {
+                                                        <span class="badge bg-warning p-1" style="font-size:100%;">@( item.Status.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</span>
+                                                    }
+                                                    @if (item.Status == PUPFMIS.Models.PPMPStatus.EvaluatedByBudgetOffice || item.Status == PUPFMIS.Models.PPMPStatus.PostedToAPP)
+                                                    {
+                                                        <span class="badge bg-success p-1" style="font-size:100%;">@( item.Status.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</span>
+                                                    }
+                                                </td>
+                                                <td align="right">@( item.EstimatedBudget.ToString("C", new System.Globalization.CultureInfo("en-ph")) )</td>
+                                                <td align="center">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <button class="btn btn-primary btn-sm mb-1" onclick="onclick = window.location = '@Url.Action("details", "ProjectProcurementManagementPlans", new { Area = "end-users", ReferenceNo = item.ReferenceNo })'"><i class="fa fa-eye"></i> View Details</button>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="2" align="right"><h6><b>Total Estimated Budget:</b></h6></td>
+                                            <td align="right"><h6><b>@( Model.PPMPList.Where(d => d.PPMPType == PUPFMIS.Models.PPMPTypes.CommonUse || d.PPMPType == PUPFMIS.Models.PPMPTypes.Original).Sum(d => d.EstimatedBudget).ToString("C", new System.Globalization.CultureInfo("en-ph")) )</b></h6></td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
                             </div>
                         </div>
                     </div>
+                    @if (Model.PPMPList.Where(d => d.Status == PUPFMIS.Models.PPMPStatus.NewPPMP && (d.PPMPType == PUPFMIS.Models.PPMPTypes.CommonUse || d.PPMPType == PUPFMIS.Models.PPMPTypes.Original)).ToList().Count > 0)
+                    {
+                        <div class="card-footer">
+                            <div class="float-right">
+                                @using (Ajax.BeginForm("submit", "ProjectProcurementManagementPlans", new { Area = "end-users", FiscalYear = (int)Model.PPMPList.Select(d => d.FiscalYear).First(), PPMPType = PUPFMIS.Models.PPMPTypes.Original }, new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "ppmpOriginal" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <button type="button" style="width:153px;" class="btn btn-primary btn-md" onclick="SubmitPPMP()"><i class="fa fa-share-alt"></i> Submit PPMP</button>
+                                }
+                            </div>
+                        </div>
+                    }
                 </div>
-            </div>
-            <div class="card-footer">
-                <div class="row">
-                    <div class="col-12 bg-info">
-                        <div class="float-right">
-                            <h3 class="mt-2 mb-2" style="font-size:16pt;">TOTAL PROPOSED BUDGET : @( String.Format("{0:C}", Model.TotalProposedBudget) ) &emsp;</h3>
+                <div class="tab-pane" id="supplemental">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table class="table table-striped table-hover" id="ppmpListSupplemental">
+                                    <thead>
+                                        <tr>
+                                            <th width="25%" style="text-align:center; vertical-align:middle">Reference No</th>
+                                            <th width="40%" style="text-align:center; vertical-align:middle">Classification</th>
+                                            <th width="20%" style="text-align:center; vertical-align:middle">Estimated Budget</th>
+                                            <th width="15%" style="text-align:center; vertical-align:middle">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.PPMPList.Where(d => d.PPMPType == PUPFMIS.Models.PPMPTypes.Supplemental).OrderBy(d => d.ReferenceNo).ToList())
+                                        {
+                                            <tr>
+                                                <td align="left">@Html.DisplayFor(d => item.ReferenceNo)</td>
+                                                <td align="left">
+                                                    @Html.DisplayFor(d => item.Classification)
+                                                    <br />
+                                                    @if (item.Status == PUPFMIS.Models.PPMPStatus.NewPPMP)
+                                                    {
+                                                        <span class="badge bg-primary p-1" style="font-size:100%;">@( item.Status.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</span>
+                                                    }
+                                                    @if (item.Status == PUPFMIS.Models.PPMPStatus.ForwardedToBudgetOffice || item.Status == PUPFMIS.Models.PPMPStatus.ReturnedForRevision)
+                                                    {
+                                                        <span class="badge bg-primary p-1" style="font-size:100%;">@( item.Status.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</span>
+                                                    }
+                                                    @if (item.Status == PUPFMIS.Models.PPMPStatus.EvaluatedByBudgetOffice || item.Status == PUPFMIS.Models.PPMPStatus.PostedToAPP)
+                                                    {
+                                                        <span class="badge bg-success p-1" style="font-size:100%;">@( item.Status.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</span>
+                                                    }
+                                                </td>
+                                                <td align="right">@( item.EstimatedBudget.ToString("C", new System.Globalization.CultureInfo("en-ph")) )</td>
+                                                <td align="center">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <button class="btn btn-primary btn-sm mb-1" onclick="onclick = window.location = '@Url.Action("details", "ProjectProcurementManagementPlans", new { Area = "end-users", ReferenceNo = item.ReferenceNo })'"><i class="fa fa-eye"></i> View Details</button>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="2" align="right"><h6><b>Total Estimated Budget:</b></h6></td>
+                                            <td align="right"><h6><b>@( Model.PPMPList.Where(d => d.PPMPType == PUPFMIS.Models.PPMPTypes.Supplemental).Sum(d => d.EstimatedBudget).ToString("C", new System.Globalization.CultureInfo("en-ph")) )</b></h6></td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
                         </div>
                     </div>
+                    @if (Model.PPMPList.Where(d => d.Status == PUPFMIS.Models.PPMPStatus.NewPPMP && (d.PPMPType == PUPFMIS.Models.PPMPTypes.Supplemental)).ToList().Count > 0)
+                    {
+                        <div class="card-footer">
+                            <div class="float-right">
+                                @using (Ajax.BeginForm("submit", "ProjectProcurementManagementPlans", new { Area = "end-users", FiscalYear = (int)Model.PPMPList.Select(d => d.FiscalYear).First(), PPMPType = PUPFMIS.Models.PPMPTypes.Supplemental }, new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "ppmpOriginal" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <button type="button" style="width:153px;" class="btn btn-primary btn-md" onclick="SubmitPPMP()"><i class="fa fa-share-alt"></i> Submit PPMP</button>
+                                }
+                            </div>
+                        </div>
+                    }
                 </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-12 pl-0 pr-0 ml-0 mr-0">
-        <div class="row">
-            <div class="col-12">
-                <div class="float-right">
-                    <a class="btn btn-primary btn-md" href="@Url.Action("print-budget-proposal", "ProjectProcurementManagementPlans", new { Area = "end-users", FiscalYear = Model.FiscalYear })" target="_blank"><i class="fa fa-print"></i> Print Budget Summary</a>
+                <div class="tab-pane" id="amendatory">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table class="table table-striped table-hover" id="ppmpListAmendatory">
+                                    <thead>
+                                        <tr>
+                                            <th width="25%" style="text-align:center; vertical-align:middle">Reference No</th>
+                                            <th width="40%" style="text-align:center; vertical-align:middle">Classification</th>
+                                            <th width="20%" style="text-align:center; vertical-align:middle">Estimated Budget</th>
+                                            <th width="15%" style="text-align:center; vertical-align:middle">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.PPMPList.Where(d => d.PPMPType == PUPFMIS.Models.PPMPTypes.Amendatory).OrderBy(d => d.ReferenceNo).ToList())
+                                        {
+                                            <tr>
+                                                <td align="left">@Html.DisplayFor(d => item.ReferenceNo)</td>
+                                                <td align="left">
+                                                    @Html.DisplayFor(d => item.Classification)
+                                                    <br />
+                                                    @if (item.Status == PUPFMIS.Models.PPMPStatus.NewPPMP)
+                                                    {
+                                                        <span class="badge bg-primary p-1" style="font-size:100%;">@( item.Status.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</span>
+                                                    }
+                                                    @if (item.Status == PUPFMIS.Models.PPMPStatus.ForwardedToBudgetOffice || item.Status == PUPFMIS.Models.PPMPStatus.ReturnedForRevision)
+                                                    {
+                                                        <span class="badge bg-primary p-1" style="font-size:100%;">@( item.Status.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</span>
+                                                    }
+                                                    @if (item.Status == PUPFMIS.Models.PPMPStatus.EvaluatedByBudgetOffice || item.Status == PUPFMIS.Models.PPMPStatus.PostedToAPP)
+                                                    {
+                                                        <span class="badge bg-success p-1" style="font-size:100%;">@( item.Status.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name )</span>
+                                                    }
+                                                </td>
+                                                <td align="right">@( item.EstimatedBudget.ToString("C", new System.Globalization.CultureInfo("en-ph")) )</td>
+                                                <td align="center">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <button class="btn btn-primary btn-sm mb-1" onclick="onclick = window.location = '@Url.Action("details", "ProjectProcurementManagementPlans", new { Area = "end-users", ReferenceNo = item.ReferenceNo })'"><i class="fa fa-eye"></i> View Details</button>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="2" align="right"><h6><b>Total Estimated Budget:</b></h6></td>
+                                            <td align="right"><h6><b>@( Model.PPMPList.Where(d => d.PPMPType == PUPFMIS.Models.PPMPTypes.Amendatory).Sum(d => d.EstimatedBudget).ToString("C", new System.Globalization.CultureInfo("en-ph")) )</b></h6></td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    @if (Model.PPMPList.Where(d => d.Status == PUPFMIS.Models.PPMPStatus.NewPPMP && (d.PPMPType == PUPFMIS.Models.PPMPTypes.Amendatory)).ToList().Count > 0)
+                    {
+                        <div class="card-footer">
+                            <div class="float-right">
+                                @using (Ajax.BeginForm("submit", "ProjectProcurementManagementPlans", new { Area = "end-users", FiscalYear = (int)Model.PPMPList.Select(d => d.FiscalYear).First(), PPMPType = PUPFMIS.Models.PPMPTypes.Supplemental }, new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "ppmpOriginal" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <button type="button" style="width:153px;" class="btn btn-primary btn-md" onclick="SubmitPPMP()"><i class="fa fa-share-alt"></i> Submit PPMP</button>
+                                }
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
     </div>
 </div>
-<br /><br />
-<h4>PPMP List</h4>
-<hr />
-@using (Ajax.BeginForm("submit-ppmp", "ProjectProcurementManagementPlans", new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "addItem", Area = "end-users" }))
-{
-    @Html.AntiForgeryToken()
-    @Html.HiddenFor(model => model.FiscalYear)
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="card-body table-responsive p-sm-0">
-                <table class="table table-striped table-hover" id="example2">
-                    <thead>
-                        <tr>
-                            <th style="text-align:center; vertical-align:middle" width="25%">
-                                @Html.DisplayNameFor(model => model.PPMPList.FirstOrDefault().ReferenceNo)
-                            </th>
-                            <th style="text-align:center; vertical-align:middle" width="10%">
-                                @Html.DisplayNameFor(model => model.PPMPList.FirstOrDefault().FiscalYear)
-                            </th>
-                            <th style="text-align:center; vertical-align:middle" width="15%">
-                                @Html.DisplayNameFor(model => model.PPMPList.FirstOrDefault().EstimatedBudget)
-                            </th>
-                            <th style="text-align:center; vertical-align:middle" width="15%">
-                                @Html.DisplayNameFor(model => model.PPMPList.FirstOrDefault().ApprovedBudget)
-                            </th>
-                            <th style="text-align:center; vertical-align:middle" width="20%">
-                                @Html.DisplayNameFor(model => model.PPMPList.FirstOrDefault().Status)
-                            </th>
-                            <th style="text-align:center; vertical-align:middle" width="15%">
-                                Action
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        
-                        @for (var item = 0; item < Model.PPMPList.Count; item++)
-                        {
-                            <tr>
-                                <td align="justify">
-                                    @if (Model.PPMPList[item].Status != "New PPMP")
-                                    {
-                                        @Html.CheckBoxFor(m => Model.PPMPList[item].IsSelected, htmlAttributes: new { disabled = "disabled" })<span>&emsp;</span><b>@Html.DisplayFor(modelItem => Model.PPMPList[item].ReferenceNo)</b>
-                                    }
-                                    else
-                                    {
-                                        @Html.HiddenFor(modelItem => Model.PPMPList[item].ReferenceNo)
-                                        @Html.CheckBoxFor(m => Model.PPMPList[item].IsSelected)<span>&emsp;</span><b>@Html.DisplayFor(modelItem => Model.PPMPList[item].ReferenceNo)</b>
-                                    }
-                                    
-                                </td>
-                                <td align="center">
-                                    @Html.HiddenFor(modelItem => Model.PPMPList[item].FiscalYear)
-                                    @Html.DisplayFor(modelItem => Model.PPMPList[item].FiscalYear)
-                                </td>
-                                <td align="right">
-                                    @Html.HiddenFor(modelItem => Model.PPMPList[item].EstimatedBudget)
-                                    @( String.Format("{0:C}", Model.PPMPList[item].EstimatedBudget) )
-                                </td>
-                                <td align="right">
-                                    @*@Html.HiddenFor(modelItem => Model.PPMPList[item].ApprovedBudget)*@
-                                    @( String.Format("{0:C}", Model.PPMPList[item].ApprovedBudget) )
-                                </td>
-                                <td align="center">
-                                    @Html.HiddenFor(modelItem => Model.PPMPList[item].Status)
-                                    @if (Model.PPMPList[item].Status == "New PPMP")
-                                    {
-                                        <span class="badge bg-secondary p-1" style="font-size:100%;">@Html.DisplayFor(modelItem => Model.PPMPList[item].Status)</span>
-                                    }
-                                    else if (Model.PPMPList[item].Status == "PPMP Submitted")
-                                    {
-                                        <span class="badge bg-warning p-1" style="font-size:100%;">@Html.DisplayFor(modelItem => Model.PPMPList[item].Status)</span>
-                                    }
-                                    else if (Model.PPMPList[item].Status == "PPMP Evaluated")
-                                    {
-                                        <span class="badge bg-success p-1" style="font-size:100%;">@Html.DisplayFor(modelItem => Model.PPMPList[item].Status)</span>
-                                    }
-                                    else if (Model.PPMPList[item].Status == "Posted to APP")
-                                    {
-                                        <span class="badge bg-primary p-1" style="font-size:100%;">@Html.DisplayFor(modelItem => Model.PPMPList[item].Status)</span>
-                                    }
-                                </td>
-                                <td style="vertical-align:middle; text-align:center;">
-                                    <a class="btn btn-sm btn-primary" href = "@Url.Action("print-ppmp", "ProjectProcurementManagementPlans", new { Area = "end-users", ReferenceNo = Model.PPMPList[item].ReferenceNo })" target="_blank"><i class="fa fa-print"></i> Print PPMP</a>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <hr />
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="text-right">
-                <button type="button" style="text-align:left;" class="btn btn-primary btn-md" onclick="SubmitPPMP()"><i class="fa fa-share"></i> Submit Selected PPMP</button>
-                <button type="button" style="text-align:left;" class="btn btn-danger btn-md" onclick="window.location = '@Url.Action("dashboard", "Dashboard")'"><i class="fa fa-arrow-circle-left"></i> Back to Dashboard</button>
-            </div>
-        </div>
-    </div>
-}
 
 <script type="text/javascript">
+    $(function () {
+        $('#ppmpListOriginal').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true
+        });
+    });
+    $(function () {
+        $('#ppmpListSupplemental').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true
+        });
+    });
+    $(function () {
+        $('#ppmpListAmendatory').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true
+        });
+    });
+    $(function () {
+        $('#ppmpYearsList').DataTable({
+            "paging": false,
+            "pageLength": 3,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": false,
+            "info": false,
+            "autoWidth": false,
+        });
+    });
     function SubmitPPMP() {
-        if ($("#addItem input:checkbox:checked").length == 0) {
-            swal.fire({
-                title: "Oops!",
-                html: "<p>Please select a PPMP first by ticking the check box.<br /><i style = 'font-size: 10.5pt;'>If the check boxes are disabled, it means that the PPMP is already submitted.</i></p>",
-                type: "warning"
-            })
-        }
-        else {
-            swal.fire({
-                title: "Submit PPMP?",
-                text: "You are about to submit your PPMP, continue?",
-                type: "warning",
-                showCancelButton: true,
-            }).then((result) => {
-                if (result.value) {
-                    $("#addItem").submit();
-                }
-                else {
-                    swal.fire({
-                        title: "Cancelled!",
-                        text: "You have cancelled saving the record.",
-                        type: "error"
-                    })
-                };
-            })
-        }
+        swal.fire({
+            title: "Submit PPMP?",
+            text: "You are about submit your PPMP, continue?",
+            icon: "question",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#ppmpOriginal").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    icon: "error"
+                })
+            };
+        })
     }
     function CreateResult(data) {
-        if (data == true) {
+        if (data.result == true) {
             swal.fire({
                 title: "PPMP Submitted!",
-                html: "<p>PPMP is successfully submitted!</p><p style = 'font-size: 10pt; text-align: justify;'><b>REMINDER:</b> Duly signed copy of PPMP must be forwarded to the Budget Services Office.</p>",
-                type: "success"
+                text: "PPMPs are successfully forwarded to Budget Office.",
+                icon: "success"
             }).then((result) => {
                 if (result.value) {
-                    window.location.href = "@Url.Action("list", "ProjectProcurementManagementPlans", new { Area = "end-users", FiscalYear = Model.FiscalYear })";
+                    var url = "@Url.Action("dashboard", "ProjectProcurementManagementPlans", new { Area = "end-users" })";
+                    window.location.href = url;
                 }
             })
         }
@@ -315,7 +319,7 @@
             swal.fire({
                 title: "Record Not Saved!",
                 text: "Saving record failed.",
-                type: "error"
+                icon: "error"
             });
         }
     }

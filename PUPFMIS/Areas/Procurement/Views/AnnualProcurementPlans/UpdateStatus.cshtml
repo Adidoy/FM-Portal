@@ -74,7 +74,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fa fa-user-alt"></i></span>
                     </div>
-                    @Html.EditorFor(model => model.ApprovedBy, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
+                    @Html.EditorFor(model => model.ApprovedBy, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled", Value = Model.ApprovedBy.Replace("\n", " / ").ToString() } })
                 </div>
             </div>
         </div>
@@ -82,13 +82,13 @@
     <div class="row">
         <div class="col-lg-6 col-md-6 col-sm-12">
             <div class="form-group">
-                @Html.Label("Bids and Awards Secretariat", htmlAttributes: new { @class = "control-label" })
+                @Html.Label("Recommending Approval", htmlAttributes: new { @class = "control-label" })
                 @Html.HiddenFor(model => model.CertifiedBy)
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fa fa-user"></i></span>
                     </div>
-                    @Html.EditorFor(model => model.CertifiedBy, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
+                    @Html.EditorFor(model => model.CertifiedBy, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled", Value = Model.CertifiedBy.Replace("\n", " / ").ToString() } })
                 </div>
             </div>
         </div>
@@ -100,7 +100,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fa fa-user"></i></span>
                     </div>
-                    @Html.EditorFor(model => model.ProcurementOfficer, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
+                    @Html.EditorFor(model => model.ProcurementOfficer, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled", Value = Model.PreparedBy.Replace("\n", " / ").ToString() } })
                 </div>
             </div>
         </div>
@@ -122,27 +122,34 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fa fa-user-alt"></i></span>
                     </div>
-                    @Html.EditorFor(model => model.PreparedBy, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
+                    @Html.EditorFor(model => model.PreparedBy, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled", Value = Model.PreparedBy.Replace("\n", " / ").ToString() } })
                 </div>
             </div>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-12">
             <div class="form-group">
                 @Html.LabelFor(model => model.PreparedAt, htmlAttributes: new { @class = "control-label" })
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                @if (Model.PreparedAt != null)
+                {
+                    @Html.HiddenFor(model => model.PreparedAt)
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.PreparedAt, new { htmlAttributes = new { @class = "form-control form-control-sm pull-right", style = "font-size: 100%", disabled = "disabled", Value = ((DateTime)Model.PreparedAt).ToString("dd MMMM yyyy") } })
                     </div>
-                    @if (Model.PreparedAt != null)
-                    {
-                        @Html.HiddenFor(model => model.PreparedAt)
-                        @Html.EditorFor(model => model.PreparedAt, new { htmlAttributes = new { @class = "form-control form-control-sm pull-right", style = "font-size: 100%", disabled = "disabled", Value = ((DateTime)Model.PreparedAt).ToString("MMMM dd, yyyy") } })
-                    }
-                    else
-                    {
-                        @Html.EditorFor(model => model.PreparedAt, new { htmlAttributes = new { @class = "form-control form-control-sm pull-right", style = "font-size: 100%" } })
-                    }
-                </div>
+                }
+                else
+                {
+                    <div class="input-group mb-3 date" id="PreparedAt1" data-target-input="nearest">
+                        <div class="input-group-prepend" data-target="#PreparedAt1" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                        @Html.EditorFor(model => Model.PreparedAt, new { htmlAttributes = new { @class = "form-control form-control-sm datetimepicker-input", data_target = "#PreparedAt1", style = "font-size: 100%", placeholder = Html.DisplayNameFor(model => Model.PreparedAt) } })
+                    </div>
+                    @Html.ValidationMessageFor(model => Model.PreparedAt, "", new { @class = "text-danger" })
+                }
+
             </div>
         </div>
     </div>
@@ -155,27 +162,34 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fa fa-user-alt"></i></span>
                     </div>
-                    @Html.EditorFor(model => model.CertifiedBy, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
+                    @Html.EditorFor(model => model.CertifiedBy, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled", Value = Model.CertifiedBy.Replace("\n", " / ").ToString() } })
                 </div>
             </div>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-12">
             <div class="form-group">
                 @Html.LabelFor(model => model.CertifiedAt, htmlAttributes: new { @class = "control-label" })
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                @if (Model.PreparedAt != null && Model.CertifiedAt != null)
+                {
+                    @Html.HiddenFor(model => model.CertifiedAt)
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.CertifiedAt, new { htmlAttributes = new { @class = "form-control form-control-sm pull-right", style = "font-size: 100%", disabled = "disabled", Value = Model.CertifiedAt == null ? string.Empty : ((DateTime)Model.CertifiedAt).ToString("MMMM dd, yyyy") } })
                     </div>
-                    @if (Model.CertifiedAt != null || Model.PreparedAt == null)
-                    {
-                        @Html.HiddenFor(model => model.CertifiedAt)
-                        @Html.EditorFor(model => model.CertifiedAt, new { htmlAttributes = new { @class = "form-control form-control-sm pull-right", style = "font-size: 100%", disabled = "disabled", Value = Model.CertifiedAt == null ? "" : ((DateTime)Model.CertifiedAt).ToString("MMMM dd, yyyy") } })
-                    }
-                    else
-                    {
-                        @Html.EditorFor(model => model.CertifiedAt, new { htmlAttributes = new { @class = "form-control form-control-sm pull-right", style = "font-size: 100%" } })
-                    }
-                </div>
+                }
+                else
+                {
+                    <div class="input-group mb-3 date" id="CertifiedAt1" data-target-input="nearest">
+                        <div class="input-group-prepend" data-target="#CertifiedAt1" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                        @Html.EditorFor(model => Model.CertifiedAt, new { htmlAttributes = new { @class = "form-control form-control-sm datetimepicker-input", data_target = "#CertifiedAt1", style = "font-size: 100%", placeholder = Html.DisplayNameFor(model => Model.CertifiedAt), Value = string.Empty } })
+                    </div>
+                    @Html.ValidationMessageFor(model => Model.CertifiedAt, "", new { @class = "text-danger" })
+                }
+
             </div>
         </div>
     </div>
@@ -188,27 +202,34 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fa fa-user-alt"></i></span>
                     </div>
-                    @Html.EditorFor(model => model.ApprovedBy, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled" } })
+                    @Html.EditorFor(model => model.ApprovedBy, new { htmlAttributes = new { @class = "form-control form-control-sm", style = "font-size: 100%", disabled = "disabled", Value = Model.ApprovedBy.Replace("\n", " / ").ToString() } })
                 </div>
             </div>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-12">
             <div class="form-group">
                 @Html.LabelFor(model => model.ApprovedAt, htmlAttributes: new { @class = "control-label" })
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                @if (Model.CertifiedAt != null && Model.ApprovedAt != null)
+                {
+                    @Html.HiddenFor(model => model.ApprovedAt)
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                        </div>
+                        @Html.EditorFor(model => model.ApprovedAt, new { htmlAttributes = new { @class = "form-control form-control-sm pull-right", style = "font-size: 100%", disabled = "disabled", Value = Model.ApprovedAt == null ? string.Empty : ((DateTime)Model.ApprovedAt).ToString("MMMM dd, yyyy") } })
                     </div>
-                    @if (Model.ApprovedAt != null || Model.CertifiedAt == null)
-                    {
-                        @Html.HiddenFor(model => model.ApprovedAt)
-                        @Html.EditorFor(model => model.ApprovedAt, new { htmlAttributes = new { @class = "form-control form-control-sm pull-right", style = "font-size: 100%", disabled = "disabled", Value = Model.ApprovedAt == null ? "" :((DateTime)Model.ApprovedAt).ToString("MMMM dd, yyyy") } })
-                    }
-                    else
-                    {
-                        @Html.EditorFor(model => model.ApprovedAt, new { htmlAttributes = new { @class = "form-control form-control-sm pull-right", style = "font-size: 100%" } })
-                    }
-                </div>
+                }
+                else
+                {
+                    <div class="input-group mb-3 date" id="ApprovedAt1" data-target-input="nearest">
+                        <div class="input-group-prepend" data-target="#ApprovedAt1" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                        @Html.EditorFor(model => Model.ApprovedAt, new { htmlAttributes = new { @class = "form-control form-control-sm datetimepicker-input", data_target = "#ApprovedAt1", style = "font-size: 100%", placeholder = Html.DisplayNameFor(model => Model.ApprovedAt), Value = string.Empty } })
+                    </div>
+                    @Html.ValidationMessageFor(model => Model.ApprovedAt, "", new { @class = "text-danger" })
+                }
+
             </div>
         </div>
     </div>
@@ -222,36 +243,30 @@
     </div>
 }
 
-<script src="~/Scripts/adminlte/components/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+
 <script type="text/javascript">
     $(function () {
-        $("#PreparedAt").datepicker({
-            changeYear: true,
-            changeMonth: true,
-            format: "MM dd, yyyy",
-            startDate: new Date('@Model.CreatedAt.ToString("MM/dd/yyyy")'),
-            autoclose: true
+        $("#PreparedAt1").datetimepicker({
+            useCurrent: true,
+            defaultDate: '@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")',
+            format: 'DD MMMM YYYY hh:mm A'
         });
-        $("#CertifiedAt").datepicker({
-            changeYear: true,
-            changeMonth: true,
-            format: "MM dd, yyyy",
-            startDate: new Date('@(Model.PreparedAt == null ? null : ((DateTime)Model.PreparedAt).ToString("MM/dd/yyyy") )'),
-            autoclose: true
+        $("#CertifiedAt1").datetimepicker({
+            useCurrent: true,
+            defaultDate: '@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")',
+            format: 'DD MMMM YYYY hh:mm A'
         });
-        $("#ApprovedAt").datepicker({
-            changeYear: true,
-            changeMonth: true,
-            format: "MM dd, yyyy",
-            startDate: new Date('@( Model.CertifiedAt == null ? null : ((DateTime)Model.CertifiedAt).ToString("MM/dd/yyyy") )'),
-            autoclose: true
+        $("#ApprovedAt1").datetimepicker({
+            useCurrent: true,
+            defaultDate: '@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")',
+            format: 'DD MMMM YYYY hh:mm A'
         });
     });
     function SaveItem() {
         swal.fire({
             title: "Save record?",
             text: "You are about to update this record, continue?",
-            type: "warning",
+            icon: "question",
             showCancelButton: true,
         }).then((result) => {
             if (result.value) {
@@ -261,7 +276,7 @@
                 swal.fire({
                     title: "Cancelled!",
                     text: "You have cancelled saving the record.",
-                    type: "error"
+                    icon: "error"
                 })
             }
         })
@@ -271,7 +286,7 @@
             swal.fire({
                 title: "Record Saved!",
                 text: "Record is successfully updated.",
-                type: "success"
+                icon: "success"
             }).then((result) => {
                 if (result.value) {
                     window.location.href = "@Url.Action("list", "AnnualProcurementPlans", new { Area = "procurement", FiscalYear = Model.FiscalYear })";
@@ -282,7 +297,7 @@
             swal.fire({
                 title: "Record Not Saved!",
                 text: "Saving record failed.",
-                type: "error"
+                icon: "error"
             })
         }
 

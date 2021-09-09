@@ -1,0 +1,104 @@
+﻿@model PUPFMIS.Models.InfrastructureProjectsVM
+
+@{
+    ViewBag.Title = "Infrastructure Project";
+    ViewBag.Description = "Detailed Estimate";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Infrastructure Projects", "list", "InfrastructureProjects", new { area = "infrastructure-unit" }, null)</li>
+        <li class="breadcrumb-item">Detailed Estimate</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-right">
+        <h1 class="card-title"><i class="fa fa-bookmark"></i> Infrastruture Detailed Estimate</h1>
+    </div>
+}
+
+@using (Ajax.BeginForm("details", "InfrastructureProjects", new { Area = "infrastructure-unit" }, new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult", UpdateTargetId = "form-container" }, htmlAttributes: new { id = "addItem" }))
+{
+    @Html.AntiForgeryToken()
+    <div id="form-container">
+        @Html.HiddenFor(d => Model.Project.ID)
+        @Html.HiddenFor(d => Model.Project.ProjectTitle)
+        @Html.HiddenFor(d => Model.Project.ProjectLocation)
+        @Html.HiddenFor(d => Model.Project.ContractDuration)
+        @Html.HiddenFor(d => Model.Project.RequestReference)
+        @Html.Partial("_Details")
+    </div>
+}
+
+@section FormFooter {
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" onclick="SaveInfrastructureRequest()" id="btn-save"><i class="fa fa-save"></i>&nbsp; Post to PPMP</button>
+                <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("list", "InfrastructureRequests", new { Area = "infrastructure-unit", FiscalYear = ViewBag.FiscalYear })'"><i class="fa fa-times-circle"></i>&nbsp; Cancel</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    function SaveInfrastructureRequest() {
+        swal.fire({
+            title: "Save Infrastructure Plan Request?",
+            text: "You are about to the Infrastructure Plan Request, continue?",
+            icon: "question",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#addItem").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    icon: "error"
+                })
+            };
+        })
+    }
+    function CreateResult(data) {
+        if (data.result == true) {
+            swal.fire({
+                title: "Record Saved!",
+                text: "Infrastructure Plan Request is successfully saved.",
+                icon: "success"
+            }).then((result) => {
+                if (result.value) {
+                    var url = "@Url.Action("list", "InfrastructureRequests", new { Area = "infrastructure-unit", FiscalYear = ViewBag.FiscalYear })";
+                    window.location.href = url;
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                icon: "error"
+            });
+        }
+        var vsummary = $("#ValidationSummary");
+        if (vsummary.val() != null) {
+            $("input").blur();
+            $(window).scrollTop(0,0);
+        }
+    }
+    function EnableReason() {
+        var acceptance = document.getElementById('Acceptance').value;
+        if(acceptance == 1)
+        {
+            document.getElementById('ReasonForNonAcceptance').disabled = false;
+        }
+        else
+        {
+            document.getElementById('ReasonForNonAcceptance').disabled = true;
+        }
+    }
+</script>

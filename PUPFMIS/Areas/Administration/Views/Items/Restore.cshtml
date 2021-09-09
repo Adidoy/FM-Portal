@@ -38,7 +38,7 @@
         swal.fire({
             title: "Restore record?",
             text: "You are about to restore this record, continue?",
-            type: "warning",
+            icon: "question",
             showCancelButton: true,
         }).then((result) => {
             if (result.value) {
@@ -48,7 +48,7 @@
                 swal.fire({
                     title: "Cancelled!",
                     text: "You have cancelled record restoration.",
-                    type: "error"
+                    icon: "error"
                 })
             };
         })
@@ -58,7 +58,7 @@
             swal.fire({
                 title: "Record Restored!",
                 text: "Record is successfully restored.",
-                type: "success"
+                icon: "success"
             }).then((result) => {
                 if (result.value) {
                     window.location.href = "@Url.Action("list", "Items", new { Area = "administration" })";
@@ -69,7 +69,7 @@
             swal.fire({
                 title: "Record Not Saved!",
                 text: "Saving record failed.",
-                type: "error"
+                icon: "error"
             });
         }
     }

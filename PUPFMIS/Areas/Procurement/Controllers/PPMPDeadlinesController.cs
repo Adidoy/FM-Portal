@@ -51,7 +51,7 @@ namespace PUPFMIS.Controllers
             ValidatePPMPDeadline(PPMPDeadlines);
             if (ModelState.IsValid)
             {
-                if(ppmpDeadlinesBL.SetNewDeadline(PPMPDeadlines) == true)
+                if (ppmpDeadlinesBL.SetNewDeadline(PPMPDeadlines) == true)
                 {
                     return Json(new { status = "success" });
                 }
@@ -113,7 +113,7 @@ namespace PUPFMIS.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             PPMPDeadlines PPMPDeadline = ppmpDeadlinesBL.GetDeadlineDetails(id);
-            if(ppmpDeadlinesBL.UpdateDeadline(PPMPDeadline, true))
+            if (ppmpDeadlinesBL.UpdateDeadline(PPMPDeadline, true))
             {
                 return Json(new { status = "success" });
             }

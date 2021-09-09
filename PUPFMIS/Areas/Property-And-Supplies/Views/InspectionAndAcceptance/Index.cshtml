@@ -1,0 +1,90 @@
+﻿@model IEnumerable<PUPFMIS.Models.InspectionListVM>
+
+@{
+    ViewBag.Title = "Inspection and Acceptance";
+    ViewBag.Description = "List";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Inspection and Acceptance", "dashboard")</li>
+        <li class="breadcrumb-item">List</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-list"></i> Delivery List</h3>
+}
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card-body table-responsive p-sm-0">
+            <table class="table table-striped table-hover display">
+                <thead>
+                    <tr>
+                        <th style="text-align: center; vertical-align: middle;" width="20%">
+                            Inspection and Acceptance Report No.
+                        </th>
+                        <th style="text-align: center; vertical-align: middle;" width="20%">
+                            Supplier
+                        </th>
+                        <th style="text-align: center; vertical-align: middle;" width="20%">
+                            Inspected By
+                        </th>
+                        <th style="text-align: center; vertical-align: middle;" width="20%">
+                            Date Inspected
+                        </th>
+                        <th style="text-align: center; vertical-align: middle;" width="20%">
+                            Action
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td style="text-align:left; vertical-align:top;">
+                                <b>@Html.DisplayFor(modelItem => item.IARNumber)</b>
+                            </td>
+                            <td style="text-align:left; vertical-align:top;">
+                                <b>@Html.DisplayFor(modelItem => item.Supplier)</b>
+                            </td>
+                            <td style="text-align:center; vertical-align:top;">
+                                @Html.DisplayFor(modelItem => item.InspectedBy)
+                            </td>
+                            <td style="text-align:center; vertical-align:top;">
+                                <i>@Html.DisplayFor(modelItem => item.InspectedAt)</i>
+                            </td>
+                            <td style="text-align:center; vertical-align:top;">
+                                <a class="btn btn-sm btn-primary" href="@Url.Action("print-iar", "InspectionAndAcceptance", new { Area = "property-and-supplies", ReferenceNo = item.IARNumber })" target="_blank"><i class="fa fa-print"></i> Print Inspection Report</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-sm-12 text-right">
+        <div class="form-group">
+            <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("dashboard", "InspectionAndAcceptance", new { Area = "property-and-supplies" })'"><i class="fa fa-arrow-alt-circle-left"></i>&nbsp; Back to Dashboard</button>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('table.display').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": false,
+            "info": true,
+            "autoWidth": false,
+        });
+    });
+</script>

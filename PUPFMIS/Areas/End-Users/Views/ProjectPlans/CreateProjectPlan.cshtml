@@ -8,8 +8,8 @@
 
 @section BreadCrumb {
     <ol class="breadcrumb float-sm-right">
-        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
-        <li class="breadcrumb-item">@Html.ActionLink("Dashboard", "dashboard", "ProjectPlans", new { area = "end-users" }, null)</li>
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Dashboard", "dashboard", "Dashboard", new { area = "end-users" }, null)</li>
         <li class="breadcrumb-item">Create Project Plan</li>
     </ol>
 }
@@ -22,9 +22,7 @@
 
 @using (Ajax.BeginForm("create-project-plan", "ProjectPlans", new { Area = "end-users" }, new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult", UpdateTargetId = "form-container" }, htmlAttributes: new { id = "addItem" }))
 {
-    <div id="form-container">
-        @Html.Partial("_CreateProjectPlan")
-    </div>
+    @Html.Partial("_CreateProjectPlan")
 }
 
 @section FormFooter {
@@ -43,7 +41,7 @@
         swal.fire({
             title: "Save Project Plan?",
             html: "<p>You are about to the Project Plan Details, continue? <i style = 'font-size: 10pt;'><br /><b>NOTE:</b> This means that no changes can be made after this action.</i></p>",
-            type: "warning",
+            icon: "question",
             showCancelButton: true,
         }).then((result) => {
             if (result.value) {
@@ -53,7 +51,7 @@
                 swal.fire({
                     title: "Cancelled!",
                     text: "You have cancelled saving the record.",
-                    type: "error"
+                    icon: "error"
                 })
             };
         })
@@ -63,10 +61,12 @@
             swal.fire({
                 title: "Record Saved!",
                 text: "Project Plan is successfully saved.",
-                type: "success"
+                icon: "success"
             }).then((result) => {
                 if (result.value) {
-                    window.location.href = "/end-users/projects/plans/"+ data.projectCode +"/details";
+                    var url = "@Url.Action("project-details", "ProjectPlans", new { Area = "end-users", ProjectCode = "xxxx" })";
+                    url = url.replace("xxxx", data.projectCode);
+                    window.location.href = url;
                 }
             })
         }
@@ -74,7 +74,7 @@
             swal.fire({
                 title: "Record Not Saved!",
                 text: "Saving record failed.",
-                type: "error"
+                icon: "error"
             });
         }
     }

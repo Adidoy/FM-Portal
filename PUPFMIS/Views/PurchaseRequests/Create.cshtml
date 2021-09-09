@@ -1,0 +1,235 @@
+﻿@model PUPFMIS.Models.PurchaseRequestVM
+
+@{
+    ViewBag.Title = "Purchase Request";
+    ViewBag.Description = "Create";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Purchase Requests", "dashboard")</li>
+        <li class="breadcrumb-item">Create</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-bookmark"></i> Create Purchase Request</h3>
+}
+
+@using (Ajax.BeginForm("create", "PurchaseRequests", new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult", UpdateTargetId = "form-container" }, htmlAttributes: new { id = "projectDetails", Area = "" }))
+{
+    @Html.AntiForgeryToken()
+    <div id="form-container">
+        <div class="row">
+            <div class="col-12 col-md-12 col-lg-8 order-2 order-md-2">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card card-primary card-outline">
+                            <div class="card-header"><h5 class="card-title text-primary"><i class="fas fa-file-contract"></i> <b>Other Details</b></h5></div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => Model.Purpose, htmlAttributes: new { @class = "control-label" })
+                                            @Html.EditorFor(model => Model.Purpose, null, new { htmlAttributes = new { @class = "form-control form-control-sm", rows = 3 } })
+                                            @Html.ValidationMessageFor(model => model.Purpose, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-12 col-lg-4 order-1 order-md-1">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card card-primary card-outline">
+                            <div class="card-header"><h5 class="card-title text-primary"><i class="fas fa-file-contract"></i> <b>Purchase Request Details</b></h5></div>
+                            <div class="card-body">
+                                <div class="text-muted">
+                                    <p class="text-sm">
+                                        @Html.HiddenFor(model => model.FiscalYear)
+                                        @Html.DisplayNameFor(model => model.FiscalYear)
+                                        <b class="d-block text-primary">@Html.DisplayFor(model => model.FiscalYear)</b>
+                                    </p>
+                                    <p class="text-sm">
+                                        @Html.HiddenFor(model => model.ContractCode)
+                                        @Html.DisplayNameFor(model => model.ContractCode)
+                                        <b class="d-block text-primary">@Html.DisplayFor(model => model.ContractCode)</b>
+                                    </p>
+                                    <p class="text-sm">
+                                        @Html.HiddenFor(model => model.ContractName)
+                                        @Html.DisplayNameFor(model => model.ContractName)
+                                        <b class="d-block text-primary">@Html.DisplayFor(model => model.ContractName)</b>
+                                    </p>
+                                    <p class="text-sm">
+                                        @Html.HiddenFor(model => model.Department)
+                                        @Html.HiddenFor(model => model.ApprovedByDepartment)
+                                        @Html.HiddenFor(model => model.RequestedByDepartment)
+                                        @Html.DisplayNameFor(model => model.RequestedByDepartment)
+                                        <b class="d-block text-primary">@Html.DisplayFor(model => model.RequestedByDepartment)</b>
+                                    </p>
+                                    <p class="text-sm">
+                                        @Html.HiddenFor(model => model.RequestedBy)
+                                        @Html.HiddenFor(model => model.RequestedByDesignation)
+                                        @Html.HiddenFor(model => model.ApprovedBy)
+                                        @Html.HiddenFor(model => model.ApprovedByDesignation)
+                                        @Html.DisplayNameFor(model => model.RequestedBy)
+                                        <b class="d-block text-primary">@Html.DisplayFor(model => model.RequestedBy), @Html.DisplayFor(model => model.RequestedByDesignation)</b>
+                                    </p>
+                                    <p class="text-sm">
+                                        @Html.HiddenFor(model => model.FundCluster)
+                                        @Html.HiddenFor(model => model.FundSource)
+                                        @Html.DisplayNameFor(model => model.FundSource)
+                                        <b class="d-block text-primary">@Html.DisplayFor(model => model.FundCluster)</b>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card card-primary card-outline">
+                    <div class="card-header"><h5 class="card-title text-primary"><i class="fas fa-pencil-ruler"></i> <b>Purchase Request Items</b></h5></div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table class="table table-striped table-hover" id="items">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align:center; vertical-align:middle" width="10%">
+                                                Unit
+                                            </th>
+                                            <th style="text-align:center; vertical-align:middle" width="55%">
+                                                Item and Description
+                                            </th>
+                                            <th style="text-align:center; vertical-align:middle" width="10%">
+                                                Quantity
+                                            </th>
+                                            <th style="text-align:center; vertical-align:middle" width="15%">
+                                                Unit Cost
+                                            </th>
+                                            <th style="text-align:center; vertical-align:middle" width="15%">
+                                                Total Cost
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (var item = 0; item < Model.PRDetails.Count; item++)
+                                        {
+                                            <tr>
+                                                @Html.HiddenFor(modelItem => Model.PRDetails[item].ArticleReference)
+                                                @Html.HiddenFor(modelItem => Model.PRDetails[item].ItemSequence)
+                                                @Html.HiddenFor(modelItem => Model.PRDetails[item].ItemCode)
+                                                <td style="text-align:center; vertical-align:top">
+                                                    @Html.HiddenFor(modelItem => Model.PRDetails[item].UOMReference)
+                                                    @Html.HiddenFor(modelItem => Model.PRDetails[item].Unit)
+                                                    @Html.DisplayFor(modelItem => Model.PRDetails[item].Unit)
+                                                </td>
+                                                <td style="text-align:justify; vertical-align:top">
+                                                    @Html.HiddenFor(modelItem => Model.PRDetails[item].ItemFullName)
+                                                    @Html.HiddenFor(modelItem => Model.PRDetails[item].ItemSpecifications)
+                                                    <b>@Html.DisplayFor(modelItem => Model.PRDetails[item].ItemFullName)</b>
+                                                    <br />
+                                                    <i style="font-size:8pt;">@Html.DisplayFor(modelItem => Model.PRDetails[item].ItemSpecifications)</i>
+                                                </td>
+                                                <td style="text-align:center; vertical-align:top">
+                                                    @Html.HiddenFor(modelItem => Model.PRDetails[item].Quantity)
+                                                    @Html.DisplayFor(modelItem => Model.PRDetails[item].Quantity)
+                                                </td>
+                                                <td style="text-align:right; vertical-align:top">
+                                                    @Html.HiddenFor(modelItem => Model.PRDetails[item].UnitCost)
+                                                    @( Model.PRDetails[item].UnitCost.ToString("N", new System.Globalization.CultureInfo("en-ph")) )
+                                                </td>
+                                                <td style="text-align:right; vertical-align:top">
+                                                    @Html.HiddenFor(modelItem => Model.PRDetails[item].TotalCost)
+                                                    @( Model.PRDetails[item].TotalCost.ToString("N", new System.Globalization.CultureInfo("en-ph")) )
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="4" style="text-align:right; vertical-align:middle"><h5><b>TOTAL ESTIMATED BUDGET:</b></h5></td>
+                                            <td style="text-align:right; vertical-align:middle"><h5><b>@Model.PRDetails.Sum(d => d.TotalCost).ToString("C", new System.Globalization.CultureInfo("en-ph"))</b></h5></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section FormFooter {
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" onclick="SavePurchaseRequest()"><i class="fa fa-save"></i>&nbsp; Save Purchase Request</button>
+                <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("dashboard", "PurchaseRequests", new { Area = "" })'"><i class="fa fa-arrow-alt-circle-left"></i>&nbsp; Back to Dashboard</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    function SavePurchaseRequest() {
+        swal.fire({
+            title: "Save Purchase Request?",
+            text: "You are about to save this Purchase Request, continue?",
+            icon: "question",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#projectDetails").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    icon: "error"
+                })
+            };
+        })
+    }
+    function CreateResult(data) {
+        if (data.result == true) {
+            swal.fire({
+                title: "Record Saved!",
+                text: "Purchase Request is successfully saved.",
+                icon: "success"
+            }).then((result) => {
+                if (result.value) {
+                    var url = "@Url.Action("dashboard", "PurchaseRequests", new { Area = "" })";
+                    window.location.href = url;
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                icon: "error"
+            });
+        }
+    }
+    $(function () {
+        $('#items').DataTable({
+            "paging": false,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": false,
+            "info": true,
+            "autoWidth": false,
+        });
+    });
+</script>

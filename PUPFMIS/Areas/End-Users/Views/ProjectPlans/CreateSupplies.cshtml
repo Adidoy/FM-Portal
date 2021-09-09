@@ -1,4 +1,4 @@
-﻿@model PUPFMIS.Models.ProjectPlans
+﻿@model PUPFMIS.Models.ProjectPlanVM
 
 @{
     ViewBag.Title = "Project Planning";
@@ -8,15 +8,15 @@
 
 @section BreadCrumb {
     <ol class="breadcrumb float-sm-right">
-        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
-        <li class="breadcrumb-item">@Html.ActionLink("Dashboard", "dashboard", "ProjectPlans", new { area = "end-users" }, null)</li>
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Dashboard", "dashboard", "Dashboard", new { area = "end-users" }, null)</li>
         <li class="breadcrumb-item">Create Supplies Plan</li>
     </ol>
 }
 
 @section Header {
     <div class="col-md-12 text-right">
-        <h1 class="card-title"><i class="fa fa-bookmark"></i> New Supplies Plan</h1>
+        <h1 class="card-title"><i class="fa fa-bookmark"></i> New Supplies Project Plan</h1>
     </div>
 }
 
@@ -29,7 +29,7 @@
     <div class="row">
         <div class="col-sm-12 text-right">
             <div class="form-group">
-                <button type="button" class="btn btn-primary" onclick="SaveProjectPlan()"><i class="fa fa-save"></i>&nbsp; Save Project</button>
+                <button type="button" class="btn btn-primary" onclick='SaveProjectPlan()' id="btn-save"><i class="fa fa-save"></i>&nbsp; Save Project</button>
                 <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("dashboard", "Dashboard", new { area = "end-users" })'"><i class="fa fa-times-circle"></i>&nbsp; Cancel</button>
             </div>
         </div>
@@ -40,8 +40,8 @@
     function SaveProjectPlan() {
         swal.fire({
             title: "Save Project Plan?",
-            html: "<p>You are about to the Project Plan Details, continue? <i style = 'font-size: 10pt;'><br /><b>NOTE:</b> This means that no changes can be made after this action.</i></p>",
-            type: "warning",
+            text: "You are about to the Project Plan Details, continue?",
+            icon: "question",
             showCancelButton: true,
         }).then((result) => {
             if (result.value) {
@@ -51,7 +51,7 @@
                 swal.fire({
                     title: "Cancelled!",
                     text: "You have cancelled saving the record.",
-                    type: "error"
+                    icon: "error"
                 })
             };
         })
@@ -61,10 +61,12 @@
             swal.fire({
                 title: "Record Saved!",
                 text: "Project Plan is successfully saved.",
-                type: "success"
+                icon: "success"
             }).then((result) => {
                 if (result.value) {
-                    window.location.href = "/end-users/projects/plans/"+ data.projectCode +"/details";
+                    var url = "@Url.Action("project-details", "ProjectPlans", new { Area = "end-users", ProjectCode = "xxxx" })";
+                    url = url.replace("xxxx", data.projectCode);
+                    window.location.href = url;
                 }
             })
         }
@@ -72,8 +74,23 @@
             swal.fire({
                 title: "Record Not Saved!",
                 text: "Saving record failed.",
-                type: "error"
+                icon: "error"
             });
         }
+        var vsummary = $("#ValidationSummary");
+        if (vsummary.val() != null) {
+            $("input").blur();
+            $(window).scrollTop(0,0);
+        }
     }
+    $(function () {
+        $('#items').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": false,
+            "info": true,
+            "autoWidth": false,
+        });
+    });
 </script>

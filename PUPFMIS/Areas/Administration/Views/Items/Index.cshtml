@@ -45,7 +45,7 @@
                     @foreach (var item in Model.OrderBy(d => d.ItemFullName).ThenBy(d => d.ItemCode))
                     {
                         <tr>
-                            <td style="text-align:center; vertical-align:middle;" width="20%">
+                            <td style="text-align:center; vertical-align:top;" width="20%">
                                 @if (item.ItemImage != null)
                                 {
                                     var base64 = Convert.ToBase64String(item.ItemImage);
@@ -58,52 +58,47 @@
                                 }
                             </td>
                             <td align="justify" width="60%">
-                                <span><b>(@Html.DisplayFor(modelItem => item.ItemCode))</b></span>
-                                <h5 style="text-align:left;">@Html.DisplayFor(modelItem => item.ItemFullName)</h5>
+                                <h5 style="text-align:left;">@Html.DisplayFor(modelItem => item.ItemFullName) <small>(@Html.DisplayFor(modelItem => item.ItemCode))</small></h5>
                                 <hr />
                                 @if (item.ItemSpecifications != null)
                                 {
+                                    <b>Item Specifications:</b>
+                                    <br />
                                     <i>
-                                        @Html.DisplayFor(modelItem => item.ItemSpecifications)
+                                        <span style="white-space:pre-line">@Html.DisplayFor(modelItem => item.ItemSpecifications)</span>
                                     </i>
                                     <br />
                                     <br />
                                 }
                                 <div class="row">
-                                    <div class="col-lg-4 col-md-4 col-sm-12"><b>Type</b></div>
-                                    <div class="col-lg-8 col-md-8 col-sm-12"><b>:</b> @( item.FKItemTypeReference.FKInventoryTypeReference.IsTangible ? "Item" : "Service")</div>
+                                    <div class="col-lg-4 col-md-4 col-sm-12"><b>@Html.DisplayNameFor(model => model.FKArticleReference.FKItemTypeReference.FKItemClassificationReference.Classification)</b></div>
+                                    <div class="col-lg-8 col-md-8 col-sm-12"><b>:</b> @Html.DisplayFor(modelItem => item.FKArticleReference.FKItemTypeReference.FKItemClassificationReference.Classification)</div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-lg-4 col-md-4 col-sm-12"><b>@Html.DisplayNameFor(model => model.FKItemTypeReference.InventoryTypeReference)</b></div>
-                                    <div class="col-lg-8 col-md-8 col-sm-12"><b>:</b> @Html.DisplayFor(modelItem => item.FKItemTypeReference.FKInventoryTypeReference.InventoryTypeName)</div>
+                                    <div class="col-lg-4 col-md-4 col-sm-12"><b>@Html.DisplayNameFor(model => model.FKArticleReference.ArticleName)</b></div>
+                                    <div class="col-lg-8 col-md-8 col-sm-12"><b>:</b> @Html.DisplayFor(modelItem => item.FKArticleReference.ArticleName)</div>
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-4 col-md-4 col-sm-12"><b>@Html.DisplayNameFor(model => model.ProcurementSource)</b></div>
-                                    <div class="col-lg-8 col-md-8 col-sm-12"><b>:</b> @( item.ProcurementSource == PUPFMIS.Models.ProcurementSources.PS_DBM ? "Procurement System - Department of Budget and Management" : "Private Suppliers" )</div>
+                                    <div class="col-lg-8 col-md-8 col-sm-12"><b>:</b> @( item.ProcurementSource == PUPFMIS.Models.ProcurementSources.AgencyToAgency ? "Procurement System - Department of Budget and Management" : "External Suppliers" )</div>
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-4 col-md-4 col-sm-12"><b>@Html.DisplayNameFor(model => model.CategoryReference)</b></div>
                                     <div class="col-lg-8 col-md-8 col-sm-12"><b>:</b> @Html.DisplayFor(modelItem => item.FKCategoryReference.ItemCategoryName)</div>
                                 </div>
-                                @if (item.QuantityPerPackage != null)
-                                {
-                                    <div class="row">
-                                        <div class="col-lg-4 col-md-4 col-sm-12"><b>@Html.DisplayNameFor(model => model.QuantityPerPackage)</b></div>
-                                        <div class="col-lg-8 col-md-8 col-sm-12"><b>:</b> @Html.DisplayFor(modelItem => item.QuantityPerPackage) @Html.DisplayFor(modelItem => item.FKIndividualUnitReference.UnitName) / @Html.DisplayFor(modelItem => item.FKPackagingUnitReference.UnitName)</div>
-                                    </div>
-                                }
-                                @if (item.MinimumIssuanceQty != null)
-                                {
-                                    <div class="row">
-                                        <div class="col-lg-4 col-md-4 col-sm-12"><b>@Html.DisplayNameFor(model => model.MinimumIssuanceQty)</b></div>
-                                        <div class="col-lg-8 col-md-8 col-sm-12"><b>:</b> @Html.DisplayFor(modelItem => item.MinimumIssuanceQty) @Html.DisplayFor(modelItem => item.FKIndividualUnitReference.UnitName)</div>
-                                    </div>
-                                }
+                                <div class="row">
+                                    <div class="col-lg-4 col-md-4 col-sm-12"><b>@Html.DisplayNameFor(model => model.QuantityPerPackage)</b></div>
+                                    <div class="col-lg-8 col-md-8 col-sm-12"><b>:</b> @Html.DisplayFor(modelItem => item.QuantityPerPackage) @Html.DisplayFor(modelItem => item.FKIndividualUnitReference.UnitName) / @Html.DisplayFor(modelItem => item.FKPackagingUnitReference.UnitName)</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-4 col-md-4 col-sm-12"><b>@Html.DisplayNameFor(model => model.MinimumIssuanceQty)</b></div>
+                                    <div class="col-lg-8 col-md-8 col-sm-12"><b>:</b> @Html.DisplayFor(modelItem => item.MinimumIssuanceQty) @Html.DisplayFor(modelItem => item.FKIndividualUnitReference.UnitName)</div>
+                                </div>
                             </td>
-                            <td align="center">
-                                <button type="button" class="btn btn-sm btn-primary" data-toggle="tooltip" title="View Details" onclick="window.location = '@Url.Action("item-details","Items", new { Area = "administration", ItemCode = item.ItemCode })'"><i class="fa fa-eye"></i></button>
-                                <button type="button" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Edit Record" onclick="window.location = '@Url.Action("update-item","Items", new { Area = "administration", ItemCode = item.ItemCode })'"><i class="fa fa-edit"></i></button>
-                                <button type="button" class="btn btn-sm btn-danger" data-toggle="tooltip" title="Purge Record" onclick="window.location = '@Url.Action("delete-item","Items", new { Area = "administration", ItemCode = item.ItemCode })'"><i class="fa fa-trash"></i></button>
+                            <td align="center" valign="top">
+                                <button type="button" class="btn btn-sm btn-primary" data-toggle="tooltip" title="View Details" onclick="window.location = '@Url.Action("details","Items", new { Area = "administration", ItemCode = item.ItemCode })'"><i class="fa fa-eye"></i></button>
+                                <button type="button" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Edit Record" onclick="window.location = '@Url.Action("update","Items", new { Area = "administration", ItemCode = item.ItemCode })'"><i class="fa fa-edit"></i></button>
+                                <button type="button" class="btn btn-sm btn-danger" data-toggle="tooltip" title="Purge Record" onclick="window.location = '@Url.Action("delete","Items", new { Area = "administration", ItemCode = item.ItemCode })'"><i class="fa fa-trash"></i></button>
                             </td>
                         </tr>
                     }

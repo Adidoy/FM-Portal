@@ -45,15 +45,13 @@
     </div>
 </div>
 
-<script src="~/Scripts/jquery.validate.min.js"></script>
-<script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
 <script type="text/javascript">
     $("#save-btn").on('click', function (e) {
         e.preventDefault();
         swal.fire({
             title: "Save changes?",
             text: "You are about to update this record, continue?",
-            type: "warning",
+            icon: "question",
             showCancelButton: true,
         }).then((result) => {
             if (result.value) {
@@ -65,7 +63,7 @@
         if (data.status === "success") {
             $('#modal-default').modal('hide');
             toastr.success('Item price updated!', 'Update', { timeOut: 10000, preventDuplicates: false });
-            window.location.href = "@Url.Action("index", "ItemPrices")";
+            window.location.href = "@Url.Action("list", "ItemPrices")";
         }
     };
 </script>

@@ -1,0 +1,459 @@
+﻿@model PUPFMIS.Models.LotProcurementProjectVM
+
+@{
+    ViewBag.Title = "Purchase Request";
+    ViewBag.Description = "Create";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Procurement Projects", "dashboard", "Dashboard", new { Area = "end-users" }, null)</li>
+        <li class="breadcrumb-item">Details</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-bookmark"></i> @Model.ContractName <small>(@Model.ContractCode)</small></h3>
+}
+
+<div class="card card-info">
+    <div class="card-header"><h3 class="card-title">Contract Information</h3></div>
+    <div class="card-body">
+
+        @Html.HiddenFor(model => Model.ProcurementProjectType, htmlAttributes: new { id = "hidden_ProcurementProjectType" })
+        @Html.HiddenFor(model => Model.ProcurementProjectStage, htmlAttributes: new { id = "hidden_ProcurementProjectStage" })
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.FiscalYear, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.FiscalYear, htmlAttributes: new { id = "hidden_FiscalYear" })
+                        @Html.EditorFor(model => Model.FiscalYear, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.Classification, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-question"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.ClassificationReference, htmlAttributes: new { id = "hidden_ClassificationReference" })
+                        @Html.HiddenFor(model => Model.Classification, htmlAttributes: new { id = "hidden_Classification" })
+                        @Html.EditorFor(model => Model.Classification, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.PAPCode, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-barcode"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.PAPCode, htmlAttributes: new { id = "hidden_PAPCode" })
+                        @Html.EditorFor(model => Model.PAPCode, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.ContractCode, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-id-badge"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.ContractCode, htmlAttributes: new { id = "hidden_ContractCode" })
+                        @Html.EditorFor(model => Model.ContractCode, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.ContractName, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-id-card"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.ContractName, htmlAttributes: new { id = "hidden_ContractName" })
+                        @Html.EditorFor(model => Model.ContractName, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.ContractStrategy, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-asterisk"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.ContractStrategy, htmlAttributes: new { id = "hidden_ContractStrategy" })
+                        @Html.EditorFor(model => Model.ContractStrategy, null, new { htmlAttributes = new { @class = "form-control form-control-sm", Value = Model.ContractStrategy.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name, disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.ContractStatus, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-play"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.ContractStatus, htmlAttributes: new { id = "hidden_ContractStatus" })
+                        @Html.EditorFor(model => Model.ContractStatus, null, new { htmlAttributes = new { @class = "form-control form-control-sm", Value = Model.ContractStatus.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name, disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.ApprovedBudgetForContract, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-coins"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.ApprovedBudgetForContract, htmlAttributes: new { id = "hidden_ABC" })
+                        @Html.EditorFor(model => Model.ApprovedBudgetForContract, null, new { htmlAttributes = new { @class = "form-control form-control-sm", Value = Model.ApprovedBudgetForContract.ToString("C", new System.Globalization.CultureInfo("en-ph")), disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.FundDescription, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-book"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.FundSource, htmlAttributes: new { id = "hidden_FundSource" })
+                        @Html.HiddenFor(model => Model.FundDescription, htmlAttributes: new { id = "hidden_FundDescription" })
+                        @Html.EditorFor(model => Model.FundDescription, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.ModeOfProcurement, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-file-invoice"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.ModeOfProcurement, htmlAttributes: new { id = "hidden_ModeOfProcurement" })
+                        @Html.HiddenFor(model => Model.ModeOfProcurementReference, htmlAttributes: new { id = "hidden_ModeOfProcurementReference" })
+                        @Html.EditorFor(model => Model.ModeOfProcurement, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", Value = Model.ModeOfProcurement } })
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.ContractLocation)
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-map-pin"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.ModeOfProcurementReference, htmlAttributes: new { id = "hidden_ContractLocation" })
+                        @Html.EditorFor(model => Model.ContractLocation, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => Model.ContractLocation, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@for (int i = 0; i < Model.SubContracts.Count; i++)
+{
+    <div class="card card-info">
+        <div class="card-header"><h3 class="card-title">@(Model.ContractStrategy == PUPFMIS.Models.ContractStrategies.LotBidding ? "Lot" : "Item") #@(i + 1): @Model.SubContracts[i].ContractName <small>(@Model.SubContracts[i].ContractCode)</small></h3></div>
+        <div class="card-body">
+
+            @Html.HiddenFor(model => Model.SubContracts[i].LotNo, htmlAttributes: new { id = string.Concat("hidden_SubContracts[", i.ToString(), "].LotNo") })
+            @Html.HiddenFor(model => Model.SubContracts[i].ParentProjectReference, htmlAttributes: new { id = string.Concat("hidden_SubContracts[", i.ToString(), "].ParentProjectReference") })
+            @Html.HiddenFor(model => Model.SubContracts[i].PAPCode, htmlAttributes: new { id = string.Concat("hidden_SubContracts[", i.ToString(), "].PAPCode") })
+            @Html.HiddenFor(model => Model.SubContracts[i].ClassificationReference, htmlAttributes: new { id = string.Concat("hidden_SubContracts[", i.ToString(), "].ClassificationReference") })
+            @Html.HiddenFor(model => Model.SubContracts[i].Classification, htmlAttributes: new { id = string.Concat("hidden_SubContracts[", i.ToString(), "].Classification") })
+            @Html.HiddenFor(model => Model.SubContracts[i].ModeOfProcurementReference, htmlAttributes: new { id = string.Concat("hidden_SubContracts[", i.ToString(), "].ModeOfProcurementReference") })
+            @Html.HiddenFor(model => Model.SubContracts[i].ModeOfProcurement, htmlAttributes: new { id = string.Concat("hidden_SubContracts[", i.ToString(), "].ModeOfProcurement") })
+            @Html.HiddenFor(model => Model.SubContracts[i].FiscalYear, htmlAttributes: new { id = string.Concat("hidden_SubContracts[", i.ToString(), "].FiscalYear") })
+            @Html.HiddenFor(model => Model.SubContracts[i].FundSource, htmlAttributes: new { id = string.Concat("hidden_SubContracts[", i.ToString(), "].FundSource") })
+            @Html.HiddenFor(model => Model.SubContracts[i].FundDescription, htmlAttributes: new { id = string.Concat("hidden_SubContracts[", i.ToString(), "].FundDescription") })
+            @Html.HiddenFor(model => Model.SubContracts[i].ProcurementProjectType, htmlAttributes: new { id = string.Concat("hidden_SubContracts[", i.ToString(), "].ProcurementProjectType") })
+            @Html.HiddenFor(model => Model.SubContracts[i].ProcurementProjectStage, htmlAttributes: new { id = string.Concat("hidden_SubContracts[", i.ToString(), "].ProcurementProjectStage") })
+            @Html.HiddenFor(model => Model.SubContracts[i].ContractStrategy, htmlAttributes: new { id = string.Concat("hidden_SubContracts[", i.ToString(), "].ContractStrategy") })
+            @Html.HiddenFor(model => Model.SubContracts[i].ContractStatus, htmlAttributes: new { id = string.Concat("hidden_SubContracts[", i.ToString(), "].ContractStatus") })
+            @Html.HiddenFor(model => Model.SubContracts[i].ContractLocation, htmlAttributes: new { id = string.Concat("hidden_SubContracts[", i.ToString(), "].ContractLocation") })
+
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => Model.SubContracts[i].ContractCode, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-id-card"></i></span>
+                            </div>
+                            @Html.HiddenFor(model => Model.SubContracts[i].ContractCode, htmlAttributes: new { id = string.Concat("hidden_SubContracts[", i.ToString(), "].ContractCode") })
+                            @Html.EditorFor(model => Model.SubContracts[i].ContractCode, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => Model.SubContracts[i].ApprovedBudgetForContract, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-coins"></i></span>
+                            </div>
+                            @Html.HiddenFor(model => Model.SubContracts[i].ApprovedBudgetForContract, htmlAttributes: new { id = string.Concat("hidden_SubContracts[", i.ToString(), "].ApprovedBudgetForContract") })
+                            @Html.EditorFor(model => Model.SubContracts[i].ApprovedBudgetForContract, null, new { htmlAttributes = new { @class = "form-control form-control-sm", Value = Model.SubContracts[i].ApprovedBudgetForContract.ToString("C", new System.Globalization.CultureInfo("en-ph")), disabled = "disabled" } })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => Model.SubContracts[i].ContractName, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-id-card"></i></span>
+                            </div>
+                            @Html.HiddenFor(model => Model.SubContracts[i].ContractName, htmlAttributes: new { id = string.Concat("hidden_SubContracts[", i.ToString(), "].ContractName") })
+                            @Html.EditorFor(model => Model.SubContracts[i].ContractName, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => Model.SubContracts[i].ProjectCoordinator, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-user"></i></span>
+                            </div>
+                            @Html.HiddenFor(model => Model.SubContracts[i].ProjectCoordinator, htmlAttributes: new { id = string.Concat("hidden_SubContracts[", i.ToString(), "].ProjectCoordinator") })
+                            @Html.EditorFor(model => Model.SubContracts[i].ProjectCoordinator, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => Model.SubContracts[i].DeliveryPeriod)
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-calendar-check"></i></span>
+                            </div>
+                            @Html.HiddenFor(model => Model.SubContracts[i].DeliveryPeriod, htmlAttributes: new { id = string.Concat("hidden_SubContracts[", i.ToString(), "].DeliveryPeriod") })
+                            @Html.EditorFor(model => Model.SubContracts[i].DeliveryPeriod, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => Model.SubContracts[i].DeliveryPeriod, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="card card-info">
+                <div class="card-header"><h3 class="card-title">Contract Line Items</h3></div>
+                <div class="card-body">
+                    <div class="card-body table-responsive p-sm-0">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="text-align:center; vertical-align:middle" width="5%">Item No.</th>
+                                    <th style="text-align:center; vertical-align:middle" width="10%">Quantity</th>
+                                    <th style="text-align:center; vertical-align:middle" width="10%">Unit</th>
+                                    <th style="text-align:center; vertical-align:middle" width="40%">Item Description</th>
+                                    <th style="text-align:center; vertical-align:middle" width="15%">Unit Cost</th>
+                                    <th style="text-align:center; vertical-align:middle" width="20%">Total Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int x = 0; x < Model.SubContracts[i].ContractItems.Count; x++)
+                                {
+                                    <tr>
+                                        <td style="text-align:center; vertical-align:middle;">@(x + 1)</td>
+                                        <td style="text-align:center; vertical-align:middle;">
+                                            @Html.HiddenFor(model => Model.SubContracts[i].ContractItems[x].Quantity)
+                                            @Html.DisplayFor(model => Model.SubContracts[i].ContractItems[x].Quantity)
+                                        </td>
+                                        <td style="text-align:center; vertical-align:middle;">
+                                            @Html.HiddenFor(model => Model.SubContracts[i].ContractItems[x].UOMReference)
+                                            @Html.HiddenFor(model => Model.SubContracts[i].ContractItems[x].UnitOfMeasure)
+                                            @Html.DisplayFor(model => Model.SubContracts[i].ContractItems[x].UnitOfMeasure)
+                                        </td>
+                                        <td style="text-align:left; vertical-align:middle;">
+                                            @Html.HiddenFor(model => Model.SubContracts[i].ContractItems[x].ArticleReference)
+                                            @Html.HiddenFor(model => Model.SubContracts[i].ContractItems[x].ItemSequence)
+                                            @Html.HiddenFor(model => Model.SubContracts[i].ContractItems[x].ItemFullName)
+                                            @Html.DisplayFor(model => Model.SubContracts[i].ContractItems[x].ItemFullName)
+                                        </td>
+                                        <td style="text-align:right; vertical-align:middle;">
+                                            @Html.HiddenFor(model => Model.SubContracts[i].ContractItems[x].EstimatedUnitCost)
+                                            @( Model.SubContracts[i].ContractItems[x].EstimatedUnitCost.ToString("N", new System.Globalization.CultureInfo("en-ph")) )
+                                        </td>
+                                        <td style="text-align:right; vertical-align:middle;">
+                                            @Html.HiddenFor(model => Model.SubContracts[i].ContractItems[x].ApprovedBudgetForItem)
+                                            @( Model.SubContracts[i].ContractItems[x].ApprovedBudgetForItem.ToString("N", new System.Globalization.CultureInfo("en-ph")) )
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="5" style="text-align:right; vertical-align:middle;">
+                                        <h5>APPROVED BUDGET FOR THE CONTRACT (ABC):</h5>
+                                    </td>
+                                    <td style="text-align:right; vertical-align:middle;">
+                                        <h5>@( Model.SubContracts[i].ContractItems.Sum(d => d.ApprovedBudgetForItem).ToString("C", new System.Globalization.CultureInfo("en-ph")) )</h5>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<div class="card card-info">
+    <div class="card-header"><h3 class="card-title">Purchase Request Actions</h3></div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.ContractStatus, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-check"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.ContractStatus)
+                        @Html.EditorFor(model => Model.ContractStatus, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", Value = Model.ContractStatus.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name } })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.ProcurementProjectStage, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-check"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.ProcurementProjectStage)
+                        @Html.EditorFor(model => Model.ProcurementProjectStage, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", Value = Model.ProcurementProjectStage.GetAttribute<System.ComponentModel.DataAnnotations.DisplayAttribute>().Name } })
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title">Print Memorandum</h3></div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-sm-12">
+                                <a class="btn btn-lg btn-primary mb-1" href="@Url.Action("print-purchase-request-memo", "ProcurementPurchaseRequests", new { Area = "procurement", ContractCode = Model.ContractCode })" target="_blank"><i class="fa fa-print"></i> Print P/R Submission Memorandum</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @if (Model.ProcurementProjectStage == PUPFMIS.Models.ProcurementProjectStages.PurchaseRequestSubmissionOpening)
+                {
+                    <div class="card">
+                        <div class="card-header"><h3 class="card-title">Purchase Request Submission Closing</h3></div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-sm-12">
+                                    <button type="button" class="btn btn-lg btn-danger" onclick="ClosePRSubmission()">Close Purchase Request Submission</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@section FormFooter{
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <div class="form-group">
+                <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("dashboard", "ProcurementPurchaseRequests", new { Area = "procurement" })'"><i class="fa fa-arrow-alt-circle-left"></i>&nbsp; Back to Purchase Requests Dashboard</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('table.display').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": false,
+            "info": true,
+            "autoWidth": false,
+        });
+    });
+    function ClosePRSubmission() {
+        var url = '@Url.Action("close-pr-submission", "ProcurementPurchaseRequests", new { Area = "procurement", ContractCode = Model.ContractCode })';
+        swal.fire({
+            title: "Close P/R Submission?",
+            text: "You are about to close the submission of Purchase Requests for this contract, continue?",
+            icon: "question",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    success: function (data) {
+                        if (data.result == true) {
+                            swal.fire({
+                                title: "P/R Submission Closed",
+                                text: "Purchase Request submission for this contract is now closed.",
+                                icon: "success"
+                            }).then((result) => {
+                                if (result.value) {
+                                    window.location.href = '@Url.Action("open-submissions", "ProcurementPurchaseRequests", new { Area = "procurement" })'
+                                }
+                            })
+                        }
+                        else {
+                            swal.fire({
+                                title: "Record not Saved",
+                                text: "A problem has occured and the record is not updated.",
+                                icon: "error"
+                            })
+                        }
+                    },
+                    error: function (error) {
+                        swal.fire({
+                            title: "Error",
+                            text: "An error has occured, please try again. If you still get this message, please contact the System Administrator.",
+                            icon: "error"
+                        })
+                    },
+                })
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    icon: "error"
+                })
+            };
+        })
+    }
+</script>

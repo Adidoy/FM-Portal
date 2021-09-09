@@ -9,11 +9,12 @@ namespace PUPFMIS.Models
     public class ProjectPlanningDashboardVM
     {
         public List<int> ProjectFiscalYears { get; set; }
+        public List<int> ProjectInfraFiscalYears { get; set; }
         public List<int> PPMPFiscalYears { get; set; }
-        public int NumberOfProjects { get; set; }
-        public int NumberOfProjectsPostedToPPMP { get; set; }
+        public int TotalNumberOfProjects { get; set; }
+        public int TotalProjectsForwardedResponsibilityCenter { get; set; }
+        public int TotalProjectsEvaluatedResponsibilityCenter { get; set; }
         public int NumberOfNewPPMP { get; set; }
-        public int NumberOfPPMPSubmitted { get; set; }
         public int NumberOfPPMPs { get; set; }
         public int NumberOfApprovedPPMPs { get; set; }
         public string PercentageOfPosting { get; set; }

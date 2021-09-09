@@ -1,0 +1,162 @@
+﻿@{
+    ViewBag.Title = "Contract Projects";
+    ViewBag.Description = "Create";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Contracts", "dashboard", "Contracts", new { Area = "procurement" }, null)</li>
+        <li class="breadcrumb-item">Create</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-bookmark"></i> Create New Contract Project: Single Contact Procurement</h3>
+}
+
+@using (Ajax.BeginForm("create-individual-contract", "Contracts", new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult", UpdateTargetId = "form-container" }, htmlAttributes: new { id = "projectDetails", Area = "procurement" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div id="form-container">
+        @Html.Partial("_CreateA2AContract")
+    </div>
+}
+
+@section FormFooter {
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" onclick="SaveProcurementProject()"><i class="fa fa-plus"></i>&nbsp; Create Contract Project</button>
+                <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("dashboard", "Contracts", new { Area = "procurement" })'"><i class="fa fa-arrow-alt-circle-left"></i>&nbsp; Back to Dashboard</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    function SaveProcurementProject() {
+        swal.fire({
+            title: "Save Contract Project?",
+            text: "You are about to save this Contract Project, continue?",
+            icon: "question",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#projectDetails").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    icon: "error"
+                })
+            };
+        })
+    }
+    function CreateResult(data) {
+        if (data.result == true) {
+            swal.fire({
+                title: "Record Saved!",
+                text: "Contract Project is successfully saved.",
+                icon: "success"
+            }).then((result) => {
+                if (result.value) {
+                    var url = "@Url.Action("dashboard", "AgencyProcurementRequest", new { Area = "procurement" })";
+                    window.location.href = url;
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                icon: "error"
+            });
+        }
+        var vsummary = $("#ValidationSummary");
+        if (vsummary.val() != null) {
+            $("input").blur();
+            $(window).scrollTop(0,0);
+        }
+    }
+
+    $(function () {
+        $('#PRSubmissionOpen1').datetimepicker({
+            defaultDate: '@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")',
+            format: 'DD MMMM YYYY hh:mm A'
+        });
+        $('#PRSubmissionClose1').datetimepicker({
+            useCurrent: false,
+            defaultDate: '@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")',
+            format: 'DD MMMM YYYY hh:mm A'
+        });
+        $('#PreProcurementConference1').datetimepicker({
+            useCurrent: false,
+            defaultDate: '@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")',
+            format: 'DD MMMM YYYY hh:mm A'
+        });
+        $('#IBPreparation1').datetimepicker({
+            useCurrent: false,
+            defaultDate: '@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")',
+            format: 'DD MMMM YYYY hh:mm A'
+        });
+        $('#PostingOfIB1').datetimepicker({
+            useCurrent: false,
+            defaultDate: '@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")',
+            format: 'DD MMMM YYYY hh:mm A'
+        });
+        $('#PreBidConference1').datetimepicker({
+            useCurrent: false,
+            defaultDate: '@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")',
+            format: 'DD MMMM YYYY hh:mm A'
+        });
+        $('#DeadlineOfSubmissionOfBids1').datetimepicker({
+            useCurrent: false,
+            defaultDate: '@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")',
+            format: 'DD MMMM YYYY hh:mm A'
+        });
+        $('#OpeningOfBids1').datetimepicker({
+            useCurrent: false,
+            defaultDate: '@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")',
+            format: 'DD MMMM YYYY hh:mm A'
+        });
+        $('#NOAIssuance1').datetimepicker({
+            useCurrent: false,
+            defaultDate: '@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")',
+            format: 'DD MMMM YYYY hh:mm A'
+        });
+        $('#NTPIssuance1').datetimepicker({
+            useCurrent: false,
+            defaultDate: '@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")',
+            format: 'DD MMMM YYYY hh:mm A'
+        });
+        $("#PRSubmissionOpen1").on("change.datetimepicker", function (e) {
+            $('#PRSubmissionClose1').datetimepicker('minDate', e.date.add(1, 'd'));
+        });
+        $("#PRSubmissionClose1").on("change.datetimepicker", function (e) {
+            $('#PreProcurementConference1').datetimepicker('minDate', e.date.add(1, 'd'));
+        });
+        $("#PreProcurementConference1").on("change.datetimepicker", function (e) {
+            $('#PostingOfIB1').datetimepicker('minDate', e.date.add(1, 'd'));
+        });
+        $("#PostingOfIB1").on("change.datetimepicker", function (e) {
+            $('#PreBidConference1').datetimepicker('minDate', e.date.add(1, 'd'));
+        });
+        $("#PreBidConference1").on("change.datetimepicker", function (e) {
+            $('#DeadlineOfSubmissionOfBids1').datetimepicker('minDate', e.date.add(1, 'd'));
+        });
+        $("#DeadlineOfSubmissionOfBids1").on("change.datetimepicker", function (e) {
+            $('#OpeningOfBids1').datetimepicker('minDate', e.date);
+        });
+        $("#OpeningOfBids1").on("change.datetimepicker", function (e) {
+            $('#NOAIssuance1').datetimepicker('minDate', e.date.add(1, 'd'));
+        });
+        $("#NOAIssuance1").on("change.datetimepicker", function (e) {
+            $('#NTPIssuance1').datetimepicker('minDate', e.date.add(1, 'd'));
+        });
+    });
+
+</script>

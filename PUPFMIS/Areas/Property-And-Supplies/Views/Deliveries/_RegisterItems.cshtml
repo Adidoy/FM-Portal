@@ -1,0 +1,198 @@
+﻿@model PUPFMIS.Models.UnregisteredItemsVM
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="alert alert-warning text-left">
+            <h6 class="m-0 p-0"><i class="fa fa-info-circle"></i> Reminder</h6>
+            <br />
+            <ul>
+                <li>Some items from this Contract are not yet registered as Supply/PPE in the system.</li>
+                <li>Register them first to proceed with the Delivery processing.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+@if (Model.Supplies.Count > 0)
+{
+    <div class="card card-info">
+        <div class="card-header"><h3 class="card-title">Supplies</h3></div>
+        <div class="card-body">
+            @for (int i = 0; i < Model.Supplies.Count; i++)
+                {
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title"><b>@Model.Supplies[i].Description</b></h3></div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => Model.Supplies[i].ItemCode, htmlAttributes: new { @class = "control-label" })
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fa fa-id-card"></i></span>
+                                        </div>
+                                        @Html.HiddenFor(model => Model.Supplies[i].Sequence)
+                                        @Html.HiddenFor(model => Model.Supplies[i].ItemCode)
+                                        @Html.HiddenFor(model => Model.Supplies[i].ArticleReference)
+                                        @Html.EditorFor(model => Model.Supplies[i].ItemCode, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => Model.Supplies[i].Article, htmlAttributes: new { @class = "control-label" })
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fa fa-id-badge"></i></span>
+                                        </div>
+                                        @Html.HiddenFor(model => Model.Supplies[i].Article)
+                                        @Html.EditorFor(model => Model.Supplies[i].Article, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => Model.Supplies[i].Description, htmlAttributes: new { @class = "control-label" })
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fa fa-pencil-ruler"></i></span>
+                                        </div>
+                                        @Html.HiddenFor(model => Model.Supplies[i].Description)
+                                        @Html.EditorFor(model => Model.Supplies[i].Description, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => Model.Supplies[i].IndividualUOMReference, htmlAttributes: new { @class = "control-label" })
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fa fa-ruler"></i></span>
+                                        </div>
+                                        @Html.HiddenFor(model => Model.Supplies[i].IndividualUOMReference)
+                                        @Html.HiddenFor(model => Model.Supplies[i].IndividualUOM)
+                                        @Html.EditorFor(model => Model.Supplies[i].IndividualUOM, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => Model.Supplies[i].ReOrderPoint, htmlAttributes: new { @class = "control-label" })
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fa fa-hashtag"></i></span>
+                                        </div>
+                                        @Html.EditorFor(model => Model.Supplies[i].ReOrderPoint, null, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => Model.Supplies[i].MinimumIssuanceQty, htmlAttributes: new { @class = "control-label" })
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fa fa-hashtag"></i></span>
+                                        </div>
+                                        @Html.EditorFor(model => Model.Supplies[i].MinimumIssuanceQty, null, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    <br />
+            }
+            <br />
+        </div>
+    </div>
+}
+<br />
+@if (Model.PPE.Count > 0)
+{
+    <div class="card card-info">
+        <div class="card-header"><h3 class="card-title">Property, Plant and Equipment</h3></div>
+        <div class="card-body">
+            @for (int i = 0; i < Model.PPE.Count; i++)
+                {
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title"><b>@Model.PPE[i].Description</b></h3></div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => Model.PPE[i].ItemCode, htmlAttributes: new { @class = "control-label" })
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fa fa-id-card"></i></span>
+                                        </div>
+                                        @Html.HiddenFor(model => Model.PPE[i].Sequence)
+                                        @Html.HiddenFor(model => Model.PPE[i].ItemCode)
+                                        @Html.HiddenFor(model => Model.PPE[i].ArticleReference)
+                                        @Html.EditorFor(model => Model.PPE[i].ItemCode, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => Model.PPE[i].Article, htmlAttributes: new { @class = "control-label" })
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fa fa-id-badge"></i></span>
+                                        </div>
+                                        @Html.HiddenFor(model => Model.PPE[i].Article)
+                                        @Html.EditorFor(model => Model.PPE[i].Article, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => Model.PPE[i].Description, htmlAttributes: new { @class = "control-label" })
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fa fa-pencil-ruler"></i></span>
+                                        </div>
+                                        @Html.HiddenFor(model => Model.PPE[i].Description)
+                                        @Html.EditorFor(model => Model.PPE[i].Description, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => Model.PPE[i].IndividualUOMReference, htmlAttributes: new { @class = "control-label" })
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fa fa-ruler"></i></span>
+                                        </div>
+                                        @Html.HiddenFor(model => Model.PPE[i].IndividualUOMReference)
+                                        @Html.HiddenFor(model => Model.PPE[i].IndividualUOM)
+                                        @Html.EditorFor(model => Model.PPE[i].IndividualUOM, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => Model.PPE[i].MinimumIssuanceQty, htmlAttributes: new { @class = "control-label" })
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fa fa-hashtag"></i></span>
+                                        </div>
+                                        @Html.EditorFor(model => Model.PPE[i].MinimumIssuanceQty, null, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+            }
+            <br />
+        </div>
+    </div>
+}

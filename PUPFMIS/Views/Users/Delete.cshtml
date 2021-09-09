@@ -1,57 +1,84 @@
-﻿@model PUPFMIS.Models.UserInformation
+﻿@model PUPFMIS.Models.UsersVM
 
-@{
-    ViewBag.Title = "Delete";
-    Layout = "~/Views/Shared/_BodyLayout.cshtml";
-}
-
-<h2>Delete</h2>
-
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>UserInformation</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.LastName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.LastName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.FirstName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.FirstName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.MiddleName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.MiddleName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Designation)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Designation)
-        </dd>
-
-    </dl>
-
-    @using (Html.BeginForm()) {
-        @Html.AntiForgeryToken()
-
-        <div class="form-actions no-color">
-            <input type="submit" value="Delete" class="btn btn-default" /> |
-            @Html.ActionLink("Back to List", "Index")
-        </div>
-    }
+<div class="modal-header">
+    <h4 class="modal-title">Purge User Account Record</h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
 </div>
+
+<div class="modal-body" id="form-body">
+    <h5>@Model.Employee</h5>
+    <br />
+    <h6>Other Details:</h6>
+    <table class="table">
+        <tr>
+            <td><strong>@Html.DisplayNameFor(model => model.Department)</strong></td>
+            <td>@Html.DisplayFor(model => model.DepartmentCode) - @Html.DisplayFor(model => model.Department)</td>
+        </tr>
+        <tr>
+            <td><strong>@Html.DisplayNameFor(model => model.Unit)</strong></td>
+            <td>@Html.DisplayFor(model => model.UnitCode) - @Html.DisplayFor(model => model.Unit)</td>
+        </tr>
+        <tr>
+            <td><strong>@Html.DisplayNameFor(model => model.UserRole)</strong></td>
+            <td>@Html.DisplayFor(model => model.UserRole)</td>
+        </tr>
+    </table>
+</div>
+
+<div class="modal-footer">
+    <div class="form-group">
+        @using (Ajax.BeginForm("delete", "Users", new AjaxOptions() { HttpMethod = "POST", UpdateTargetId = "modal-container", OnSuccess = "CloseModal" }, htmlAttributes: new { id = "deleteSupplier" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.UserID)
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" id="save-btn"><i class="fa fa-trash"></i>&nbsp; Delete record</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i>&nbsp; Close</button>
+            </div>
+        }
+    </div>
+</div>
+
+<script type="text/javascript">
+    $("#save-btn").on('click', function (e)
+    {
+        e.preventDefault();
+        swal.fire({
+            title: "Delete record?",
+            text: "You are about to delete this record, continue?",
+            type: "warning",
+            showCancelButton: true,
+        }).then((result) =>
+        {
+            if (result.value)
+            {
+                $("#deleteSupplier").submit();
+            }
+        })
+    });
+    function CloseModal(data) {
+        if (data.result === true) {
+            $('#modal-default').modal('hide');
+            if (data.result == true) {
+                swal.fire({
+                    title: "Record Deleted!",
+                    text: "Record is successfully deleted.",
+                    icon: "success"
+                }).then((result) => {
+                    if (result.value) {
+                        window.location.href = "@Url.Action("index", "Users", new { Area = "" })";
+                    }
+                })
+            }
+            else {
+                swal.fire({
+                    title: "Record Not Saved!",
+                    text: "Saving record failed.",
+                    icon: "error"
+                })
+            }
+        }
+    };
+</script>

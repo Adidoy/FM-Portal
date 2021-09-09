@@ -1,0 +1,124 @@
+﻿@{
+    ViewBag.Title = "Deliveries";
+    ViewBag.Description = "New Delivery";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Deliveries Dashboard", "dashboard")</li>
+        <li class="breadcrumb-item">New Delivery</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-list"></i> New Delivery</h3>
+}
+
+@using (Ajax.BeginForm("post-delivery", "Deliveries", null, new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult", UpdateTargetId = "form-container" }, htmlAttributes: new { id = "projectDetails", Area = "property-and-supplies" }))
+{
+    @Html.AntiForgeryToken()
+    <div id="form-container">
+        @Html.Partial("_Details")
+    </div>
+}
+
+@section FormFooter{
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" onclick="SaveUpdates()"><i class="fa fa-save"></i>&nbsp; Save Delivery</button>
+                <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("dashboard", "Deliveries", new { Area = "property-and-supplies" })'"><i class="fa fa-arrow-alt-circle-left"></i>&nbsp; Back to Dashboard</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('table.display').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": false,
+            "info": true,
+            "autoWidth": false,
+            "pageLength": 5
+        });
+    });
+
+    $(function () {
+        $('#InvoiceDate1').datetimepicker({
+            useCurrent: true,
+            defaultDate: '@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")',
+            format: 'DD MMMM YYYY hh:mm A'
+        });
+        $('#DeliveryDate1').datetimepicker({
+            useCurrent: true,
+            defaultDate: '@DateTime.Now.ToString("dd MMMM yyyy hh:mm tt")',
+            format: 'DD MMMM YYYY hh:mm A'
+        });
+    });
+
+    function SaveUpdates() {
+        swal.fire({
+            title: "Save Delivery?",
+            text: "You are about to save delivery for this contract, continue?",
+            icon: "question",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#projectDetails").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    icon: "error"
+                })
+            };
+        })
+    }
+
+    function CreateResult(data) {
+        if (data.result == true) {
+            swal.fire({
+                title: "Delivery Saved!",
+                text: "Delivery is successfully updated.",
+                icon: "success"
+            }).then((result) => {
+                if (result.value) {
+                    var url = '@Url.Action("dashboard", "Deliveries", new { Area = "property-and-supplies" })';
+                    window.location.href = url;
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                icon: "error"
+            });
+        }
+        var vsummary = $("#ValidationSummary");
+        if (vsummary.val() != null) {
+            $("input").blur();
+            $(window).scrollTop(0,0);
+        }
+    }
+
+    function VideoConferencingChanged() {
+        var option = $('#PreBidVideoConferencingOptions').val()
+        if (option == 0) {
+            document.getElementById('PreBidVideoConferenceMode').disabled = true;
+            document.getElementById('PreBidVideoConferenceAccessRequestEmail').disabled = true;
+            document.getElementById('PreBidVideoConferenceAccessRequestContactNo').disabled = true;
+        }
+        else {
+            document.getElementById('PreBidVideoConferenceMode').disabled = false;
+            document.getElementById('PreBidVideoConferenceAccessRequestEmail').disabled = false;
+            document.getElementById('PreBidVideoConferenceAccessRequestContactNo').disabled = false;
+        }
+    }
+</script>

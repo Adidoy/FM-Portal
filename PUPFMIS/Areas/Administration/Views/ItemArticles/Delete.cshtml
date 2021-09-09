@@ -1,0 +1,75 @@
+﻿@{
+    ViewBag.Title = "Item Articles";
+    ViewBag.Description = "Purge Record";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Item Articles", "list", "ItemArticles", new { Area = "administration" }, null)</li>
+        <li class="breadcrumb-item">Purge</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-right">
+        <h1 class="card-title"><i class="fa fa-bookmark"></i> Purge Item Article Record</h1>
+    </div>
+}
+
+@Html.Partial("_Details")
+
+@section FormFooter {
+    <div class="form-group float-right">
+        @using (Ajax.BeginForm("delete", "ItemArticles", new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "addItem", Area = "administration", ArticleCode = Model.ArticleCode }))
+        {
+            @Html.AntiForgeryToken()
+            <button type="button" class="btn btn-primary" id="save-btn" onclick="DeleteRecord()"><i class="fa fa-trash"></i> Delete Record</button>
+            <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("list","ItemArticles", new { Area = "administration" })'"><i class="fa fa-arrow-circle-left"></i> Back to List</button>
+        }
+    </div>
+}
+
+<script type="text/javascript">
+    function DeleteRecord() {
+        swal.fire({
+            title: "Delete record?",
+            text: "You are about to delete this record, continue?",
+            icon: "question",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#addItem").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    icon: "error"
+                })
+            }
+        })
+    }
+    function CreateResult(data) {
+        if (data.result == true) {
+            swal.fire({
+                title: "Record Deleted!",
+                text: "Record is successfully deleted.",
+                icon: "success"
+            }).then((result) => {
+                if (result.value) {
+                    window.location.href = "@Url.Action("list", "ItemArticles", new { Area = "administration" })";
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                icon: "error"
+            })
+        }
+
+    }
+</script>

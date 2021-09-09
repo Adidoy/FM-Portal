@@ -1,0 +1,651 @@
+﻿@model PUPFMIS.Models.InstitutionalItemPlan
+
+@{
+    ViewBag.Title = "Institutional Procurement Plan";
+    ViewBag.Description = "Details";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Institutional Procurement Planning", "list")</li>
+        <li class="breadcrumb-item">Home</li>
+    </ol>
+}
+
+@section Header {
+    <div class="col-md-12 text-right">
+        <h1 class="card-title"><i class="fa fa-bookmark"></i> Institutional Procurement Plan Details</h1>
+    </div>
+}
+
+@using (Ajax.BeginForm("details", "StrategicPlanning", new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "stratPlan", Area = "responsibility-centers" }))
+{
+<div id="form-container">
+    @Html.AntiForgeryToken()
+    @if (!Html.ViewData.ModelState.IsValid)
+    {
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="alert alert-danger pl-2 pr-2 ml-2 mr-2 pb-0 pt-2">
+                    <p class="p-0 m-0">
+                        <h6><i class="icon fas fa-ban"></i> Alert!</h6>
+                        @Html.ValidationSummary(true, "", new { style = "font-size: 10pt;" })
+                    </p>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">ITEM AND SPECIFICATIONS</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-12">
+                            <div class="form-group-sm">
+                                <div style="text-align:center;" id="itemImageHolder">
+                                    @Html.HiddenFor(model => model.Item.ItemImage)
+                                    @if (Model.Item.ItemImage != null)
+                                    {
+                                        var base64 = Convert.ToBase64String(Model.Item.ItemImage);
+                                        var imgsrc = string.Format("data:image/jpg;base64,{0}", base64);
+                                        <img src='@imgsrc' style="max-width:85%; max-height:85%; position:absolute; left:50%; top:50%; transform:translate(-50%, -50%);" />
+                                    }
+                                    else
+                                    {
+                                        <img src="@Url.Content("~/Content/imgs/PUPLogo.png")" style="max-width:85%; max-height:85%; position:absolute; left:50%; top:50%; transform:translate(-50%, -50%);" />
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-8 col-md-8 col-sm-12">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            @Html.HiddenFor(d => d.Item.ItemCode)
+                                            <h4 class="card-title"><b>@Model.Item.ItemName <small>(@Model.Item.ItemCode)</small></b></h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <h6>ITEM DETAILS:</h6>
+                                                    <div class="row">
+                                                        <div class="col-sm-4"><b>Classification</b></div>
+                                                        @Html.HiddenFor(modelItem => modelItem.Item.Classification)
+                                                        <div class="col-sm-1">:</div>
+                                                        <div class="col-sm-7"><i>@Html.DisplayFor(modelItem => modelItem.Item.Classification)</i></div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-4"><b>Item Type</b></div>
+                                                        @Html.HiddenFor(modelItem => modelItem.Item.ItemType)
+                                                        <div class="col-sm-1">:</div>
+                                                        <div class="col-sm-7"><i>@Html.DisplayFor(modelItem => modelItem.Item.ItemType)</i></div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-4"><b>Category</b></div>
+                                                        @Html.HiddenFor(modelItem => modelItem.Item.Category)
+                                                        <div class="col-sm-1">:</div>
+                                                        <div class="col-sm-7"><i>@Html.DisplayFor(modelItem => modelItem.Item.Category)</i></div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-4"><b>Procurement Source</b></div>
+                                                        <div class="col-sm-1">:</div>
+                                                        @Html.HiddenFor(modelItem => modelItem.Item.ProcurementSource)
+                                                        <div class="col-sm-7"><i>@Html.DisplayFor(modelItem => modelItem.Item.ProcurementSource)</i></div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-4"><b>Unit of Measure</b></div>
+                                                        <div class="col-sm-1">:</div>
+                                                        @Html.HiddenFor(modelItem => modelItem.Item.IndividualUOMReference)
+                                                        <div class="col-sm-7"><i>@Html.DisplayFor(modelItem => modelItem.Item.IndividualUOMReference)</i></div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-4"><b>Minimum Issuance Qty</b></div>
+                                                        <div class="col-sm-1">:</div>
+                                                        @Html.HiddenFor(modelItem => modelItem.Item.MinimumIssuanceQty)
+                                                        <div class="col-sm-7"><i>@Html.DisplayFor(modelItem => modelItem.Item.MinimumIssuanceQty)<span>&nbsp;</span>@Html.DisplayFor(modelItem => modelItem.Item.IndividualUOMReference)</i></div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-4"><b>Unit Cost</b></div>
+                                                        <div class="col-sm-1">:</div>
+                                                        @Html.HiddenFor(modelItem => modelItem.Item.UnitCost)
+                                                        <div class="col-sm-7">
+                                                            @if (Model.Item.UnitCost == null)
+                                                            {
+                                                                if (Model.Item.Classification != "Repair and Maintenance" && Model.Item.Classification != "Infrastructure")
+                                                                {
+                                                                    <b><u>@Html.ActionLink("Update Market Survey", "create-from-planning", "MarketSurvey", new { ItemCode = Model.Item.ItemCode }, null)</u></b>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <b><u>@Html.ActionLink("Update Detailed Estimates", "create-from-planning", "MarketSurvey", new { ItemCode = Model.Item.ItemCode }, null)</u></b>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <i>@( Model.Item.UnitCost.Value.ToString("C", new System.Globalization.CultureInfo("en-ph")) )</i>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title"><b>ITEM SPECIFICATIONS</b></h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="ml-3 mr-3">
+                                                <p style="text-align:justify; font-size:9pt;">@Html.DisplayFor(modelItem => modelItem.Item.ItemSpecifications)</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr />
+    @if (Model.Item.UnitCost == null)
+    {
+        if (Model.Item.Classification != "Repair and Maintenance" && Model.Item.Classification != "Infrastructure")
+        {
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">ITEM MARKET SURVEY</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <h6>Market Survey needs to be updated. <b><u>@Html.ActionLink("Update", "create-from-planning", "MarketSurvey", new { ItemCode = Model.Item.ItemCode, DepartmentCode = ViewBag.DepartmentCode }, null)</u></b> it now.</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">DETAILED ESTIMATES</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <h6>Detailed Estimates needs to be updated. <b><u>@Html.ActionLink("Update", "create-from-planning", "MarketSurvey", new { ItemCode = Model.Item.ItemCode, DepartmentCode = ViewBag.DepartmentCode }, null)</u></b> it now.</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">PROJECT PLANS</h3>
+                    </div>
+                    <div class="card-body">
+                        @for (int i = 0; i < Model.ProjectPlans.Count; i++)
+                        {
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="card card-info">
+                                        <div class="card-header">
+                                            @Html.HiddenFor(d => Model.ProjectPlans[i].ProjectCode)
+                                            <h3 class="card-title">@Model.ProjectPlans[i].ProjectName.ToUpper() <small>(@Model.ProjectPlans[i].ProjectCode)</small></h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="row">
+                                                        <div class="col-lg-3 col-md-3 col-sm-12">
+                                                            <b>@Html.DisplayNameFor(model => Model.ProjectPlans[i].UnitName)</b>
+                                                        </div>
+                                                        <div class="col-lg-8 col-md-8 col-sm-12">
+                                                            :&nbsp;<b>@( Model.ProjectPlans[i].UnitName.ToUpper() )</b>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-3 col-md-3 col-sm-12">
+                                                            <b>@Html.DisplayNameFor(model => Model.ProjectPlans[i].Program)</b>
+                                                        </div>
+                                                        <div class="col-lg-8 col-md-8 col-sm-12">
+                                                            :&nbsp;<b>@Html.DisplayFor(d => d.ProjectPlans[i].Program) (@Html.DisplayFor(d => d.ProjectPlans[i].PAPCode))</b>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-3 col-md-3 col-sm-12">
+                                                            <b>@Html.DisplayNameFor(model => Model.ProjectPlans[i].Description)</b>
+                                                        </div>
+                                                        <div class="col-lg-8 col-md-8 col-sm-12">
+                                                            :&nbsp;@Html.DisplayFor(d => d.ProjectPlans[i].Description)
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-3 col-md-3 col-sm-12">
+                                                            <b>@Html.DisplayNameFor(model => Model.ProjectPlans[i].Justification)</b>
+                                                        </div>
+                                                        <div class="col-lg-8 col-md-8 col-sm-12">
+                                                            :&nbsp;@Html.DisplayFor(d => d.ProjectPlans[i].Justification)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr />
+                                            <div class="row">
+                                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                                    <div class="card" style="height:215px;">
+                                                        <div class="card-header">
+                                                            <h5 class="card-title"><b>Quantity Requirement:</b></h5>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            @if (Model.ProjectPlans[i].ProjectCode.Contains("EUPR"))
+                                                            {
+                                                                <div class="row">
+                                                                    <div class="col-sm-12">
+                                                                        @if (Model.ProjectPlans[i].JanQty != 0)
+                                                                        {
+                                                                            <div class="row">
+                                                                                <div class="col-sm-2">
+                                                                                    @Html.LabelFor(modelItem => Model.ProjectPlans[i].JanQty)
+                                                                                </div>
+                                                                                <div class="col-sm-10">
+                                                                                    <span> : </span>@Html.DisplayFor(modelItem => Model.ProjectPlans[i].JanQty)
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                        @if (Model.ProjectPlans[i].FebQty != 0)
+                                                                        {
+                                                                            <div class="row">
+                                                                                <div class="col-sm-2">
+                                                                                    @Html.LabelFor(modelItem => Model.ProjectPlans[i].FebQty)
+                                                                                </div>
+                                                                                <div class="col-sm-10">
+                                                                                    <span> : </span>@Html.DisplayFor(modelItem => Model.ProjectPlans[i].FebQty)
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                        @if (Model.ProjectPlans[i].MarQty != 0)
+                                                                        {
+                                                                            <div class="row">
+                                                                                <div class="col-sm-2">
+                                                                                    @Html.LabelFor(modelItem => Model.ProjectPlans[i].MarQty)
+                                                                                </div>
+                                                                                <div class="col-sm-10">
+                                                                                    <span> : </span>@Html.DisplayFor(modelItem => Model.ProjectPlans[i].MarQty)
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                        @if (Model.ProjectPlans[i].AprQty != 0)
+                                                                        {
+                                                                            <div class="row">
+                                                                                <div class="col-sm-2">
+                                                                                    @Html.LabelFor(modelItem => Model.ProjectPlans[i].AprQty)
+                                                                                </div>
+                                                                                <div class="col-sm-10">
+                                                                                    <span> : </span>@Html.DisplayFor(modelItem => Model.ProjectPlans[i].AprQty)
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                        @if (Model.ProjectPlans[i].MayQty != 0)
+                                                                        {
+                                                                            <div class="row">
+                                                                                <div class="col-sm-2">
+                                                                                    @Html.LabelFor(modelItem => Model.ProjectPlans[i].MayQty)
+                                                                                </div>
+                                                                                <div class="col-sm-10">
+                                                                                    <span> : </span>@Html.DisplayFor(modelItem => Model.ProjectPlans[i].MayQty)
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                        @if (Model.ProjectPlans[i].JunQty != 0)
+                                                                        {
+                                                                            <div class="row">
+                                                                                <div class="col-sm-2">
+                                                                                    @Html.LabelFor(modelItem => Model.ProjectPlans[i].JunQty)
+                                                                                </div>
+                                                                                <div class="col-sm-10">
+                                                                                    <span> : </span>@Html.DisplayFor(modelItem => Model.ProjectPlans[i].JunQty)
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                        @if (Model.ProjectPlans[i].JulQty != 0)
+                                                                        {
+                                                                            <div class="row">
+                                                                                <div class="col-sm-2">
+                                                                                    @Html.LabelFor(modelItem => Model.ProjectPlans[i].JulQty)
+                                                                                </div>
+                                                                                <div class="col-sm-10">
+                                                                                    <span> : </span>@Html.DisplayFor(modelItem => Model.ProjectPlans[i].JulQty)
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                        @if (Model.ProjectPlans[i].AugQty != 0)
+                                                                        {
+                                                                            <div class="row">
+                                                                                <div class="col-sm-2">
+                                                                                    @Html.LabelFor(modelItem => Model.ProjectPlans[i].AugQty)
+                                                                                </div>
+                                                                                <div class="col-sm-10">
+                                                                                    <span> : </span>@Html.DisplayFor(modelItem => Model.ProjectPlans[i].AugQty)
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                        @if (Model.ProjectPlans[i].SepQty != 0)
+                                                                        {
+                                                                            <div class="row">
+                                                                                <div class="col-sm-2">
+                                                                                    @Html.LabelFor(modelItem => Model.ProjectPlans[i].SepQty)
+                                                                                </div>
+                                                                                <div class="col-sm-10">
+                                                                                    <span> : </span>@Html.DisplayFor(modelItem => Model.ProjectPlans[i].SepQty)
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                        @if (Model.ProjectPlans[i].OctQty != 0)
+                                                                        {
+                                                                            <div class="row">
+                                                                                <div class="col-sm-2">
+                                                                                    @Html.LabelFor(modelItem => Model.ProjectPlans[i].OctQty)
+                                                                                </div>
+                                                                                <div class="col-sm-10">
+                                                                                    <span> : </span>@Html.DisplayFor(modelItem => Model.ProjectPlans[i].OctQty)
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                        @if (Model.ProjectPlans[i].NovQty != 0)
+                                                                        {
+                                                                            <div class="row">
+                                                                                <div class="col-sm-2">
+                                                                                    @Html.LabelFor(modelItem => Model.ProjectPlans[i].NovQty)
+                                                                                </div>
+                                                                                <div class="col-sm-10">
+                                                                                    <span> : </span>@Html.DisplayFor(modelItem => Model.ProjectPlans[i].NovQty)
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                        @if (Model.ProjectPlans[i].DecQty != 0)
+                                                                        {
+                                                                            <div class="row">
+                                                                                <div class="col-sm-2">
+                                                                                    @Html.LabelFor(modelItem => Model.ProjectPlans[i].DecQty)
+                                                                                </div>
+                                                                                <div class="col-sm-10">
+                                                                                    <span> : </span>@Html.DisplayFor(modelItem => Model.ProjectPlans[i].DecQty)
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="row">
+                                                                    <div class="col-lg-3 col-md-3 col-sm-12">
+                                                                        <div class="row">
+                                                                            <div class="col-sm-6">
+                                                                                <b>@Html.DisplayNameFor(d => Model.ProjectPlans[i].JanQty)</b>
+                                                                            </div>
+                                                                            <div class="col-sm-6">
+                                                                                <span>&nbsp;:&nbsp;</span>@Html.DisplayFor(d => Model.ProjectPlans[i].JanQty)
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-sm-6">
+                                                                                <b>@Html.DisplayNameFor(d => Model.ProjectPlans[i].FebQty)</b>
+                                                                            </div>
+                                                                            <div class="col-sm-6">
+                                                                                <span>&nbsp;:&nbsp;</span>@Html.DisplayFor(d => Model.ProjectPlans[i].FebQty)
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-sm-6">
+                                                                                <b>@Html.DisplayNameFor(d => Model.ProjectPlans[i].MarQty)</b>
+                                                                            </div>
+                                                                            <div class="col-sm-6">
+                                                                                <span>&nbsp;:&nbsp;</span>@Html.DisplayFor(d => Model.ProjectPlans[i].MarQty)
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-12">
+                                                                        <div class="row">
+                                                                            <div class="col-sm-6">
+                                                                                <b>@Html.DisplayNameFor(d => Model.ProjectPlans[i].AprQty)</b>
+                                                                            </div>
+                                                                            <div class="col-sm-6">
+                                                                                <span>&nbsp;:&nbsp;</span>@Html.DisplayFor(d => Model.ProjectPlans[i].AprQty)
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-sm-6">
+                                                                                <b>@Html.DisplayNameFor(d => Model.ProjectPlans[i].MayQty)</b>
+                                                                            </div>
+                                                                            <div class="col-sm-6">
+                                                                                <span>&nbsp;:&nbsp;</span>@Html.DisplayFor(d => Model.ProjectPlans[i].MayQty)
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-sm-6">
+                                                                                <b>@Html.DisplayNameFor(d => Model.ProjectPlans[i].JunQty)</b>
+                                                                            </div>
+                                                                            <div class="col-sm-6">
+                                                                                <span>&nbsp;:&nbsp;</span>@Html.DisplayFor(d => Model.ProjectPlans[i].JunQty)
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-12">
+                                                                        <div class="row">
+                                                                            <div class="col-sm-6">
+                                                                                <b>@Html.DisplayNameFor(d => Model.ProjectPlans[i].JulQty)</b>
+                                                                            </div>
+                                                                            <div class="col-sm-6">
+                                                                                <span>&nbsp;:&nbsp;</span>@Html.DisplayFor(d => Model.ProjectPlans[i].JulQty)
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-sm-6">
+                                                                                <b>@Html.DisplayNameFor(d => Model.ProjectPlans[i].AugQty)</b>
+                                                                            </div>
+                                                                            <div class="col-sm-6">
+                                                                                <span>&nbsp;:&nbsp;</span>@Html.DisplayFor(d => Model.ProjectPlans[i].AugQty)
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-sm-6">
+                                                                                <b>@Html.DisplayNameFor(d => Model.ProjectPlans[i].SepQty)</b>
+                                                                            </div>
+                                                                            <div class="col-sm-6">
+                                                                                <span>&nbsp;:&nbsp;</span>@Html.DisplayFor(d => Model.ProjectPlans[i].SepQty)
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-12">
+                                                                        <div class="row">
+                                                                            <div class="col-sm-6">
+                                                                                <b>@Html.DisplayNameFor(d => Model.ProjectPlans[i].OctQty)</b>
+                                                                            </div>
+                                                                            <div class="col-sm-6">
+                                                                                <span>&nbsp;:&nbsp;</span>@Html.DisplayFor(d => Model.ProjectPlans[i].OctQty)
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-sm-6">
+                                                                                <b>@Html.DisplayNameFor(d => Model.ProjectPlans[i].NovQty)</b>
+                                                                            </div>
+                                                                            <div class="col-sm-6">
+                                                                                <span>&nbsp;:&nbsp;</span>@Html.DisplayFor(d => Model.ProjectPlans[i].NovQty)
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-sm-6">
+                                                                                <b>@Html.DisplayNameFor(d => Model.ProjectPlans[i].DecQty)</b>
+                                                                            </div>
+                                                                            <div class="col-sm-6">
+                                                                                <span>&nbsp;:&nbsp;</span>@Html.DisplayFor(d => Model.ProjectPlans[i].DecQty)
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                            <br />
+                                                            <div class="row">
+                                                                <div class="col-sm-12">
+                                                                    <h6>TOTAL QUANTITY<span> : </span>@Html.DisplayFor(modelItem => Model.ProjectPlans[i].TotalQty)</h6>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                                    <div class="card" style="height:215px;">
+                                                        <div class="card-header">
+                                                            <h5 class="card-title"><b>Acceptance:</b></h5>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <div class="row">
+                                                                <div class="col-sm-12">
+                                                                    <div class="form-group">
+                                                                        @Html.LabelFor(model => Model.ProjectPlans[i].ResponsibilityCenterAction, htmlAttributes: new { @class = "control-label" })
+                                                                        <div class="input-group mb-3">
+                                                                            <div class="input-group-prepend">
+                                                                                <span class="input-group-text"><i class="fa fa-building"></i></span>
+                                                                            </div>
+                                                                            @Html.EnumDropDownListFor(model => Model.ProjectPlans[i].ResponsibilityCenterAction, htmlAttributes: new { @class = "form-control form-control-sm", style = "font-size:9pt;", onchange = string.Concat("ShowReasons(", i, ")") })
+                                                                        </div>
+                                                                        @Html.ValidationMessageFor(model => Model.ProjectPlans[i].ResponsibilityCenterAction, "", new { @class = "text-danger" })
+                                                                    </div>
+                                                                    <div hidden id=@( string.Concat("ProjectPlans[",i,"].ReasonForNonAcceptance_FormGroup") )>
+                                                                        <div class="form-group">
+                                                                            @Html.LabelFor(model => Model.ProjectPlans[i].ReasonForNonAcceptance, htmlAttributes: new { @class = "control-label" })
+                                                                            <div class="input-group mb-3">
+                                                                                <div class="input-group-prepend">
+                                                                                    <span class="input-group-text"><i class="fa fa-building"></i></span>
+                                                                                </div>
+                                                                                @Html.EnumDropDownListFor(model => Model.ProjectPlans[i].ReasonForNonAcceptance, htmlAttributes: new { @class = "form-control form-control-sm", style = "font-size:9pt;" })
+                                                                            </div>
+                                                                            @Html.ValidationMessageFor(model => Model.ProjectPlans[i].ReasonForNonAcceptance, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+}
+
+@section FormFooter{
+    <div class="row">
+        <div class="col-sm-12">
+            <div style="text-align: right;">
+                <button type="button" class="btn btn-md btn-primary" onclick="SaveStrategicPlan()"> <i class="fa fa-save"></i> Save Items</button>
+                <button type="button" class="btn btn-md btn-danger" onclick="window.location = '@Url.Action("list", "StrategicPlanning", new { Area = "responsibility-centers" })'"> <i class="fa fa-arrow-circle-left"></i> Back to Items List</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        $('#items').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": false,
+            "info": true,
+            "autoWidth": false,
+        });
+    });
+    function SaveStrategicPlan() {
+        swal.fire({
+            title: "Save Institutional Procurement Plan?",
+            text: "You are about to save this Institutional Procurement Plan Detail, continue?",
+            icon: "question",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#stratPlan").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    icon: "error"
+                })
+            };
+        })
+    }
+    function CreateResult(data) {
+        if (data.result == true) {
+            swal.fire({
+                title: "Institutional Procurement Plan Updated!",
+                text: "Institutional Procurement Plan Items are successfully updated.",
+                icon: "success"
+            }).then((result) => {
+                if (result.value) {
+                    var url = "@Url.Action("item-list", "StrategicPlanning", new { Area = "responsibility-centers", DepartmentCode = "xxxx" })";
+                    url = url.replace("xxxx", '@ViewBag.DepartmentCode')
+                    window.location.href = url;
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                icon: "error"
+            });
+        }
+    }
+    function ShowReasons(index)
+    {
+        var approval = document.getElementsByName('ProjectPlans[' + index + '].ResponsibilityCenterAction')[0].value;
+        if(approval == 0)
+        {
+            document.getElementById('ProjectPlans[' + index + '].ReasonForNonAcceptance_FormGroup').hidden = true;
+        }
+        else
+        {
+            document.getElementById('ProjectPlans[' + index + '].ReasonForNonAcceptance_FormGroup').hidden = false;
+        }
+    }
+</script>

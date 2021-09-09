@@ -1,0 +1,149 @@
+﻿@model PUPFMIS.Models.RequestForQuotationVM
+
+@{
+    ViewBag.Title = "Requests for Quotation";
+    ViewBag.Description = "Create";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">@Html.ActionLink("Request for Quotation", "dashboard", "RequestForQuotation", new { Area = "procurement" }, null)</li>
+        <li class="breadcrumb-item">Create</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-list"></i> Create New Request for Quotation</h3>
+}
+
+@using (Ajax.BeginForm("create", "RequestForQuotation", new AjaxOptions() { HttpMethod = "POST", OnSuccess = "CreateResult" }, htmlAttributes: new { id = "projectDetails", Area = "procurement" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="card card-info">
+        <div class="card-header"><h3 class="card-title">RFQ Details</h3></div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => Model.SolicitationNo, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-barcode"></i></span>
+                            </div>
+                            @Html.HiddenFor(model => Model.SolicitationNo)
+                            @Html.EditorFor(model => Model.SolicitationNo, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => Model.ContractCode, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-id-card"></i></span>
+                            </div>
+                            @Html.HiddenFor(model => Model.ContractCode)
+                            @Html.EditorFor(model => Model.ContractCode, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => Model.ContractName, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-id-badge"></i></span>
+                            </div>
+                            @Html.HiddenFor(model => Model.ContractName)
+                            @Html.EditorFor(model => Model.ContractName, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => Model.FiscalYear, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                            </div>
+                            @Html.HiddenFor(model => Model.FiscalYear)
+                            @Html.EditorFor(model => Model.FiscalYear, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        @Html.LabelFor(model => Model.Deadline, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                            </div>
+                            @Html.HiddenFor(model => Model.Deadline)
+                            @Html.EditorFor(model => Model.Deadline, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", Value = Model.Deadline.ToString("dd MMMM yyyy hh:mm tt") } })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section FormFooter {
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" onclick="PostToAPR()"><i class="fa fa-plus"></i>&nbsp; Create Request for Quotation</button>
+                <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("dashboard", "RequestForQuotation", new { area = "procurement" })'"><i class="fa fa-arrow-alt-circle-left"></i>&nbsp; Back to Dashboard</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    function PostToAPR() {
+        swal.fire({
+            title: "Save Request for Quotation?",
+            text: "You are about to save this RFQ, continue?",
+            icon: "question",
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                $("#projectDetails").submit();
+            }
+            else {
+                swal.fire({
+                    title: "Cancelled!",
+                    text: "You have cancelled saving the record.",
+                    icon: "error"
+                })
+            };
+        })
+    }
+    function CreateResult(data) {
+        if (data.result == true) {
+            swal.fire({
+                title: "Record Saved!",
+                text: "Request for Quotation is successfully saved.",
+                icon: "success"
+            }).then((result) => {
+                if (result.value) {
+                    var url = "@Url.Action("details", "RequestForQuotation", new { Area = "procurement", SolicitationNo = Model.SolicitationNo })";
+                    window.location.href = url;
+                }
+            })
+        }
+        else {
+            swal.fire({
+                title: "Record Not Saved!",
+                text: "Saving record failed.",
+                icon: "error"
+            });
+        }
+    }
+</script>

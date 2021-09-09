@@ -8,29 +8,64 @@ using System.Web.Mvc;
 
 namespace PUPFMIS.Models
 {
-    [Table("PROC_MSTR_Inventory_Types")]
-    public class InventoryType
+    [Table("PROC_MSTR_Item_Classification")]
+    public class ItemClassification
     {
         [Key]
         public int ID { get; set; }
 
         [Required]
-        [Display(Name = "Inventory Code")]
-        public string InventoryCode { get; set; }
-
-        [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
-        [MaxLength(75, ErrorMessage = "{0} must be up to {1} characters only.")]
-        [Display(Name = "Inventory Type")]
-        public string InventoryTypeName { get; set; }
+        [MaxLength(75)]
+        [Display(Name = "General Class")]
+        public string GeneralClass { get; set; }
 
         [Required]
-        [Display(Name = "Is Tangible?")]
-        public bool IsTangible { get; set; }
+        [MaxLength(75)]
+        [Display(Name = "Classification")]
+        public string Classification { get; set; }
 
-        [Display(Name = "Default Responsibility Center")]
+        [Required]
+        [MaxLength(75)]
+        [Display(Name = "Project Prefix")]
+        public string ProjectPrefix { get; set; }
+    }
+
+    [Table("PROC_MSTR_Item_Types")]
+    public class ItemTypes
+    {
+        private string _itemType;
+        private string _itemTypeCode;
+
+        [Key]
+        public int ID { get; set; }
+
+        [Required]
+        [MaxLength(4)]
+        [Display(Name = "Item Type Code")]
+        public string ItemTypeCode { get { return _itemTypeCode; } set { _itemTypeCode = value == null ? null : value.ToUpper(); } }
+
+        [Required]
+        [MaxLength(150)]
+        [Column(TypeName = "VARCHAR")]
+        [Display(Name = "Item Type")]
+        public string ItemType { get { return _itemType; } set { _itemType = value == null ? null : value.ToUpper(); } }
+
+        [MaxLength(30)]
+        [Column(TypeName = "VARCHAR")]
+        [Display(Name = "Responsibility Center")]
         public string ResponsibilityCenter { get; set; }
 
+        [MaxLength(30)]
+        [Column(TypeName = "VARCHAR")]
+        [Display(Name = "Purchase Request Center")]
+        public string PurchaseRequestCenter { get; set; }
+
+        public int ItemClassificationReference { get; set; }
+
         [Required]
+        [Display(Name = "Is Deleted?")]
+        public bool PurgeFlag { get; set; }
+
         [Display(Name = "Date Created")]
         public DateTime CreatedAt { get; set; }
 
@@ -39,6 +74,9 @@ namespace PUPFMIS.Models
 
         [Display(Name = "Date Deleted")]
         public DateTime? DeletedAt { get; set; }
+
+        [ForeignKey("ItemClassificationReference")]
+        public virtual ItemClassification FKItemClassificationReference { get; set; }
     }
 
     [Table("PROC_MSTR_Item_Categories")]
@@ -67,33 +105,29 @@ namespace PUPFMIS.Models
         public DateTime? DeletedAt { get; set; }
     }
 
-    [Table("PROC_MSTR_Item_Type")]
-    public class ItemType
+    [Table("PROC_MSTR_Item_Articles")]
+    public class ItemArticles
     {
-        private string _itemTypeName = String.Empty;
+        private string _articleName = string.Empty;
 
         [Key]
         public int ID { get; set; }
 
-        [Display(Name = "Item Type Code")]
+        [MaxLength(30)]
         [Column(TypeName = "VARCHAR")]
-        [MaxLength(4, ErrorMessage = "{0} is up to {1} characters only.")]
+        [Display(Name = "Article Code")]
         [Required(ErrorMessage = "{0} field must be filled out.", AllowEmptyStrings = false)]
-        public string ItemTypeCode { get; set; }
+        public string ArticleCode { get; set; }
 
+        [Display(Name = "Article Name")]
+        [Column(TypeName = "VARCHAR")]
+        [MaxLength(150, ErrorMessage = "{0} is up to {1} characters only.")]
+        [Required(ErrorMessage = "{0} field must be filled out.", AllowEmptyStrings = false)]
+        public string ArticleName { get { return _articleName; } set { _articleName = value.ToUpper(); } }
+
+        [Required]
         [Display(Name = "Item Type")]
-        [Column(TypeName = "VARCHAR")]
-        [MaxLength(75, ErrorMessage = "{0} is up to {1} characters only.")]
-        [Required(ErrorMessage = "{0} field must be filled out.", AllowEmptyStrings = false)]
-        public string ItemTypeName { get { return _itemTypeName; } set { _itemTypeName = value.ToUpper(); } }
-
-        [Required]
-        [Display(Name = "Item Specification for this type is user-defined")]
-        public bool IsSpecificationUserDefined { get; set; }
-
-        [Required]
-        [Display(Name = "Inventory Type")]
-        public int InventoryTypeReference { get; set; }
+        public int ItemTypeReference { get; set; }
 
         [MaxLength(20)]
         [Display(Name = "UACS Object Class")]
@@ -117,29 +151,44 @@ namespace PUPFMIS.Models
         [Display(Name = "Date Deleted")]
         public DateTime? DeletedAt { get; set; }
 
-        [ForeignKey("InventoryTypeReference")]
-        public virtual InventoryType FKInventoryTypeReference { get; set; }
+        [ForeignKey("ItemTypeReference")]
+        public virtual ItemTypes FKItemTypeReference { get; set; }
     }
 
     [Table("PROC_MSTR_Item")]
     public class Item
     {
+        private string _itemCode = string.Empty;
+        private string _itemFullName = string.Empty;
+        private string _shortSpecs = string.Empty;
+        private string _sequence = string.Empty;
+
         [Key]
         public int ID { get; set; }
 
-        [Column(TypeName = "VARCHAR")]
+        [NotMapped]
         [Display(Name = "Item Code")]
-        [MaxLength(30, ErrorMessage = "{0} field must be up to {1} characters only.")]
-        public string ItemCode { get; set; }
+        public string ItemCode
+        {
+            get { return this.FKArticleReference.ArticleCode + "-" + this.Sequence; }
+        }
 
-        [Display(Name = "Item Type")]
-        public int ItemType { get; set; }
+        [Required]
+        [MaxLength(2)]
+        public string Sequence { get; set; }
+
+        [Display(Name = "Article")]
+        public int ArticleReference { get; set; }
 
         [Display(Name = "Full Name")]
         [Column(TypeName = "VARCHAR")]
         [MaxLength(200, ErrorMessage = "{0} field must be up to {1} characters only.")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
-        public string ItemFullName { get; set; }
+        public string ItemFullName
+        {
+            get { return _itemFullName.ToUpper(); }
+            set { _itemFullName = value.ToUpper(); }
+        }
 
         [Display(Name = "Item Image")]
         public byte[] ItemImage { get; set; }
@@ -148,7 +197,11 @@ namespace PUPFMIS.Models
         [Display(Name = "Short Specifications")]
         [MaxLength(100, ErrorMessage = "{0} field must be up to {1} characters only.")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
-        public string ItemShortSpecifications { get; set; }
+        public string ItemShortSpecifications { get { return _shortSpecs; } set { _shortSpecs = value.ToUpper(); } }
+
+        [Required]
+        [Display(Name = "Item Specification is set by End-User?")]
+        public bool IsSpecsUserDefined { get; set; }
 
         [AllowHtml]
         [DataType(DataType.MultilineText)]
@@ -158,26 +211,24 @@ namespace PUPFMIS.Models
         [Display(Name = "Category")]
         public int CategoryReference { get; set; }
 
-        [Display(Name = "Responsibility Center")]
-        public string ResponsibilityCenter { get; set; }
-
-        [Display(Name = "Purchase Request Office")]
-        public string PurchaseRequestOffice { get; set; }
-
         [Display(Name = "Procurement Source")]
         public ProcurementSources ProcurementSource { get; set; }
 
+        [Required]
         [Display(Name = "Packaging Unit")]
-        public int? PackagingUOMReference { get; set; }
+        public int PackagingUOMReference { get; set; }
 
+        [Required]
         [Display(Name = "Individual Unit")]
-        public int? IndividualUOMReference { get; set; }
+        public int IndividualUOMReference { get; set; }
 
+        [Required]
         [Display(Name = "Quantity per Package")]
-        public int? QuantityPerPackage { get; set; }
+        public int QuantityPerPackage { get; set; }
 
+        [Required]
         [Display(Name = "Minimum Issuance Quantity")]
-        public int? MinimumIssuanceQty { get; set; }
+        public int MinimumIssuanceQty { get; set; }
 
         [Required]
         [Display(Name = "Is Deleted?")]
@@ -201,8 +252,8 @@ namespace PUPFMIS.Models
         [Display(Name = "Individual Unit of Measure")]
         public virtual UnitOfMeasure FKIndividualUnitReference { get; set; }
 
-        [ForeignKey("ItemType")]
-        public virtual ItemType FKItemTypeReference { get; set; }
+        [ForeignKey("ArticleReference")]
+        public virtual ItemArticles FKArticleReference { get; set; }
 
         [ForeignKey("CategoryReference")]
         public virtual ItemCategory FKCategoryReference { get; set; }
@@ -221,7 +272,7 @@ namespace PUPFMIS.Models
         public virtual Item FKItemReference { get; set; }
     }
 
-    [Table("PROC_MSTR_Item_Prices")]
+    [Table("PROC_MSTR_Item_Price_Catalogue")]
     public class ItemPrice
     {
         [Key]
@@ -229,69 +280,25 @@ namespace PUPFMIS.Models
 
         public int Item { get; set; }
 
-        [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
         [Display(Name = "Unit Price")]
-        public decimal UnitPrice { get; set; }
-
         [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
-        [Display(Name = "Effectivity Date")]
-        [Column(TypeName = "datetime2")]
-        public DateTime EffectivityDate { get; set; }
-
-        [Display(Name = "Item")]
-        [ForeignKey("Item")]
-        public virtual Item FKItemReference { get; set; }
+        public decimal UnitPrice { get; set; }
 
         [Required]
         [Display(Name = "Is Prevailing Price?")]
         public bool IsPrevailingPrice { get; set; }
 
-        [Required]
-        [Display(Name = "Date Created")]
-        public DateTime CreatedAt { get; set; }
-
-        [Display(Name = "Date Updated")]
-        public DateTime? UpdatedAt { get; set; }
-    }
-    
-    public class ItemTypeVM
-    {
-        public int ID { get; set; }
-
-        [Display(Name = "Item Specification for this type is user-defined")]
-        public bool IsSpecificationUserDefined { get; set; }
-
-        [Display(Name = "Item Code")]
-        public string ItemTypeCode { get; set; }
-
-        [Display(Name = "Item Type")]
-        public string ItemTypeName { get; set; }
-
-        public int InventoryTypeReference { get; set; }
-
-        [Display(Name = "Inventory Type")]
-        public string InventoryTypeName { get; set; }
-
-        [Display(Name = "UACS Object Class")]
-        public string UACSObjectClass { get; set; }
-
-        [Display(Name = "Responsibility Center")]
-        public string ResponsibilityCenter { get; set; }
-
-        [Display(Name = "Is Tangible?")]
-        public string IsTangible { get; set; }
-
-        [Display(Name = "Is Deleted?")]
-        public bool PurgeFlag { get; set; }
-
-        [Display(Name = "Date Created")]
-        public DateTime CreatedAt { get; set; }
+        [Column(TypeName = "datetime2")]
+        [Display(Name = "Effectivity Date")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "{0} field must be filled out.")]
+        public DateTime EffectivityDate { get; set; }
 
         [Display(Name = "Date Updated")]
         public DateTime? UpdatedAt { get; set; }
 
-        [Display(Name = "Date Deleted")]
-        public DateTime? DeletedAt { get; set; }
+        [ForeignKey("Item")]
+        [Display(Name = "Item")]
+        public virtual Item FKItemReference { get; set; }
     }
 
     public class ItemVM
@@ -301,14 +308,20 @@ namespace PUPFMIS.Models
         [Display(Name = "Item Code")]
         public string ItemCode { get; set; }
 
+        [Display(Name = "Article")]
+        public int Article { get; set; }
+
         [Display(Name = "Item Type")]
         public string ItemType { get; set; }
+        
+        [Display(Name = "UACS Object Class")]
+        public string AccountClass { get; set; }
 
-        [Display(Name = "Inventory Type")]
-        public string InventoryType { get; set; }
+        [Display(Name = "Classification")]
+        public string Classification { get; set; }
 
         [Display(Name = "Category")]
-        public string Category { get; set; }
+        public int Category { get; set; }
 
         [Display(Name = "Full Name")]
         public string ItemFullName { get; set; }
@@ -319,16 +332,14 @@ namespace PUPFMIS.Models
         [Display(Name = "Short Specifications")]
         public string ItemShortSpecifications { get; set; }
 
+        [Required]
+        [Display(Name = "Item Specification is set by End-User?")]
+        public bool IsSpecsUserDefined { get; set; }
+
         [AllowHtml]
         [DataType(DataType.MultilineText)]
         [Display(Name = "Full Specifications")]
         public string ItemSpecifications { get; set; }
-        
-        [Display(Name = "UACS Object Class")]
-        public string AccountClass { get; set; }
-
-        [Display(Name = "Is Tangible?")]
-        public string IsTangible { get; set; }
 
         [Display(Name = "Responsibility Center")]
         public string ResponsibilityCenter { get; set; }
@@ -340,19 +351,19 @@ namespace PUPFMIS.Models
         public ProcurementSources ProcurementSource { get; set; }
 
         [Display(Name = "Packaging Unit")]
-        public string PackagingUOMReference { get; set; }
+        public int PackagingUOMReference { get; set; }
 
         [Display(Name = "Individual Unit")]
-        public string IndividualUOMReference { get; set; }
+        public int IndividualUOMReference { get; set; }
 
         [Display(Name = "Unit Price")]
         public decimal? UnitPrice { get; set; }
 
         [Display(Name = "Quantity per Package")]
-        public int? QuantityPerPackage { get; set; }
+        public int QuantityPerPackage { get; set; }
 
         [Display(Name = "Minimum Issuance Quantity")]
-        public int? MinimumIssuanceQty { get; set; }
+        public int MinimumIssuanceQty { get; set; }
 
         [Display(Name = "Is Deleted?")]
         public string PurgeFlag { get; set; }
@@ -368,8 +379,12 @@ namespace PUPFMIS.Models
 
         [Display(Name = "Allowed Users")]
         public List<string> AllowedUsers { get; set; }
-    }
 
+        public virtual ItemArticles ArticleInformation { get; set; }
+        public virtual ItemCategory CategoryInfomation { get; set; }
+        public virtual UnitOfMeasure IndividualUnitInformation { get; set; }
+        public virtual UnitOfMeasure PackagingUnitInformation { get; set; }
+    }
     public class ItemCategoryValidator : AbstractValidator<ItemCategory>
     {
         FMISDbContext db = new FMISDbContext();
@@ -389,27 +404,56 @@ namespace PUPFMIS.Models
             return (db.UOM.Where(x => x.UnitName == UnitName && x.PurgeFlag == true).Count() == 0) ? true : false;
         }
     }
-
-    public class ItemTypeValidator : AbstractValidator<ItemTypeVM>
+    public class ItemTypeValidator : AbstractValidator<ItemTypes>
     {
         FMISDbContext db = new FMISDbContext();
         public ItemTypeValidator()
         {
-            RuleFor(x => x.ItemTypeName).Must(NotBeDeleted).WithMessage("Item Type was recently deleted. If you want to use the unit name, please restore the record.");
-            RuleFor(x => x.ItemTypeName).Must(BeUnique).WithMessage("Item Type Name already exists in the system's database.");
+            RuleFor(x => x.ItemTypeCode).Must(BeUniqueCode).WithMessage("Item Type Code already exists in the system's database.");
+            RuleFor(x => x.ItemType).Must(NotBeDeleted).WithMessage("Item Type was recently deleted. If you want to use the unit name, please restore the record.");
+            RuleFor(x => x.ItemType).Must(BeUnique).WithMessage("Item Type Name already exists in the system's database.");
         }
 
         public bool BeUnique(string ItemTypeName)
         {
-            return (db.ItemTypes.Where(x => x.ItemTypeName == ItemTypeName).Count() == 0) ? true : false;
+            return (db.ItemTypes.Where(x => x.ItemType == ItemTypeName).Count() == 0) ? true : false;
+        }
+
+        public bool BeUniqueCode(string ItemTypeCode)
+        {
+            return (db.ItemTypes.Where(x => x.ItemTypeCode == ItemTypeCode).Count() == 0) ? true : false;
         }
 
         public bool NotBeDeleted(string ItemTypeName)
         {
-            return (db.ItemTypes.Where(x => x.ItemTypeName == ItemTypeName && x.PurgeFlag == true).Count() == 0) ? true : false;
+            return (db.ItemTypes.Where(x => x.ItemType == ItemTypeName && x.PurgeFlag == true).Count() == 0) ? true : false;
         }
     }
+    public class ItemArticleValidator : AbstractValidator<ItemArticles>
+    {
+        FMISDbContext db = new FMISDbContext();
+        public ItemArticleValidator()
+        {
+            RuleFor(x => x.ArticleCode).Must(BeUniqueCode).WithMessage("Article Code already exists in the system's database.");
+            RuleFor(x => x.ArticleName).Must(NotBeDeleted).WithMessage("Article Name was recently deleted. If you want to use the unit name, please restore the record.");
+            RuleFor(x => x.ArticleName).Must(BeUnique).WithMessage("Article Name already exists in the system's database.");
+        }
 
+        public bool BeUnique(string ArticleName)
+        {
+            return (db.ItemArticles.Where(x => x.ArticleName == ArticleName).Count() == 0) ? true : false;
+        }
+
+        public bool BeUniqueCode(string ArticleCode)
+        {
+            return (db.ItemArticles.Where(x => x.ArticleCode == ArticleCode).Count() == 0) ? true : false;
+        }
+
+        public bool NotBeDeleted(string ArticleName)
+        {
+            return (db.ItemArticles.Where(x => x.ArticleName == ArticleName && x.PurgeFlag == true).Count() == 0) ? true : false;
+        }
+    }
     public class ItemValidator : AbstractValidator<ItemVM>
     {
         public ItemValidator()
@@ -417,7 +461,6 @@ namespace PUPFMIS.Models
             RuleFor(x => x.ItemShortSpecifications).NotEmpty().WithMessage("Item Short Specification field must be filled out.");
             RuleFor(x => x.QuantityPerPackage).NotEmpty().WithMessage("Quanity per Package field must be filled out.");
             RuleFor(x => x.MinimumIssuanceQty).NotEmpty().WithMessage("Minimum Issuance Quantity field must be filled out.");
-            RuleFor(x => x.ItemSpecifications).NotEmpty().WithMessage("Full Specification field must be filled out.");
         }
     }
 }

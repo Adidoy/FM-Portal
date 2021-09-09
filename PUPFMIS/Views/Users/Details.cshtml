@@ -1,51 +1,34 @@
-﻿@model PUPFMIS.Models.UserInformation
+﻿@model PUPFMIS.Models.UsersVM
 
-@{
-    ViewBag.Title = "Details";
-    Layout = "~/Views/Shared/_BodyLayout.cshtml";
-}
-
-<h2>Details</h2>
-
-<div>
-    <h4>UserInformation</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.LastName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.LastName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.FirstName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.FirstName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.MiddleName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.MiddleName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Designation)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Designation)
-        </dd>
-
-    </dl>
+<div class="modal-header">
+    <h4 class="modal-title">View User Account Record </h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+
+<div class="modal-body" id="form-body">
+    <h5>@Model.Employee</h5>
+    <br />
+    <h6>Other Details:</h6>
+    <table class="table">
+        <tr>
+            <td><strong>@Html.DisplayNameFor(model => model.Department)</strong></td>
+            <td>@Html.DisplayFor(model => model.DepartmentCode) - @Html.DisplayFor(model => model.Department)</td>
+        </tr>
+        <tr>
+            <td><strong>@Html.DisplayNameFor(model => model.Unit)</strong></td>
+            <td>@Html.DisplayFor(model => model.UnitCode) - @Html.DisplayFor(model => model.Unit)</td>
+        </tr>
+        <tr>
+            <td><strong>@Html.DisplayNameFor(model => model.UserRole)</strong></td>
+            <td>@Html.DisplayFor(model => model.UserRole)</td>
+        </tr>
+    </table>
+</div>
+
+<div class="modal-footer">
+    <div class="form-group">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+    </div>
+</div>

@@ -2,13 +2,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="content-wrapper">
+<div class="content-wrapper px-2 py-2" style="min-height: 855px;">
     <section class="content-header p-2">
         <div class="container-fluid">
             <div class="row p-0">
                 <div class="col-sm-6">
                     <h3 class="p-0">
-                        @ViewBag.Title  
+                        @ViewBag.Title
                         <small>@ViewBag.Description</small>
                     </h3>
                 </div>
@@ -32,15 +32,17 @@
     </section>
 </div>
 
-<script type="text/javascript">
-        $(function () {
-            $('#example2').DataTable({
-                "paging": true,
-                "lengthChange": true,
-                "searching": true,
-                "ordering": false,
-                "info": true,
-                "autoWidth": false,
+@section Scripts{
+    <script type="text/javascript">
+            $(function () {
+                $('#example2').DataTable({
+                    "paging": true,
+                    "lengthChange": true,
+                    "searching": true,
+                    "ordering": false,
+                    "info": true,
+                    "autoWidth": false,
+                });
             });
-        });
-</script>
+    </script>
+}

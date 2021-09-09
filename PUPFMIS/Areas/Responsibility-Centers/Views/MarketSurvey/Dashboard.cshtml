@@ -1,0 +1,147 @@
+﻿@model PUPFMIS.Models.MarketSurveyDashboard
+
+@{
+    ViewBag.Title = "Market Survey";
+    ViewBag.Description = "Home";
+    Layout = "~/Views/Shared/_BodyLayout.cshtml";
+}
+
+@section BreadCrumb {
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/"><i class="fa fa-tachometer-alt"></i>&nbsp;@Html.ActionLink("PUP-FM Portal", "index", "Home", new { Area = "" }, null)</a></li>
+        <li class="breadcrumb-item">Home</li>
+    </ol>
+}
+
+@section Header {
+    <h3 class="card-title"><i class="fa fa-tachometer-alt"></i> Dashboard</h3>
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="bg-info">
+            <h5 class="p-2">Statistics</h5>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-4 col-md-4 col-sm-12">
+        <div class="small-box bg-primary">
+            <div class="inner">
+                <h3>@Model.NoOfNewItems</h3>
+                <p>New Items Added</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-box"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-4 col-sm-12">
+        <div class="small-box bg-success">
+            <div class="inner">
+                <h3>@Model.NoOfUpdatedMarketSurvey</h3>
+                <p>Updated Market Surveys</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-file"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-4 col-sm-12">
+        <div class="small-box bg-danger">
+            <div class="inner">
+                <h3>@Model.NoOfLapsedMarketSurvey</h3>
+                <p>Lapsed Market Surveys</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-file"></i>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-sm-12">
+        <div class="bg-info">
+            <h5 class="p-2">Market Survey Actions</h5>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-12">
+        <div class="info-box">
+            <span class="info-box-icon bg-primary"><i class="fa fa-file-contract"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text" style="font-size:10pt; font-weight:bold;"> @Html.ActionLink("Create Market Survey", "new-items", "MarketSurvey", new { area = "responsibility-centers" }, null)</span>
+                <span class="info-box-number" style="font-size:8pt;">
+                    Record new market survey for various items.
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12">
+        <div class="info-box">
+            <span class="info-box-icon bg-danger"><i class="fa fa-edit"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text" style="font-size:10pt; font-weight:bold;"> @Html.ActionLink("Update Market Survey", "items", "MarketSurvey", new { area = "responsibility-centers" }, null)</span>
+                <span class="info-box-number" style="font-size:8pt;">
+                    Update previously conducted market surveys.
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-sm-12">
+        <div class="bg-info">
+            <h5 class="p-2">View Market Surveys</h5>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <table class="table table-striped table-hover" id="items">
+            <thead>
+                <tr>
+                    <th width="25%" style="text-align:center; vertical-align:middle">Item</th>
+                    <th width="25%" style="text-align:center; vertical-align:middle">Unit Cost</th>
+                    <th width="25%" style="text-align:center; vertical-align:middle">Last Updated</th>
+                    <th width="25%" style="text-align:center; vertical-align:middle">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.MarketSurveyList)
+                {
+                    <tr>
+                        <td style="text-align:justify; vertical-align: middle;">
+                            @Html.DisplayFor(d => item.ItemName) <small>(@Html.DisplayFor(d => item.ItemCode))</small>
+                        </td>
+                        <td style="text-align:right; vertical-align: middle;">
+                            @( item.UnitCost.Value.ToString("C", new System.Globalization.CultureInfo("en-ph")) )
+                        </td>
+                        <td style="text-align:center; vertical-align:top;">
+                            @( item.LastUpdated.Value.ToString("dd MMMM yyyy hh:mm tt") )
+                        </td>
+                        <td style="text-align:center; vertical-align:top;">
+                            <button style="text-align:left;" class="btn btn-primary btn-sm" onclick="window.location = '@Url.Action("details", "MarketSurvey", new { ItemCode = item.ItemCode })'"><i class="fa fa-eye"></i> View Details</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $('#items').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": false,
+            "info": true,
+            "autoWidth": false,
+        });
+    });
+</script>

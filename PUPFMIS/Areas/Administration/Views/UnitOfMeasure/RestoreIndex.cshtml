@@ -9,7 +9,7 @@
 @section BreadCrumb {
     <ol class="breadcrumb float-sm-right">
         <li class="breadcrumb-item"><a href="/"><i class="fa fa-dashboard"></i>@Html.ActionLink("PUP-FM Portal", "index", "Home")</a></li>
-        <li class="breadcrumb-item">@Html.ActionLink("Unit of Measure", "index")</li>
+        <li class="breadcrumb-item">@Html.ActionLink("Unit of Measure", "list")</li>
         <li class="breadcrumb-item">Restore Deleted Records</li>
     </ol>
 }
@@ -28,9 +28,6 @@
                             @Html.DisplayNameFor(model => model.UnitName)
                         </th>
                         <th style="text-align:center;">
-                            @Html.DisplayNameFor(model => model.Abbreviation)
-                        </th>
-                        <th style="text-align:center;">
                             @Html.DisplayNameFor(model => model.DeletedAt)
                         </th>
                         <th>Action</th>
@@ -39,18 +36,16 @@
                 @foreach (var item in Model)
                 {
                     <tbody>
+
                         <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.UnitName)
+                            <td style="text-align:left; vertical-align:middle;">
+                                <b>@Html.DisplayFor(modelItem => item.UnitName)</b> (@Html.DisplayFor(modelItem => item.UnitName))
                             </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Abbreviation)
+                            <td style="text-align:center; vertical-align:middle;">
+                                @Html.DisplayFor(modelItem => item.DeletedAt)
                             </td>
-                            <td>
-                                @Convert.ToDateTime(Html.DisplayFor(modelItem => item.DeletedAt).ToString()).ToString("dd MMMM yyyy hh:mm tt")
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-sm btn-success" data-toggle="tooltip" title="Restore" onclick="loadModal('@Url.Action("restore","UnitOfMeasure", new { id = item.ID })')"><i class="fa fa-check-circle"></i> Restore Record</button>
+                            <td style="text-align:center; vertical-align:middle;">
+                                <button type="button" class="btn btn-sm btn-primary" data-toggle="tooltip" title="View Details" onclick="loadModal('@Url.Action("restore","UnitOfMeasure", new { id = item.ID })')"><i class="fa fa-eye"></i></button>
                             </td>
                         </tr>
                     </tbody>
@@ -64,7 +59,7 @@
 <div class="row">
     <div class="col-sm-12">
         <div class="form-group float-right">
-            <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("index", "UnitOfMeasure", new { Area = "administration" })'"><i class="fa fa-arrow-circle-left"></i> Back to List</button>
+            <button type="button" class="btn btn-danger" onclick="window.location = '@Url.Action("list", "UnitOfMeasure", new { Area = "administration" })'"><i class="fa fa-arrow-circle-left"></i> Back to List</button>
         </div>
     </div>
 </div>

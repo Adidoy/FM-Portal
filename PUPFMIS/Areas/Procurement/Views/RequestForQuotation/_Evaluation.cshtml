@@ -1,0 +1,496 @@
+﻿@model PUPFMIS.Models.QuoteEvaluationVM
+
+<div class="card card-info">
+    <div class="card-header"><h3 class="card-title">Request For Quotation Details</h3></div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.FiscalYear, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.FiscalYear)
+                        @Html.HiddenFor(model => Model.SolicitationNo)
+                        @Html.EditorFor(model => Model.FiscalYear, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.ContractCode, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-id-card"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.ContractCode)
+                        @Html.EditorFor(model => Model.ContractCode, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.ContractName, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-id-badge"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.ContractName)
+                        @Html.EditorFor(model => Model.ContractName, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled" } })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.ABC, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-coins"></i></span>
+                        </div>
+                        @Html.HiddenFor(model => Model.ABC)
+                        @Html.EditorFor(model => Model.ABC, null, new { htmlAttributes = new { @class = "form-control form-control-sm", disabled = "disabled", Value = Model.ABC.ToString("C", new System.Globalization.CultureInfo("en-ph")) } })
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.OpenedAt, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group date" id="OpenedAt1" data-target-input="nearest">
+                        <div class="input-group-prepend" data-target="#OpenedAt1" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                        @Html.EditorFor(model => Model.OpenedAt, new { htmlAttributes = new { @class = "form-control form-control-sm datetimepicker-input", data_target = "#OpenedAt1", style = "font-size: 100%", placeholder = Html.DisplayNameFor(model => Model.OpenedAt), Value = Model.OpenedAt == null || Model.OpenedAt == Convert.ToDateTime("01/01/0001 12:00 AM") ? (DateTime?)null : Model.OpenedAt } })
+                    </div>
+                    @Html.ValidationMessageFor(model => Model.OpenedAt, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.PlaceOpened, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-building"></i></span>
+                        </div>
+                        @Html.EditorFor(model => Model.PlaceOpened, null, new { htmlAttributes = new { @class = "form-control form-control-sm" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => Model.PlaceOpened, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card card-info">
+    <div class="card-header">
+        <h3 class="card-title">Procurement Projects</h3>
+    </div>
+    <div class="card-body">
+        <div class="card card-primary card-outline">
+            <div class="card-header d-flex p-0">
+                <ul class="nav nav-pills p-2">
+                    @for (int i = 0; i < Model.Details.Count; i++)
+                    {
+                        if (i == 0)
+                        {
+                            <li class="nav-item" style="font-size:12pt;"><a class="nav-link active" href="#@( string.Concat(Convert.ToChar(i + 65).ToString(), "-",  Model.Details[i].QuotationNo.Replace("-","")) )" data-toggle="tab"><i class="fa fa-list"></i>&nbsp; @Model.Details[i].QuotationNo - @Model.Details[i].Supplier</a></li>
+                        }
+                        else
+                        {
+                            <li class="nav-item" style="font-size:12pt;"><a class="nav-link" href="#@( string.Concat(Convert.ToChar(i + 65).ToString(), "-",  Model.Details[i].QuotationNo.Replace("-","")) )" data-toggle="tab"><i class="fa fa-list"></i>&nbsp; @Model.Details[i].QuotationNo - @Model.Details[i].Supplier</a></li>
+                        }
+                    }
+                </ul>
+            </div>
+            <div class="tab-content">
+                @for (int i = 0; i<Model.Details.Count; i++)
+                {
+
+                    @Html.HiddenFor(modelItem => Model.Details[i].QuotationNo)
+                    @Html.HiddenFor(modelItem => Model.Details[i].Supplier)
+
+                    if (i == 0)
+                    {
+                        <div class="tab-pane active" id="@( string.Concat(Convert.ToChar(i + 65).ToString(), "-",  Model.Details[i].QuotationNo.Replace("-","")) )">
+                            <div class="card-body">
+                                <div class="card">
+                                    <div class="card-header"><h3 class="card-title">Comparison</h3></div>
+                                    <div class="card-body">
+                                        <div class="card-body table-responsive p-sm-0">
+                                            <table class="table table-striped table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="text-align: center; vertical-align: middle;" width="25%">
+                                                            Description
+                                                        </th>
+                                                        <th style="text-align: center; vertical-align: middle;" width="15%">
+                                                            Approved Budget
+                                                        </th>
+                                                        <th style="text-align: center; vertical-align: middle;" width="15%">
+                                                            Unit Price<br />(PhP)
+                                                        </th>
+                                                        <th style="text-align: center; vertical-align: middle;" width="15%">
+                                                            Total Bid<br />(PhP)
+                                                        </th>
+                                                        <th style="text-align: center; vertical-align: middle;" width="15%">
+                                                            Variance<br />(%)
+                                                        </th>
+                                                        <th style="text-align: center; vertical-align: middle;" width="15%">
+                                                            Savings<br />(PhP)
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @for (var x = 0; x < Model.Details[i].Items.Count; x++)
+                                                    {
+                                                        <tr>
+                                                            <td style="text-align:justify; vertical-align:top;">
+                                                                @Html.HiddenFor(modelItem => Model.Details[i].Items[x].ArticleReference)
+                                                                @Html.HiddenFor(modelItem => Model.Details[i].Items[x].ItemSequence)
+                                                                @Html.HiddenFor(modelItem => Model.Details[i].Items[x].ItemFullName)
+                                                                @Html.HiddenFor(modelItem => Model.Details[i].Items[x].ItemSpecifications)
+                                                                <div class="row">
+                                                                    <div class="col-sm-12">
+                                                                        <b>@Html.DisplayFor(modelItem => Model.Details[i].Items[x].ItemFullName)</b>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td style="text-align:right; vertical-align:top;">
+                                                                @Html.HiddenFor(modelItem => Model.Details[i].Items[x].TotalCost)
+                                                                @( Model.Details[i].Items[x].TotalCost.Value.ToString("C", new System.Globalization.CultureInfo("en-ph")) )
+                                                            </td>
+                                                            <td style="text-align:right; vertical-align:top;">
+                                                                @Html.HiddenFor(modelItem => Model.Details[i].Items[x].UnitBidPrice)
+                                                                @( Model.Details[i].Items[x].UnitBidPrice == null ? "No Bid" : Model.Details[i].Items[x].UnitBidPrice.Value.ToString("C", new System.Globalization.CultureInfo("en-ph")) )
+                                                            </td>
+                                                            <td style="text-align:right; vertical-align:top;">
+                                                                @Html.HiddenFor(modelItem => Model.Details[i].Items[x].TotalBid)
+                                                                @( Model.Details[i].Items[x].UnitBidPrice == null ? string.Empty : Model.Details[i].Items[x].TotalBid.Value.ToString("C", new System.Globalization.CultureInfo("en-ph")) )
+                                                            </td>
+                                                            <td style="text-align:center; vertical-align:top;">
+                                                                @Html.HiddenFor(modelItem => Model.Details[i].Items[x].Variance)
+                                                                @( Model.Details[i].Items[x].UnitBidPrice == null ? string.Empty : Model.Details[i].Items[x].Variance.Value.ToString("P", new System.Globalization.CultureInfo("en-ph")) )
+                                                            </td>
+                                                            <td style="text-align:right; vertical-align:top;">
+                                                                @Html.HiddenFor(modelItem => Model.Details[i].Items[x].Savings)
+                                                                @( Model.Details[i].Items[x].UnitBidPrice == null ? string.Empty : Model.Details[i].Items[x].Savings.Value.ToString("C", new System.Globalization.CultureInfo("en-ph")) )
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                                <tr>
+                                                    <td style="text-align:right; vertical-align:middle">
+                                                        <h5>TOTAL:</h5>
+                                                    </td>
+                                                    <td style="text-align:right; vertical-align:middle">
+                                                        <h5>@Model.Details[i].Items.Sum(d => d.TotalCost).Value.ToString("C", new System.Globalization.CultureInfo("en-ph"))</h5>
+                                                    </td>
+                                                    <td style="text-align:right; vertical-align:middle"></td>
+                                                    <td style="text-align:right; vertical-align:middle">
+                                                        <h5>@Model.Details[i].Items.Sum(d => d.TotalBid).Value.ToString("C", new System.Globalization.CultureInfo("en-ph"))</h5>
+                                                    </td>
+                                                    <td style="text-align:right; vertical-align:middle"></td>
+                                                    <td style="text-align:right; vertical-align:middle">
+                                                        <h5>@Model.Details[i].Items.Sum(d => d.Savings).Value.ToString("C", new System.Globalization.CultureInfo("en-ph"))</h5>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header"><h3 class="card-title">Recommendation</h3></div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-lg-6 col-md-6 col-sm-12">
+                                                <div class="card">
+                                                    <div class="card-header"><h3 class="card-title">Eligibility Requirements</h3></div>
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col-sm-6">
+                                                                @Html.RadioButtonFor(model => Model.Details[i].EligibilityRequirements, true, htmlAttributes: new { id = "Details[" + i + "].EligibilityRequirementsPassed", @checked = "checked" })
+                                                                @Html.Label("Passed", htmlAttributes: new { @for = "Details[" + i + "].EligibilityRequirementsPassed" })
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                @Html.RadioButtonFor(model => Model.Details[i].EligibilityRequirements, false, htmlAttributes: new { id = "Details[" + i + "].EligibilityRequirementsFailed" })
+                                                                @Html.Label("Failed", htmlAttributes: new { @for = "Details[" + i + "].EligibilityRequirementsFailed" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="card">
+                                                    <div class="card-header"><h3 class="card-title">Technical Requirements</h3></div>
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col-sm-6">
+                                                                @Html.RadioButtonFor(model => Model.Details[i].TechnicalRequirements, true, htmlAttributes: new { id = "Details[" + i + "].TechnicalRequirementsPassed", @checked = "checked" })
+                                                                @Html.Label("Passed", htmlAttributes: new { @for = "Details[" + i + "].TechnicalRequirementsPassed" })
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                @Html.RadioButtonFor(model => Model.Details[i].TechnicalRequirements, false, htmlAttributes: new { id = "Details[" + i + "].TechnicalRequirementsFailed" })
+                                                                @Html.Label("Failed", htmlAttributes: new { @for = "Details[" + i + "].TechnicalRequirementsFailed" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="card">
+                                                    <div class="card-header"><h3 class="card-title">Financial Requirements</h3></div>
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col-sm-6">
+                                                                @Html.RadioButtonFor(model => Model.Details[i].FinancialRequirements, true, htmlAttributes: new { id = "Details[" + i + "].FinancialRequirementsPassed", @checked = "checked" })
+                                                                @Html.Label("Passed", htmlAttributes: new { @for = "Details[" + i + "].FinancialRequirementsPassed" })
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                @Html.RadioButtonFor(model => Model.Details[i].FinancialRequirements, false, htmlAttributes: new { id = "Details[" + i + "].FinancialRequirementsFailed" })
+                                                                @Html.Label("Failed", htmlAttributes: new { @for = "Details[" + i + "].FinancialRequirementsFailed" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-12">
+                                                <div class="card">
+                                                    <div class="card-header"><h3 class="card-title">Recommend to Award Contract</h3></div>
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <div class="form-group">
+                                                                    @Html.LabelFor(model => Model.Details[i].LCRQ)
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-prepend">
+                                                                            <span class="input-group-text">
+                                                                                @Html.CheckBoxFor(model => Model.Details[i].LCRQ)
+                                                                            </span>
+                                                                        </div>
+                                                                        @Html.Editor("Lowest Calculated and Responsive Quotation?", null, new { htmlAttributes = new { @class = "form-control form-control-sm", Value = "Lowest Calculated and Responsive Quotation?", disabled = "disabled" } })
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-6">
+                                                                @Html.RadioButtonFor(model => Model.Details[i].RecommendToAward, true, htmlAttributes: new { id = "Details[" + i + "].RecommendToAwardPassed", @checked = "checked" })
+                                                                @Html.Label("Yes", htmlAttributes: new { @for = "Details[" + i + "].RecommendToAwardPassed" })
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                @Html.RadioButtonFor(model => Model.Details[i].RecommendToAward, false, htmlAttributes: new { id = "Details[" + i + "].RecommendToAwardFailed" })
+                                                                @Html.Label("No", htmlAttributes: new { @for = "Details[" + i + "].RecommendToAwardFailed" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <div class="form-group">
+                                                            @Html.LabelFor(model => Model.Details[i].Remarks, htmlAttributes: new { @class = "control-label" })
+                                                            @Html.EditorFor(model => Model.Details[i].Remarks, null, new { htmlAttributes = new { @class = "form-control form-control-sm", rows = "4" } })
+                                                            @Html.ValidationMessageFor(model => Model.Details[i].Remarks, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="tab-pane" id="@( string.Concat(Convert.ToChar(i + 65).ToString(), "-",  Model.Details[i].QuotationNo.Replace("-","")) )">
+                            <div class="card-body">
+                                <div class="card">
+                                    <div class="card-header"><h3 class="card-title">Comparison</h3></div>
+                                    <div class="card-body">
+                                        <div class="card-body table-responsive p-sm-0">
+                                            <table class="table table-striped table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="text-align: center; vertical-align: middle;" width="25%">
+                                                            Description
+                                                        </th>
+                                                        <th style="text-align: center; vertical-align: middle;" width="15%">
+                                                            Approved Budget
+                                                        </th>
+                                                        <th style="text-align: center; vertical-align: middle;" width="15%">
+                                                            Unit Price<br />(PhP)
+                                                        </th>
+                                                        <th style="text-align: center; vertical-align: middle;" width="15%">
+                                                            Total Bid<br />(PhP)
+                                                        </th>
+                                                        <th style="text-align: center; vertical-align: middle;" width="15%">
+                                                            Variance<br />(%)
+                                                        </th>
+                                                        <th style="text-align: center; vertical-align: middle;" width="15%">
+                                                            Savings<br />(PhP)
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @for (var x = 0; x < Model.Details[i].Items.Count; x++)
+                                                    {
+                                                        <tr>
+                                                            <td style="text-align:justify; vertical-align:top;">
+                                                                @Html.HiddenFor(modelItem => Model.Details[i].Items[x].ArticleReference)
+                                                                @Html.HiddenFor(modelItem => Model.Details[i].Items[x].ItemSequence)
+                                                                @Html.HiddenFor(modelItem => Model.Details[i].Items[x].ItemFullName)
+                                                                @Html.HiddenFor(modelItem => Model.Details[i].Items[x].ItemSpecifications)
+                                                                <div class="row">
+                                                                    <div class="col-sm-12">
+                                                                        <b>@Html.DisplayFor(modelItem => Model.Details[i].Items[x].ItemFullName)</b>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td style="text-align:right; vertical-align:top;">
+                                                                @Html.HiddenFor(modelItem => Model.Details[i].Items[x].TotalCost)
+                                                                @( Model.Details[i].Items[x].TotalCost.Value.ToString("C", new System.Globalization.CultureInfo("en-ph")) )
+                                                            </td>
+                                                            <td style="text-align:right; vertical-align:top;">
+                                                                @Html.HiddenFor(modelItem => Model.Details[i].Items[x].UnitBidPrice)
+                                                                @( Model.Details[i].Items[x].UnitBidPrice == null ? "No Bid" : Model.Details[i].Items[x].UnitBidPrice.Value.ToString("C", new System.Globalization.CultureInfo("en-ph")) )
+                                                            </td>
+                                                            <td style="text-align:right; vertical-align:top;">
+                                                                @Html.HiddenFor(modelItem => Model.Details[i].Items[x].TotalBid)
+                                                                @( Model.Details[i].Items[x].UnitBidPrice == null ? string.Empty : Model.Details[i].Items[x].TotalBid.Value.ToString("C", new System.Globalization.CultureInfo("en-ph")) )
+                                                            </td>
+                                                            <td style="text-align:center; vertical-align:top;">
+                                                                @Html.HiddenFor(modelItem => Model.Details[i].Items[x].Variance)
+                                                                @( Model.Details[i].Items[x].UnitBidPrice == null ? string.Empty : Model.Details[i].Items[x].Variance.Value.ToString("P", new System.Globalization.CultureInfo("en-ph")) )
+                                                            </td>
+                                                            <td style="text-align:right; vertical-align:top;">
+                                                                @Html.HiddenFor(modelItem => Model.Details[i].Items[x].Savings)
+                                                                @( Model.Details[i].Items[x].UnitBidPrice == null ? string.Empty : Model.Details[i].Items[x].Savings.Value.ToString("C", new System.Globalization.CultureInfo("en-ph")) )
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                                <tr>
+                                                    <td style="text-align:right; vertical-align:middle">
+                                                        <h5>TOTAL:</h5>
+                                                    </td>
+                                                    <td style="text-align:right; vertical-align:middle">
+                                                        <h5>@Model.Details[i].Items.Sum(d => d.TotalCost).Value.ToString("C", new System.Globalization.CultureInfo("en-ph"))</h5>
+                                                    </td>
+                                                    <td style="text-align:right; vertical-align:middle"></td>
+                                                    <td style="text-align:right; vertical-align:middle">
+                                                        <h5>@Model.Details[i].Items.Sum(d => d.TotalBid).Value.ToString("C", new System.Globalization.CultureInfo("en-ph"))</h5>
+                                                    </td>
+                                                    <td style="text-align:right; vertical-align:middle"></td>
+                                                    <td style="text-align:right; vertical-align:middle">
+                                                        <h5>@Model.Details[i].Items.Sum(d => d.Savings).Value.ToString("C", new System.Globalization.CultureInfo("en-ph"))</h5>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header"><h3 class="card-title">Recommendation</h3></div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-lg-6 col-md-6 col-sm-12">
+                                                <div class="card">
+                                                    <div class="card-header"><h3 class="card-title">Eligibility Requirements</h3></div>
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col-sm-6">
+                                                                @Html.RadioButtonFor(model => Model.Details[i].EligibilityRequirements, true, htmlAttributes: new { id = "Details[" + i + "].EligibilityRequirementsPassed", @checked = "checked" })
+                                                                @Html.Label("Passed", htmlAttributes: new { @for = "Details[" + i + "].EligibilityRequirementsPassed" })
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                @Html.RadioButtonFor(model => Model.Details[i].EligibilityRequirements, false, htmlAttributes: new { id = "Details[" + i + "].EligibilityRequirementsFailed" })
+                                                                @Html.Label("Failed", htmlAttributes: new { @for = "Details[" + i + "].EligibilityRequirementsFailed" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="card">
+                                                    <div class="card-header"><h3 class="card-title">Technical Requirements</h3></div>
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col-sm-6">
+                                                                @Html.RadioButtonFor(model => Model.Details[i].TechnicalRequirements, true, htmlAttributes: new { id = "Details[" + i + "].TechnicalRequirementsPassed", @checked = "checked" })
+                                                                @Html.Label("Passed", htmlAttributes: new { @for = "Details[" + i + "].TechnicalRequirementsPassed" })
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                @Html.RadioButtonFor(model => Model.Details[i].TechnicalRequirements, false, htmlAttributes: new { id = "Details[" + i + "].TechnicalRequirementsFailed" })
+                                                                @Html.Label("Failed", htmlAttributes: new { @for = "Details[" + i + "].TechnicalRequirementsFailed" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="card">
+                                                    <div class="card-header"><h3 class="card-title">Financial Requirements</h3></div>
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col-sm-6">
+                                                                @Html.RadioButtonFor(model => Model.Details[i].FinancialRequirements, true, htmlAttributes: new { id = "Details[" + i + "].FinancialRequirementsPassed", @checked = "checked" })
+                                                                @Html.Label("Passed", htmlAttributes: new { @for = "Details[" + i + "].FinancialRequirementsPassed" })
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                @Html.RadioButtonFor(model => Model.Details[i].FinancialRequirements, false, htmlAttributes: new { id = "Details[" + i + "].FinancialRequirementsFailed" })
+                                                                @Html.Label("Failed", htmlAttributes: new { @for = "Details[" + i + "].FinancialRequirementsFailed" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-12">
+                                                <div class="card">
+                                                    <div class="card-header"><h3 class="card-title">Recommend to Award Contract</h3></div>
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <div class="form-group">
+                                                                    @Html.LabelFor(model => Model.Details[i].LCRQ)
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-prepend">
+                                                                            <span class="input-group-text">
+                                                                                @Html.CheckBoxFor(model => Model.Details[i].LCRQ)
+                                                                            </span>
+                                                                        </div>
+                                                                        @Html.Editor("Lowest Calculated and Responsive Quotation?", null, new { htmlAttributes = new { @class = "form-control form-control-sm", Value = "Lowest Calculated and Responsive Quotation?", disabled = "disabled" } })
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-6">
+                                                                @Html.RadioButtonFor(model => Model.Details[i].RecommendToAward, true, htmlAttributes: new { id = "Details[" + i + "].RecommendToAwardPassed", @checked = "checked" })
+                                                                @Html.Label("Yes", htmlAttributes: new { @for = "Details[" + i + "].RecommendToAwardPassed" })
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                @Html.RadioButtonFor(model => Model.Details[i].RecommendToAward, false, htmlAttributes: new { id = "Details[" + i + "].RecommendToAwardFailed" })
+                                                                @Html.Label("No", htmlAttributes: new { @for = "Details[" + i + "].RecommendToAwardFailed" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <div class="form-group">
+                                                            @Html.LabelFor(model => Model.Details[i].Remarks, htmlAttributes: new { @class = "control-label" })
+                                                            @Html.EditorFor(model => Model.Details[i].Remarks, null, new { htmlAttributes = new { @class = "form-control form-control-sm", rows = "4" } })
+                                                            @Html.ValidationMessageFor(model => Model.Details[i].Remarks, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+
+        </div>
+    </div>
+</div>
